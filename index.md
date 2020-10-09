@@ -7,6 +7,7 @@ permalink: /
 ---
 
 # Welcome to **Chirpy Cardinal**.
+<img style='float:right;' src="{{site.baseurl}}/assets/images/chirpy_logo.svg" width="100" height="100">
 {: .fs-9 }
 
 **Chirpy Cardinal** is the award-winning [Stanford NLP](https://nlp.stanford.edu/) team for the [Alexa Prize](https://developer.amazon.com/alexaprize), a university competition to advance conversational AI.
