@@ -1,1 +1,0 @@
-This repo was created by cloning the [just-the-docs](https://github.com/pmarsceill/just-the-docs) repo, then replacing the content with our content. The webpage is hosted by Github Pages and can be found [here](https://stanfordnlp.github.io/chirpycardinal/).
