@@ -15,8 +15,8 @@
 # in the templates via {{ site.myvariable }}.
 title: Chirpy Cardinal
 description: The website for Chirpy Cardinal, Stanford NLP's team for the Alexa Prize competitions.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://stanfordnlp.github.io/chirpycardinal/" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/chirpycardinal" # the subpath of your site, e.g. /blog
+url: "https://stanfordnlp.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
 
 permalink: pretty
 exclude: ["node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"
