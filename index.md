@@ -6,8 +6,8 @@ description: "Just the Docs is a responsive Jekyll theme with built-in search th
 permalink: /
 ---
 
+<img style='float:right;' src="{{site.baseurl}}/assets/images/chirpy_logo_optimized.svg" width="140" height="140">
 # Welcome to **Chirpy Cardinal**.
-<img style='float:right;' src="{{site.baseurl}}/assets/images/chirpy_logo.svg" width="100" height="100">
 {: .fs-9 }
 
 The aim of this project is to advance the state of open domain dialog research. 
@@ -27,8 +27,9 @@ Alternatively, you can watch our overview presentation:
 
 [Read our paper](https://arxiv.org/abs/2008.12348){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } 
 <!--[View our repo](TBD){: .btn .fs-5 .mb-4 .mb-md-0 }-->
-<iframe width="560" height="315" src="https://www.youtube.com/embed/2pmAvOJOmGg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+<div class="video-container">
+<iframe class="video" src="https://www.youtube.com/embed/2pmAvOJOmGg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 ## Press
 * **Forbes**: [_Talking Machines: Who Won This Year’s Alexa Prize?_](https://www.forbes.com/sites/craigsmith/2020/08/04/talking-machines-who-won-this-years-alexa-prize/#a3a73d54c40f)
