@@ -10,17 +10,23 @@ permalink: /
 <img style='float:right;' src="{{site.baseurl}}/assets/images/chirpy_logo.svg" width="100" height="100">
 {: .fs-9 }
 
-**Chirpy Cardinal** is the award-winning [Stanford NLP](https://nlp.stanford.edu/) team for the [Alexa Prize](https://developer.amazon.com/alexaprize), a university competition to advance conversational AI.
+The aim of this project is to advance the state of open domain dialog research. 
 {: .fs-6 .fw-300 }
 
-[Read our paper](https://arxiv.org/abs/2008.12348){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [View our repo](TBD){: .btn .fs-5 .mb-4 .mb-md-0 }
+We're the award-winning [Stanford NLP](https://nlp.stanford.edu/) team for the [Alexa Prize](https://developer.amazon.com/alexaprize), a university competition to advance conversational AI.
+{: .fs-6 .fw-300 }
 
+We're also part of the [Open Virtual Assistant Lab](https://oval.cs.stanford.edu)
+{: .fs-6 .fw-300 }
 ---
 
 # Alexa Prize 3 (2019-2020)
 In July 2020, Chirpy Cardinal won 2nd place (of 10 teams) in the finals of the Alexa Prize Grand Challenge 3.
 To get an overview of our bot, read our system [paper](https://arxiv.org/abs/2008.12348), **Neural Generation Meets Real People: Towards Emotionally Engaging Mixed-Initiative Conversations**.
 Alternatively, you can watch our overview presentation:
+
+[Read our paper](https://arxiv.org/abs/2008.12348){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } 
+<!--[View our repo](TBD){: .btn .fs-5 .mb-4 .mb-md-0 }-->
 <iframe width="560" height="315" src="https://www.youtube.com/embed/2pmAvOJOmGg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
