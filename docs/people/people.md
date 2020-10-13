@@ -8,5 +8,5 @@ permalink: /docs/people
 
 # People
 
-We have lots of great people!
+Find out more about our team members.
 {: .fs-6 .fw-300 }

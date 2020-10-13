@@ -5,5 +5,4 @@ parent: People
 nav_order: 2
 ---
 
-
-TBD!
+Check back for updates!
