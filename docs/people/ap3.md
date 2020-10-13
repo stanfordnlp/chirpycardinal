@@ -5,8 +5,7 @@ parent: People
 nav_order: 1
 ---
 
-
-|
+<img width="2500"> | <!-- I resized all the images to be 250x250. For some reason they show up too small, so I add this "blank" image in the top row. And for some other reason putting "250" here is still too small but putting 2500 gives around the right size. ??? -->
 --|--
 ![Chris]({{site.baseurl}}/assets/images/chris.jpg)|**[Christopher Manning](https://nlp.stanford.edu/manning/) (Faculty Advisor)** is a professor of computer science and linguistics at Stanford University and Director of the Stanford AI Lab. He is a leader in applying deep neural networks to Natural Language Processing, including work on tree recursive models, sentiment analysis, neural machine translation and parsing, and the GloVe word vectors. He founded the Stanford NLP group ([@stanfordnlp](https://twitter.com/stanfordnlp)), developed Stanford Dependencies and Universal Dependencies, and manages development of the Stanford CoreNLP software. Manning is an ACM, AAAI, and ACL Fellow, and a Past President of ACL.
 --|--
