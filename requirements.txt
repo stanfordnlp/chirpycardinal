@@ -1,0 +1,56 @@
+# This file lists requirements for running various parts of the code locally (including dashboard, notebooks, unit tests, etc)
+
+boto3
+pyyaml
+requests
+injector==0.12.1
+pytz
+awscli
+colorama
+shyaml
+jinja2
+six
+nltk
+
+jsonpickle==1.3  # this needs to match the version in lambda_requirements.txt
+elasticsearch
+requests_aws4auth
+
+# needed for dashboard
+SQLAlchemy
+psycopg2-binary
+dash
+pandas
+plotly
+seaborn
+
+# needed for jupyter notebooks
+nbdime
+ipython-sql
+
+# needed for unittests
+textblob
+flask_restful
+vaderSentiment
+rasa_core
+nose
+parameterized
+
+# haojun need editdisance for fuzzy search
+editdistance
+
+# needed for aws cluster setup
+aws-parallelcluster >= 2.4
+
+# entity linker
+text2digits
+tabulate
+
+
+# movies - checking string similarity
+python-Levenshtein
+
+# entity linker - needed for asr robustness
+g2p_en
+metaphone==0.6
+pyxDamerauLevenshtein==1.6

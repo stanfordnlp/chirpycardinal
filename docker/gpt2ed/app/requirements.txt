@@ -1,0 +1,15 @@
+Flask==0.11.1
+Flask-RESTful==0.3.5
+Werkzeug==0.10.4
+future==0.16.0
+jsonpickle==0.9.4
+numpy==1.16.4
+pandoc==1.0.0b2
+six==1.10.0
+typing==3.6.2
+ConfigArgParse==0.12.0
+gunicorn==19.7.1
+
+# for transfer-learning-conv-ai
+pytorch-ignite
+transformers==2.3.0
