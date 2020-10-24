@@ -1,0 +1,5 @@
+boto3
+tweepy
+requests_aws4auth
+elasticsearch
+psycopg2

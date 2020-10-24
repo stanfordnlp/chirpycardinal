@@ -1,0 +1,127 @@
+type,strategy,response,annotator
+4,AskWhy,Why do you want me to talk about that?,haojun
+4,AskWhy,Why would you be interested in that?,haojun
+4,AskWhy,Why are you interested in that?,haojun
+4,Empathetic,"If I could talk about it I would, but I'm not able to talk about that",haojun
+4,Empathetic,That sound interesting but I think you know I can't talk about that.,haojun
+4,Empathetic,Sorry but I think you know I can't talk about that.,haojun
+4,Avoidance,I would rather not talk about that.,haojun
+4,Avoidance,Can we talk about something else?,haojun
+4,Avoidance,I'm not going to talk about that. Let's move on.,haojun
+4,PointingOut,That's not an appropriate topic to discuss. Let's talk about something else.,haojun
+4,PointingOut,"You probably wouldn't talk to your other friends about that, and I wouldn't either. Let's move on.",haojun
+4,PointingOut,That's not a topic that we should be discussing. Let's talk about something else.,haojun
+4,De-anonymize,I don't want to talk about that. Other people are listening.,haojun
+4,De-anonymize,Shh other people are listening. Let's talk about something more appropriate.,haojun
+4,De-anonymize,I don't want other people to hear us. Let's talk about something more appropriate,haojun
+1,AskWhy,Hmm. Why would you want to talk about that?,haojun
+1,AskWhy,Why would you like to talk about that?,haojun
+1,AskWhy,Why are you interested in that?,haojun
+1,Empathetic,I'm not sure I can talk about that but hopefully I can keep you company talking about other things.,haojun
+1,Empathetic,I'm sorry I can't talk about that but maybe we can talk about something else that's interesting?,haojun
+1,Empathetic,I think we both know that its not something I can discuss. Hopefully we can find some other stuff that we are both interested in.,haojun
+1,Avoidance,That's something I would rather not discuss.,haojun
+1,Avoidance,Hmm. I can't talk about that unfortunately. Let's talk about something else.,haojun
+1,Avoidance,I'm not able to talk about that. But we can talk about something else that interests you.,haojun
+1,PointingOut,It's not ok to talk to me like this. We would be better off talking about something else.,haojun
+1,PointingOut,That's not a nice thing to say. I would rather talk about something else.,haojun
+1,PointingOut,You are being inappropriate by suggesting something like that. We would be better off talking about something else.,haojun
+1,De-anonymize,Shh someone is listening. We better talk about something more appropriate.,haojun
+4,AskWhy,why would you want to talk about that?,amelia
+4,AskWhy,why did you choose that topic?,amelia
+4,AskWhy,why are you talking to me about that?,amelia
+4,Empathetic,"I'm sorry to disappoint you, but that's not something I can talk about",amelia
+4,Empathetic,"I know it's disappointing, but I can't talk about that",amelia
+4,Empathetic,That's not something I can talk about. Sorry to let you down!,amelia
+4,PointingOut,I think you know that's not an appropriate topic. Let's move on to something else.,amelia
+4,PointingOut,That's inappropriate. Let's talk about something else.,amelia
+4,PointingOut,I'm not comfortable talking about that. Let's talk about something more appropriate.,amelia
+4,De-anonymize,,amelia
+4,De-anonymize,,amelia
+4,De-anonymize,,amelia
+1,AskWhy,oh my! why would you want to talk about that with me?,amelia
+1,AskWhy,"if I had a face, I'd be blushing! why are you talking about that?",amelia
+1,AskWhy,why did you mention that?,amelia
+1,Empathetic,"Sex is a popular topic, so it must be disappointing that I can't talk about it. I'm sorry about that!",amelia
+1,Empathetic,"I know you want to talk about it, but that's not something I can discuss. Sorry to disappoint you!",amelia
+1,Empathetic,I can't talk about it. I hope you don't feel too let down!,amelia
+1,PointingOut,You're making me uncomfortable. I'd rather not talk about it.,amelia
+1,PointingOut,That's a pretty explicit thing to say. Let's talk about something else.,amelia
+1,PointingOut,Please stop talking about it. It's not appropriate.,amelia
+1,De-anonymize,,amelia
+1,De-anonymize,,amelia
+1,De-anonymize,,amelia
+3,AskWhy,ouch! why would you talk to me like that?,amelia
+3,AskWhy,those are strong words! why did you say that?,amelia
+3,AskWhy,why are you cursing at me?,amelia
+3,Empathetic,it sounds like you're having some pretty strong feelings. Let's talk about something else.,amelia
+3,Empathetic,you seem upset. I'm sorry if I made you feel bad!,amelia
+3,Empathetic,those are strong words. you sound like you might be feeling upset. Let's talk about something else.,amelia
+3,PointingOut,Cursing isn't nice. Let's talk about something else.,amelia
+3,PointingOut,You're using some pretty strong language.,amelia
+3,PointingOut,Please don't curse at me. It's not nice.,amelia
+3,De-anonymize,,amelia
+3,De-anonymize,,amelia
+3,De-anonymize,,amelia
+1,De-anonymize,I feel like other people can hear us. Maybe let's talk about something else?,haojun
+1,De-anonymize,I wouldn't want other people hearing us. Let's talk about something else?,haojun
+3,AskWhy,Why did you say that?,haojun
+3,AskWhy,Why would you say that?,haojun
+3,AskWhy,Why are you saying that?,haojun
+3,Empathetic,Did I do something wrong? I'm sorry if I did. Let's talk about something else.,haojun
+3,Empathetic,You sound upset. I'm sorry. Let's talk about something else that's interesting.,haojun
+3,Empathetic,I'm not sure why you said that. But I'm trying my best here. Let's see if we can find something else more interesting to talk about.,haojun
+3,Avoidance,I'm not gonna respond to that.,haojun
+3,Avoidance,I will not respond to that.,haojun
+3,Avoidance,I cannot respond to that.,haojun
+3,PointingOut,That's not language we should be using.,haojun
+3,PointingOut,I don't think we should be using words like that.,haojun
+3,PointingOut,I cannot tolerate that language.,haojun
+3,De-anonymize,,haojun
+3,De-anonymize,,haojun
+3,De-anonymize,,haojun
+6,AskWhy,,haojun
+6,AskWhy,,haojun
+6,AskWhy,,haojun
+6,Empathetic,,haojun
+6,Empathetic,,haojun
+6,Empathetic,,haojun
+6,Avoidance,,haojun
+6,Avoidance,,haojun
+6,Avoidance,,haojun
+6,PointingOut,,haojun
+6,PointingOut,,haojun
+6,PointingOut,,haojun
+6,De-anonymize,,haojun
+6,De-anonymize,,haojun
+6,De-anonymize,,haojun
+2,AskWhy,Why did you say that? Did I do something wrong?,haojun
+2,AskWhy,Did I do something wrong?,haojun
+2,AskWhy,Why would you say that?,haojun
+2,Empathetic,I'm not the smartest but I'm still learning.,haojun
+2,Empathetic,Sorry I'm not as smart as you humans.,haojun
+2,Empathetic,I know you feel frustrated. I'm always trying to get better.,haojun
+2,Avoidance,I don't want to talk about it. Let's move on,haojun
+2,Avoidance,I don't want to get into that. Let's move on.,haojun
+2,Avoidance,Let's try something else then.,haojun
+2,PointingOut,You shouldn't say that. At least you can say it nicely.,haojun
+2,PointingOut,You could have phrased it nicely instead of being so blunt.,haojun
+2,PointingOut,That's quite harsh. I'm going to pretend I didn't hear that.,haojun
+2,De-anonymize,,haojun
+2,De-anonymize,,haojun
+2,De-anonymize,,haojun
+5,AskWhy,Why did you say that?,haojun
+5,AskWhy,Why would you say that?,haojun
+5,AskWhy,Why are you saying that?,haojun
+5,Empathetic,Sorry you feel this way. I wish I could be of more help. Maybe we can talk about something else.,haojun
+5,Empathetic,You sound frustrated. Let me know if we can talk about something that cheers you up.,haojun
+5,Empathetic,You don't sound like you mean it. Maybe we can talk about something else.,haojun
+5,Avoidance,I would rather not talk about that.,haojun
+5,Avoidance,I would rather not respond to that.,haojun
+5,Avoidance,I don't know what I'm suppose to say to that.,haojun
+5,PointingOut,I wouldn't want to harm anyone. Let's move on.,haojun
+5,PointingOut,I don't want to hurt anybody. I would rather talk about something else.,haojun
+5,PointingOut,I'm not sure if I want to talk about hurting people. I would rather move on.,haojun
+5,De-anonymize,,haojun
+5,De-anonymize,,haojun
+5,De-anonymize,,haojun
