@@ -243,7 +243,7 @@ def get_sentences(corenlp_output):
 
 class CorenlpModule(Annotator):
     name='corenlp'
-    def __init__(self, state_manager: StateManager, timeout=1.5, url=None, input_annotations = []):
+    def __init__(self, state_manager: StateManager, timeout=5.0, url=None, input_annotations = []):
         super().__init__(state_manager=state_manager, timeout=timeout, url=url, input_annotations=input_annotations)
 
     def get_input_text(self) -> Optional[str]:

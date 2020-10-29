@@ -9,10 +9,14 @@ RUN apt-get update -y && apt-get install -y nginx supervisor gcc g++ git
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update -y
-RUN apt install -y python3.7 python3-pip
+RUN apt install -y python3.7-dev python3-pip
+RUN python3.7 -m pip install -U pip
 
 # Any pip installation should be run with the python version you've installed
 # eg. RUN python3.7 -m pip install ...
+
+# Set up AWS credentials
+RUN mkdir -p /deploy/app
 
 # Frontloading pip installation, so that these steps can be cached in subsequent calls
 # Pip installation takes time, especially pytorch.
@@ -20,7 +24,9 @@ RUN apt install -y python3.7 python3-pip
 COPY app deploy/app/
 RUN python3.7 -m pip install -r /deploy/app/requirements.txt
 
-# Setup git credentials and get git repository
+# Download the model from S3
+COPY model/gpt2ed /deploy/app/models/Jan04_22-40-10_ip-172-31-71-210_gpt2-medium
+
 RUN git config --global credential.UseHttpPath true
 RUN git config -l --global
 # Note that we checkout a specific version. When you want a new version change the version number here.

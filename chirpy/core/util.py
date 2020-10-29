@@ -39,7 +39,7 @@ NAME_2_ES_HOST = json.load(open(config_path, 'r'))
 
 def get_es_host(name):
     if name in NAME_2_ES_HOST.keys():
-        return NAME_ES_HOST[name]['url']
+        return NAME_2_ES_HOST[name]['url']
     else:
         return None
 

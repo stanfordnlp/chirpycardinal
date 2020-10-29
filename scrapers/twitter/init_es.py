@@ -1,10 +1,11 @@
 import boto3
+import os
 from requests_aws4auth import AWS4Auth
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 from chirpy.core.util import get_es_host
 
 host = get_es_host("opinion_twitter") # the Amazon ES domain, with https://
-region = 'us-east-1' # e.g. us-west-1
+region = os.environ.get('ES_REGION')
 service = 'es'
 credentials = boto3.Session().get_credentials()
 awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)

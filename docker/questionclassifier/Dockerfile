@@ -10,16 +10,28 @@ RUN apt-get update && apt-get install -y nginx supervisor gcc g++ git
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get update -y
-RUN apt install -y python3.7-dev python3-pip
+RUN apt-get install -y python3.7-dev python3-pip
+RUN python3.7 -m pip install -U pip
+#RUN apt-get install build-essential libssl-dev libffi-dev
+
+#COPY usr/lib/sentencepiece-0.1.83-cp37-cp37m-manylinux1_x86_64.whl deploy/usr/lib/app/sentencepiece-0.1.83-cp37-cp37m-manylinux1_x86_64.whl
+#RUN python3.7 -m pip install sentencepiece-0.1.83-cp37-cp37m-manylinux1_x86_64.whl
+#RUN apt-get install pip
 
 # Any pip installation should be run with the python version you've installed
 # eg. RUN python3.7 -m pip install ...
+
+# Set up AWS credentials
+RUN mkdir -p /deploy/app
 
 # Frontloading pip installation, so that these steps can be cached in subsequent calls
 # Pip installation takes time, especially pytorch.
 # If your repo contains more requirements add them here, so that packages don't need to be installed for every new pull
 COPY app/requirements.txt deploy/app/requirements.txt
 RUN python3.7 -m pip install -r /deploy/app/requirements.txt
+
+# Download the model from S3
+COPY model/question/question-classifier deploy/app/models/baseline
 
 # Setup nginx
 RUN rm /etc/nginx/sites-enabled/default

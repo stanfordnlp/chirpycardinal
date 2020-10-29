@@ -9,8 +9,8 @@ host = get_es_host("postgres")
 host_stream = get_es_host("chirpy_stream")
 port = os.environ.get('POSTGRES_PORT')
 database = 'twitter_opinions'
-user = 'postgres'
-password = os.environ.get('POSTGRES_PW')
+user = os.environ.get('POSTGRES_USER')
+password = os.environ.get('POSTGRES_PASSWORD')
 
 def insert(data : List[Tuple[str, str, str, bool]], host : str):
     conn = psycopg2.connect(host=host, port=port, database=database, user=user, password=password) # type: ignore
