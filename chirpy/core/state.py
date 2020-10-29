@@ -123,7 +123,7 @@ class State(object):
     @classmethod
     def deserialize(cls, mapping: dict):
         decoded_items = {}
-        logger.primary_info(mapping.items())
+        logger.info(mapping.items())
         for k, v in mapping.items():
             try:
                 decoded_items[k] = jsonpickle.decode(v)

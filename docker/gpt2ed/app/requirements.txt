@@ -13,3 +13,4 @@ gunicorn==19.7.1
 # for transfer-learning-conv-ai
 pytorch-ignite
 transformers==2.3.0
+interact

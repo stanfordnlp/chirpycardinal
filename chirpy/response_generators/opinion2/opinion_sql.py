@@ -8,15 +8,14 @@ import psycopg2
 from typing import Optional, Set, List, Tuple, Dict
 from dataclasses import dataclass
 
-import chirpy.core.blacklists.blacklists as blacklists
 # import chirpy.core.offensive_classifier.offensive_classifier
 from chirpy.core.offensive_classifier.offensive_classifier import contains_offensive
 
-host_stream = get_es_host("opinion_sql")
-port = os.environ.get('POSTGRES_PORT')
+host_stream = "localhost"
+port = 5432
 database = 'twitter_opinions'
-user = 'postgres'
-password = os.environ.get('POSTGRES_PW')
+user = os.environ.get('POSTGRES_USER')
+password = os.environ.get('POSTGRES_PASSWORD')
 
 NOT_ALPHA_NUMERIC_RE = r'[^a-zA-Z0-9\s]'
 HASHTAG = r'#[^\s]+'

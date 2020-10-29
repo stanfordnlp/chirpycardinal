@@ -6,6 +6,7 @@ import json
 import logging
 from metaphone import doublemetaphone
 import re
+import os
 from typing import Dict, List, Optional
 
 from chirpy.core.asr.index_phone_to_ent import PHONE_TO_ENT_INDEX, span_to_phoneme_string
@@ -20,21 +21,12 @@ SIMILARITY_RATIO_THRESHOLD = 0.8  # cutoff for the similarity score
 
 ES_QUERY_TIMEOUT = 2.0  # seconds
 
-host = get_es_host("wiki") # the Amazon ES domain, with https://
-region = 'us-east-1' # e.g. us-west-1
+host = "localhost"
+port = "9200"
+username = os.environ.get('ES_USER')
+password = os.environ.get('ES_PASSWORD')
 
-service = 'es'
-credentials = boto3.Session().get_credentials()
-awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
-
-es = Elasticsearch(
-    hosts = [{'host': host, 'port': 443}],
-    http_auth = awsauth,
-    use_ssl = True,
-    verify_certs = True,
-    connection_class = RequestsHttpConnection,
-    # timeout=30
-)
+es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
 
 @measure
 def get_asr_aware_span2entsim(spans: List[str], g2p_module, topn: int = 200) -> Dict[str, Dict[str, Dict]]:

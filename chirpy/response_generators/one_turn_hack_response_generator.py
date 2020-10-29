@@ -8,7 +8,6 @@ from chirpy.core.response_generator_datatypes import emptyResult, ResponseGenera
 from chirpy.core.regex.regex_template import RegexTemplate
 from chirpy.core.regex.templates import MyNameIsNonContextualTemplate, MyNameIsNotTemplate
 from chirpy.core.util import contains_phrase
-from chirpy.response_generators.coronavirus_utils import contains_coronavirus_keywords
 from chirpy.core.util import contains_phrase
 from chirpy.core.entity_linker.entity_linker_simple import get_entity_by_wiki_name
 from chirpy.core.smooth_handoffs import SmoothHandoff

@@ -2,6 +2,7 @@
 
 import logging
 import boto3
+import os
 from requests_aws4auth import AWS4Auth
 from elasticsearch import Elasticsearch, RequestsHttpConnection, ElasticsearchException
 from typing import List, Dict, Set, Optional
@@ -19,7 +20,7 @@ MAX_ES_SEARCH_SIZE = 1000
 ANCHORTEXT_QUERY_TIMEOUT = 3.0  # seconds
 ENTITYNAME_QUERY_TIMEOUT = 1.0  # seconds
 
-ARTICLES_INDEX_NAME = 'enwiki-20200520-articles'
+ARTICLES_INDEX_NAME = 'enwiki-20200920-articles'
 
 # These are the fields we DO want to fetch from ES
 FIELDS_FILTER = ['doc_title', 'doc_id', 'categories', 'pageview', 'linkable_span_info', 'wikidata_categories_all', 'redirects']
@@ -30,19 +31,11 @@ UNTALKABLE_WIKIDATA_CLASSES = ['catalog of works', 'Wikimedia list article', 'Wi
 
 
 # Elastic Search
-host = get_es_host('wiki')  # domain is called "wiki"
-region = 'us-east-1'
-service = 'es'
-credentials = boto3.Session().get_credentials()
-awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
-es = Elasticsearch(
-    hosts = [{'host': host, 'port': 443}],
-    http_auth = awsauth,
-    use_ssl = True,
-    verify_certs = True,
-    connection_class = RequestsHttpConnection,
-    # timeout=2,
-)
+host = "localhost"
+port = "9200"
+username = os.environ.get('ES_USER')
+password = os.environ.get('ES_PASSWORD')
+es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
 
 
 def clean_category(category: str) -> str:

@@ -117,23 +117,12 @@ if __name__ == "__main__":
 
     g2p_module = MockG2p()
 
-    host = get_es_host("wiki")  # the Amazon ES domain, with https://
-    region = 'us-east-1'  # e.g. us-west-1
-
-    service = 'es'
-
-    credentials = boto3.Session().get_credentials()
-    awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
-
-    es = Elasticsearch(
-        hosts=[{'host': host, 'port': 443}],
-        http_auth=awsauth,
-        use_ssl=True,
-        verify_certs=True,
-        connection_class=RequestsHttpConnection,
-        timeout=1000,
-    )
-
+    host = "localhost"
+    port = "9200"
+    username = os.environ.get('ES_USER')
+    password = os.environ.get('ES_PASSWORD')
+    es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
+    
     delete_index(PHONE_TO_ENT_INDEX)
     ensure_index(PHONE_TO_ENT_INDEX)
 

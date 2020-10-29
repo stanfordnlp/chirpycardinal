@@ -106,6 +106,7 @@ class CategoriesResponseGenerator(ResponseGenerator):
         """
         
         # If this is a smooth transition from movies, get a prompt for tv category from the Introductory treelet
+        '''
         if self.state_manager.current_state.smooth_handoff == SmoothHandoff.MOVIES_TO_CATEGORIES:
             logger.primary_info('Getting prompt from tv IntroductoryTreelet.')
             state.cur_category_name = 'TVCategory'
@@ -118,7 +119,7 @@ class CategoriesResponseGenerator(ResponseGenerator):
                 result = PromptResult(question.question, PromptType.FORCE_START, state, cur_entity=new_entity,
                                       expected_type=question.expected_type, conditional_state=conditional_state)
                 return result
-        
+        '''
         # If the user is requesting a category, get a prompt for that category from the Introductory treelet
         utterance = self.state_manager.current_state.text.lower()
         user_initiated_category, user_has_posnav = get_user_initiated_category(utterance, self.state_manager.current_state)

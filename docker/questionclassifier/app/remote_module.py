@@ -6,11 +6,11 @@ model = ClassificationModel('roberta', 'models/baseline/', use_cuda=False,
     args={'sliding_window': True,
         'fp16': False,
         'reprocess_input_data': True,
-        'use_multiprocessing': False,
-        'device': torch.device("cuda")})
+        'use_multiprocessing': False})
+        #'device': torch.device("cuda")})
 required_context = ['utterance']
-device = torch.device('cuda')
-model.model.to(device)
+#device = torch.device('cuda')
+# model.model.to(device)
 
 def get_required_context():
     return required_context

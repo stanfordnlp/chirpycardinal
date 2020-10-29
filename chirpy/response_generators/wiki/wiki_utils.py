@@ -10,11 +10,11 @@ from elasticsearch import Elasticsearch, RequestsHttpConnection
 from chirpy.annotators.sentseg import NLTKSentenceSegmenter
 from chirpy.core.offensive_classifier.offensive_classifier import contains_offensive
 from chirpy.core.latency import measure
-import chirpy.core.blacklists.blacklists as blacklists
 from functools import lru_cache
 from dataclasses import dataclass, field
 from chirpy.core.util import filter_and_log, contains_phrase, get_es_host
 import logging
+import os
 from copy import deepcopy
 
 lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in', 'into', 'is', 'it',
@@ -24,22 +24,11 @@ lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for
 SUB_SEC_TOKEN = ' [SUB-SEC] '
 YEAR_RE = r'\([0-9]+\)'
 
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-table = dynamodb.Table('wiki-entities') # pylint: disable=no-member'
-host = get_es_host("wiki") # the Amazon ES domain, with https://
-region = 'us-east-1' # e.g. us-west-1
-service = 'es'
-credentials = boto3.Session().get_credentials()
-awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
-logger = logging.getLogger('chirpylogger')
-es = Elasticsearch(
-    hosts = [{'host': host, 'port': 443}],
-    http_auth = awsauth,
-    use_ssl = True,
-    verify_certs = True,
-    connection_class = RequestsHttpConnection,
-    timeout=2,
-)
+host = "localhost"
+port = "9200"
+username = os.environ.get('ES_USER')
+password = os.environ.get('ES_PASSWORD')
+es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
 
 
 @dataclass

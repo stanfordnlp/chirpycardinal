@@ -4,11 +4,11 @@ from chirpy.core.util import get_es_host
 import psycopg2
 import os
 
-host_stream = get_es_host("opinion_sql")
-port = os.environ.get('POSTGRES_PORT')
+host_stream = "localhost"
+port = 5432
 database = 'twitter_opinions'
-user = 'postgres'
-password = os.environ.get('POSTGRES_PW')
+user = os.environ.get('POSTGRES_USER')
+password = os.environ.get('POSTGRES_PASSWORD')
 
 def fetch_sql(sql_statement):
     conn = psycopg2.connect(host=host_stream, port=port, database=database, user=user, password=password)
