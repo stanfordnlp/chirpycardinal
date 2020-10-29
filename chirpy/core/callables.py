@@ -6,6 +6,7 @@ import sys
 import traceback
 from concurrent import futures
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
+from pathlib import Path
 
 import requests
 
@@ -18,7 +19,7 @@ from chirpy.core.state_manager import StateManager
 from chirpy.core.util import run_module
 
 logger = logging.getLogger('chirpylogger')
-CHIRPY_HOME = os.environ.get('CHIRPY_HOME', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent.parent)
 config_fname = 'bin/local_callable_config.json'
 config_path = os.path.join(CHIRPY_HOME, config_fname)
 NAME_2_URL = json.load(open(config_path, 'r'))

@@ -7,6 +7,7 @@ import json
 import unicodedata
 import sys
 from functools import lru_cache
+from pathlib import Path
 
 import boto3
 import logging
@@ -32,7 +33,7 @@ PUNC_TABLE = dict.fromkeys(i for i in range(sys.maxunicode) if unicodedata.categ
 
 DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-CHIRPY_HOME = os.environ.get('CHIRPY_HOME', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent.parent)
 config_fname = 'chirpy/core/es_config.json'
 config_path = os.path.join(CHIRPY_HOME, config_fname)
 NAME_2_ES_HOST = json.load(open(config_path, 'r'))

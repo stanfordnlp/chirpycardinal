@@ -46,3 +46,5 @@ alexa.zip
 bin/intro_utterances_example.txt
 
 convpara/*
+
+chirpy/core/es_config.json

@@ -6,6 +6,7 @@ in main loop:
 3. enter loop in commandline and interact with text agent
 """
 import os
+from pathlib import Path
 import requests
 import logging
 from flask import Flask
@@ -13,7 +14,7 @@ from agent.agents.local.local_agent import LocalAgent
 from chirpy.core.logging_utils import LoggerSettings, setup_logger
 from local_callable_manager import LocalCallableManager
 
-CHIRPY_HOME = os.environ.get('CHIRPY_HOME', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent)
 app = Flask(__name__)
 
 # Logging settings
