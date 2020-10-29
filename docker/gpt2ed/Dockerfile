@@ -29,8 +29,7 @@ COPY model/gpt2ed /deploy/app/models/Jan04_22-40-10_ip-172-31-71-210_gpt2-medium
 
 RUN git config --global credential.UseHttpPath true
 RUN git config -l --global
-# Note that we checkout a specific version. When you want a new version change the version number here.
-# This ensures that the dockerfile cache is invalidated from this point onwards
+
 
 # Setup nginx
 RUN rm /etc/nginx/sites-enabled/default

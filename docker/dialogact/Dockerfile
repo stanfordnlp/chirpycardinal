@@ -33,16 +33,13 @@ COPY model/dialog_act/dialog-act/midas-2 deploy/app/models/midas-2
 # Download vocab file from huggingface
 RUN apt-get install wget
 RUN wget -O deploy/app/models/midas-2/vocab.txt "https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt"
+# RUN aws s3 cp s3://models.huggingface.co/bert/bert-base-uncased-vocab.txt deploy/app/models/midas-2/vocab.txt
 
 # Setup git credentials and get git repository
 RUN git config --global credential.UseHttpPath true
 RUN git config -l --global
 # Note that we checkout a specific version. When you want a new version change the version number here.
 # This ensures that the dockerfile cache is invalidated from this point onwards
-<<<<<<< HEAD
-=======
-# RUN git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/dialog-act /deploy/app/dialogact && cd /deploy/app/dialogact && git checkout 62ee6ab6 && cd ../../
->>>>>>> c3c5670f... add local text agent
 
 # Setup nginx
 RUN rm /etc/nginx/sites-enabled/default
