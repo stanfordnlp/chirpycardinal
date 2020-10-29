@@ -23,6 +23,11 @@ RUN python3.7 -m pip install -U pip
 
 # Set up AWS credentials
 RUN mkdir -p /deploy/app
+# Install awscli and move the .aws dir to ~/
+# For some reason, "COPY .aws ~/.aws" doesn't work (the command runs but afterwards ~/.aws is not there)
+# RUN python3.7 -m pip install --upgrade pip && python3.7 -m pip install awscli
+# COPY .aws /deploy/app/.aws
+# RUN mv /deploy/app/.aws ~/
 
 # Frontloading pip installation, so that these steps can be cached in subsequent calls
 # Pip installation takes time, especially pytorch.

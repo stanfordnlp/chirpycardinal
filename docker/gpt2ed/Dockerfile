@@ -17,6 +17,8 @@ RUN python3.7 -m pip install -U pip
 
 # Set up AWS credentials
 RUN mkdir -p /deploy/app
+# Install awscli and move the .aws dir to ~/
+# For some reason, "COPY .aws ~/.aws" doesn't work (the command runs but afterwards ~/.aws is not there)
 
 # Frontloading pip installation, so that these steps can be cached in subsequent calls
 # Pip installation takes time, especially pytorch.
@@ -27,9 +29,13 @@ RUN python3.7 -m pip install -r /deploy/app/requirements.txt
 # Download the model from S3
 COPY model/gpt2ed /deploy/app/models/Jan04_22-40-10_ip-172-31-71-210_gpt2-medium
 
+# Setup git credentials and get git repository
+#RUN git config --global credential.helper '!aws codecommit credential-helper $@'
 RUN git config --global credential.UseHttpPath true
 RUN git config -l --global
-
+# Note that we checkout a specific version. When you want a new version change the version number here.
+# This ensures that the dockerfile cache is invalidated from this point onwards
+#RUN git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/transfer-learning-conv-ai /deploy/app/transfer-learning-conv-ai && cd /deploy/app/transfer-learning-conv-ai && git checkout 5c3bf313467b86f1e1418cce9ce01e5a3e8a3309 && cd ../../
 
 # Setup nginx
 RUN rm /etc/nginx/sites-enabled/default

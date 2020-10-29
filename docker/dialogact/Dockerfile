@@ -40,6 +40,7 @@ RUN git config --global credential.UseHttpPath true
 RUN git config -l --global
 # Note that we checkout a specific version. When you want a new version change the version number here.
 # This ensures that the dockerfile cache is invalidated from this point onwards
+# RUN git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/dialog-act /deploy/app/dialogact && cd /deploy/app/dialogact && git checkout 62ee6ab6 && cd ../../
 
 # Setup nginx
 RUN rm /etc/nginx/sites-enabled/default
