@@ -28,7 +28,7 @@ COPY app/requirements.txt deploy/app/requirements.txt
 RUN python3.7 -m pip install -r /deploy/app/requirements.txt
 
 # Download the model from S3
-COPY model/dialog_act/dialog-act/midas-2 deploy/app/models/midas-2
+COPY model/dialog-act/midas-2 deploy/app/models/midas-2
 
 # Download vocab file from huggingface
 RUN apt-get install wget
