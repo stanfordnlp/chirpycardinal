@@ -36,7 +36,7 @@ COPY app/requirements.txt deploy/app/requirements.txt
 RUN python3.7 -m pip install -r /deploy/app/requirements.txt
 
 # Download the model from S3
-COPY model/question/question-classifier deploy/app/models/baseline
+COPY model/question-classifier deploy/app/models/baseline
 
 # Setup nginx
 RUN rm /etc/nginx/sites-enabled/default

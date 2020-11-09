@@ -21,6 +21,9 @@ RUN apt install -y python3.7-dev python3-pip
 COPY app/requirements.txt deploy/app/requirements.txt
 RUN python3.7 -m pip install -r /deploy/app/requirements.txt
 
+# Copy the model
+COPY model/emotion-classifier/roberta deploy/app/models/roberta/
+
 # Setup nginx
 RUN rm /etc/nginx/sites-enabled/default
 # Setup flask application
