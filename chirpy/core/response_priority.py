@@ -62,6 +62,7 @@ class TiebreakPriority(Enum):
     NEURAL_CHAT = 68
     ACKNOWLEDGMENT = 67
     CATEGORIES = 60
+    MUSIC = 38
     OPINION = 35
     WIKI = 30
     SHOWERTHOUGHTS = 10
@@ -102,6 +103,7 @@ FORCE_START_PROMPT_DIST = {
     # That way, if NEURAL_CHAT is the only FORCE_START prompter, its prompt is chosen, but if there are any other
     # FORCE_START prompts, NEURAL_CHAT won't get chosen.
     "NEURAL_CHAT": 0.000001,
+    "MUSIC": 1
 }
 
 # Defines a probability distribution over response generators that signifies the likelihood of that response
@@ -111,6 +113,7 @@ CURRENT_TOPIC_PROMPT_DIST = {
     "OPINION": 1,
     "WIKI": 1,
     'NEURAL_CHAT': 1,
+    "MUSIC": 1,
     "OFFENSIVE_USER": 0.0,
     "RED_QUESTION": 0.0,
     "LAUNCH": 0.0,
@@ -132,6 +135,7 @@ CONTEXTUAL_PROMPT_DIST = {
     "OPINION": 0.1,
     "WIKI": 0.25,
     'NEURAL_CHAT': 0.3,
+    "MUSIC": 0.3,
     "OFFENSIVE_USER": 0.0,
     "RED_QUESTION": 0.0,
     "LAUNCH": 0.0,
@@ -153,6 +157,7 @@ GENERIC_PROMPT_DIST = {
     "OPINION": 1,
     "FALLBACK": 1,
     'NEURAL_CHAT': 3,
+    "MUSIC": 1.5,
     "OFFENSIVE_USER": 0,
     "RED_QUESTION": 0,
     "LAUNCH": 0,

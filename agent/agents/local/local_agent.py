@@ -25,6 +25,7 @@ from chirpy.response_generators.neural_fallback_response_generator import Neural
 from chirpy.response_generators.closing_confirmation_response_generator import ClosingConfirmationResponseGenerator
 from chirpy.response_generators.complaint_response_generator import ComplaintResponseGenerator
 from chirpy.response_generators.acknowledgment.acknowledgment_response_generator import AcknowledgmentResponseGenerator
+from chirpy.response_generators.music.music_response_generator import MusicResponseGenerator
 
 from chirpy.annotators.corenlp import CorenlpModule
 from chirpy.annotators.navigational_intent.navigational_intent import NavigationalIntentModule
@@ -230,7 +231,8 @@ class LocalAgent(Agent):
             response_generator_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
                                         OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
                                         OffensiveUserResponseGenerator, OpinionResponseGenerator2, AcknowledgmentResponseGenerator,
-                                        NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator],
+                                        NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator,
+                                        MusicResponseGenerator],
             annotator_classes = [QuestionAnnotator, DialogActAnnotator, NavigationalIntentModule, StanfordnlpModule, CorenlpModule,
                                 EntityLinkerModule, NeuralGraphemeToPhoneme],
             annotator_timeout = NLP_PIPELINE_TIMEOUT
