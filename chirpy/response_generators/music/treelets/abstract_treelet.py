@@ -95,7 +95,7 @@ class Treelet(ABC):
     @staticmethod
     def get_handoff_response(state_manager, state):
         neural_response = get_neural_fallback_handoff(state_manager.current_state)
-        text = neural_response or state_manager.choose_least_repetitive(HANDOFF_REMARKS)
+        text = neural_response or random.choice(HANDOFF_REMARKS)
         priority = ResponsePriority.WEAK_CONTINUE
         response = Treelet.prepare_rg_result(text, state, priority=priority, needs_prompt=True)
         return response
