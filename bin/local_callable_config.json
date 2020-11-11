@@ -20,9 +20,6 @@
         "docker_file_dir": "docker/stanfordnlp",
         "url": "http://localhost:3400"
     },
-    "navigational_intent": {
-        "url": "none"
-    },
     "gpt2ed": {
         "port": "3500",
         "docker_file_dir": "docker/gpt2ed",
