@@ -13,7 +13,7 @@ from chirpy.core.asr.index_phone_to_ent import PHONE_TO_ENT_INDEX, span_to_phone
 from chirpy.core.asr.lattice import span_to_lattice, get_lattice_similarity, remove_stress
 from chirpy.core.entity_linker.lists import get_unigram_freq, DONT_LINK_WORDS
 from chirpy.core.latency import measure
-from chirpy.core.util import query_es_index, get_es_host
+from chirpy.core.util import query_es_index, get_es_host, get_elasticsearch
 
 logger = logging.getLogger('chirpylogger')
 
@@ -26,7 +26,7 @@ port = "9200"
 username = os.environ.get('ES_USER')
 password = os.environ.get('ES_PASSWORD')
 
-es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
+es = get_elasticsearch()
 
 @measure
 def get_asr_aware_span2entsim(spans: List[str], g2p_module, topn: int = 200) -> Dict[str, Dict[str, Dict]]:

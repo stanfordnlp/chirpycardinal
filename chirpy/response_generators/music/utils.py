@@ -16,7 +16,7 @@ LOWER_CASE_TITLE_WORDS = ['a', 'an', 'the', 'and', 'or', 'of', 'to', 'with', 'wi
 
 
 # MusicBrainz
-HOST ='localhost'
+HOST = os.environ.get('POSTGRES_HOST', 'localhost')
 DATABASE = 'musicbrainz'
 PORT = 5432
 USER = os.environ.get('POSTGRES_USER')

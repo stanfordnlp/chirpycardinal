@@ -11,7 +11,7 @@ from chirpy.core.latency import measure
 from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
 from chirpy.core.entity_linker.lists import MANUAL_SPAN2ENTINFO
 from chirpy.core.flags import inf_timeout, use_timeouts
-from chirpy.core.util import query_es_index, get_es_host
+from chirpy.core.util import query_es_index, get_es_host, get_elasticsearch
 
 logger = logging.getLogger('chirpylogger')
 
@@ -31,11 +31,7 @@ UNTALKABLE_WIKIDATA_CLASSES = ['catalog of works', 'Wikimedia list article', 'Wi
 
 
 # Elastic Search
-host = "localhost"
-port = "9200"
-username = os.environ.get('ES_USER')
-password = os.environ.get('ES_PASSWORD')
-es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
+es = get_elasticsearch()
 
 
 def clean_category(category: str) -> str:
