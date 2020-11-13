@@ -77,7 +77,7 @@ def build_response_state(deserialized_current_state, response):
     
     return current_state
 
-@app.route('/process_utterance', methods=['GET'])
+@app.route('/process_utterance', methods=['POST'])
 def process_utterance():
 
     # create handler (pass in RGs + annotators)
