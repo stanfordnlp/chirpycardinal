@@ -62,17 +62,32 @@ def init_current_state(request):
     return state_attributes
 
 """
+Initialize user attributes from request. 
+If no user_id is provided, randomly initialize one.
+"""
+def init_user_attributes(request):
+    if request.json['user_id'] is None:
+        user_id = uuid.uuid4().hex
+    else: 
+        user_id = request.json['user_id']
+    user_attributes = {'user_id': user_id}
+    user_attributes = {k: jsonpickle.encode(v) for k, v in user_attributes.items()}
+    return user_attributes
+
+"""
 Extract desired values from handler result
 """
 def build_response_state(deserialized_current_state, response):
     selected_response_rg = deserialized_current_state['selected_response_rg']
     selected_prompt_rg = deserialized_current_state['selected_prompt_rg']
+    curr_entity = deserialized_current_state['curr_entity']
 
     current_state = {'selected_response_rg': selected_response_rg,
                      'selected_prompt_rg': selected_prompt_rg,
                      'response': response,
                      'response_priority': deserialized_current_state['response_generator_states'][selected_response_rg]['priority'],
-                     'prompt_priority': deserialized_current_state['response_generator_states'][selected_prompt_rg]['priority']
+                     'prompt_priority': deserialized_current_state['response_generator_states'][selected_prompt_rg]['priority'],
+                     'curr_entity': curr_entity
                      }
     
     return current_state
@@ -91,16 +106,10 @@ def process_utterance():
                                 EntityLinkerModule, NeuralGraphemeToPhoneme],
             annotator_timeout = NLP_PIPELINE_TIMEOUT
     )
-    
-    # get user_id
-    if request.user_id is None:
-        user_id = uuid.uuid4().hex
-    else: 
-        user_id = request.user_id
 
     # get current_state and last_state from request
     state_attributes = init_current_state(request)
-    user_attributes = {'user_id': user_id}
+    user_attributes = init_user_attributes(request)
     last_state = request.json['last_state']
 
     # execute handler
