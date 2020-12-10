@@ -34,6 +34,8 @@ from chirpy.annotators.dialogact import DialogActAnnotator
 from chirpy.core.entity_linker.entity_linker import EntityLinkerModule
 
 from chirpy.core.handler import Handler
+from chirpy.core.state_manager import StateManager
+from chirpy.core.entity_linker.entity_linker import entity_link
 
 app = Flask(__name__)
 
@@ -154,6 +156,25 @@ def process_utterance():
             }
     
     return jsonify(output)
+"""
+For all RGs in current_state, run update_state_if_not_chosen and return its output
+"""
+def un_choose_rgs(state_manager: StateManager, rg_states, response_results):
+    rg_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
+                  OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
+                  OffensiveUserResponseGenerator, OpinionResponseGenerator2, AcknowledgmentResponseGenerator,
+                  NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator,
+                  MusicResponseGenerator]
+    name_to_class = {rg_class.name: rg_class for rg_class in rg_classes}
+    rg_names = response_results.keys()
+
+    updated_rg_states = {}
+    for rg_name in rg_names:
+        rg_obj = name_to_class[rg_name](state_manager)
+        output = rg_obj.update_state_if_not_chosen(rg_states[rg_name], response_results[rg_name].conditional_state)
+        updated_rg_states[rg_name] = output
+    
+    return updated_rg_states
 
 """
 Input:
@@ -171,13 +192,28 @@ def update_chirpy_state():
 
     """
     if genie is chosen
-    - un-choose all RGs
     """
-    # if genie is chosen
+    deserialized_current_state = {k: jsonpickle.decode(v) for k, v in request.json['current_state'].items()}
+    state_manager = StateManager(deserialized_current_state, {})
+    rg_states = deserialized_current_state['response_generator_states']
+    response_results = deserialized_current_state['response_results']
+
     # un-choose all RGs
-    # change last state (alter entity, selected_response_rg, selected_prompt_rg, response given)
+    updated_rg_states = un_choose_rgs(state_manager, rg_states, response_results)
+    deserialized_current_state['response_generator_states'] = updated_rg_states
+
+    # link genie entity to chirpy wiki page name
+    genie_entity = request.json['updated_entity']
+    linked_entity = entity_link(genie_entity).top_highprec_ent
+
+    # update remaining fields of current state
+    deserialized_current_state['entity_tracker'].cur_entity = linked_entity
+    deserialized_current_state['selected_response_rg'] = 'GENIE',
+    deserialized_current_state['selected_prompt_rg'] = 'GENIE',
+    deserialized_current_state['response'] = request.json['genie_response']
+
     # return last state
-    return
+    return jsonify({k: jsonpickle.encode(v) for k, v in deserialized_current_state.items()})
 
 if __name__ == '__main__':
     init_logger()
