@@ -76,6 +76,8 @@ def init_user_attributes(request):
 
 """
 Extract desired values from handler result
+(actually, we want all of these)
+"""
 """
 def build_response_state(deserialized_current_state, response):
     selected_response_rg = deserialized_current_state['selected_response_rg']
@@ -87,11 +89,26 @@ def build_response_state(deserialized_current_state, response):
                      'response': response,
                      'response_priority': deserialized_current_state['response_generator_states'][selected_response_rg]['priority'],
                      'prompt_priority': deserialized_current_state['response_generator_states'][selected_prompt_rg]['priority'],
-                     'curr_entity': curr_entity
+
+                     'curr_entity': 
                      }
     
     return current_state
+"""
+"""
+Input: 
+json dict with the fields
+- utterance (REQUIRED): what the user just said
+- session_id (REQUIRED): the session id
+- last_state (OPTIONAL): the last state
+- user_id (OPTIONAL): unique user_id. initialized randomly if missing
 
+Output:
+json dict with the fields
+- user_attributes (dict): current user attributes
+- response (string): chirpy's response to the last utterance
+- current_state: chirpy's current state
+"""
 @app.route('/process_utterance', methods=['POST'])
 def process_utterance():
 
@@ -118,13 +135,49 @@ def process_utterance():
 
     # extract values to return from state
     response = turn_result.response
-    current_state = build_response_state(deserialized_current_state, response)
+    selected_response_rg = deserialized_current_state['selected_response_rg']
+    selected_prompt_rg = deserialized_current_state['selected_prompt_rg']
+    if selected_prompt_rg is not None:
+        prompt_priority = deserialized_current_state['response_results'][selected_prompt_rg].priority
+    else:
+        prompt_priority = None
+    # current_state = build_response_state(deserialized_current_state, response)
 
     output = {'user_attributes': {},
               'response': response,
-              'current_state': current_state}
+              'selected_response_rg': selected_response_rg, 
+              'selected_prompt_rg': selected_prompt_rg,
+              'response_priority': deserialized_current_state['response_results'][selected_response_rg].priority,
+              'prompt_priority': prompt_priority,
+              'current_entity': deserialized_current_state['entity_tracker'].cur_entity,
+              'current_state': {k: jsonpickle.encode(v) for k, v in deserialized_current_state.items()} # Return full current state, to be passed back in on the next turn
+            }
     
     return jsonify(output)
+
+"""
+Input:
+json dict with the fields
+- 
+"""
+@app.route('/update_chirpy_state', methods=['POST'])
+def update_chirpy_state():
+    """
+    if genie is not chosen
+    - return unchanged current_state (which will become last_state on the next turn)
+    """
+    if request.json['genie_chosen'] == 'false':
+        return request.json['current_state']
+
+    """
+    if genie is chosen
+    - un-choose all RGs
+    """
+    # if genie is chosen
+    # un-choose all RGs
+    # change last state (alter entity, selected_response_rg, selected_prompt_rg, response given)
+    # return last state
+    return
 
 if __name__ == '__main__':
     init_logger()
