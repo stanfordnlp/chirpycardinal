@@ -1,0 +1,15 @@
+# files/dirs marked as export-ignore are not included in "git archive" commands
+# https://feeding.cloud.geek.nz/posts/excluding-files-from-git-archive/
+# You need to COMMIT your changes to .gitattributes before it will have effect
+.git export-ignore
+convpara export-ignore
+doc export-ignore
+notebooks export-ignore
+cruft export-ignore
+entity_linker_eval export-ignore
+idf export-ignore
+docker export-ignore
+
+*.ipynb	diff=jupyternotebook
+
+*.ipynb	merge=jupyternotebook

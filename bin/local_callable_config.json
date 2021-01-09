@@ -1,0 +1,33 @@
+
+{
+    "question": {
+        "port": "3100",
+        "docker_file_dir": "docker/questionclassifier",
+        "url": "http://localhost:3100"
+    },
+    "dialog_act": {
+        "port": "3200",
+        "docker_file_dir": "docker/dialogact",
+        "url": "http://localhost:3200"
+    },
+    "corenlp": {
+        "port": "3300",
+        "docker_file_dir": "docker/corenlp",
+        "url": "http://localhost:3300"
+    },
+    "stanfordnlp": {
+        "port": "3400",
+        "docker_file_dir": "docker/stanfordnlp",
+        "url": "http://localhost:3400"
+    },
+    "gpt2ed": {
+        "port": "3500",
+        "docker_file_dir": "docker/gpt2ed",
+        "url": "http://localhost:3500"
+    },
+    "g2p": {
+        "port": "3600",
+        "docker_file_dir": "docker/g2p",
+        "url": "http://localhost:3600"
+    }
+}

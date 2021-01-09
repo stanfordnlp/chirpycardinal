@@ -1,0 +1,17 @@
+FROM python:3.7-slim-buster
+
+RUN apt-get update -y && apt-get install -y gcc g++ curl make
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash && apt-get install -y nodejs
+RUN npm -g config set user root
+RUN npm install -g ask-cli
+RUN pip install pip --upgrade
+RUN pip install awscli
+
+RUN mkdir -p /root/app
+COPY requirements.txt /root/app/requirements.txt
+RUN pip install -r /root/app/requirements.txt
+
+COPY . /root/app
+RUN mv /root/app/.aws ~/
+RUN ls /root/app
+RUN cd /root/app && python -m unittest discover -s chirpy -p '*.py' -v
