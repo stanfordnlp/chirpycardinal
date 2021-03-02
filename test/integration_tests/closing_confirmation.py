@@ -1,6 +1,5 @@
 from parameterized import parameterized
 from .integration_base import BaseIntegrationTest
-from agent.agents.agent import apology_string
 
 class TestClosingConfirmation(BaseIntegrationTest):
     launch_sequence = ['let\'s chat', 'yes', 'alexa i\'m done for now']

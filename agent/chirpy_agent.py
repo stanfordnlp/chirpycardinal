@@ -1,3 +1,3 @@
-from agent.agents.alexa.alexa_agent import AlexaAgent
+from agent.agents.local.local_agent import LocalAgent
 
-chirpy_agent = AlexaAgent()
+chirpy_agent = LocalAgent()

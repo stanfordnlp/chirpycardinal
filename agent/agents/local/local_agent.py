@@ -40,7 +40,7 @@ from chirpy.core.util import get_function_version_to_display
 from chirpy.annotators.dialogact import DialogActAnnotator
 from chirpy.core.entity_linker.entity_linker import EntityLinkerModule
 
-from agent.agents.agent import Agent
+from agent.agents.abstract_agent import Agent
 import chirpy.core.flags as flags
 from chirpy.core.latency import log_events_to_dynamodb, measure, clear_events
 from chirpy.core.regex.templates import StopTemplate 
