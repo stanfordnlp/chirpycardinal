@@ -16,6 +16,7 @@ from chirpy.core.util import filter_and_log, contains_phrase, get_es_host
 import logging
 import os
 from copy import deepcopy
+from chirpy.core.util import query_es_index, get_es_host, get_elasticsearch
 
 lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in', 'into', 'is', 'it',
  'no', 'not', 'of', 'on', 'or', 'such', 'that', 'the', 'their', 'then', 'there', 'these', 'they', 'this', 'to', 'was',
@@ -24,11 +25,7 @@ lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for
 SUB_SEC_TOKEN = ' [SUB-SEC] '
 YEAR_RE = r'\([0-9]+\)'
 
-host = "localhost"
-port = "9200"
-username = os.environ.get('ES_USER')
-password = os.environ.get('ES_PASSWORD')
-es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
+es = get_elasticsearch()
 
 
 @dataclass
