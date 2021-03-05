@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import boto3
 import copy
 import datetime
@@ -82,7 +84,7 @@ else:
     state_table_name = 'StateTableBeta'
 
 state_store = {}
-user_store = {}
+user_store = defaultdict(dict)
 
 class StateTable:
     def __init__(self):
@@ -204,17 +206,16 @@ class LocalAgent(Agent):
         commit_id = os.environ.get('COMMITID')
         state_attributes['commit_id'] = commit_id if commit_id is not None else ''
         state_attributes['session_id'] = self.session_id
+        state_attributes['user_id'] = self.user_id
         state_attributes['text'] = user_utterance
         state_attributes = {k: jsonpickle.encode(v) for k, v in state_attributes.items()}
         return state_attributes
     
     def get_user_attributes(self):
-        # user_attributes = LocalAgent.user_table.fetch(jsonpickle.encode(user_id))
-        user_attributes = {}
+        user_attributes = self.user_table.fetch(self.user_id)
         user_attributes['user_id'] = self.user_id
         user_attributes['user_timezone'] = None
         user_attributes = {k: jsonpickle.encode(v) for k, v in user_attributes.items()}
-        self.user_table.persist(user_attributes)
         return user_attributes
 
     def get_last_state(self): # figure out new session and session_id
@@ -224,19 +225,22 @@ class LocalAgent(Agent):
             last_state = None
         return last_state
 
+    def create_handler(self):
+        return Handler(
+            response_generator_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
+                                          OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
+                                          OffensiveUserResponseGenerator, OpinionResponseGenerator2, AcknowledgmentResponseGenerator,
+                                          NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator,
+                                          MusicResponseGenerator],
+            annotator_classes = [QuestionAnnotator, DialogActAnnotator, NavigationalIntentModule, StanfordnlpModule, CorenlpModule,
+                                 EntityLinkerModule, NeuralGraphemeToPhoneme],
+            annotator_timeout = NLP_PIPELINE_TIMEOUT
+        )
+
     def process_utterance(self, user_utterance):
 
         # create handler (pass in RGs + annotators)
-        handler = Handler(
-            response_generator_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
-                                        OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
-                                        OffensiveUserResponseGenerator, OpinionResponseGenerator2, AcknowledgmentResponseGenerator,
-                                        NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator,
-                                        MusicResponseGenerator],
-            annotator_classes = [QuestionAnnotator, DialogActAnnotator, NavigationalIntentModule, StanfordnlpModule, CorenlpModule,
-                                EntityLinkerModule, NeuralGraphemeToPhoneme],
-            annotator_timeout = NLP_PIPELINE_TIMEOUT
-        )
+        handler = self.create_handler()
 
         current_state = self.get_state_attributes(user_utterance)
         user_attributes = self.get_user_attributes()
