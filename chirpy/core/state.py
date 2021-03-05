@@ -31,7 +31,7 @@ jsonpickle.set_encoder_options('json', sort_keys=True)
 
 class State(object):
 
-    def __init__(self, session_id: str, creation_date_time: str = None, ) -> None:
+    def __init__(self, session_id: str, creation_date_time: str = None, user_id=None) -> None:
         """
         Initialize a State object with provided fields.
         :param session_id: session id
