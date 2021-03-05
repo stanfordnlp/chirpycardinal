@@ -1,6 +1,10 @@
+from pathlib import Path
 import functools
 import json
 import os
+
+from chirpy.core.logging_utils import setup_logger, PROD_LOGGER_SETTINGS
+
 
 import jsonpickle
 import logging
@@ -46,33 +50,17 @@ PROGRESSIVE_RESPONSE_TIMEOUT = 3 if flags.use_timeouts else flags.inf_timeout  #
 NLP_PIPELINE_TIMEOUT = 3 if flags.use_timeouts else flags.inf_timeout  #seconds
 
 logger = logging.getLogger('chirpylogger')
-CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent.parent)
-remote_url_config = {
-    "corenlp": {
-        "url": "http://localhost:4080"
-    },
-    "dialog_act": {
-        "url": "http://localhost:4081"
-    },
-    "g2p": {
-        "url": "http://localhost:4082"
-    },
-    "gpt2ed": {
-        "url": "http://localhost:4083"
-    },
-    "question": {
-        "url": "http://localhost:4084"
-    },
-    "stanfordnlp": {
-        "url": "http://localhost:4085"
-    },
-}
-os.environ['CALLABLE_URL_MAP'] = 'bin/remote_callable_config.json'
-with open(os.paths.join(CHIRPY_HOME, os.environ['CALLABLE_URL_MAP']), 'w') as f:
-    json.dump(remote_url_config, f)
+root_logger = logging.getLogger()
+if not hasattr(root_logger, 'chirpy_handlers'):
+    setup_logger(PROD_LOGGER_SETTINGS)
 
 class RemoteNonPersistentAgent(LocalAgent):
-    pass
+    def __init__(self, session_id, user_id, new_session, last_state_creation_time):
+        super().__init__()
+        self.session_id = session_id
+        self.user_id = user_id
+        self.new_session = new_session
+        self.last_state_creation_time = last_state_creation_time
 
 def lambda_handler():
     local_agent = RemoteNonPersistentAgent()
@@ -82,4 +70,33 @@ def lambda_handler():
         response, deserialized_current_state = local_agent.process_utterance(user_input)
         print(response)
 
+if __name__ == '__main__':
+    remote_url_config = {
+        "corenlp": {
+            "url": "http://localhost:4080"
+        },
+        "dialog_act": {
+            "url": "http://localhost:4081"
+        },
+
+        "g2p": {
+            "url": "http://localhost:4082"
+        },
+        "gpt2ed": {
+            "url": "http://localhost:4083"
+        },
+        "question": {
+            "url": "http://localhost:4084"
+        },
+        "stanfordnlp": {
+            "url": "http://localhost:4085"
+        },
+    }
+    for callable, config in remote_url_config.items():
+        os.environ[f'{callable}_URL'] = config['url']
+
+    os.environ['ES_PORT'] = '443'
+    os.environ['ES_SCHEME'] = 'https'
+
+    lambda_handler()
 
