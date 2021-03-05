@@ -5,6 +5,7 @@ in main loop:
 2. initialize text agent (run server)
 3. enter loop in commandline and interact with text agent
 """
+import json
 import os
 from pathlib import Path
 import requests
@@ -31,6 +32,10 @@ def setup_callables():
     config_fname = os.path.join(CHIRPY_HOME, "bin/local_callable_config.json")
     callable_manager = LocalCallableManager(config_fname)
     callable_manager.start_containers()
+    with open(config_fname) as f:
+        callable_config = json.load(f)
+        for callable, config in callable_config.items():
+            os.environ[f'{callable}_URL'] = config['url']
     return callable_manager
 
 def get_lambda_fn(lambda_handler_path):
