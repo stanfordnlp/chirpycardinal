@@ -6,26 +6,27 @@ const ChatBox = {
       user_uuid: null,
       payload: null,
       utterances: [
-          {speaker: 'bot', 'text': 'Hi this is Chirpy! What\'s your name?'},
-          {speaker: 'user', 'text': "I'm ashwin. How are you doing?"},
-          {speaker: 'bot', 'text': "I'm fine. What did you do today?"},
-          {speaker: 'user', 'text': "I went out for a game of basketball"},
       ],
       newUtterance: '',
     }
   },
   methods: {
     pushUtterance: function(speaker, text) {
+        if(speaker==='bot'){
+            text = text.replace('Hi, this is an Alexa Prize Socialbot.', 'Hi, I\'m Chirpy Cardinal.');
+        }
       this.utterances.push({speaker: speaker, text: text});
       this.$nextTick(function(){
-          var element = document.getElementsByClassName("transcript");
-          element[0].scrollTop = element[0].scrollHeight;
+          realign_transcript()
       });
     },
     submit: function(){
+      document.newUtteranceForm.newUtterance.focus();
       var that = this;
-      this.pushUtterance('user', this.newUtterance);
-      axios.post('http://localhost:5001/conversation', {
+      if(!this.newUtterance=='') {
+          this.pushUtterance('user', this.newUtterance);
+      }
+      axios.post('/conversation', {
         payload: this.payload,
         session_uuid: this.session_uuid,
         user_uuid: this.user_uuid,
@@ -47,5 +48,11 @@ const ChatBox = {
 
   }
 }
+function realign_transcript(){
+    var element = document.getElementsByClassName("transcript");
+    element[0].scrollTop = element[0].scrollHeight;
+}
+window.addEventListener('resize', realign_transcript);
 const app = Vue.createApp(ChatBox);
-const vm = app.mount("#app")
+const vm = app.mount("#app");
+vm.submit();
