@@ -16,7 +16,7 @@ body {
     height: 100%;
     margin: 0px;
 }
-.main, .main-content-wrap, .main-content {
+.main, .main-content-wrap, .main-content, .main-content-content{
   min-height: 100%;
   display: flex;
   flex-direction: column;
