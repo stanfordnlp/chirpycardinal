@@ -115,6 +115,7 @@ layout: table_wrappers
         {% endif %}
       {% endunless %}
       <div id="main-content" class="main-content" role="main">
+        <div id="main-content-content" class="main-content-content">
         {% if site.heading_anchors != false %}
           {% include vendor/anchor_headings.html html=content beforeHeading="true" anchorBody="<svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><use xlink:href=\"#svg-link\"></use></svg>" anchorClass="anchor-heading" anchorAttrs="aria-labelledby=\"%html_id%\"" %}
         {% else %}
@@ -133,8 +134,10 @@ layout: table_wrappers
             {% endfor %}
           </ul>
         {% endif %}
-
-        {% if site.footer_content != nil or site.last_edit_timestamp or site.gh_edit_link %}
+        </div>
+          <div class="main-content-footer">
+        {% if page.skipfooter!=true %}
+            {% if site.footer_content != nil or site.last_edit_timestamp or site.gh_edit_link %}
           <hr>
           <footer>
             {% if site.back_to_top %}
@@ -165,6 +168,8 @@ layout: table_wrappers
               </div>
             {% endif %}
           </footer>
+          </div>
+        {% endif %}
         {% endif %}
 
       </div>
