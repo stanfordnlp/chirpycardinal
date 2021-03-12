@@ -64,6 +64,8 @@ heading_anchors: true
 
 # Aux links for the upper right navigation
 aux_links:
+  "Github":
+    - "https://www.github.com/stanfordnlp/chirpycardinal/"
   "Stanford NLP":
     - "https://nlp.stanford.edu/"
   "OVAL":
@@ -122,3 +124,34 @@ compress_html:
   profile: false
   # ignore:
   #   envs: all
+  #
+  #
+collections:
+  people:
+    order:
+      - chris.md
+      - ashwin.md
+      - abi.md
+      - ethan.md
+      - haojun.md
+      - amelia.md
+      - alexander.md
+      - sk.md
+      - caleb.md
+      - hari.md
+      - avanika.md
+      - kelly.md
+      - jillian.md
+      - chetanya.md
+      - trenton.md
+  alum:
+    order:
+      - kathleen.md
+      - peng.md
+      - kaushik.md
+      - minh.md
+      - dilara.md
+
+  publications:
+    
+

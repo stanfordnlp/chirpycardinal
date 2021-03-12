@@ -19,7 +19,7 @@
   }
 
   @include mq(lg) {
-    width: calc((100% - #{$nav-width + $content-width}) / 2 + #{$nav-width});
+    //width: calc((100% - #{$nav-width + $content-width}) / 2 + #{$nav-width});
     min-width: $nav-width;
   }
 }
@@ -27,14 +27,15 @@
 .main {
   @include mq(md) {
     position: relative;
-    max-width: $content-width;
+    //max-width: $content-width;
     margin-left: $nav-width-md;
   }
 
   @include mq(lg) {
-    margin-left: calc(
-      (100% - #{$nav-width + $content-width}) / 2 + #{$nav-width}
-    );
+    margin-left: $nav-width;
+    //margin-left: calc(
+    //  (100% - #{$nav-width + $content-width}) / 2 + #{$nav-width}
+    //);
   }
 }
 
@@ -184,7 +185,6 @@ body {
 
 .site-footer {
   @include container;
-  position: absolute;
   bottom: 0;
   left: 0;
   padding-top: $sp-4;
@@ -193,7 +193,6 @@ body {
   @include fs-2;
 
   @include mq(md) {
-    position: static;
     justify-self: end;
   }
 }

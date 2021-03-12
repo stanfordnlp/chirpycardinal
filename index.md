@@ -5,18 +5,15 @@ nav_order: 1
 permalink: /
 ---
 
+<div>
 <img style='float:right;' src="{{site.baseurl}}/assets/images/chirpy_logo_optimized.svg" width="140" height="140">
-# Welcome to **Chirpy Cardinal**.
-{: .fs-9 }
-
-Our goal is to advance the state of open-domain dialogue.
+<h1 class='fs-9'> Welcome to <strong>Chirpy Cardinal</strong>. </h1>
+We are a <a href="https://nlp.stanford.edu/">Stanford NLP</a> research group focussed on open-domain dialogue. <br><br>
+Our research is informed by hundreds of thousands of people chatting with our bot Chirpy Cardinal via the <a href="https://developer.amazon.com/alexaprize">Alexa Prize</a>, a university competition to advance conversational AI. <br><br>
+In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assistant Lab (OVAL)</a>, we have open-sourced our award-winning socialbot from Alexa Prize 2020. 
+</div>
 {: .fs-6 .fw-300 }
 
-We're the award-winning [Stanford NLP](https://nlp.stanford.edu/) team for the [Alexa Prize](https://developer.amazon.com/alexaprize), a university competition to advance conversational AI.
-{: .fs-6 .fw-300 }
-
-We’re working with the [Open Virtual Assistant Lab](https://oval.cs.stanford.edu) to bring social abilities to open-source virtual assistants.
-{: .fs-6 .fw-300 }
 ---
 
 # Alexa Prize 3 (2019-2020)
@@ -27,6 +24,8 @@ To find out more about our bot, read our system [paper](https://arxiv.org/abs/20
 <!-- ![system diagram]({{site.baseurl}}/assets/images/overview_diagram.png) -->
 
 [Read our paper](https://arxiv.org/abs/2008.12348){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[Chat with Chirpy](live_demo/){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[Browse code](https://github.com/stanfordnlp/chirpycardinal){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 <!--[View our repo](TBD){: .btn .fs-5 .mb-4 .mb-md-0 }-->
 
 Alternatively, you can watch our [overview presentation](https://youtu.be/2pmAvOJOmGg):
