@@ -1,7 +1,7 @@
 ---
 name: Ashwin Paranjape
 link: http://stanford.edu/~ashwinpp
-image: /assets/images/ashwin.png
+image: /assets/images/ashwin.jpg
 order: 2
 ---
 *Team Leader 2020*  
