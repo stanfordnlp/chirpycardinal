@@ -126,32 +126,34 @@ compress_html:
   #   envs: all
   #
   #
+  #
 collections:
   people:
-    order:
-      - chris.md
-      - ashwin.md
-      - abi.md
-      - ethan.md
-      - haojun.md
-      - amelia.md
-      - alexander.md
-      - sk.md
-      - caleb.md
-      - hari.md
-      - avanika.md
-      - kelly.md
-      - jillian.md
-      - chetanya.md
-      - trenton.md
+# The order doesn't work with gh-pages because it doesn't yet support jekyll v4, temporary workaround is to specify order in the yaml for each file
+#    order:
+#      - chris.md
+#      - ashwin.md
+#      - abi.md
+#      - ethan.md
+#      - haojun.md
+#      - amelia.md
+#      - alexander.md
+#      - sk.md
+#      - caleb.md
+#      - hari.md
+#      - avanika.md
+#      - kelly.md
+#      - jillian.md
+#      - chetanya.md
+#      - trenton.md
   alum:
-    order:
-      - kathleen.md
-      - peng.md
-      - kaushik.md
-      - minh.md
-      - dilara.md
-
+      #    order:
+      #      - kathleen.md
+      #      - peng.md
+      #      - kaushik.md
+      #      - minh.md
+      #      - dilara.md
+      #
   publications:
     
 
