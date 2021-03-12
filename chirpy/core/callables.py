@@ -25,7 +25,9 @@ CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent.parent)
 #NAME_2_URL = json.load(open(config_path, 'r'))
 
 def get_url(name):
-    return os.environ.get(f'{name}_URL', None)
+    url = os.environ.get(f'{name}_URL', None)
+    logger.debug(f"For callable: {name} got remote url: {url}")
+    return url
 
 class RemoteCallableError(Exception):
     def __init__(self, message: str):
