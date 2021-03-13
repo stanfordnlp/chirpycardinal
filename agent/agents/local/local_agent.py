@@ -1,16 +1,10 @@
 from collections import defaultdict
 
-import boto3
-import copy
 import datetime
-import json
 import jsonpickle
 import logging
-from multiprocessing import Process
-import os 
+import os
 import uuid
-import random
-import requests
 import time
 from typing import Dict
 
@@ -46,10 +40,6 @@ from agent.agents.abstract_agent import Agent
 import chirpy.core.flags as flags
 from chirpy.core.latency import log_events_to_dynamodb, measure, clear_events
 from chirpy.core.regex.templates import StopTemplate 
-from chirpy.core.state import State
-from chirpy.core.user_attributes import UserAttributes
-from chirpy.core.entity_tracker.entity_tracker import EntityTrackerState
-from chirpy.core.state_manager import StateManager
 from chirpy.core.handler import Handler
 from chirpy.core.logging_utils import setup_logger, update_logger, PROD_LOGGER_SETTINGS
 
@@ -76,22 +66,12 @@ apology_string = 'Sorry, I\'m having a really hard time right now. ' + \
 'I have to go, but I hope you enjoyed our conversation so far. ' + \
 'Have a good day!'
 
-if os.environ.get('STAGE') == 'PROD' and os.environ.get('PIPELINE') != 'DEV':
-    user_table_name = 'UserTable'
-    state_table_name = 'StateTable'
-else:
-    user_table_name = 'UserTableBeta'
-    state_table_name = 'StateTableBeta'
-
 state_store = {}
 user_store = defaultdict(dict)
 
 class StateTable:
     def __init__(self):
-        if os.environ.get('STAGE') == 'PROD' and os.environ.get('PIPELINE') != 'DEV':
-            self.table_name = 'StateTable'
-        else:
-            self.table_name = 'StateTableBeta'
+        self.table_name = 'StateTable'
 
     def fetch(self, session_id, creation_date_time):
         logger.warning(f"state_table fetching last state for session {session_id}, creation_date_time {creation_date_time} from table {self.table_name}")
@@ -130,10 +110,7 @@ class StateTable:
 
 class UserTable():
     def __init__(self):
-        if os.environ.get('STAGE') == 'PROD' and os.environ.get('PIPELINE') != 'DEV':
-            self.table_name = 'UserTable'
-        else:
-            self.table_name = 'UserTableBeta'
+        self.table_name = 'UserTable'
 
     def fetch(self, user_id):
         logger.debug(
