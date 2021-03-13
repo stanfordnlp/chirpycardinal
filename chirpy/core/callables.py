@@ -20,9 +20,7 @@ from chirpy.core.util import run_module
 
 logger = logging.getLogger('chirpylogger')
 CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent.parent)
-#config_fname = os.environ.get('CALLABLE_URL_MAP', 'bin/local_callable_config.json')
-#config_path = os.path.join(CHIRPY_HOME, config_fname)
-#NAME_2_URL = json.load(open(config_path, 'r'))
+
 
 def get_url(name):
     url = os.environ.get(f'{name}_URL', None)
