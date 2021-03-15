@@ -5,4 +5,4 @@ image: /assets/images/chris.jpg
 order: 1
 ---
 *Faculty Advisor*  
-Professor in Linguistics and CS interested in memory, reasoning and neural dialogue generation.
+Professor in Linguistics and CS interested in natural language understanding and neural dialogue generation. 
