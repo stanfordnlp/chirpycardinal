@@ -8,12 +8,10 @@ class LocalCallableManager:
         self.module_to_container_id = {}
 
     def start_containers(self):
-        with open(self.config, 'r') as config_file:
-            self.config = json.load(config_file)  # will this persist?
-            for module_name in self.config:
-                if self.config[module_name]['url'] != 'none':
-                    self.start_container(module_name)
-            return
+        for module_name in self.config:
+            if self.config[module_name]['url'] != 'none':
+                self.start_container(module_name)
+        return
 
     def start_container(self, module_name):
         port = self.config[module_name]['port']

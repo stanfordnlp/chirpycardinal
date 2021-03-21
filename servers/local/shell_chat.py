@@ -8,16 +8,44 @@ in main loop:
 import json
 import os
 from pathlib import Path
-import requests
 import logging
-from flask import Flask
-from agent.agents.local.local_agent import LocalAgent
+from agents.local_agent import LocalAgent
 from chirpy.core.logging_utils import LoggerSettings, setup_logger
-from local_callable_manager import LocalCallableManager
+from servers.local.local_callable_manager import LocalCallableManager
 
 CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent)
-app = Flask(__name__)
-
+callable_config={
+    "question": {
+        "port": "3100",
+        "docker_file_dir": "docker/questionclassifier",
+        "url": "http://localhost:3100"
+    },
+    "dialog_act": {
+        "port": "3200",
+        "docker_file_dir": "docker/dialogact",
+        "url": "http://localhost:3200"
+    },
+    "corenlp": {
+        "port": "3300",
+        "docker_file_dir": "docker/corenlp",
+        "url": "http://localhost:3300"
+    },
+    "stanfordnlp": {
+        "port": "3400",
+        "docker_file_dir": "docker/stanfordnlp",
+        "url": "http://localhost:3400"
+    },
+    "gpt2ed": {
+        "port": "3500",
+        "docker_file_dir": "docker/gpt2ed",
+        "url": "http://localhost:3500"
+    },
+    "g2p": {
+        "port": "3600",
+        "docker_file_dir": "docker/g2p",
+        "url": "http://localhost:3600"
+    }
+}
 # Logging settings
 LOGTOSCREEN_LEVEL = logging.INFO + 5
 LOGTOFILE_LEVEL = logging.DEBUG
@@ -29,30 +57,23 @@ def init_logger():
     setup_logger(logger_settings)
 
 def setup_callables():
-    config_fname = os.path.join(CHIRPY_HOME, "bin/local_callable_config.json")
-    callable_manager = LocalCallableManager(config_fname)
+    callable_manager = LocalCallableManager(callable_config)
     callable_manager.start_containers()
-    with open(config_fname) as f:
-        callable_config = json.load(f)
-        for callable, config in callable_config.items():
-            os.environ[f'{callable}_URL'] = config['url']
+    for callable, config in callable_config.items():
+        os.environ[f'{callable}_URL'] = config['url']
     return callable_manager
 
-def get_lambda_fn(lambda_handler_path):
-    lambda_module = __import__(lambda_handler_path, fromlist=['lambda_handler'])
-    return getattr(lambda_module, 'lambda_handler')
 
 def main():
     init_logger()
     callable_manager = setup_callables() # check if container is already running
-    lambda_handler_path = 'lambda_module'
-    lambda_fn = get_lambda_fn(lambda_handler_path)
     # execute dialogue in loop
     local_agent = LocalAgent()
     should_end_conversation = False
     while not should_end_conversation:
         user_utterance = input("> ")
-        response, should_end_conversation = lambda_fn(local_agent, user_utterance)
+        response, deserialized_current_state = local_agent.process_utterance(user_utterance)
+        should_end_conversation = deserialized_current_state['should_end_session']
         print(response)
 
     callable_manager.stop_containers()

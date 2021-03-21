@@ -36,7 +36,6 @@ from chirpy.core.util import get_function_version_to_display
 from chirpy.annotators.dialogact import DialogActAnnotator
 from chirpy.core.entity_linker.entity_linker import EntityLinkerModule
 
-from agent.agents.abstract_agent import Agent
 import chirpy.core.flags as flags
 from chirpy.core.latency import log_events_to_dynamodb, measure, clear_events
 from chirpy.core.regex.templates import StopTemplate 
@@ -151,7 +150,7 @@ class UserTable():
             logger.error("Exception when persisting state to table: " + self.table_name, exc_info=True)
             return False
 
-class LocalAgent(Agent):
+class LocalAgent():
     """
     Agent that inputs and outputs text, and runs callables locally.
     """
@@ -162,12 +161,6 @@ class LocalAgent(Agent):
         self.user_id = "1"
         self.new_session = True
         self.last_state_creation_time = None
-
-    def persist():
-        return
-    
-    def get_response_builder():
-        return
 
     def should_end_session(self, turn_result):
         return turn_result.should_end_session

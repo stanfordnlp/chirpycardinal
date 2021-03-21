@@ -5,7 +5,7 @@ from flask import Flask, request
 import uuid
 
 #from agent.agents.remote_non_persistent import RemoteNonPersistentAgent as Agent
-from agent.agents.remote_psql_persistent import RemotePersistentAgent as Agent
+from agents.remote_psql_persistent import RemotePersistentAgent as Agent
 app = Flask(__name__)
 from flask_cors import CORS
 CORS(app, origins='*')
@@ -53,5 +53,4 @@ def convert_to_alexa_asr(sentence: str):
     return alexa_asr_sentence
 
 if __name__ == '__main__':
-    os.environ
     app.run(host="127.0.0.1", port=5001)

@@ -7,7 +7,7 @@ import json
 
 from chirpy.core.logging_utils import setup_logger, PROD_LOGGER_SETTINGS
 
-from agent.agents.remote_non_persistent import RemoteNonPersistentAgent
+from agents.remote_non_persistent import RemoteNonPersistentAgent
 import psycopg2
 import psycopg2.extras
 
