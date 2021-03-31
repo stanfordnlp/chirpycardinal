@@ -4,7 +4,7 @@ Codebase for [chirpy cardinal](https://stanfordnlp.github.io/chirpycardinal/)
 # Getting Started
 If you'd like to run the bot locally, start here <link>
 To chat with chirpy on our web server, start here <link>
-For a general overview of the codebase, start [here](src/README.md##How the code is organized)
+For a general overview of the codebase, start [here](chirpycardinal/README.md##How the code is organized)
 
 ## How the code is organized
 
