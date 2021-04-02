@@ -4,9 +4,9 @@ Codebase for [chirpy cardinal](https://stanfordnlp.github.io/chirpycardinal/)
 # Getting Started
 - If you'd like to run the bot locally, start [here](https://docs.google.com/document/d/1TejUPEIJIfttYESagXCcl6QEFJMdrgM8YIT86VHfaMQ/edit?usp=sharing)
 - To chat with chirpy on our web server, start [here](https://stanfordnlp.github.io/chirpycardinal/live_demo/)
-- For a general overview of the codebase, start [here](chirpycardinal/README.md#how-the-code-is-organized)
+- For a general overview of the codebase, start [here](#-how-the-code-is-organized)
 
-#How the code is organized
+# How the code is organized
 `agent`: When you run chirpycardinal, you will create an agent. Agents manage data storage, logging, user message input, bot message output, connections to remote modules, and calls to the handler. Three agents are provided:
 - `local_agent.py`: an agent that stores data and runs remote modules locally. 
 - `remote_non_persistent_agent.py`: an agent that runs modules remotely, but stores data in memory.
