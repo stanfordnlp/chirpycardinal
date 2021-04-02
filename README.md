@@ -2,7 +2,7 @@
 Codebase for [chirpy cardinal](https://stanfordnlp.github.io/chirpycardinal/) 
 
 # Getting Started
-- If you'd like to run the bot locally, start [here](https://docs.google.com/document/d/1TejUPEIJIfttYESagXCcl6QEFJMdrgM8YIT86VHfaMQ/edit?usp=sharing)
+- If you'd like to run the bot locally, start [here](#-running-chirpy-locally)
 - To chat with chirpy on our web server, start [here](https://stanfordnlp.github.io/chirpycardinal/live_demo/)
 - For a general overview of the codebase, start [here](#-how-the-code-is-organized)
 
@@ -91,6 +91,63 @@ In order for your response generator to be called, it needs to be added to a) yo
 
 ### Using Treelets
 If your response generator has scripted components, then you may want to use treelets. Treelets handle branching options of a scripted response generator. Based on a user’s response, one treelet can determine which treelet should go next. This value is stored in the response_generator’s conditional_state. To see an example of how this works in code, look at `categories_response_generator.py`, `categories/treelets/introductory_treelet.py`, and `categories/treelets/handle_answer_treelet.py`. 
+
+# Running Chirpy Locally
+#### Clone Repository
+`git clone https://github.com/stanfordnlp/chirpycardinal.git`
+
+#### Set `CHIRPY_HOME` environment variable
+1. **cd** into the chirpycardinal directory2
+2. Run **pwd** to get the absolute path to this directory, e.g. `/Users/username/Documents/chirpycardinal`
+3. Add the following 2 lines to ~/.bash_profile:
+- `export CHIRPY_HOME=/Users/username/Documents/chirpycardinal`
+- `export PATH=$CHIRPY_HOME/bin:$PATH`
+4. Run `source ~/.bash_profile`
+
+#### Set up ElasticSearch Indices and Postgres database
+1. **cd**  into wiki-es-dump/ where the below scripts are located
+2. Follow the instructions in [wiki-setup.md](chirpycardinal/wiki-es-dump/wiki-setup.md) to
+- Install dependencies
+- Run scripts and set up the indices
+3. Set up the **twitter opinions** database (Skip this step if you don't need the [opinions resonse generator](chirpycardinal/chirpy/response_generators/opinion2)
+
+#### Configure credential environment variables
+Configure the credentials for your es index as environment variables
+**Step 1: copy the following into your ~/.bash_profile**
+export ES_PASSWORD= **your_password**
+export ES_USER=**your_username**
+export ES_REGION=**your_region**
+export ES_HOST=**your_host**
+export ES_SCHEME=https
+export ES_PORT=**your_port**
+
+**Step 2:** run `source ~/.bash_profile`
+
+#### Replace credential in (chirpy/core/es_config.json)[chirpycardinal/chirpy/core/es_config.json]
+“url”: **your_es_url**
+
+#### Download and store models
+1. Add a **model/** directory to **docker/dialogact**, **docker/emotionclassifier**, **docker/gpt2ed**, and **docker/questionclassifier**
+2. Download and unzip models in [this folder](https://drive.google.com/drive/folders/1XsPQYLFeVg7Wn9bytIm-3r5zQR5FyHug), and move them into the chirpycardinal repo
+- **dialog-act.zip**  should go to **docker/dialogact/model**
+- **emotion-classifier.zip**  should go to **docker/emotionclassifier/model**
+- **gpt2ed.zip** should go to **docker/gpt2ed/model**. Once unzipped, rename to gpt2ed
+- **question-classifier.zip** should go to **docker/questionclassifier/model**
+
+#### Set up the chirpy environment
+1. Make a **new conda env**: `conda create --name chirpy python=3.7`
+2. **Install pip3** --v19.0 or higher
+3. **cd** into your new directory
+4. run `conda activate chirpy`
+5. run `pip3 install -r requirements.txt`
+
+#### Install and run docker
+Install [docker](https://docs.docker.com/get-docker/)
+
+#### Run the text agent
+Run `python3 bin/shell_chat.py`
+When you first run this, it will be building the docker images from scratch, which will take some time
+To end your conversation, say “stop”
 
 # License
 The code is licensed under [GNU AGPLv3](https://www.gnu.org/licenses/agpl-3.0.en.html). There is an exception for currently participating Alexa Prize Teams to whom it is licensed under [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html). 
