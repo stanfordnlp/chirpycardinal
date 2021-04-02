@@ -2,9 +2,9 @@
 Codebase for [chirpy cardinal](https://stanfordnlp.github.io/chirpycardinal/) 
 
 # Getting Started
-- If you'd like to run the bot locally, start [here](#-running-chirpy-locally)
+- If you'd like to run the bot locally, start [here](#running-chirpy-locally)
 - To chat with chirpy on our web server, start [here](https://stanfordnlp.github.io/chirpycardinal/live_demo/)
-- For a general overview of the codebase, start [here](#-how-the-code-is-organized)
+- For a general overview of the codebase, start [here](#how-the-code-is-organized)
 
 # How the code is organized
 `agent`: When you run chirpycardinal, you will create an agent. Agents manage data storage, logging, user message input, bot message output, connections to remote modules, and calls to the handler. Three agents are provided:
@@ -106,10 +106,10 @@ If your response generator has scripted components, then you may want to use tre
 
 #### Set up ElasticSearch Indices and Postgres database
 1. **cd**  into wiki-es-dump/ where the below scripts are located
-2. Follow the instructions in [wiki-setup.md](chirpycardinal/wiki-es-dump/wiki-setup.md) to
+2. Follow the instructions in [wiki-setup.md](https://github.com/stanfordnlp/chirpycardinal/blob/main/wiki-es-dump/wiki-setup.md) to
 - Install dependencies
 - Run scripts and set up the indices
-3. Set up the **twitter opinions** database (Skip this step if you don't need the [opinions resonse generator](chirpycardinal/chirpy/response_generators/opinion2)
+3. Set up the **twitter opinions** database (Skip this step if you don't need the [opinions resonse generator](https://github.com/stanfordnlp/chirpycardinal/tree/main/chirpy/response_generators/opinion2)
 
 #### Configure credential environment variables
 Configure the credentials for your es index as environment variables
@@ -123,7 +123,7 @@ export ES_PORT=**your_port**
 
 **Step 2:** run `source ~/.bash_profile`
 
-#### Replace credential in (chirpy/core/es_config.json)[chirpycardinal/chirpy/core/es_config.json]
+#### Replace credential in [chirpy/core/es_config.json](https://github.com/stanfordnlp/chirpycardinal/blob/main/chirpy/core/es_config.json)
 “url”: **your_es_url**
 
 #### Download and store models
