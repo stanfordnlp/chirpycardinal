@@ -16,6 +16,7 @@ from chirpy.core.util import filter_and_log, contains_phrase, get_es_host
 import logging
 import os
 from copy import deepcopy
+from chirpy.core.util import query_es_index, get_es_host, get_elasticsearch
 
 lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in', 'into', 'is', 'it',
  'no', 'not', 'of', 'on', 'or', 'such', 'that', 'the', 'their', 'then', 'there', 'these', 'they', 'this', 'to', 'was',
@@ -24,11 +25,11 @@ lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for
 SUB_SEC_TOKEN = ' [SUB-SEC] '
 YEAR_RE = r'\([0-9]+\)'
 
-host = "localhost"
-port = "9200"
-username = os.environ.get('ES_USER')
-password = os.environ.get('ES_PASSWORD')
-es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
+es = get_elasticsearch()
+#SECTIONS_INDEX = 'enwiki-20201201-sections'
+SECTIONS_INDEX = 'enwiki-20200920-sections'
+
+logger = logging.getLogger('chirpylogger')
 
 
 @dataclass
@@ -97,7 +98,7 @@ def get_wiki_sections(title=str) -> List[WikiSection]:
 
     query = {'query': {'bool': {'filter': [
             {'term': {'doc_title': title}}]}}}
-    sections = es.search(index='enwiki-20200520-sections', body=query, size=100)
+    sections = es.search(index=SECTIONS_INDEX, body=query, size=100)
     filtered_sections = filter_sections(title, sections)
     return filtered_sections
 
@@ -248,7 +249,7 @@ def search_wiki_sections(doc_title: str, phrases: tuple, wiki_links:tuple) -> Li
             }
     }
     }
-    sections = es.search(index='enwiki-20200520-sections', body=query)
+    sections = es.search(index=SECTIONS_INDEX, body=query)
     logger.debug(f"For phrases {phrases}, in wikipedia article {doc_title}, found following sections (unfiltered) {sections}")
     filtered_sections = filter_highlight_sections(doc_title, sections)
     return filtered_sections
@@ -293,7 +294,7 @@ def overview_entity(entity : str, sentseg_fn : Callable[[str], list], max_words 
                 }}]}
             }
         }
-        result = es.search(index='enwiki-20200520-sections', body=query, size=1) # pylint: disable=e1123
+        result = es.search(index=SECTIONS_INDEX, body=query, size=1) # pylint: disable=e1123
         if not result or result['hits']['total']['value'] == 0:
             logger.warning(f"Could not find overview for {entity}. Indicative of mismatch between entity linker and wiki corpus")
             return None
@@ -366,7 +367,7 @@ def get_section_by_id(section_id : str) -> Optional[dict] :
     ['Life and career', "2010–2014: ''Speak Now'' and ''Red''"]
     """
     query = {"query": {"ids": {"values": [section_id]}}}
-    result = es.search(index='enwiki-20200520-sections', body=query, size=1) # pylint: disable=e1123
+    result = es.search(index=SECTIONS_INDEX, body=query, size=1) # pylint: disable=e1123
     if not result or result['hits']['total']['value'] == 0:
         return None
     return convert_to_dict(result['hits']['hits'][0])

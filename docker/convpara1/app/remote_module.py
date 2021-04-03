@@ -1,23 +1,23 @@
-from convpara.topical_chat.analysis.generate import get_args, load_model, sample_and_print, load_dataset, sample_paraphrase
-from convpara.topical_chat.analysis.topical_chat_data_utils import *
-import torch
+from generate import sample_paraphrase
+from model_loading_utils import load_model
 import argparse
 import logging
+import torch
 
 import sys
-print(sys.version)
-
+print("Python version", sys.version)
+print("Pytorch version", torch.__version__)
 # Load model
 args = argparse.Namespace()
 args.seed = 3421
 args.model = 'gpt2'
 args.model_checkpoint = 'model/'
 #args.checkpoint_filename =
-#args.device = "cuda" if torch.cuda.is_available() else "cpu"
-args.device = "cuda"
+args.device = "cuda" if torch.cuda.is_available() else "cpu"
+#args.device = "cuda"
 logging.info(f"Using device {args.device}")
 tokenizer, model = load_model(args)
-
+logging.info(f"Loaded tokenizer and model")
 required_context = ['entity']
 
 def get_required_context():
@@ -63,7 +63,7 @@ def handle_message(msg):
         'probabilities': prob,
         'paraphrase_ended': sample_finished,
         'paraphrase_tokens': generated_tokens,
-        'paraphrase_token_probabilities': seq_probs.tolist(),
+        'paraphrase_token_probabilities': seq_probs,
     }
 
 

@@ -43,6 +43,16 @@ def get_es_host(name):
         return NAME_2_ES_HOST[name]['url']
     else:
         return None
+    
+
+def get_elasticsearch():
+    host = os.environ.get('ES_HOST', "localhost")
+    port = os.environ.get('ES_PORT', "9200")
+    scheme = os.environ.get('ES_SCHEME', 'http')
+    username = os.environ.get('ES_USER')
+    password = os.environ.get('ES_PASSWORD')
+    return Elasticsearch([{'host': host, 'scheme': scheme, 'port': port}], http_auth=(username, password), timeout=99999)
+
 
 def get_user_datetime(user_timezone=None) -> Optional[datetime.datetime]:
     """

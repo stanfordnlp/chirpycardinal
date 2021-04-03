@@ -18,7 +18,7 @@ import os
 import re
 
 from chirpy.core.asr.g2p import g2p
-from chirpy.core.util import get_es_host
+from chirpy.core.util import get_es_host, get_elasticsearch
 from chirpy.core.asr.lattice import remove_stress, lattice_to_phonemes
 
 PHONE_TO_ENT_INDEX = "phone_doc-0520-3"
@@ -117,11 +117,7 @@ if __name__ == "__main__":
 
     g2p_module = MockG2p()
 
-    host = "localhost"
-    port = "9200"
-    username = os.environ.get('ES_USER')
-    password = os.environ.get('ES_PASSWORD')
-    es = Elasticsearch([{'host': host, 'port': port}], http_auth=(username, password), timeout=99999)
+    es = get_elasticsearch()
     
     delete_index(PHONE_TO_ENT_INDEX)
     ensure_index(PHONE_TO_ENT_INDEX)

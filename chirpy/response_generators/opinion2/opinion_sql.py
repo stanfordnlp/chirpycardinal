@@ -11,7 +11,7 @@ from dataclasses import dataclass
 # import chirpy.core.offensive_classifier.offensive_classifier
 from chirpy.core.offensive_classifier.offensive_classifier import contains_offensive
 
-host_stream = "localhost"
+host_stream = os.environ.get('POSTGRES_HOST', 'localhost')
 port = 5432
 database = 'twitter_opinions'
 user = os.environ.get('POSTGRES_USER')

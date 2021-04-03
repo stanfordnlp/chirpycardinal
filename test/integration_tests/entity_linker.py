@@ -1,8 +1,7 @@
 from .integration_base import BaseIntegrationTest
 from unittest import TestCase
 from chirpy.core.flags import USE_ASR_ROBUSTNESS_OVERALL_FLAG
-from parameterized import parameterized
-from agent.agents.agent import apology_string
+from agents.local_agent import apology_string
 from chirpy.core.entity_linker.entity_linker import entity_link
 from chirpy.core.entity_linker.entity_linker_simple import link_span_to_entity, get_entity_by_wiki_name
 from chirpy.core.entity_linker.entity_groups import EntityGroup

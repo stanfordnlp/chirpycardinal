@@ -20,15 +20,12 @@ from chirpy.core.util import run_module
 
 logger = logging.getLogger('chirpylogger')
 CHIRPY_HOME = os.environ.get('CHIRPY_HOME', Path(__file__).parent.parent.parent)
-config_fname = 'bin/local_callable_config.json'
-config_path = os.path.join(CHIRPY_HOME, config_fname)
-NAME_2_URL = json.load(open(config_path, 'r'))
+
 
 def get_url(name):
-    if name in NAME_2_URL.keys():
-        return NAME_2_URL[name]['url']
-    else:
-        return None
+    url = os.environ.get(f'{name}_URL', None)
+    logger.debug(f"For callable: {name} got remote url: {url}")
+    return url
 
 class RemoteCallableError(Exception):
     def __init__(self, message: str):
@@ -101,7 +98,7 @@ class RemoteCallable(NamedCallable):
 class Annotator(RemoteCallable):
     def __init__(self, state_manager: StateManager, timeout: float, url: str = None, input_annotations :List[str] = []):
         if url is None:
-            url = NAME_2_URL[self.name]['url']
+            url = get_url(self.name)
         super().__init__(url = url, timeout=timeout)
         self.state_manager = state_manager
         self.input_annotations = input_annotations

@@ -1,14 +1,10 @@
-import boto3
-import copy
+from collections import defaultdict
+
 import datetime
-import json
 import jsonpickle
 import logging
-from multiprocessing import Process
-import os 
+import os
 import uuid
-import random
-import requests
 import time
 from typing import Dict
 
@@ -40,14 +36,9 @@ from chirpy.core.util import get_function_version_to_display
 from chirpy.annotators.dialogact import DialogActAnnotator
 from chirpy.core.entity_linker.entity_linker import EntityLinkerModule
 
-from agent.agents.agent import Agent
 import chirpy.core.flags as flags
 from chirpy.core.latency import log_events_to_dynamodb, measure, clear_events
 from chirpy.core.regex.templates import StopTemplate 
-from chirpy.core.state import State
-from chirpy.core.user_attributes import UserAttributes
-from chirpy.core.entity_tracker.entity_tracker import EntityTrackerState
-from chirpy.core.state_manager import StateManager
 from chirpy.core.handler import Handler
 from chirpy.core.logging_utils import setup_logger, update_logger, PROD_LOGGER_SETTINGS
 
@@ -74,22 +65,12 @@ apology_string = 'Sorry, I\'m having a really hard time right now. ' + \
 'I have to go, but I hope you enjoyed our conversation so far. ' + \
 'Have a good day!'
 
-if os.environ.get('STAGE') == 'PROD' and os.environ.get('PIPELINE') != 'DEV':
-    user_table_name = 'UserTable'
-    state_table_name = 'StateTable'
-else:
-    user_table_name = 'UserTableBeta'
-    state_table_name = 'StateTableBeta'
-
 state_store = {}
-user_store = {}
+user_store = defaultdict(dict)
 
 class StateTable:
     def __init__(self):
-        if os.environ.get('STAGE') == 'PROD' and os.environ.get('PIPELINE') != 'DEV':
-            self.table_name = 'StateTable'
-        else:
-            self.table_name = 'StateTableBeta'
+        self.table_name = 'StateTable'
 
     def fetch(self, session_id, creation_date_time):
         logger.warning(f"state_table fetching last state for session {session_id}, creation_date_time {creation_date_time} from table {self.table_name}")
@@ -128,10 +109,7 @@ class StateTable:
 
 class UserTable():
     def __init__(self):
-        if os.environ.get('STAGE') == 'PROD' and os.environ.get('PIPELINE') != 'DEV':
-            self.table_name = 'UserTable'
-        else:
-            self.table_name = 'UserTableBeta'
+        self.table_name = 'UserTable'
 
     def fetch(self, user_id):
         logger.debug(
@@ -172,7 +150,7 @@ class UserTable():
             logger.error("Exception when persisting state to table: " + self.table_name, exc_info=True)
             return False
 
-class LocalAgent(Agent):
+class LocalAgent():
     """
     Agent that inputs and outputs text, and runs callables locally.
     """
@@ -183,12 +161,6 @@ class LocalAgent(Agent):
         self.user_id = "1"
         self.new_session = True
         self.last_state_creation_time = None
-
-    def persist():
-        return
-    
-    def get_response_builder():
-        return
 
     def should_end_session(self, turn_result):
         return turn_result.should_end_session
@@ -204,17 +176,16 @@ class LocalAgent(Agent):
         commit_id = os.environ.get('COMMITID')
         state_attributes['commit_id'] = commit_id if commit_id is not None else ''
         state_attributes['session_id'] = self.session_id
+        state_attributes['user_id'] = self.user_id
         state_attributes['text'] = user_utterance
         state_attributes = {k: jsonpickle.encode(v) for k, v in state_attributes.items()}
         return state_attributes
     
     def get_user_attributes(self):
-        # user_attributes = LocalAgent.user_table.fetch(jsonpickle.encode(user_id))
-        user_attributes = {}
+        user_attributes = self.user_table.fetch(self.user_id)
         user_attributes['user_id'] = self.user_id
         user_attributes['user_timezone'] = None
         user_attributes = {k: jsonpickle.encode(v) for k, v in user_attributes.items()}
-        self.user_table.persist(user_attributes)
         return user_attributes
 
     def get_last_state(self): # figure out new session and session_id
@@ -224,19 +195,22 @@ class LocalAgent(Agent):
             last_state = None
         return last_state
 
+    def create_handler(self):
+        return Handler(
+            response_generator_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
+                                          OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
+                                          OffensiveUserResponseGenerator, OpinionResponseGenerator2, AcknowledgmentResponseGenerator,
+                                          NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator,
+                                          MusicResponseGenerator],
+            annotator_classes = [QuestionAnnotator, DialogActAnnotator, NavigationalIntentModule, StanfordnlpModule, CorenlpModule,
+                                 EntityLinkerModule, NeuralGraphemeToPhoneme],
+            annotator_timeout = NLP_PIPELINE_TIMEOUT
+        )
+
     def process_utterance(self, user_utterance):
 
         # create handler (pass in RGs + annotators)
-        handler = Handler(
-            response_generator_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
-                                        OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
-                                        OffensiveUserResponseGenerator, OpinionResponseGenerator2, AcknowledgmentResponseGenerator,
-                                        NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator,
-                                        MusicResponseGenerator],
-            annotator_classes = [QuestionAnnotator, DialogActAnnotator, NavigationalIntentModule, StanfordnlpModule, CorenlpModule,
-                                EntityLinkerModule, NeuralGraphemeToPhoneme],
-            annotator_timeout = NLP_PIPELINE_TIMEOUT
-        )
+        handler = self.create_handler()
 
         current_state = self.get_state_attributes(user_utterance)
         user_attributes = self.get_user_attributes()

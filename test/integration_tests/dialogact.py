@@ -1,6 +1,5 @@
 from parameterized import parameterized
 from .integration_base import BaseIntegrationTest
-from agent.agents.agent import apology_string
 
 class TestDialogAct(BaseIntegrationTest):
     launch_sequence = ['let\'s chat']
