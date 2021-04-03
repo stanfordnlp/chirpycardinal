@@ -3,7 +3,7 @@
 # requirements.txt is the longer list of requirements for running all different parts of the code locally (including dashboard, notebooks, unit tests, etc)
 
 boto3==1.17.21
-requests==2.14.2
+requests==2.20.0
 pytz==2018.5
 requests_aws4auth==0.9
 elasticsearch==7.5.1
