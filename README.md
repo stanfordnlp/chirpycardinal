@@ -145,7 +145,7 @@ export ES_PORT=**your_port**
 Install [docker](https://docs.docker.com/get-docker/)
 
 #### Run the text agent
-Run `python3 bin/shell_chat.py`
+Run `python3 -m servers.local.shell_chat`
 When you first run this, it will be building the docker images from scratch, which will take some time
 To end your conversation, say “stop”
 

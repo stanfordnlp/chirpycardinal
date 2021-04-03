@@ -13,7 +13,7 @@ rendered/
 .idea
 .DS_Store
 
-bin/update-template.sh
+
 integ_test/local_test.log
 
 Pipfile
@@ -22,7 +22,7 @@ Pipfile.lock
 .DS_Store
 docker/redquestiondetector/dataset/
 
-bin/abi_utts.txt
+
 notebooks/inspect_idf.ipynb
 notebooks/gpt2_conv_testing.ipynb
 notebooks/frequent_entities.json
@@ -43,7 +43,6 @@ chirpy/core/entity_tracker/entity_tracker_latency.png
 idf/*idfs.json
 
 alexa.zip
-bin/intro_utterances_example.txt
 
 convpara/*
 
