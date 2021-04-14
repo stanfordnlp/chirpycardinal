@@ -30,18 +30,16 @@ ES_HOST=localhost
 ```
 
 ## Runing locally
-To run the server locally, run from project directory `python server/chat_api.py`
-
-Then 
+To run the server locally, run from project directory
 ```
-source server/local_env.list
-python -m server.chat_api
+source servers/remote/local_env.list
+python -m servers.remote.chat_api
 ```
 
 ## Running via Docker
 To build (from the project directory)
 ```
-docker build --file server/Dockerfile .
+docker build --file servers/remote/Dockerfile .
 ```
 This adds the entire project as context and builds the docker container terminating with an output like `Successfully built d2b0029ce2da`
 

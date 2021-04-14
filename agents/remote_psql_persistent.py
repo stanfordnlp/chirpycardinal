@@ -11,7 +11,19 @@ from agents.remote_non_persistent import RemoteNonPersistentAgent
 import psycopg2
 import psycopg2.extras
 
-conn = psycopg2.connect(dbname="session_store", user=os.environ['POSTGRES_USER'], password=os.environ["POSTGRES_PASSWORD"], host=os.environ["POSTGRES_HOST"])
+def db_connect():
+    return psycopg2.connect(dbname="session_store", user=os.environ['POSTGRES_USER'], password=os.environ["POSTGRES_PASSWORD"], host=os.environ["POSTGRES_HOST"])
+
+conn=db_connect()
+def get_db_cursor():
+    global conn
+    try:
+        curs = conn.cursor()
+    except psycopg2.InterfaceError:
+        conn = db_connect()
+        curs = conn.cursor()
+    return curs
+
 logger = logging.getLogger('chirpylogger')
 root_logger = logging.getLogger()
 if not hasattr(root_logger, 'chirpy_handlers'):
@@ -31,7 +43,7 @@ class StateTable:
             start_time = time.time()
             timeout = 2  # second
             while (item is None and time.time() < start_time + timeout):
-                with conn.cursor() as curs:
+                with get_db_cursor() as curs:
                     curs.execute(f"SELECT state from {self.table_name} where session_id=%(session_id)s AND creation_date_time=%(creation_date_time)s",
                                  {'session_id':session_id, 'creation_date_time': creation_date_time})
                     item = curs.fetchone()[0]
@@ -41,9 +53,10 @@ class StateTable:
                     f"Timed out when fetching last state\nfor session {session_id}, creation_date_time {creation_date_time} from table {self.table_name}.")
             else:
                 return item
+
         except:
             logger.exception("Exception when fetching last state")
-            return None
+            raise
 
     def persist(self, state: Dict):
         logger.primary_info('Using StateTable to persist state! Persisting to table {}'.format(self.table_name))
@@ -54,7 +67,7 @@ class StateTable:
             assert 'session_id' in state
             assert 'creation_date_time' in state
             assert 'user_id' in state
-            with conn.cursor() as curs:
+            with get_db_cursor() as curs:
                 curs.execute(
                     f"INSERT INTO {self.table_name} (creation_date_time, session_id, user_id, state) VALUES  "
                     f"(%(creation_date_time)s, %(session_id)s, %(user_id)s, %(state)s)",
@@ -64,7 +77,7 @@ class StateTable:
             return True
         except:
             logger.error("Exception when persisting state to table" + self.table_name, exc_info=True)
-            return False
+            raise
 
 
 class UserTable():
@@ -81,7 +94,7 @@ class UserTable():
             start_time = time.time()
             timeout = 2  # second
             while (item is None and time.time() < start_time + timeout):
-                with conn.cursor() as curs:
+                with get_db_cursor() as curs:
                     curs.execute(f"SELECT attributes from {self.table_name} where user_id=%(user_id)s",
                                  {'user_id':user_id})
                     row = curs.fetchone()
@@ -98,7 +111,7 @@ class UserTable():
         except:
             logger.error("Exception when fetching user attributes from table: " + self.table_name,
                          exc_info=True)
-            return None
+            raise
 
     def persist(self, user_attributes: Dict) -> None:
         """
@@ -107,14 +120,15 @@ class UserTable():
         try:
             assert 'user_id' in user_attributes
             decoded_attributes = {k: json.loads(v) for k, v in user_attributes.items()}
-            with conn.cursor() as curs:
+
+            with get_db_cursor() as curs:
                 return curs.execute(
                     f"INSERT INTO {self.table_name} (user_id, attributes) VALUES  "
                     f"(%(user_id)s, %(attributes)s) ON CONFLICT (user_id) DO UPDATE SET attributes=%(attributes)s",
                     {'user_id': decoded_attributes['user_id'], 'attributes': psycopg2.extras.Json(decoded_attributes)})
         except:
             logger.error("Exception when persisting state to table: " + self.table_name, exc_info=True)
-            return False
+            raise
 
 class RemotePersistentAgent(RemoteNonPersistentAgent):
     def __init__(self, *args, **kwargs):
