@@ -126,14 +126,6 @@ export ES_PORT=**your_port**
 #### Replace credential in [chirpy/core/es_config.json](https://github.com/stanfordnlp/chirpycardinal/blob/main/chirpy/core/es_config.json)
 “url”: **your_es_url**
 
-#### Download and store models
-1. Add a **model/** directory to **docker/dialogact**, **docker/emotionclassifier**, **docker/gpt2ed**, and **docker/questionclassifier**
-2. Download and unzip models in [this folder](https://drive.google.com/drive/folders/1XsPQYLFeVg7Wn9bytIm-3r5zQR5FyHug), and move them into the chirpycardinal repo
-- **dialog-act.zip**  should go to **docker/dialogact/model**
-- **emotion-classifier.zip**  should go to **docker/emotionclassifier/model**
-- **gpt2ed.zip** should go to **docker/gpt2ed/model**. Once unzipped, rename to gpt2ed
-- **question-classifier.zip** should go to **docker/questionclassifier/model**
-
 #### Set up the chirpy environment
 1. Make a **new conda env**: `conda create --name chirpy python=3.7`
 2. **Install pip3** --v19.0 or higher
@@ -141,13 +133,36 @@ export ES_PORT=**your_port**
 4. run `conda activate chirpy`
 5. run `pip3 install -r requirements.txt`
 
-#### Install and run docker
+#### Install docker, pull images
 Install [docker](https://docs.docker.com/get-docker/)
+Pull images from our dockerhub repositories
+```
+docker pull openchirpy/questionclassifier
+docker pull openchirpy/dialogact
+docker pull openchirpy/g2p
+docker pull openchirpy/stanfordnlp
+docker pull openchirpy/corenlp
+docker pull openchirpy/gpt2ed
+docker pull openchirpy/convpara
+```
+These images contain the model files as well. The images are large and can a while to download. We would recommend having 24G of disk space allocated to docker (otherwise it'll complain about the disk space being full).
 
 #### Run the text agent
 Run `python3 -m servers.local.shell_chat`
-When you first run this, it will be building the docker images from scratch, which will take some time
 To end your conversation, say “stop”
+If the docker images don't exist (you didn't download them in the above step), the script will attempt to build them which might take a while. 
+
+### Building your own docker images
+
+Depending on which docker module you want to rebuild you would have to download one of the following models. Then run the respective Dockerfile to build there. There are issues with the python package versioning. Huggingface transformers has gotten breaking changes since we wrote the code, so the code needs to be updated, but that will likely not happen immedietly but might happen with next release. 
+
+#### Download and store models
+1. Add a **model/** directory to **docker/dialogact**, **docker/emotionclassifier**, **docker/gpt2ed**, and **docker/questionclassifier**
+2. Download and unzip models in [this folder](https://drive.google.com/drive/folders/1XsPQYLFeVg7Wn9bytIm-3r5zQR5FyHug), and move them into the chirpycardinal repo
+- **dialog-act.zip**  should go to **docker/dialogact/model**
+- **emotion-classifier.zip**  should go to **docker/emotionclassifier/model**
+- **gpt2ed.zip** should go to **docker/gpt2ed/model**. Once unzipped, rename to gpt2ed
+- **question-classifier.zip** should go to **docker/questionclassifier/model**
 
 # License
 The code is licensed under [GNU AGPLv3](https://www.gnu.org/licenses/agpl-3.0.en.html). There is an exception for currently participating Alexa Prize Teams to whom it is licensed under [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html). 
