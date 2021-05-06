@@ -22,4 +22,4 @@ psycopg2-binary==2.8.6
 
 flask==1.1.2
 gunicorn==20.0.4
-flask-cors==3.0.8
+flask-cors==3.0.9
