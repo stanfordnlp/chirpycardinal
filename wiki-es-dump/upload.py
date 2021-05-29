@@ -21,7 +21,10 @@ def upload_partition(partition):
         '_type': '_doc',
         '_source' : article
     } for index, article in partition)
-    bulk(es, actions)
+    try:
+        bulk(es, actions)
+    except elasticsearch.helpers.errors.BulkIndexError as error:
+        print('Bulk Index Error in partition: ' + str(error))
 
 if __name__ == "__main__":
     conf = SparkConf().setAppName('wiki-parse').set('spark.driver.maxResultSize', 0)
