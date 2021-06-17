@@ -14,7 +14,8 @@ In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assist
 </div>
 {: .fs-6 .fw-300 }
 
-## Media and Blogs
+## Updates
+* [**NAACL and SIGDIAL**](/chirpycardinal/publications): 4 new research papers accepted! 
 * [**Stanford AI Lab Blog**](https://ai.stanford.edu/blog/chirpy-cardinal/): _Inside Chirpy Cardinal: Stanford's Open-Source Social Chatbot that Won 2nd place in the Alexa Prize_
 * [**Stanford HAI**](https://hai.stanford.edu/news/how-create-better-chatbot-conversations): _How to Create Better Chatbot Conversations_
 * [**Forbes**]((https://www.forbes.com/sites/craigsmith/2020/08/04/talking-machines-who-won-this-years-alexa-prize/#a3a73d54c40f)): _Talking Machines: Who Won This Year’s Alexa Prize?_
