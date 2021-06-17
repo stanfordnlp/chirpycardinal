@@ -1,6 +1,6 @@
 ---
 title: Human-like informative conversations via conditional mutual information
-extlink: https://stanford.edu/~ashwinpp/assets/pdf/Humanlike_PCMI.pdf
+extlink: https://arxiv.org/pdf/2104.07831.pdf
 authors: Ashwin Paranjape and Christopher D. Manning
 venue: North American Chapter of the Association for Computational Linguistics (NAACL), 2021
 ---
