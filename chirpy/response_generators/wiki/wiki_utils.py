@@ -26,8 +26,7 @@ SUB_SEC_TOKEN = ' [SUB-SEC] '
 YEAR_RE = r'\([0-9]+\)'
 
 es = get_elasticsearch()
-#SECTIONS_INDEX = 'enwiki-20201201-sections'
-SECTIONS_INDEX = 'enwiki-20200920-sections'
+SECTIONS_INDEX = 'enwiki-20201201-sections'
 
 logger = logging.getLogger('chirpylogger')
 
