@@ -24,6 +24,16 @@ In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assist
 
 ---
 
+# Alexa Prize 4 (2020-2021)
+
+**Latest News! Chirpy Cardinal is officially in the finals of the Alexa Prize Grand Challenge 4. Check back for more updates!**
+
+The Chirpy Cardinal team has been hard at work building on the success of last year's team. Updates include:
+
+- Working on methods for controllable neural generation
+- Updating the previous news, music and movies modules with new APIs, as well as made major improvements in entity linking, topical transitions, and latency
+- Expanding the variety of responses via new modules that focus on personal issues, sports, food, and even extraterrestrial life!
+
 # Alexa Prize 3 (2019-2020)
 In July 2020, Chirpy Cardinal won 2nd place (of 10 teams) in the finals of the Alexa Prize Grand Challenge 3.
 
@@ -44,5 +54,4 @@ Alternatively, you can watch our [overview presentation](https://youtu.be/2pmAvO
 
 
 
-# Alexa Prize 4 (2020-2021)
-Check back for updates!
+
