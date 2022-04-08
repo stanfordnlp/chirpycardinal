@@ -3,7 +3,7 @@ import logging
 from typing import Optional, Tuple, List
 from chirpy.response_generators.neural_chat.treelets.abstract_treelet import Treelet
 from chirpy.core.util import get_eastern_dayofweek, get_eastern_us_time, get_pacific_dayofweek, get_pacific_us_time, \
-    get_user_datetime, get_user_dayofweek
+    get_user_datetime, get_user_dayofweek, sample_bernoulli
 from chirpy.response_generators.neural_chat.state import State
 from chirpy.core.response_generator_datatypes import PromptType
 
@@ -46,7 +46,7 @@ def get_transition_phrase(date_time, day_of_week, state_manager):
         transition_phrases += EVENING_TRANSITION_PHRASES
     transition_phrases = [t.format(day_of_week=day_of_week) for t in transition_phrases]
     return random.choice(transition_phrases)
-    # return state_manager.current_state.choose_least_repetitive(transition_phrases)
+    # return self.choose(transition_phrases)
 
 
 
@@ -96,11 +96,23 @@ class CurrentAndRecentActivitiesTreelet(Treelet):
     def get_exact_starterquestion(self, date_time, day_of_week):
         prompt_type = PromptType.GENERIC
 
+        # Turn off because we're no longer in the NFL era
+        # if day_of_week == 'Sunday' and date_time.hour < 18: #sunday, 18
+        #     use_sports = sample_bernoulli(p=0.5)
+        #     if use_sports:
+        #         return "I really enjoy spending my Sundays watching football. Are you a fan of the NFL?", [], prompt_type
+
+        logger.primary_info(f"DOW is {day_of_week} {date_time.hour}")
         if (day_of_week == 'Monday' or (day_of_week == 'Sunday' and date_time.hour >= 18)):  # 6pm Sunday -> 11:59pm Monday
-            use_weekend_question = random.choice([True, False])
+            use_weekend_question = sample_bernoulli(p=0.5)
             logger.info(f'Sampled use_weekend_question={use_weekend_question} with 50/50 probability.')
             if use_weekend_question:
-                return "You know, I can't believe the weekend went by so quickly. What did you do over the weekend?", [], prompt_type
+                use_sports = sample_bernoulli(p=0.25)
+                logger.primary_info(f"Use sports is {use_sports}")
+                if use_sports:
+                    return "I enjoy watching football on Sundays. Did you watch any of the NFL games yesterday?", [], prompt_type
+                else:
+                    return "You know, I can't believe the weekend went by so quickly. What did you do over the weekend?", [], prompt_type
         if 5 <= date_time.hour < 9:  # 5am-9am
             return "You know, I have to admit, I'm still in the process of waking up. I'm not a morning person! What are your plans for today?", [], prompt_type
         elif 9 <= date_time.hour < 13:  # 9am-1pm
@@ -123,7 +135,7 @@ class CurrentAndRecentActivitiesTreelet(Treelet):
 
         # These utterances need to work for both the eastern time and pacific time, which is 3 hours behind
         if (eastern_day == 'Monday' or (eastern_day == 'Sunday' and eastern_time.hour >= 21)):  # 9pm Sunday -> 11:59pm Monday EST
-            use_weekend_question = random.choice([True, False])
+            use_weekend_question = sample_bernoulli(p=0.5)
             logger.info(f'Sampled use_weekend_question={use_weekend_question} with 50/50 probability.')
             if use_weekend_question:
                 return "You know, I can't believe the weekend went by so quickly. What did you do over the weekend?", [], prompt_type
@@ -145,5 +157,8 @@ class CurrentAndRecentActivitiesTreelet(Treelet):
 
     @property
     def return_question_answer(self) -> str:
-        """Gives a response to the user if they ask the "return question" to our starter question"""
+        """Gives a response to the user if they ask the "return question" to our starter question
+        
+        DEPRECATED -- No need w/ blenderbot
+        """
         return "I spend most of my time talking to people, but I like taking naps too."

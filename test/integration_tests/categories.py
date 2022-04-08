@@ -1,6 +1,5 @@
 from .integration_base import BaseIntegrationTest
 from chirpy.core.test_args import TestArgs
-import unittest
 from chirpy.core.response_generator_datatypes import ResponsePriority, PromptType
 from chirpy.core.entity_linker.entity_groups import ENTITY_GROUPS_FOR_EXPECTED_TYPE
 

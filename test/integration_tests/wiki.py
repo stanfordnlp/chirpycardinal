@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Tuple
 from .integration_base import BaseIntegrationTest
 from chirpy.core.test_args import TestArgs
 import logging
@@ -19,7 +19,6 @@ class TestWikiBaseClass(BaseIntegrationTest):
 
 class TestWikiWithCategories(TestWikiBaseClass):
     wiki_test_args = TestArgs(selected_prompt_rg="Categories")
-    pass
     #Fixme: test entity extraction and then follow up
 class TestWikiOpenQuestions(TestWikiBaseClass):
     entity_name = 'Ariana Grande'

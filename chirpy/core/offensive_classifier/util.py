@@ -1,7 +1,5 @@
 from textblob import TextBlob
 import nltk
-import ssl
-import codecs
 import os
 
 def load_blacklist(fname):

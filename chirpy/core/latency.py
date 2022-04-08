@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import time
 import jsonpickle
-from functools import wraps, partial
+from functools import wraps
 import asyncio
 import logging
 logger = logging.getLogger('chirpylogger')

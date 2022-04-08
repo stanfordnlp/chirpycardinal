@@ -1,0 +1,2 @@
+from .CheckUserKnowledgeTemplate import CheckUserKnowledgeTemplate
+from .AcknowledgeUserKnowledgeTemplate import AcknowledgeUserKnowledgeTemplate

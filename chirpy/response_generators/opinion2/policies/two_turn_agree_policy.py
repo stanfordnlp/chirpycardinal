@@ -4,7 +4,7 @@ from chirpy.response_generators.opinion2.abstract_policy import Policy
 
 
 class TwoTurnAgreePolicy(Policy):
-    
+
     def __repr__(self) -> str:
         return "TwoTurnAgreePolicy"
 
@@ -34,7 +34,7 @@ class TwoTurnAgreePolicy(Policy):
                 return Action(solicit_opinion=True)
             else:
                 return Action(solicit_reason=True)
-        prev_action = state.action_history[-1]    
+        prev_action = state.action_history[-1]
         if prev_action.solicit_opinion or prev_action.suggest_alternative:
             if state.cur_sentiment == 2:
                 action = Action(exit=True)

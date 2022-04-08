@@ -1,7 +1,7 @@
 from typing import Dict, List
 from chirpy.response_generators.opinion2.state_actions import Action, AdditionalFeatures, State
 
-class Policy(object):
+class Policy:
     
     def __repr__(self) -> str:
         raise NotImplementedError()

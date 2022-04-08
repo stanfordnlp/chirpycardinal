@@ -1,0 +1,294 @@
+{
+  "musician": [
+    ["I love [song] because of its [quality], which never fails to move me.", ["song", "single", "recording", "quality", "released"]],
+    ["I still remember [year] when [song] came out. It seemed to be on every [genre] station!", ["song", "single", "released", "recording", "genre"]],
+    ["Out of the album [album], I like [song] the best because of <mask>. Did you know that <mask>?", ["album", "recording", "song", "released"]],
+    ["I really like {entity} because {entity} is so [adjective].", ["artist", "star", "great", "talented"]],
+    ["My favorite album by [artist] is [album] because it's so [adjective]. <mask>", ["album", "popular", "single"]],
+    ["I've been following her since [he/she] first started [action] at [place]", ["birthplace", "born", "child"]],
+    ["I hear that [group] released the album [name]. It's so bingeworthy!", ["group", "band", "album", "collaboration"]]
+  ],
+  "location": [
+    ["I love to visit [location] because of all the [things] there.", ["attractions", "food", "sights"]],
+    ["Honestly, [location] is such a great place to be, you can [action].", ["activity", "work", "tourism"]],
+    ["I've heard that [location] is famous for [thing].", ["activity", "business", "economy", "landmark", "icon"]],
+    ["The architecture of [location] is so beautiful, I love how [adjective] the buildings are.", ["building", "architecture", "skyline"]],
+    ["I've always wanted to visit [location], I imagine that I could go [action] there.", ["entertainment", "food", "tourism"]],
+    ["I love the [adjective] food of [location], my favorite part about it is how [adjective] it is.", ["food", "cuisine", "dish"]]
+  ],
+  "tourist_attraction": [
+    ["[city] is a popular destination for tourists, with [number] people visiting annually.", ["city", "destination", "tourist", "visitors", "annually"]],
+    ["Hey, isn't [city]'s most famous landmark the [thing]?", ["city", "landmark", "visit", "site", "tourist"]],
+    ["I really want to go to [place] because of its beaches.", ["tropics", "beaches", "hawaii", "coastal", "palm"]],
+    ["[place] is visited by over [number] people a year.", ["attraction", "destination", "tourist", "visitors", "annually"]],
+    ["One of the most unique things about [place] is <mask>.", ["unique", "destination", "popular", "tourist", "visited"]],
+    ["The most visited attraction in [country] is [thing].", ["country", "visit", "site", "tourist"]]
+  ],
+  "game": [
+    ["{entity} is one of my favorite games to play with my friends because <mask>.", ["game", "player", "gaming", "Nintendo", "Xbox", "PC"]],
+    ["I always play as [person] in [game].", ["player", "character", "protagonist", "antagonist", "boss"]],
+    ["[character] is my favorite character in [game].", ["player", "character", "protagonist", "antagonist", "boss", "PC"]],
+    ["[game] is a really popular [genre] game!", ["shooter", "rpg", "role-playing", "fighting", "racing", "shooting", "puzzle", "open-world"]],
+    ["The retro game {entity} used to be really popular back in the day.", ["past", "old", "retro", "game"]]
+  ],
+  "animal": [
+    ["I think {entity} is just so cute.", ["cute", "animal", "species"]],
+    ["I just learned that {entity} can be [appearance].", ["species", "feature", "appearance", "taxonomy", "habitat"]],
+    ["Apparently, {entity} originated from [location].", ["species", "evolved", "emerge", "taxonomy", "habitat"]],
+    ["{entity} primarily lives in [place] but can also live in [place].", ["species", "habitat", "range", "live"]],
+    ["{entity} eats a lot of [food].", ["diet", "prey", "herbivore", "carnivore", "food"]],
+    ["{entity} is my favorite animal because [fact].", ["favourite", "species", "fact"]],
+    ["{entity} is the reason why I visit the zoo. I just love how it is so [attribute].", ["disposition", "cute", "fluffy", "adorable", "smart"]],
+    ["I've heard that {entity} is the only animal that <mask>.", ["unique", "feature", "description"]]
+  ],
+  "historical_period": [
+    ["[person] is a historical icon. I believe [he/she] is most remembered for <mask>.", ["figure", "activist", "legacy", "influence", "icon"]],
+    ["[war] involved the countries [country], [country], and others. What a terrible battle.", ["war", "battle", "country", "empire"]],
+    ["The [battle] took place on [date] and involved [people]. I hope that humanity has advanced as a civilization since then.", ["battle", "month", "during", "forces", "soldier", "general"]],
+    ["The aftermath of [battle] was <mask>. Can you imagine being there?", ["aftermath", "legacy", "result", "victory", "defeat"]]
+  ],
+  "book": [
+    ["{entity_gen} plot was so [adjective], especially where <mask>.", ["imaginative", "novel", "popular", "creative", "plot", "arc"]],
+    ["My favorite character in {entity} was [character].", ["main", "character", "protagonist", "antagonist"]],
+    ["I heard that {entity} is extremely popular and has sold [number] copies.", ["popular", "print", "sell", "copies", "edition", "number"]],
+    ["I like {entity} because of its themes of <mask>.", ["book", "themes", "concepts"]],
+    ["I really enjoyed reading {entity}, especially the part where <mask>.", ["book", "exciting", "chapter"]],
+    ["{entity_gen} themes are what really stuck with me, especially [theme].", ["book", "theme", "moral"]],
+    ["It's really interesting to me how {entity} takes place in <mask>.", ["context", "setting", "location"]]
+  ],
+  "artist": [
+    ["[person] is a really popular artist known for their [genre].", ["artist", "painter", "paintings", "films", "drawings", "techniques"]],
+    ["I really want to learn how to do [art]. It's such a unique mode of expression.", ["art", "paint", "sculpt", "creative"]],
+    ["[painting] was painted with [medium] painting by [person]. I would love to see it some day!", ["work", "painting", "artist", "painter", "medium", "acrylic", "oil"]]
+  ],
+  "tv_show": [
+    ["My favorite character in [show] is [person] since they are [adjective].", ["character", "cast", "episode"]],
+    ["Did you know that [person] played [character] in [show]?", ["character", "cast", "episode", "plays"]]
+  ],
+  "pet": [
+    ["People like [pet] because they are so [adjective]. Our pets are too good for us.", ["attribute", "loyal", "behavior", "play"]],
+    ["I had a [pet] for [number] years. I love how it <mask>.", ["pet", "love", "attribute"]]
+  ],
+  "food": [
+    ["My favorite cuisine is [country] since it is so [adjective].", ["cuisine", "country", "influence", "ingredients", "taste"]],
+    ["One of the most interesting types of {entity} is [food]. It can be eaten in so many different ways!", ["variant", "variation"]],
+    ["I've heard that {entity} is typically eaten for <mask>. What a sumptuous experience!", ["breakfast", "lunch", "meal", "restaurant"]],
+    ["I love {entity} because it is so [flavor]. Did you know that <mask>?", ["flavor", "quality", "taste", "popular"]],
+    ["I've heard that {entity} was first prepared in [year]. What a long time ago!", ["history", "historian", "century"]]
+  ],
+  "dance": [
+    ["Dancers use their [body part] heavily. I wish I could move as well as them.", ["ballet", "feet", "ankle", "dance"]],
+    ["I love dancing because it's [adjective]. What a unique way to express yourself while getting a lot of exercise!", ["breakdancing", "dancing", "hip-hop", "fun", "healthy"]],
+    ["Some of the best dancers in the world are [person] and [person]. They are so impressive!", ["dancers", "partner", "champion", "professional"]]
+  ],
+  "fashion_designer": [
+    ["In my opinion, the best place for [clothing] is [store]. Their selection is impeccable.", ["clothing", "fashion", "retailer", "dress", "suits"]],
+    ["I am a big fan of [person]'s fashion and emulate them in what I wear.", ["icon", "style", "inspiration", "fashion", "legacy"]],
+    ["Did you know that [person] advertised for the clothing company [name]? I guess they must have pretty good taste.", ["icon", "model", "brand", "endorsed", "featured"]]
+  ],
+  "film": [
+    ["I loved how [actor] acted in {entity}. I really enjoyed [his/her] performance.", ["actor", "movie", "character", "cast"]],
+    ["I believe {entity} had [number] dollars in revenue. That's a lot of zeroes!", ["revenue", "gross", "box", "office", "million", "dollars"]],
+    ["I heard that {entity} won <mask>. I'd say it was really well deserved.", ["movie", "film", "award", "academy", "nomination", "best"]],
+    ["I especially love how {entity} is inspired by <mask>. It's interesting how art has so many sources of inspiration", ["inspiration", "source", "background"]],
+    ["{entity_gen} soundtrack is always so beautiful to me, it was composed by [composer].", ["composer", "soundtrack", "song"]],
+    ["{entity_gen} theme song is so [mask], it was performed by [person].", ["singer", "soundtrack", "song", "theme"]],
+    ["My favorite character in {entity} was [name]. I really enjoyed [his/her] presence in the movie.", ["character", "movie", "film", "cast", "plot"]],
+    ["I remember how great the reviews were, [person] said the movie was <mask>.", ["review", "reception", "critic", "critical", "roger", "rating"]]
+  ],
+  "musical_instrument": [
+    ["My favorite instrument is the [instrument] because it is so [adjective].", ["tone", "sound", "style", "versatility"]],
+    ["I love it when [person] performed [instrument] at [venue].", ["venue", "hall", "concert", "musician", "player", "composer"]]
+  ],
+  "musical_work": [
+    ["The [song] was composed by [artist]. [he/she] is so talented!", ["artist", "composed", "composer", "musician", "work"]],
+    ["The [song] is typically arranged for [instrument]. I love the [instrument].", ["song", "arrangement", "instrument", "choir", "composed"]],
+    ["My favorite song in [album] is [song] because <mask>.", ["album", "song", "artist", "award", "single", "selling"]],
+    ["Critics have said that [song] is <mask>.", ["reception", "critics", "award", "praised", "attribute"]],
+    ["[song] has won [award] for its popularity and acclaim. Very well deserved, I'd say!", ["grammy", "performance", "award", "single"]],
+    ["I still remember [year], when it seemed like [song] was on every [genre] station.", ["song", "single", "released", "recording", "genre"]]
+  ],
+  "restaurant_chain": [
+    ["The best food in [restaurant] is [food].", ["food", "chain", "consistent", "meal", "menu"]],
+    ["[restaurant] typically serves [cuisine].", ["country", "branch", "cuisine", "type"]],
+    ["[restaurant] records [number] dollars in annual revenue.", ["profit", "revenue", "business", "chain"]]
+  ],
+  "sports_team": [
+    ["I love [player] because [he/she] is so [adjective].", ["player", "sport", "athlete", "great"]],
+    ["[player] has won <mask>. Talk about impressive!", ["player", "sport", "won", "championship"]],
+    ["[player] has pursued philanthropy such as <mask>.", ["player", "philanthropy", "volunteer", "charity"]],
+    ["I am a fan of [team] since [player] is on it.", ["team", "player", "played", "joined", "signed"]],
+    ["[player]'s greatest accomplishment is <mask>.", ["player", "greatest", "accomplishment", "win", "succeed"]]
+  ],
+  "fictional_character": [
+    ["My favorite superhero is [name] because [he/she] has the powers of [thing].", ["superhero", "superman", "batman", "superpower", "comics"]],
+    ["[character] played such a great role in [movie].", ["character", "fictional", "film", "lead"]],
+    ["[character] inspired me because [he/she] was [adjective].", ["character", "fictional", "film", "lead", "acclaim"]],
+    ["[character] was <mask>. What do you think about [him/her]?", ["character", "fictional", "film", "lead"]],
+    ["My favorite fictional character is [name] because [he/she] was <mask>.", ["character", "cool", "amazing"]],
+    ["I hope to be like [name] one day. I love how [he/she] <mask>.", ["character", "inspiration"]],
+    ["I am a big fan of [name] because [he/she] <mask>.", ["character", "fictional", "film"]],
+    ["I wish I was [character]. That way, I can <mask>.", ["character", "wish", "inspiration"]],
+    ["If I could be anyone, I would want to be [character] because <mask>.", ["character", "inspiration"]]
+  ],
+  "comedian": [
+    ["[comedian]'s style can be described as <mask>.", ["style", "funny", "jokes", "stand-up"]],
+    ["[comedian]'s best known show is [show].", ["series", "sketch", "comedy", "debut", "show"]],
+    ["[comedian] was influenced by [people].", ["influence", "emulate", "early", "inspiration"]],
+    ["[comedian]'s live shows consist of [shows].", ["show", "act", "performances", "set"]],
+    ["[comedian]'s jokes are often described as <mask>.", ["jokes", "pun", "light", "humorous"]],
+    ["[comedian] likes to use the catchphrase [phrase].", ["catchphrase", "preamble", "phrase"]],
+    ["Have you seen [comedian]'s shows? I heard [he/she] is famous for <mask>.", ["acclaimed", "joke", "theme", "renowned"]],
+    ["I love [comedian]'s act because of <mask>.", ["act", "show", "performances", "comedy"]],
+    ["My favorite comedian is [comedian] because <mask>.", ["comedian", "sarcastic", "humorous", "style"]],
+    ["[comedian]'s jokes often make fun of <mask>. I can see why some people find that entertaining.", ["joke", "funny", "subject", "politics"]]
+  ],
+  "actor": [
+    ["{entity} became popular because of {entity_gen} involvement in [thing].", ["celebrity", "famous", "popular", "entertainment"]],
+    ["{entity}'s best movie is [movie]. I really loved watching it.", ["actor", "movie", "film", "academy", "starring"]],
+    ["One of the best movies in {entity_gen} career is [movie].", ["academy", "oscar", "actor", "film", "movie", "acclaim"]],
+    ["When {entity} was young, {entity} did [thing] which influenced their acting career.", ["influences", "classes", "young", "early", "break", "emulate"]],
+    ["I really like {entity} because {entity} is so [adjective].", ["artist", "singer", "painter", "performer", "sculptor"]],
+    ["{entity} is best known for {entity_gen} [role/performance] in [film].", ["academy", "oscar", "actor", "film", "movie", "acclaim"]],
+    ["In {entity_gen} newest film, {entity} played as [role].", ["actor", "role", "character"]],
+    ["{entity_gen} first role was [role] in [film].", ["actor", "role", "character"]],
+    ["I heard that {entity_gen} breakout role is when {entity} starred in [film].", ["actor", "film", "first"]]
+  ],
+  "politician": [
+    ["{entity} was elected as [position] in [year].", ["senator", "representative", "politician", "position", "year"]],
+    ["{entity} is from [state] and is a [republican/democrat].", ["senator", "representative", "politician", "state", "party", "affiliation"]],
+    ["I think {entity} ran for office in [year].", ["elected", "politician", "ran", "seek", "office"]],
+    ["{entity} is known for {entity_gen} views on <mask>.", ["politician", "views", "opinions"]]
+  ],
+  "anime": [
+    ["[character] is my favourite character in [anime] because <mask>.", ["anime", "character", "manga", "episode", "cool", "brave"]],
+    ["I have been watching {entity} since [event]. I am a really huge fan.", ["anime", "time", "year", "event"]],
+    ["I love watching {entity} because <mask>.", ["anime", "interesting", "fun", "cool"]],
+    ["I prefer [character] over [character] because <mask>.", ["anime", "character", "cool", "funny"]],
+    ["{entity} is a very cool anime. I love the story line and the characters.", ["cool", "story", "plot", "network"]],
+    ["{entity} is a classic anime. I really like how they made each character unique in their own way.", ["classic", "unique", "character"]],
+    ["I think that {entity} is the best anime of all time. It is really [attribute].", ["anime", "time", "my favorite"]],
+    ["The character [character] from {entity} makes me laugh so hard every time I watch the show.", ["anime", "cool", "funny"]],
+    ["I love [anime] because it makes me feel <mask>.", ["anime", "happy", "relaxed"]]
+  ],
+  "group_of_people": [
+    ["The {entity} have an interesting history. I learned that they are mostly based in [country].", ["country", "region", "migration"]],
+    ["I love the food from the {entity}. My favorite dish is [food].", ["food", "dish", "cuisine"]],
+    ["There are around [number] {entity} in the world.", ["communities", "diaspora", "population"]],
+    ["The {entity} are further divided into sub groups, such as the [ethnicity].", ["race", "religion", "ethnicity"]],
+    ["The {entity} mostly speak [language].", ["dialect", "tongue", "language"]]
+  ],
+  "sport": [
+    ["{entity} first originated from [country] in [time].", ["origin", "country", "century", "creation"]],
+    ["Famous competitions for {entity} include [event] which is held every [time].", ["championship", "competition", "event", "annually"]],
+    ["{entity} is played by around [number] people around the world.", ["global", "players", "world", "popular"]],
+    ["One of the most popular players in {entity} is [player].", ["star", "famous", "superstar", "player"]]
+  ],
+  "toy": [
+    ["{entity} is a toy that was first released in [year] by [company].", ["release", "year", "company"]],
+    ["Over [number] {entity}s have been sold around the world!", ["popular", "number", "sold"]],
+    ["{entity} was designed by [designer].", ["style", "designer", "creator"]],
+    ["On average, a {entity} is sold for about [number] dollars.", ["toy", "price"]],
+    ["{entity} spawned a media franchise, including [film].", ["media", "film", "series", "show"]]
+  ],
+  "tv_channel": [
+    ["{entity} was first launched in [year]. That feels like a long time ago.", ["channel", "origin", "year"]],
+    ["Over [number] people watch {entity} every year. That's a lot of people!", ["channel", "viewers", "number", "audience"]]
+  ],
+  "app_or_website": [
+    ["{entity} was created by [creator] in [year].", ["creator", "origin", "year", "founded"]],
+    ["The purpose of {entity} is to <mask>.", ["application", "users", "purpose", "features"]],
+    ["{entity} was bought over by [company] in [year].", ["acquire", "bought", "merged"]],
+    ["[number] people use {entity} every year.", ["traffic", "users", "number", "active"]],
+    ["{entity} can be used to <mask>.", ["application", "users", "purpose", "features"]]
+  ],
+  "media_franchise": [
+    ["If I remember correctly, {entity} centers around [character] and his journey to <mask>. It has a lot of fans!", ["character", "cast", "protagonist"]],
+    ["There are so many popular and well written characters from {entity}, such as <mask>.", ["character", "cast", "protagonist"]]
+  ],
+  "academic_subject": [
+    ["{entity} is an important subject, especially in the fields of [subject].", ["application", "subject", "industry", "technology"]],
+    ["[person] is a very famous academic in {entity} for their work in [topic].", ["contributions", "academic", "researcher", "scholar", "developed"]],
+    ["{entity} is simply defined as <mask>.", ["academic", "subject", "definition"]],
+    ["Accounts vary but {entity} is thought to have originated from [country] in [year].", ["origin", "country", "year", "history"]]
+  ],
+  "mode_of_transport": [
+    ["{entity} is a popular mode of transport, especially in [country].", ["transport", "country", "place"]],
+    ["{entity} first originated from [country] in [year]. What a long time ago that was!", ["history", "origin", "country", "first", "year"]],
+    ["The best part of riding {entity} is <mask>.", ["transport", "convenient", "benefit", "entertainment"]],
+    ["I love riding on {entity} because of how [attribute] it is.", ["transport", "convenient", "benefit", "entertainment"]]
+  ],
+  "dancer": [
+    ["{entity} is a famous dancer, especially in the [genre] genre.", ["ballroom", "genre", "salsa", "style"]],
+    ["{entity}'s dance is really famous for its [attribute].", ["dancer", "attribute", "quality", "elegance"]],
+    ["In addition to dancing, {entity} is also famous for their <mask>.", ["dancer", "quality", "style"]]
+  ],
+  "company": [
+    ["{entity} is a company that works on <mask>.", ["product", "service", "sells", "industry"]],
+    ["[founder] founded {entity} in [year].", ["incorporated", "founder", "origin", "year"]],
+    ["Company is based in [country] with offices in [countries].", ["country", "headquarters", "location"]],
+    ["The most popular product from {entity} is the [product].", ["largest", "famous", "popular", "product"]],
+    ["{entity} earns [number] dollars in revenue every year.", ["profit", "revenue", "generates"]]
+  ],
+  "taxon": [
+    ["{entity} is an amazing creature. Did you know that it <mask>?", ["animal", "plant"]],
+    ["{entity} belongs to the [species] family.", ["animal", "plant", "species", "genus"]],
+    ["The average age of [a/an] {entity} is [number] years.", ["animal", "age"]],
+    ["{entity_gen} love eating [food].", ["animal", "diet", "food"]],
+    ["I just learned that {entity} can be [appearance].", ["animal", "species", "feature", "appearance", "taxonomy", "habitat", "food"]],
+    ["Apparently, {entity} originated from [location].", ["animal", "species", "feature", "appearance", "taxonomy", "habitat", "food"]],
+    ["{entity} primarily lives in [place].", ["animal", "species", "habitat", "range", "live"]],
+    ["{entity} eats a lot of [food].", ["diet", "prey", "herbivore", "carnivore", "food"]],
+    ["{entity} would be an amazing pet. Think of how it would <mask>.", ["pet", "fun", "action"]]
+  ],
+  "painting": [
+    ["{entity} is a famous painting by [painter] in [year].", ["origin", "painter", "year"]],
+    ["{entity} depicts a scene of <mask>.", ["scene", "portrait", "description"]],
+    ["{entity} was sold for [number] dollars in [year].", ["sold", "price", "acquire", "auction", "valuable"]],
+    ["Currently, {entity} is housed in the [place].", ["painting", "museum", "displayed", "exhibit"]],
+    ["{entity} was created in the [era] era. It really reflects the unique preoccupations of that era.", ["period", "era", "history"]]
+  ],
+  "general_technology": [
+    ["{entity} is a technology meant to <mask>. What a useful invention!", ["technology", "purpose", "use", "innovation"]],
+    ["{entity} was first invented in [country] in [year]. That's such a long time ago! I wonder if they could have imagined how it is used today", ["created", "origin", "year", "country", "innovate"]]
+  ],
+  "musical_group": [
+    ["{entity} is a really productive group! Haven't they released [number] albums since their founding?", ["band", "albums"]],
+    ["Wow, {entity} yeah, they have produced so many hits like [song] and [song].", ["single", "band", "popular", "song", "grammy"]]
+  ],
+  "mythical_creature": [
+    ["{entity} is based in folklore from [country]. They are said to be <mask>.", ["folklore", "animal", "country", "mythology"]],
+    ["The physical appearance of {entity} is said to be <mask>.", ["physical", "animal", "appearance", "depiction"]],
+    ["Isn't it cool that {entity} has been featured in popular media such as [media].", ["appearance", "animal", "movie", "film", "series"]],
+    ["If I'm not mistaken, the first account of {entity} was in [year]. It is said that they <mask>.", ["animal", "book", "year", "account", "appearance"]],
+    ["Ah {entity}s, I believe they are well known for their [attribute].", ["animal", "attribute", "wings", "horns", "roar", "eyes", "fur"]]
+  ],
+  "athlete": [
+    ["Ah {entity}, the athlete, right? I believe [he/she] started playing [sport] when [he/she] was [number] years old.", ["started", "origin", "first", "kid"]],
+    ["It's so interesting that the style of {entity} has often been described as [attribute].", ["profile", "talent", "aggressive", "style", "attribute"]],
+    ["Many would say that {entity} is famous for [his/her] <mask>.", ["talent", "sports", "legacy", "influence", "famous"]]
+  ],
+  "human": [
+    ["{entity} has had such a remarkable life and achieved so much, such as <mask>.", ["award", "achievements", "legacy"]],
+    ["Ah {entity}, aren't they best known for <mask>?", ["famous", "achievement", "legacy", "renowned"]]
+  ],
+  "general": [
+    ["It gives me hope that <mask>", ["positive", "improvement", "success"]],
+    ["<mask> was such an exciting time, I still remember when <mask>.", ["time", "year", "happen", "occurrence"]],
+    ["Honestly, [thing] is so <mask>.", ["beautiful", "amazing", "interesting"]],
+    ["It's interesting how <mask>. I mean think about it, <mask>.", ["fact", "interesting"]],
+    ["I think it's fascinating how <mask>.", ["fact", "interesting"]],
+    ["I wonder how <mask>, don't you?", ["fact", "interesting"]],
+    ["That's cool, isn't it? I mean, <mask>.", ["fact", "interesting"]],
+    ["I have always thought that <mask>; it is so [adjective] that <mask>.", ["time", "event", "exciting", "occurrence"]]
+  ],
+  "acknowledgements": [
+    "Yeah, I love [person] too!",
+    "Yeah, I agree that <mask>.",
+    "Yeah, I agree that [person] is [adjective].",
+    "[Thing] is one of my favorite [things].",
+    "Yes, [thing] really is [adjective].",
+    "I know, I imagine that [thing] is so <mask>.",
+    "Yeah, can you believe that [person] [action]?"
+  ]
+}

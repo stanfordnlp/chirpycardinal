@@ -2,12 +2,134 @@ from chirpy.core.regex.util import OPTIONAL_TEXT_PRE, OPTIONAL_TEXT_POST, NONEMP
 from chirpy.core.regex.regex_template import RegexTemplate
 from chirpy.core.regex.templates import DontKnowTemplate
 
+def process_til(til):
+    return random.choice([
+        f'I found out that {til}. Isn\'t that interesting?',
+        f'I learned that {til}. What do you think about that?',
+        f'Did you know that {til}?',
+        f'I just found out the other day that {til}. Isn\'t that fascinating? What do you think?',
+    ])
 
 HANDOFF_REMARKS = [
     'Got it.',
     'Okay!',
     'OK',
     'I see!'
+]
+
+POSITIVE_ADJECTIVES = [
+    "good",
+    "pretty good",
+    "the best",
+    "best",
+    "awesome",
+    "amazing",
+    "unbelievable",
+    "superior",
+    "high quality",
+    "excellent",
+    "superb",
+    "outstanding",
+    "magnificent",
+    "exceptional",
+    "marvelous",
+    "wonderful",
+    "first rate",
+    "great",
+    "ace",
+    "terrific",
+    "fantastic",
+    "fabulous",
+    "top notch",
+    "killer",
+    "wicked",
+    "dope",
+    "class",
+    "awesome",
+    "smashing",
+    "brilliant",
+    "extraordinary",
+    "very much"
+]
+POSITIVE_VERBS = [
+    "like",
+    "love",
+    "prefer",
+    "adore",
+    "enjoy",
+    "did",
+    "do",
+    "liked",
+    "loved",
+    "prefered",
+    "adored",
+    "enjoyed"
+]
+POSITIVE_ADVERBS = [
+    "really",
+    "truly",
+    "very",
+    "honestly",
+    "undoubtedly",
+    "extremely",
+    "thoroughly",
+    "decidedly",
+    "exceptionally",
+    "exceedingly",
+    "immensely",
+    "monumentally",
+    "tremendously",
+    "incredibly",
+    "most",
+    "totally",
+    "seriously",
+    "real",
+    "mighty",
+    "just"
+]
+NEGATIVE_ADJECTIVES = [
+    "bad",
+    "pretty bad",
+    "the worst",
+    "worst",
+    "poor",
+    "second-rate",
+    "unsatisfactory",
+    "inadequate",
+    "crummy",
+    "appalling",
+    "awful",
+    "atrocious",
+    "appalling",
+    "deplorable",
+    "terrible",
+    "abysmal",
+    "rotten",
+    "godawful",
+    "pathetic",
+    "woeful",
+    "lousy",
+    "not up to snuff",
+    "disagreeable",
+    "terrible",
+    "dreadful",
+    "distressing",
+    "horrific",
+    "egregious"
+]
+NEGATIVE_VERBS = [
+    "hate",
+    "hated",
+    "loathe",
+    "loathed",
+    "detest",
+    "detested",
+    "despise",
+    "despised",
+    "disliked",
+    "abhored",
+    "couldn't bear",
+    "couldn't stand"
 ]
 
 LIKE_CLAUSES = [
@@ -235,9 +357,24 @@ NEGATIVE_FEELINGS = [
     "tired",
     "exhausted",
     "devastated",
-    "horriffied",
+    "horrified",
     "bad"
 ]
+
+POSITIVE_WORDS = POSITIVE_ADJECTIVES + \
+    POSITIVE_VERBS + \
+    ['not ' + i for i in NEGATIVE_ADJECTIVES] + \
+    ['not ' + i for i in NEGATIVE_VERBS] + \
+    ['don\'t ' + i for i in NEGATIVE_ADJECTIVES] + \
+    ['don\'t ' + i for i in NEGATIVE_VERBS] + \
+    YES
+NEGATIVE_WORDS = NEGATIVE_ADJECTIVES + \
+    NEGATIVE_VERBS + \
+    ['not ' + i for i in POSITIVE_ADJECTIVES] + \
+    ['not ' + i for i in POSITIVE_VERBS] + \
+    ['don\'t ' + i for i in POSITIVE_ADJECTIVES] + \
+    ['don\'t ' + i for i in POSITIVE_VERBS] + \
+    NO
 
 ANSWER_FAVORITE_TEMPLATES = [
     OPTIONAL_TEXT_PRE + "my favorite {trigger_word} is (the |){answer}",

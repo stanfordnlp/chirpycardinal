@@ -1,5 +1,5 @@
+from enum import IntEnum
 import logging
-from dataclasses import dataclass
 
 from chirpy.core.response_priority import ResponsePriority, PromptType
 from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
@@ -7,19 +7,33 @@ from chirpy.core.smooth_handoffs import SmoothHandoff
 from typing import Optional
 from chirpy.core.entity_linker.entity_groups import EntityGroup
 
+
 logger = logging.getLogger('chirpylogger')
 
 
-class ResponseGeneratorResult():
+class AnswerType(IntEnum):
+    NONE = 1
+    QUESTION_SELFHANDLING = 2
+    QUESTION_HANDOFF = 3
+    STATEMENT = 4
+    ENDING = 5
+
+
+CONTINUING_ANSWER_TYPES = [AnswerType.QUESTION_SELFHANDLING, AnswerType.QUESTION_HANDOFF, AnswerType.STATEMENT]
+
+class ResponseGeneratorResult:
     def __init__(self,
                  text: Optional[str],
                  priority: ResponsePriority,
                  needs_prompt: bool,
                  state,
                  cur_entity: Optional[WikiEntity],
+                 answer_type: AnswerType = AnswerType.NONE,
                  expected_type: Optional[EntityGroup] = None,
                  smooth_handoff: Optional[SmoothHandoff] = None,
-                 conditional_state=None):
+                 conditional_state=None,
+                 tiebreak_priority=None,
+                 no_transition=False):
         """
         :param text: text of the response
         :param priority: priority of the response
@@ -55,6 +69,13 @@ class ResponseGeneratorResult():
             raise TypeError(f'Trying to create a ResponseGeneratorResult with cur_entity={cur_entity}, which is of '
                              f'type {type(cur_entity)}. It should be None or type {WikiEntity}')
         self.cur_entity = cur_entity
+        self.answer_type = answer_type
+        if not isinstance(answer_type, AnswerType):
+            raise TypeError(f'Trying to create a ResponseGeneratorResult with answer_type={answer_type}, which is of type'
+                            f'{type(answer_type)} and not AnswerType.')
+        if needs_prompt:
+            logger.primary_info("Setting AnswerType to AnswerType.ENDING because needs_prompt=True.")
+            self.answer_type = AnswerType.ENDING
         if expected_type is not None and not isinstance(expected_type, EntityGroup):
             raise TypeError(f'Trying to create a ResponseGeneratorResult with expected_type={expected_type}, which is '
                              f'of type {type(expected_type)}. It should be None or a EntityGroup')
@@ -62,10 +83,12 @@ class ResponseGeneratorResult():
             raise ValueError(f"Trying to create a ResponseGeneratorResult with expected_type={expected_type} and "
                              f"needs_prompt={needs_prompt}. A response should not have an expected_type if "
                              f"needs_prompt=True because the prompting RG determines the expected_type (if any).")
+
         self.expected_type = expected_type
         if smooth_handoff is not None and not isinstance(smooth_handoff, SmoothHandoff):
             raise TypeError(f'Trying to create a ResponseGeneratorResult with smooth_handoff={smooth_handoff}, which is '
                             f'of type {type(smooth_handoff)}. It should be None or an instance of {SmoothHandoff}')
+
         if smooth_handoff is not None and not needs_prompt:
             raise ValueError(f"Trying to create a ResponseGeneratorResult with smooth_handoff={smooth_handoff} and "
                              f"needs_prompt={needs_prompt}. A response should not have a smooth_handoff if "
@@ -73,6 +96,8 @@ class ResponseGeneratorResult():
         self.smooth_handoff = smooth_handoff
         self.state = state
         self.conditional_state = conditional_state
+        self.tiebreak_priority = tiebreak_priority
+        self.no_transition = no_transition
 
     def reduce_size(self, max_size:int = None):
         """Gracefully degrade by removing non essential attributes.
@@ -88,17 +113,18 @@ class ResponseGeneratorResult():
 
 
     def __repr__(self):
-        return 'ResponseGeneratorResult' + str(self.__dict__)
+        return 'ResponseGeneratorResult(' + ', '.join(f'{key}={value}' for key, value in self.__dict__.items()) + ')'
 
 
-class PromptResult():
+class PromptResult:
     def __init__(self,
                  text: Optional[str],
                  prompt_type: PromptType,
                  state,
                  cur_entity: Optional[WikiEntity],
                  expected_type: Optional[EntityGroup] = None,
-                 conditional_state=None):
+                 conditional_state=None,
+                 answer_type: AnswerType = AnswerType.QUESTION_SELFHANDLING):
         """
         :param text: text of the response
         :param prompt_type: the type of response being given, typically CONTEXTUAL or GENERIC
@@ -136,6 +162,7 @@ class PromptResult():
         self.expected_type = expected_type
         self.state = state
         self.conditional_state = conditional_state
+        self.answer_type = answer_type
 
     def __repr__(self):
         return 'PromptResult' + str(self.__dict__)
@@ -193,3 +220,8 @@ def emptyPrompt(state):
 def emptyPrompt_with_conditional_state(state, conditional_state):
     """Makes a PromptResult that has no text, but also takes a conditional state"""
     return PromptResult(text=None, prompt_type=PromptType.NO, state=state, cur_entity=None, conditional_state=conditional_state)
+
+KILLED_RESULT = ResponseGeneratorResult(text="Killed", priority=ResponsePriority.NO, needs_prompt=False, state=None, cur_entity=None)
+
+def is_killed(result):
+    return result.text == 'Killed'

@@ -1,5 +1,4 @@
 import logging
-import random
 from typing import Optional, Tuple, List
 from chirpy.response_generators.neural_chat.treelets.abstract_treelet import Treelet
 from chirpy.response_generators.neural_chat.state import State
@@ -32,9 +31,11 @@ class GeneralActivitiesTreelet(Treelet):
         """
         if for_response:
             return None, [], None
-        return self.state_manager.current_state.choose_least_repetitive(STARTER_QUESTIONS), [], PromptType.GENERIC
+        return self.choose(STARTER_QUESTIONS), [], PromptType.GENERIC
 
     @property
     def return_question_answer(self) -> str:
-        """Gives a response to the user if they ask the "return question" to our starter question"""
+        """Gives a response to the user if they ask the "return question" to our starter question
+        
+        DEPRECATED -- No need w/ blenderbot"""
         return "I like knitting. It keeps my mind and fingers occupied but it's also super relaxing."

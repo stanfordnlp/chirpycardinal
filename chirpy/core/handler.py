@@ -1,7 +1,8 @@
 import logging
 from dataclasses import dataclass
 
-from chirpy.core.callables import Annotator, AnnotationDAG, ResponseGenerators, ResponseGenerator
+from chirpy.core.callables import Annotator, AnnotationDAG, ResponseGenerators
+from chirpy.core.response_generator import ResponseGenerator
 from chirpy.core.latency import measure
 from chirpy.core.regex.templates import StopTemplate
 from chirpy.core.state import State
@@ -15,8 +16,8 @@ from chirpy.annotators.navigational_intent.navigational_intent import Navigation
 
 logger = logging.getLogger('chirpylogger')
 
-# NOTE: disable immediate stopping via dialog_act to increase precision.
-# High-probability "closing" prediction via dialog_act will be handled by CLOSING_CONFIRMATION RG.
+# NOTE: disable immediate stopping via dialogact to increase precision.
+# High-probability "closing" prediction via dialogact will be handled by CLOSING_CONFIRMATION RG.
 CLOSING_HIGH_CONFIDENCE_THRESHOLD = 1
 DEFAULT_MAX_SESSION_HISTORY_COUNT = 50 # TODO: find me a better home
 
@@ -35,7 +36,6 @@ class TurnResult:
             user_attributes.serialize())
 
 class Handler():
-
     @measure
     def __init__(self, annotator_classes: List[Type[Annotator]], response_generator_classes: List[Type[ResponseGenerator]],
                  annotator_timeout = 3):
@@ -87,28 +87,27 @@ class Handler():
             logger.info('Running the NLP pipeline...')
 
             # run the NLP pipeline. this saves the annotations to state_manager.current_state
-            annotation_dag.run_multithreaded_DAG()
+            annotation_dag.run_multithreaded_DAG(last_state)
             logger.info('Finished running the NLP pipeline.')
 
             # If is_question=True, set navigational intent to none
             # We used to do this inside navigational intent module, but the NLP pipeline dependencies (question -> nav intent -> entity linker) caused problems
-
-            if state_manager.current_state.question is not None:
+            if hasattr(state_manager.current_state, 'question') and state_manager.current_state.question is not None:
                 is_question = state_manager.current_state.question['is_question']
-                if is_question:
+                if is_question and not state_manager.current_state.text.startswith('why would'):
                     logger.primary_info(f"user utterance is marked as is_question, so setting navigational_intent to none")
                     state_manager.current_state.navigational_intent = NavigationalIntentOutput()
 
             closing_probability = 0
-            if state_manager.current_state.dialog_act is not None:
-                closing_probability = state_manager.current_state.dialog_act['probdist']['closing']
+            if hasattr(state_manager.current_state, 'dialogact') and state_manager.current_state.dialogact is not None:
+                closing_probability = state_manager.current_state.dialogact['probdist']['closing']
 
             if closing_probability > CLOSING_HIGH_CONFIDENCE_THRESHOLD: # If closing detected with high confidence, end conversation immediately
-                logger.primary_info('Stopping the conversation since "dialog_act" is "closing" with probability {}'.format(closing_probability))
+                logger.primary_info('Stopping the conversation since "dialogact" is "closing" with probability {}'.format(closing_probability))
                 response, should_end_session = None, True
 
             else:
-                response, should_end_session = dialog_manager.execute_turn()  # str, str, bool
+                response, should_end_session = dialog_manager.execute_turn()  # str, bool
 
         setattr(state_manager.current_state, 'response', response)
         setattr(state_manager.current_state, 'should_end_session', should_end_session)

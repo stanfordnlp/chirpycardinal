@@ -1,0 +1,18 @@
+Flask
+Flask-RESTful
+Werkzeug
+future
+jsonpickle==0.9.4
+numpy
+pandoc
+six
+typing
+ConfigArgParse
+gunicorn
+
+
+# for transfer-learning-conv-ai
+pytorch-ignite
+transformers==4.2.0
+torch==1.7.0
+

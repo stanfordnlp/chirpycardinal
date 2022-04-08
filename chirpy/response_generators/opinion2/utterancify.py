@@ -394,7 +394,7 @@ def add_user_dislike(meta_templates: List[str], action : Action, phrasing_featur
     elif action.give_agree:
         meta_templates.append('{i_also_dislike}')
 
-def add_i_like_reason(meta_templates : List[str], action : Action, 
+def add_i_like_reason(meta_templates : List[str], action : Action,
         reason : Optional[str], phrasing_features : PhrasingFeatures) -> None:
     # Tell the user a reason if we chose to
     if reason is None:
@@ -411,7 +411,7 @@ def add_i_like_reason(meta_templates : List[str], action : Action,
         if reason.startswith('of'): meta_templates.append('{another_reason_i_like_is_of}')
         else: meta_templates.append('{another_reason_i_like_is}')
 
-def add_i_dislike_reason(meta_templates : List[str], action : Action, 
+def add_i_dislike_reason(meta_templates : List[str], action : Action,
         reason : Optional[str], phrasing_features : PhrasingFeatures) -> None:
     # Tell the user a reason if we chose to
     if reason is None:
@@ -461,7 +461,7 @@ def add_user_dislike_solicit(meta_templates: List[str], action : Action, phrasin
         meta_templates.append('{hmm_do_you_like_alt_instead}')
 
 def fancy_utterancify(state : State, action : Action, positive_reasons : List[str], negative_reasons : List[str],
-        alternatives : List[str], should_evaluate : bool, choice_fn: Callable[[List[str]], str], is_prompt: bool = False) -> Tuple[str, str, Optional[str]]:
+        alternatives : List[str], should_evaluate : bool, choice_fn: Callable[[List[str]], str], is_prompt: bool = False, additional_features = None) -> Tuple[str, str, Optional[str]]:
 
     # First, select reasons and alternative if needed
     reason = None
@@ -483,10 +483,10 @@ def fancy_utterancify(state : State, action : Action, positive_reasons : List[st
     prev_solicit_reason = not is_turn1 and state.action_history[-1].solicit_reason
     sentiment_switched = not is_turn1 and abs(state.action_history[-1].sentiment - action.sentiment) == 4 # We didn't like it before, but we like it now
     phrasing_features = PhrasingFeatures(
-        num_reasons_given_since_switch, 
-        is_turn1, sentiment_switched, 
-        prev_solicit_reason, 
-        abs(state.cur_sentiment - action.sentiment) == 4, 
+        num_reasons_given_since_switch,
+        is_turn1, sentiment_switched,
+        prev_solicit_reason,
+        abs(state.cur_sentiment - action.sentiment) == 4,
         is_prompt)
 
     # Next, generate the template based on the action and reasons
@@ -522,11 +522,13 @@ def fancy_utterancify(state : State, action : Action, positive_reasons : List[st
         add_user_dislike_solicit(meta_templates, action, phrasing_features)
     elif action.sentiment == 2 and state.cur_sentiment > 2: # Conservative (neutral, like)
         add_user_like_solicit(meta_templates, action, phrasing_features)
-    if action.exit and should_evaluate:
+    if action.exit and additional_features is not None and additional_features.detected_no:
+        meta_templates.append('{hard_exit_conversation}')
+    elif action.exit and should_evaluate:
         meta_templates.append('{thanks_for_sharing_eval}')
     elif action.exit:
         meta_templates.append('{thanks_for_sharing}')
-    
+
     chosen_meta_templates = [choice_fn(PHRASING_TEMPLATES[meta_template]) for meta_template in meta_templates]
     utterance_f = ' '.join([meta_template for meta_template in chosen_meta_templates if meta_template is not None])
     '''

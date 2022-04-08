@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict, Set, Optional
+from typing import List, Dict, Set, Optional  # NOQA
 
 from chirpy.core.callables import Annotator, get_url
 from chirpy.core.state_manager import StateManager

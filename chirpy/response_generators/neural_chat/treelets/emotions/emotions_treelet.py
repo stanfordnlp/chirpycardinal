@@ -86,13 +86,15 @@ class EmotionsTreelet(Treelet):
 
     @property
     def return_question_answer(self) -> str:
-        """Gives a response to the user if they ask the "return question" to our starter question"""
+        """Gives a response to the user if they ask the "return question" to our starter question
+                
+        DEPRECATED -- No need w/ blenderbot"""
         return "Speaking for myself, I have good days and I have bad days."
 
 
     def optionally_get_nonneural_response(self, history: List[str]):
         """
-        If we should give a non-neural response instead of calling GPT2ED, give the response here.
+        If we should give a non-neural response instead of calling remote module, give the response here.
 
         Inputs:
             history: odd-length list of strings, starting and ending with user utterances
@@ -124,7 +126,7 @@ class EmotionsTreelet(Treelet):
             logger.primary_info(f'User gave {user_mood} response. Sampled strategy {strategy}.')
             return "{} {}".format(BAD_NO_ELAB_RESPONSE, response), [user_mood], [strategy]
         elif user_mood == UserMood.OTHER:
-            logger.primary_info(f'User gave {user_mood} response, so using GPT2ED to respond.')
+            logger.primary_info(f'User gave {user_mood} response, so using DialoGPT to respond.')
             return None, [user_mood], []
         else:
             raise ValueError(user_mood)

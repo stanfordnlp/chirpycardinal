@@ -27,6 +27,9 @@ class ResponsePriority(int, Enum):
     # Use this when the RG has no response (i.e. text is None)
     NO = 0
 
+    def __str__(self):
+        return self._name_
+
 
 class PromptType(int, Enum):
     # This category should ONLY be used when forcing a smooth transition from one RG to the other. In other words,
@@ -52,21 +55,23 @@ class PromptType(int, Enum):
 # TiebreakPriority is only used for tiebreaks AFTER sorting by ResponsePriority
 # This is only used for responses, not prompts
 class TiebreakPriority(Enum):
-    CLOSING_CONFIRMATION = 250 
+    CLOSING_CONFIRMATION = 250
     OFFENSIVE_USER = 200
     COMPLAINT = 175
     RED_QUESTION = 150
     LAUNCH = 100
-    CORONAVIRUS = 80
-    ONE_TURN_HACK = 70
-    NEURAL_CHAT = 68
-    ACKNOWLEDGMENT = 67
+    TRANSITION = 71
+    PERSONAL_ISSUES = 69
+    FOOD = 68
+    NEURAL_CHAT = 66
+    ALIENS = 66
+    OPINION = 63
+    ACKNOWLEDGMENT = 62
+    EVI = 58
+    NEWS = 65
+    WIKI = 64
     CATEGORIES = 60
-    MUSIC = 38
-    OPINION = 35
-    WIKI = 30
-    SHOWERTHOUGHTS = 10
-    ALEXA_COMMANDS = 9
+    MUSIC = 66
     NEURAL_FALLBACK = 5  # fallback should always be lowest priority i.e. last resort
     FALLBACK = 0  # fallback should always be lowest priority i.e. last resort
 
@@ -88,20 +93,14 @@ FORCE_START_PROMPT_DIST = {
     "OFFENSIVE_USER": 1,
     "RED_QUESTION": 1,
     "LAUNCH": 1,
-    "ONE_TURN_HACK": 1,
     "CATEGORIES": 1,
-    "SHOWERTHOUGHTS": 1,
-    "ALEXA_COMMANDS": 1,
     "NEURAL_FALLBACK": 1,
     "FALLBACK": 1,
     "CLOSING_CONFIRMATION": 1,
-    "CORONAVIRUS": 1,
-
-    # We're running an experiment with EmotionsTreelet and want to collect more data. So EmotionsTreelet is giving a
-    # FORCE_START prompt to make sure we get more conversations. I don't want this to override another RG's legitimate
-    # FORCE_START though, so I'm making the neural chat prob much smaller here.
-    # That way, if NEURAL_CHAT is the only FORCE_START prompter, its prompt is chosen, but if there are any other
-    # FORCE_START prompts, NEURAL_CHAT won't get chosen.
+    "FOOD": 1,
+    'ALIENS': 1,
+    "TRANSITION": 1,
+    "REOPEN": 1,
     "NEURAL_CHAT": 0.000001,
     "MUSIC": 1
 }
@@ -110,21 +109,21 @@ FORCE_START_PROMPT_DIST = {
 # generator's prompt being given when the prompt type chosen is contextual. Response generators with a 0.0
 # probability of being picked never give contextual prompts.
 CURRENT_TOPIC_PROMPT_DIST = {
+    "MUSIC": 1,
     "OPINION": 1,
     "WIKI": 1,
     'NEURAL_CHAT': 1,
-    "MUSIC": 1,
     "OFFENSIVE_USER": 0.0,
     "RED_QUESTION": 0.0,
     "LAUNCH": 0.0,
     "ONE_TURN_HACK": 0.0,
     "CATEGORIES": 1,
-    "SHOWERTHOUGHTS": 0.0,
-    "ALEXA_COMMANDS": 0.0,
     "NEURAL_FALLBACK": 0.0,
     "FALLBACK": 0.0,
     "CLOSING_CONFIRMATION": 0.0,
-    "CORONAVIRUS": 0.0
+    'ALIENS': 0.0,
+    "TRANSITION": 1,
+    "REOPEN": 0,
 }
 
 
@@ -132,21 +131,23 @@ CURRENT_TOPIC_PROMPT_DIST = {
 # generator's prompt being given when the prompt type chosen is contextual. Response generators with a 0.0
 # probability of being picked never give contextual prompts.
 CONTEXTUAL_PROMPT_DIST = {
+    "MUSIC": 0.3,
+    "FOOD": 0.3,
     "OPINION": 0.1,
     "WIKI": 0.25,
     'NEURAL_CHAT': 0.3,
-    "MUSIC": 0.3,
     "OFFENSIVE_USER": 0.0,
     "RED_QUESTION": 0.0,
     "LAUNCH": 0.0,
     "ONE_TURN_HACK": 0.0,
     "CATEGORIES": 0.3,
-    "SHOWERTHOUGHTS": 0.0,
-    "ALEXA_COMMANDS": 0.0,
     "NEURAL_FALLBACK": 0.0,
     "FALLBACK": 0.0,
     "CLOSING_CONFIRMATION": 0.0,
-    "CORONAVIRUS": 0.0
+    "CORONAVIRUS": 0.0,
+    'ALIENS': 0.0,
+    'TRANSITION': 0.5,
+    'REOPEN': 0.0
 }
 
 # Defines a probability distribution over response generators that signifies the likelihood of that response
@@ -154,18 +155,17 @@ CONTEXTUAL_PROMPT_DIST = {
 # probability of being picked never give generic prompts.
 GENERIC_PROMPT_DIST = {
     "CATEGORIES": 3,
-    "OPINION": 1,
-    "FALLBACK": 1,
-    'NEURAL_CHAT': 3,
     "MUSIC": 1.5,
+    "OPINION": 1,
+    "WIKI": 1,
+    "FALLBACK": 0.0001,
+    "FOOD": 1.5,
+    'NEURAL_CHAT': 2,
+    'ALIENS': 2,
     "OFFENSIVE_USER": 0,
     "RED_QUESTION": 0,
     "LAUNCH": 0,
-    "ONE_TURN_HACK": 0,
-    "WIKI": 0,
-    "SHOWERTHOUGHTS": 0,
-    "ALEXA_COMMANDS": 0,
-    "CORONAVIRUS": 0
+    "REOPEN": 2,
 }
 
 PROMPT_DISTS_OVER_RGS = {

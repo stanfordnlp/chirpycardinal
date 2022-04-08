@@ -3,6 +3,9 @@ from chirpy.response_generators.opinion2.opinion_sql import Phrase
 import random
 from typing import Optional, Tuple, List, Dict
 from dataclasses import dataclass
+import logging
+
+logger = logging.getLogger('chirpylogger')
 
 @dataclass(frozen=False)
 class Action:
@@ -12,7 +15,7 @@ class Action:
     give_agree : bool = False
     # Then, decide whether we want to give a reason or not
     give_reason : bool = False
-    # Then, decide whether 
+    # Then, decide whether
     solicit_opinion : bool = False
     solicit_disambiguate : bool = False
     solicit_agree : bool = False
@@ -20,6 +23,7 @@ class Action:
     suggest_alternative : bool = False
     # This is a field indicating whether we should exit the conversation
     exit : bool = False
+    hard_exit : bool = False
     # These are fields used for engineering purposes
     text : str = ''
 
@@ -66,6 +70,7 @@ class State:
 @dataclass(frozen=False)
 class AdditionalFeatures:
     detected_phrases : Tuple[str, ...] = ()
+    current_posnav_phrases : Tuple[str, ...] = ()
     detected_yes : bool = False
     detected_no : bool = False
     detected_like : bool = False
@@ -74,14 +79,15 @@ class AdditionalFeatures:
     detected_user_sentiment_switch : bool = False
     detected_user_disinterest : bool = False
 
-def next_state(state : State, utterance : str, additional_features : AdditionalFeatures) -> Optional[State]:
+
+def next_state(state : State, utterance : str, additional_features : AdditionalFeatures, entity_tracker = None) -> Optional[State]:
     """This method advances the state to the next state, it
 
     1. selects a cur_phrase if there is one available. Otherwise it returns None because you cannot advance a state
        without a cur_phrase
     2. It populates the utterance history by adding the current utterance.
     3. It detects the user's sentiment via a variety of ways (depending on the utterance and action history)
-    
+
     :param state: the current state
     :type state: State
     :param utterance: the utterance of the user
@@ -95,8 +101,14 @@ def next_state(state : State, utterance : str, additional_features : AdditionalF
     user_sentiment_history = dict(state.user_sentiment_history)
     if state.cur_phrase == '':
         # A phrase is considered available if user did not have an opinion, or if user did, have a non-neutral opinion
-        available_phrases = [phrase for phrase in additional_features.detected_phrases \
-                if phrase not in user_sentiment_history or user_sentiment_history[phrase] != 2] 
+        available_phrases = additional_features.detected_phrases + additional_features.current_posnav_phrases
+        available_phrases = [phrase for phrase in available_phrases \
+                if phrase not in user_sentiment_history or user_sentiment_history[phrase] != 2]
+
+        # remove talked_finished items
+        if entity_tracker is not None:
+            logger.primary_info(f"Phrases are {available_phrases}")
+            available_phrases = [phrase for phrase in available_phrases if not any(e.name == phrase for e in entity_tracker.talked_finished)]
         if len(available_phrases) == 0:
             return None
         # We give priority to phrases which user have already expressed an opinion about
@@ -125,17 +137,17 @@ def next_state(state : State, utterance : str, additional_features : AdditionalF
     new_state.latest_utterance = ''
     return new_state
 
-def fill_state_on_action(state_p : State, action : Action, text : str, 
+def fill_state_on_action(state_p : State, action : Action, text : str,
         phrase : str, additional_features : AdditionalFeatures, reason : Optional[str],
         opinionable_phrases : Dict[str, Phrase],
         opinionable_entities : Dict[str, List[Phrase]]) -> State:
     """This is a convenient function that fill the state after an action is generated. Specifically it
-    
+
     1. adds the current action to the history
     2. adds the phrase to a list of phrases done so we don't prompt it again
     3. sets the cur_phrase and cur_sentiment correctly conditioned on the action
-    4. adds the reason to a list of reasons used 
-    
+    4. adds the reason to a list of reasons used
+
     :param state_p: the state we are modifying
     :type state_p: State
     :param action: the action that the policy returned

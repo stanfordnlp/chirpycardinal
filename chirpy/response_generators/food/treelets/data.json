@@ -1,0 +1,99 @@
+{
+  "reuben": {
+    "ingredients": [
+      "swiss cheese",
+      "beef",
+      "bread",
+      "sauerkraut"
+    ],
+    "types": []
+  },
+  "beef": {
+    "ingredients": [],
+    "types": []
+  },
+  "bread": {
+    "ingredients": [],
+    "types": []
+  },
+  "sauerkraut": {
+    "ingredients": [],
+    "types": []
+  },
+  "cheese": {
+    "ingredients": [
+      "milk"
+    ],
+    "types": [
+      "swiss cheese",
+      "cheddar",
+      "mozzarella",
+      "brie",
+      "american"
+    ]
+  },
+  "milk": {
+    "ingredients": [],
+    "types": []
+  },
+  "swiss cheese": {
+    "ingredients": [],
+    "types": []
+  },
+  "cheddar": {
+    "ingredients": [],
+    "types": []
+  },
+  "mozzarella": {
+    "ingredients": [],
+    "types": []
+  },
+  "brie": {
+    "ingredients": [],
+    "types": []
+  },
+  "american": {
+    "ingredients": [],
+    "types": []
+  },
+  "tomato": {
+    "ingredients": [],
+    "types": []
+  },
+  "lettuce": {
+    "ingredients": [],
+    "types": []
+  },
+  "vegetable": {
+    "ingredients": [],
+    "types": [
+      "tomato",
+      "lettuce"
+    ]
+  },
+  "sandwich": {
+    "ingredients": [
+      "cheese",
+      "bread",
+      "tomato",
+      "lettuce"
+    ],
+    "types": [
+      "reuben",
+      "club sandwich"
+    ]
+  },
+  "club sandwich": {
+    "ingredients": [
+      "cheddar",
+      "tomato",
+      "lettuce",
+      "ham"
+    ],
+    "types": []
+  },
+  "ham": {
+    "ingredients": [],
+    "types": []
+  }
+}

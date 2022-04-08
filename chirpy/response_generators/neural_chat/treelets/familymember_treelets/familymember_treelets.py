@@ -5,7 +5,6 @@ from chirpy.response_generators.neural_chat.treelets.abstract_treelet import Tre
 from chirpy.response_generators.neural_chat.state import State, ConditionalState
 from chirpy.response_generators.neural_chat.treelets.familymember_treelets.util import UserFamilyMember, OLDER_FAMILY_MEMBERS, FRIENDS, PARTNERS, SIBLINGS_AND_COUSINS, KIDS, PETS
 from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, ResponsePriority, PromptType
-from dataclasses import asdict
 
 
 logger = logging.getLogger('chirpylogger')
@@ -70,13 +69,13 @@ class FamilyMemberTreelet(Treelet):
         logger.primary_info(f'{self.name} uniformly sampled the strategy "{strategy}" for {user_family_member} from {available_strategies}')
 
         # Choose least repetitive starter question for this strategy
-        starter_q = self.state_manager.current_state.choose_least_repetitive(strategy2starterq[strategy])
+        starter_q = self.choose(strategy2starterq[strategy])
 
         # Choose least repetitive "you mentioned" phrase for this strategy
-        you_mentioned = self.state_manager.current_state.choose_least_repetitive(user_family_member.you_mentioned if current_turn else user_family_member.you_mentioned_earlier)
+        you_mentioned = self.choose(user_family_member.you_mentioned if current_turn else user_family_member.you_mentioned_earlier)
 
         # Choose least repetitive bridge phrase for this strategy
-        bridge = self.state_manager.current_state.choose_least_repetitive(user_family_member.bridges(starter_q))
+        bridge = self.choose(user_family_member.bridges(starter_q))
 
         # Make the utterance
         utterance = "{} {} {}".format(you_mentioned, bridge, starter_q)
@@ -124,7 +123,7 @@ class FamilyMemberTreelet(Treelet):
             # Also add a prompt transition phrase
             else:
                 priority = PromptType.CURRENT_TOPIC if posnav and trigger_on_current_turn else PromptType.CONTEXTUAL
-                prompt_transition_phrase = self.state_manager.current_state.choose_least_repetitive(PROMPT_TRANSITIONS)
+                prompt_transition_phrase = self.choose(PROMPT_TRANSITIONS)
                 starter_question = "{} {}".format(prompt_transition_phrase, starter_question)
 
             return starter_question, bot_labels, priority
@@ -134,21 +133,23 @@ class FamilyMemberTreelet(Treelet):
 
     @property
     def return_question_answer(self) -> str:
-        """Gives a response to the user if they ask the "return question" to our starter question"""
+        """Gives a response to the user if they ask the "return question" to our starter question
+        
+        DEPRECATED -- No need w/ blenderbot"""
         if not self.return_question_answers:
             raise NotImplementedError()
-        return self.state_manager.current_state.choose_least_repetitive(self.return_question_answers)
+        return self.choose(self.return_question_answers)
 
-    def edit_history_for_gpt2ed(self, history: List[str]) -> List[str]:
+    def edit_history_for_remote(self, history: List[str]) -> List[str]:
         """
-        Returns the history as it should be given as input to GPT2ED
+        Returns the history as it should be given as input to remote module
 
         Inputs:
             history: odd-length list of strings, starting and ending with user utterances, as it exists in the
                 neuralchat state.
 
         Returns:
-            new_history: odd-length list of strings, starting and ending with user utterances, as it should be fed to gpt2ed
+            new_history: odd-length list of strings, starting and ending with user utterances, as it should be fed to remote module
         """
         # Override the abstract class's function which only uses the "question part" of the starter question
         # We want to include the whole starter question (including "you mentioned your sister") because it gives necessary context
@@ -188,7 +189,7 @@ class SiblingsCousinsTreelet(FamilyMemberTreelet):
     _user_family_members = SIBLINGS_AND_COUSINS
 
 class KidsTreelet(FamilyMemberTreelet):
-    fallback_response = "It's so nice to hear about your little ones."
+    fallback_response = "It's so nice to hear about your children."
     return_question_answers = [
         "I don't have any kids myself, but I think being a parent is one of the most important jobs in the world.",
     ]
@@ -200,4 +201,3 @@ class PetsTreelet(FamilyMemberTreelet):
         "It's hard for me to keep a pet in the cloud, but if I could, I think a sloth would be nice to keep me company.",
     ]
     _user_family_members = PETS
-

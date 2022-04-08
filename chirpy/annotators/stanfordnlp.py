@@ -186,7 +186,7 @@ class StanfordnlpModule(Annotator):
     def __init__(self, state_manager: StateManager, timeout=1.5, url=None, input_annotations = []):
         super().__init__(state_manager=state_manager, timeout=timeout, url=url, input_annotations=input_annotations)
 
-    def get_default_response(self):
+    def get_default_response(self, input_data: dict = None):
         """The default response to be returned in case this module's execute fails, times out or is cancelled"""
         return {
             'nouns': [],

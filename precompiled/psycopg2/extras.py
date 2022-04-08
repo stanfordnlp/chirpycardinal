@@ -497,7 +497,6 @@ class StopReplication(Exception):
     `~psycopg2.Error` as occurrence of this exception does not indicate an
     error.
     """
-    pass
 
 
 class ReplicationCursor(_replicationCursor):

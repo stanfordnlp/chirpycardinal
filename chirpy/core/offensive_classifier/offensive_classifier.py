@@ -5,6 +5,7 @@ from chirpy.core.util import load_text_file, contains_phrase
 
 logger = logging.getLogger('chirpylogger')
 
+# SPECIAL_CHARS is copied from profanity_checker.py
 SPECIAL_CHARS = "!\"#$%&()+,./:;<=>?[\\]^_`{|}~"
 
 # Offensive phrases which are in offensive_phrases_preprocessed.txt, that you want to remove
@@ -12,16 +13,30 @@ SPECIAL_CHARS = "!\"#$%&()+,./:;<=>?[\\]^_`{|}~"
 REMOVE_FROM_BLACKLIST = set(['god', 'gods', 'ginger', 'gay', 'lesbian', 'lesbians', 'balls', 'crabs', 'dammit', 'damn',
                            'darn', 'dirty', 'murder', 'omg', 'organ', 'organs', 'queer', 'sandler', 'sandlers',
                            'rum', 'strips', 'pots', 'sexes', 'psycho', 'beaver', 'willy', 'mick', 'aryan', 'dink',
-                           'crackers', 'ugly', 'trashy', 'crappy', 'shitty', 'sucks', 'stupid', 'tart'])
+                           'crackers', 'ugly', 'trashy', 'crappy', 'shitty', 'sucks', 'stupid', 'tart', 'cracker', 'crackers'])
 
 # Offensive phrases which aren't in offensive_phrases_preprocessed.txt, that you want to add
 # These should be lowercase, but they can contain punctuation
 # You might want to add both singular and plural versions
+
+
 ADD_TO_BLACKLIST = set(['pornhub', 'penises', 'suicide', 'suicides', 'marijuana', 'poo', 'blood', 'stripper',
                         'strippers', 'sexually', 'my balls', 'his balls', 'no balls', 'pornographic', 'abortion',
-                        'torture', 'tortures', 'killed', 'killer', 'talk dirty', 'dirty talk', 'talking dirty',
-                        'dirty talking', 'prostitution', 'urinate', 'mating', 'feces', 'swine', 'excreted' ,'excrete'])
+                        'torture', 'tortures', 'killer', 'killing', 'talk dirty', 'dirty talk', 'talking dirty',
+                        'dirty talking', 'prostitution', 'urinate', 'mating', 'feces', 'swine', 'excreted' ,'excrete', 'blackface',
+                        'abusive', 'big gay al', 'big gay boat ride', 'misogyny'])
 
+ADD_TO_BLACKLIST_NEWS = set(['republican', 'democrat', 'election', 'elections', 'election fraud', 'trump', 'biden',
+                    'white house', 'jail', 'jailed', 'fatally', 'fatal', 'shooting', 'robbery',
+                    'gun', 'obama', 'rob', 'robber', 'robbers', 'robbed', 'prosecutor', 'protest', 'military', 'murder', 'murders',
+                    'death', 'deaths', 'arrest', 'arrested', 'nato', 'us-nato', 'sanction', 'sanctions',
+                    'sudan-israel', 'far-right', 'far-left', 'nazi', 'neo-nazi', 'neo-nazism',
+                    'missile', 'missiles', 'troop', 'troops', 'plead guilty', 'pleads guilty', 'special forces',
+                    'republicant', 'republicants', 'democrats', 'slaughter', 'slaughters', 'manslaughter', 'manslaughters',
+                    'fraud', 'frauds', 'suicidal', 'presidental transition', 'ballot', 'ballots', 'prison',
+                    'communist', 'communist party', 'communism', 'protester', 'protesters', 'war', 'homicide',
+                    'clinton', 'sanders', 'bush', 'pence', 'pelosi', 'palin', 'warren', 'harris', 'killed'])
+# killed shows up in a lot of fictional character bios for Wiki, so we don't want to block that
 
 # Inoffensive phrases that we don't want to classify as offensive, even though they contain a blacklisted phrase.
 # For example we don't want to classify 'kill bill' as offensive, but we don't want to remove 'kill' from the blacklist.
@@ -31,14 +46,14 @@ ADD_TO_BLACKLIST = set(['pornhub', 'penises', 'suicide', 'suicides', 'marijuana'
 WHITELIST_PHRASES = set(['kill bill', 'beavis and butt head', 'beavis and butt-head', 'beavis and butthead',
                          'kill a mockingbird', 'killer mockingbird', 'bloody mary', 'mick jagger', 'the mick',
                          "dick's sporting goods", 'lady and the tramp', 'jackson pollock', 'on the basis of sex',
-                         'sex and the city', 'sex education', 'willy wonka and the chocolate factory', 'lady and the tramp', 
+                         'sex and the city', 'sex education', 'willy wonka and the chocolate factory', 'lady and the tramp',
                          'suicide squad', "hell's kitchen", 'hells kitchen', 'jane the virgin',
                          'harry potter and the half blood prince', 'to kill a mockingbird', 'rambo last blood',
                          'shits creek', 'shit\'s creek', 'looney tunes', 'sniper', 'punky brewster',
                          'the good the bad and the ugly', 'pee wee herman', 'the ugly dachshund', 'xxx tentacion',
                          'lil uzi vert', 'lil uzi', 'young blood', 'chicken pot pie', 'pot roast', 'pop tarts',
                          'they suck', 'he\'s sexy', 'she\'s sexy', 'vegas strip', 'hell comes to frogtown',
-                         'dick van dyke', 'blood and bullets', 'blood prison', 'dick powell'])
+                         'dick van dyke', 'blood and bullets', 'blood prison', 'dick powell', 'comic strip', 'comic strips'])
 
 class OffensiveClassifier(object):
     """A class to load, and check text against, our preprocessed offensive phrases file"""
@@ -58,6 +73,12 @@ class OffensiveClassifier(object):
     def contains_offensive(self, text: str, log_message: str = 'text "{}" contains offensive phrase "{}"') -> bool:
         """
         Returns True iff text contains an offensive phrase.
+
+        This function copies the checking function in profanity_checker.py, however:
+            (a) we use contains_phrase rather than their _text_contains_exact_word_fast because contains_phrase is
+                faster when the blacklist is long
+            (b) we remove punctuation from text in the same way as profanity_checker.py, but we also try removing in
+                other ways and check those variants too.
         """
         # Lowercase
         text = text.lower().strip()
@@ -77,7 +98,7 @@ class OffensiveClassifier(object):
         # Remove all string.punctuation, replacing with ''.
         # Unlike the Amazon code, this will catch things like "pissin'".
         # "pissin" and "pissing" are in our blacklist, but "pissin'" is not.
-        texts.add(text.translate({ord(p): '' for p in string.punctuation}))
+        # texts.add(text.translate({ord(p): '' for p in string.punctuation}))
 
         # Remove all string.punctuation, replacing with ' '.
         # This will catch things like "fuck-day" or "shit's" where we have an offensive word ("fuck", "shit") connected
@@ -93,11 +114,20 @@ class OffensiveClassifier(object):
         for text in texts:
             if contains_phrase(text, self.blacklist, log_message, lowercase_text=False, lowercase_phrases=False,
                                remove_punc_text=False, remove_punc_phrases=False, max_phrase_len=self.blacklist_max_len):
+                logger.primary_info(f"[Offensive Classifier] Detected blacklisted word {text}")
+                return True
+
+        # dealing with false positives for "He'll"
+        if contains_phrase(text.translate({ord(p): '' for p in string.punctuation}), self.blacklist - {'hell'}, log_message, lowercase_text=False, lowercase_phrases=False,
+                           remove_punc_text=False, remove_punc_phrases=False, max_phrase_len=self.blacklist_max_len):
                 return True
         return False
 
 
 OFFENSIVE_CLASSIFIER = OffensiveClassifier()
+NEWS_OFFENSIVE_CLASSIFIER = OffensiveClassifier()
+NEWS_OFFENSIVE_CLASSIFIER.blacklist = NEWS_OFFENSIVE_CLASSIFIER.blacklist.union(ADD_TO_BLACKLIST_NEWS)
+NEWS_OFFENSIVE_CLASSIFIER.blacklist_max_len = max({len(phrase.split()) for phrase in NEWS_OFFENSIVE_CLASSIFIER.blacklist})
 
 
 def contains_offensive(text: str, log_message: str = 'text "{}" contains offensive phrase "{}"'):
@@ -112,6 +142,20 @@ def contains_offensive(text: str, log_message: str = 'text "{}" contains offensi
     Returns: True iff text contains an offensive phrase
     """
     return OFFENSIVE_CLASSIFIER.contains_offensive(text, log_message)
+
+def contains_offensive_news(text: str, log_message: str = 'text "{}" contains offensive phrase "{}"'):
+    """
+    Checks whether the text contains any offensive phrases on our blacklist for news rg only
+
+    Inputs:
+        text: the text to check. it will be lowercased and we will try various ways of removing punctuation to check
+            against the blacklist.
+        log_message: a str to be formatted with (text, offensive_phrase). An informative log message when the result is
+            True. If empty, no log message will be shown.
+    Returns: True iff text contains an offensive phrase
+    """
+
+    return NEWS_OFFENSIVE_CLASSIFIER.contains_offensive(text, log_message)
 
 
 if __name__ == "__main__":

@@ -47,6 +47,11 @@ from chirpy.core.entity_linker.util import NUMBER_ALTERNATIVES
 # Load stopwords
 STOPWORDS_FILEPATH = os.path.join(os.path.dirname(__file__), '../../data/long_stopwords.txt')
 STOPWORDS = load_text_file(STOPWORDS_FILEPATH)  # set of strings
+
+COMMONWORDS_FILEPATH = os.path.join(os.path.dirname(__file__), '../../data/common_words.txt')
+COMMONWORDS = load_text_file(STOPWORDS_FILEPATH)  # set of strings
+
+STOPWORDS.update(COMMONWORDS)
 STOPWORDS.update(set([str(x) for x in range(100)]))  # add single numbers
 STOPWORDS.update({w for word_set in NUMBER_ALTERNATIVES for w in word_set if len(w.split())==1})
 
@@ -58,7 +63,11 @@ DONT_LINK_WORDS = {w for w in STOPWORDS}
 DONT_LINK_WORDS.update(set(['alexa', 'question', 'subject', 'conversation', 'talk', 'chat', 'watched', 'watching',
                             'ok', 'well', 'bot', 'bots', 'chatbot', 'socialbot', 'social', 'lot', 'play', 'played', 'playing',
                             'robot', 'hmm', 'book', 'ate', 'forget', 'yummy', 'goodbye', 'cancel', 'rating', 'eating',
-                            'lol', 'nevermind', 'choose', 'people', 'actor', 'actors', 'belief', 'beliefs']))
+                            'lol', 'nevermind', 'choose', 'people', 'actor', 'actors', 'belief', 'beliefs', 'ai',
+                            'subject', 'love', 'tone', 'song', 'sound', 'live', 'book', 'reading', 'flavor', 'scouts',
+                            'tomorrow', 'today', 'yesterday', 'truth', 'false', 'dream', 'yes', 'no', 'color',
+                            'mom', 'dad', 'mommy', 'daddy', 'sister', 'brother', 'aunt', 'uncle', 'parent', 'house',
+                            'idiot', 'drink', 'echo', 'film', 'over', 'hello', 'skip']))
 assert all([len(span.split()) == 1 for span in DONT_LINK_WORDS]), 'Only put unigrams in DONT_LINK_WORDS'
 
 # Load spoken unigram frequencies from chirpy/data/2_2_spokenvwritten.txt
@@ -97,8 +106,14 @@ LOW_PREC_SPANS = set(
    'now that', 'of course', 'off of', 'on behalf of', 'on board', 'on to', 'on top of', 'once again',
    'one another', 'other than', 'out of', 'outside of', 'over here', 'over there', 'per cent', 'prior to',
    'rather than', 'so that', 'sort of', 'straight away', 'subject to', 'such as', 'that is', 'up to',
-   'up to date', 'whether or not', 'with regard to', 'read', 'celebrity', 'kid', 'idea', 'big fan'])
-
+   'up to date', 'whether or not', 'with regard to', 'read', 'celebrity', 'kid', 'idea', 'big fan',
+   'bad', 'nice', 'cook', 'cooking',
+   'red', 'blue', 'green', 'yellow', 'orange', 'black', 'purple', 'chartreuse', 'white', 'gray', 'pink' # colors
+   ])          # Michael Jackson
+LOW_PREC_FILEPATH = os.path.join(os.path.dirname(__file__), 'low_prec.txt')
+SHORT_KEYS_FILEPATH = os.path.join(os.path.dirname(__file__), 'short_keys.txt')
+LOW_PREC_SPANS |= load_text_file(LOW_PREC_FILEPATH)
+LOW_PREC_SPANS |= load_text_file(SHORT_KEYS_FILEPATH)
 
 class ManualLink(object):
     """Represents a manually-linked entity and how to handle it"""
@@ -121,7 +136,15 @@ MANUAL_SPAN2ENTINFO = {
     'animal': ManualLink('https://en.wikipedia.org/wiki/Animal', delete_alternative_entities=True),
     'movies': ManualLink('https://en.wikipedia.org/wiki/Film', delete_alternative_entities=True),
     'movie': ManualLink('https://en.wikipedia.org/wiki/Film', delete_alternative_entities=True),
+
+    'fortnite': ManualLink('https://en.wikipedia.org/wiki/Fortnite_Battle_Royale', delete_alternative_entities=True),
+
+    # for NEWS RG
     'technology': ManualLink('https://en.wikipedia.org/wiki/Technology', delete_alternative_entities=True),
+    'entertainment': ManualLink('https://en.wikipedia.org/wiki/Entertainment', delete_alternative_entities=True, force_high_prec=True),
+    'health': ManualLink('https://en.wikipedia.org/wiki/Health', delete_alternative_entities=True, force_high_prec=True),
+    'business': ManualLink('https://en.wikipedia.org/wiki/Business', delete_alternative_entities=True, force_high_prec=True),
+    'science': ManualLink('https://en.wikipedia.org/wiki/Science', delete_alternative_entities=True, force_high_prec=True),
     'sports': ManualLink('https://en.wikipedia.org/wiki/Sport', delete_alternative_entities=True),
     'sport': ManualLink('https://en.wikipedia.org/wiki/Sport', delete_alternative_entities=True),
     'book': ManualLink('https://en.wikipedia.org/wiki/Book', delete_alternative_entities=True),
@@ -137,6 +160,13 @@ MANUAL_SPAN2ENTINFO = {
     'celebrity': ManualLink('https://en.wikipedia.org/wiki/Celebrity', delete_alternative_entities=True),
     'celebrities': ManualLink('https://en.wikipedia.org/wiki/Celebrity', delete_alternative_entities=True),
     'read': ManualLink('https://en.wikipedia.org/wiki/Reading', delete_alternative_entities=True),
+    'sandwiches': ManualLink('https://en.wikipedia.org/wiki/Sandwich', delete_alternative_entities=True),
+    'sandwich': ManualLink('https://en.wikipedia.org/wiki/Sandwich', delete_alternative_entities=True),
+    'skits': ManualLink('https://en.wikipedia.org/wiki/Skit', delete_alternative_entities=True),
+    'chicken nugget': ManualLink('https://en.wikipedia.org/wiki/Chicken_nugget', delete_alternative_entities=True),
+    'chicken nuggets': ManualLink('https://en.wikipedia.org/wiki/Chicken_nugget', delete_alternative_entities=True),
+    'san francisco': ManualLink('https://en.wikipedia.org/wiki/San_Francisco', delete_alternative_entities=True),
+    'san jose': ManualLink('https://en.wikipedia.org/wiki/San_Jose,_California', delete_alternative_entities=True),
 
     'ahmaud arbery': ManualLink('https://en.wikipedia.org/wiki/Shooting_of_Ahmaud_Arbery', force_high_prec=True, delete_alternative_entities=True),
     'breonna taylor': ManualLink('https://en.wikipedia.org/wiki/Institutional_racism', force_high_prec=True, delete_alternative_entities=True),
@@ -157,13 +187,39 @@ MANUAL_SPAN2ENTINFO = {
     'world war one': ManualLink('https://en.wikipedia.org/wiki/World_War_I', force_high_prec=True, delete_alternative_entities=True),
     'world war i': ManualLink('https://en.wikipedia.org/wiki/World_War_I', force_high_prec=True, delete_alternative_entities=True),
     'mac and cheese': ManualLink('https://en.wikipedia.org/wiki/Macaroni_and_cheese', force_high_prec=True, delete_alternative_entities=True),
+    'taylor swift': ManualLink('https://en.wikipedia.org/wiki/Taylor_Swift', force_high_prec=True, delete_alternative_entities=True),
     'darwins game': ManualLink('https://en.wikipedia.org/wiki/Darwin\'s_Game', force_high_prec=True),
     'sam and cat': ManualLink('https://en.wikipedia.org/wiki/Sam_&_Cat', force_high_prec=True),  # problem is with the ampersand. proper solution would be to convert ampersand to "and" in the ES index anchortexts
     'austin and ally': ManualLink('https://en.wikipedia.org/wiki/Austin_&_Ally', force_high_prec=True),  # problem is with the ampersand. proper solution would be to convert ampersand to "and" in the ES index anchortexts
     "magic for humans": ManualLink('https://en.wikipedia.org/wiki/Magic_for_Humans', force_high_prec=True),
     'cookies': ManualLink('https://en.wikipedia.org/wiki/Cookie', force_high_prec=True),
     'pets': ManualLink('https://en.wikipedia.org/wiki/Pet', force_high_prec=True),
+    'tiger': ManualLink('https://en.wikipedia.org/wiki/Tiger', force_high_prec=True),
+    'gummy': ManualLink('https://en.wikipedia.org/wiki/Gummy_candy', force_high_prec=True, delete_alternative_entities=True),
+    'tigers': ManualLink('https://en.wikipedia.org/wiki/Tiger', force_high_prec=True),
+    'john adams': ManualLink('https://en.wikipedia.org/wiki/John_Adams', force_high_prec=True),
+    'wings of fire': ManualLink('https://en.wikipedia.org/wiki/Wings_of_Fire_(novel_series)', force_high_prec=True, delete_alternative_entities=True),
+    'horse': ManualLink('https://en.wikipedia.org/wiki/Horse', force_high_prec=True, delete_alternative_entities=True),
+    'horses': ManualLink('https://en.wikipedia.org/wiki/Horse', force_high_prec=True, delete_alternative_entities=True),
+    'victorious': ManualLink('https://en.wikipedia.org/wiki/Victorious', force_high_prec=False),
+    'chocolate chips': ManualLink('https://en.wikipedia.org/wiki/Chocolate_chip', force_high_prec=False, delete_alternative_entities=True),
+    'chocolate chip': ManualLink('https://en.wikipedia.org/wiki/Chocolate_chip', force_high_prec=False, delete_alternative_entities=True),
+    'penguin': ManualLink('https://en.wikipedia.org/wiki/Penguin', force_high_prec=True, delete_alternative_entities=True),
+    'penguins': ManualLink('https://en.wikipedia.org/wiki/Penguin', force_high_prec=True, delete_alternative_entities=True),
+    'potatoes': ManualLink('https://en.wikipedia.org/wiki/Potato', force_high_prec=True, delete_alternative_entities=True),
+    'potato': ManualLink('https://en.wikipedia.org/wiki/Potato', force_high_prec=True, delete_alternative_entities=True),
 
+    # Entity Linker
+    'alaska': ManualLink('https://en.wikipedia.org/wiki/Alaska'),
+    'chess': ManualLink('https://en.wikipedia.org/wiki/Chess'),
+    'joe biden': ManualLink('https://en.wikipedia.org/wiki/Joe_Biden'),
+    'brownies': ManualLink('https://en.wikipedia.org/wiki/Chocolate_brownie', force_high_prec=True, delete_alternative_entities=True)
+}
+
+MANUAL_TALKABLE_NAMES = {
+    'hamburger': 'hamburgers',
+    'chocolate brownie': 'brownies',
+    'apple': 'apples'
 }
 
 

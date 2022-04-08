@@ -1,14 +1,13 @@
 from chirpy.core.entity_linker.entity_groups import ENTITY_GROUPS_FOR_CLASSIFICATION
 from chirpy.core.entity_linker.entity_linker_simple import get_entity_by_wiki_name
-from chirpy.core.util import get_es_host
 import psycopg2
-import os
 
-host_stream = "localhost"
+host_stream = 'twitter-opinions.cx4nfaa5bt0l.us-east-1.rds.amazonaws.com'
+# host_stream = 'localhost'
 port = 5432
 database = 'twitter_opinions'
-user = os.environ.get('POSTGRES_USER')
-password = os.environ.get('POSTGRES_PASSWORD')
+user = 'postgres'
+password = 'qyhqae-4Sepzy-zecget'
 
 def fetch_sql(sql_statement):
     conn = psycopg2.connect(host=host_stream, port=port, database=database, user=user, password=password)

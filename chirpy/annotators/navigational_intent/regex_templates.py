@@ -1,7 +1,7 @@
 from chirpy.core.regex.regex_template import RegexTemplate
 from chirpy.core.regex.util import one_or_more_spacesep, oneof, NONEMPTY_TEXT, OPTIONAL_TEXT_PRE, OPTIONAL_TEXT_POST
 from chirpy.core.regex.word_lists import INTENSIFIERS
-from chirpy.response_generators.fallback_response_generator import FALLBACK_PROMPTS
+from chirpy.response_generators.fallback.response_templates import FALLBACK_PROMPTS
 from chirpy.response_generators.neural_chat.util import question_part
 
 
@@ -23,6 +23,8 @@ TALK = [
     'learning',
     'tell',
     'telling',
+    'speak',   # people ACTUALLY say this — Ethan
+    'to know'
 ]
 
 THIS = [
@@ -136,7 +138,8 @@ POSITIVE_NAVIGATION = [
 
     # This posnav template needs a posnav anchor (like "let's", "i", "can"), then one or more talk_phrases.
     # Anything can precede except "why do"
-    "(?<!why do ){anchor} {talk_phrase}".format(anchor=one_or_more_spacesep(POSNAV_ANCHORS), talk_phrase=one_or_more_spacesep([TALK_PHRASE])),
+    "(?<!why do ){anchor} {talk_phrase}".format(anchor=one_or_more_spacesep(POSNAV_ANCHORS),
+                                                talk_phrase=one_or_more_spacesep([TALK_PHRASE])),
 
     # This posnav template doesn't need a posnav anchor, but the talk phrase needs to be at the beginning of the utterance
     # We optionally allow "no" at the beginning of the utterance. This is not in TALK_PHRASE_PRECEDERS because it might signal
@@ -163,6 +166,8 @@ NEGNAV_ANCHORS = [
     "weren't",
     "quit",
     "i'm done",
+    "tired of",
+    "hate"
 ]
 
 NEGATIVE_NAVIGATION = [
@@ -182,6 +187,11 @@ NAV_QUESTION = [
     "what ((are|is it|that|topic|subject) )*(you|you're) {interested_in}".format(interested_in=one_or_more_spacesep([INTERESTED_IN])),
 ] + [question_part(q.lower()) for q in FALLBACK_PROMPTS]
 
+HATE_PHRASE = [
+    "i hate",
+    "i don't like",
+]
+
 class NegativeNavigationTemplate(RegexTemplate):
     """
     This template captures when the user is expressing a negative navigational intent like
@@ -189,14 +199,23 @@ class NegativeNavigationTemplate(RegexTemplate):
     """
     slots = {
         'change_the_subject': "(?<!don't )(change|new) (the )?(subject|category|topic)",
+        'why_would_i': "why would (i|you)",
+        'skip': "(let\'s )?skip( this)?",
         'nav': one_or_more_spacesep(NEGATIVE_NAVIGATION),
-        'nav_about': one_or_more_spacesep(['{} about'.format(oneof(NEGATIVE_NAVIGATION))]),
+        'nav_about': one_or_more_spacesep([f'{oneof(NEGATIVE_NAVIGATION)} about']),
         'topic': NONEMPTY_TEXT,
+        'change': "((move|change|switch) to|(talk|chat|discuss) about|discuss)",
+        'subject': "(something else|(another|some other) (thing|subject|category|topic))",
+        'hate': HATE_PHRASE,
     }
     templates = [
         OPTIONAL_TEXT_PRE + "{change_the_subject}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{why_would_i}" + OPTIONAL_TEXT_POST,
+        "{skip}",
         OPTIONAL_TEXT_PRE + "{nav_about}( {topic})?",
         OPTIONAL_TEXT_PRE + "{nav}( {topic})?",
+        OPTIONAL_TEXT_PRE + "{change} {subject}",
+        OPTIONAL_TEXT_PRE + "{hate} {topic}",
     ]
     positive_examples = [
         ('change the subject', {'change_the_subject': 'change the subject'}),
@@ -212,6 +231,9 @@ class NegativeNavigationTemplate(RegexTemplate):
         ("stop talking", {'nav': "stop talking"}),
         ("i'm not interested in spiders", {'nav': "not interested in", 'topic': 'spiders'}),
         ("we were never really interested in spiders", {'nav': "never really interested in", 'topic': 'spiders'}),
+        ("i'm tired of talking about movies", {'nav_about': 'tired of talking about', 'topic': 'movies'}),
+        ("i hate talking about this", {'nav_about': 'hate talking about', 'topic': 'this'}),
+        ("i hate basketball", {'hate': 'i hate', 'topic': 'basketball'}),
     ]
     negative_examples = [
         'talk about movies',
@@ -220,6 +242,7 @@ class NegativeNavigationTemplate(RegexTemplate):
         "why don't you want to talk about it",
         "i'm interested in spiders",
         "why are you interested in spiders",
+        # "i hate it"
     ]
 
 
@@ -268,6 +291,7 @@ class PositiveNavigationTemplate(RegexTemplate):
         ("have you ever heard of ariel osbourne", {'nav': 'you ever heard of', 'topic': 'ariel osbourne'}),
         ("what do you think about veganism", {'nav_about': 'what do you think about', 'topic': 'veganism'}),
         ("let's switch topics what do you think is going to happen", {'nav': 'what do you think', 'topic': 'is going to happen'}),
+        ("yes i want to know about snow because i like snow", {'nav_about': 'i want to know about', 'topic': 'snow because i like snow'})
     ]
     negative_examples = [
         "into politics",
@@ -279,6 +303,8 @@ class PositiveNavigationTemplate(RegexTemplate):
         "do you think i'm cool",
         "i haven't heard of it",
         "do you think so",
+        "i don't know about that",
+        "i don't know"
     ]
 
 

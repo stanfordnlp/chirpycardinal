@@ -1,0 +1,40 @@
+I also [verb] [thing].	love; taylor swift	Taylor swift is such a great singer.
+I also [verb] [thing].	support; taylor swift	I am a big fan of Taylor swift.
+I also [verb] [thing].	enjoy; pasta	My favorite dish to make is pasta.
+I also [verb] [thing].	dislike; homework	Homework is so tough and boring.
+I also [verb] [thing].	listen;	to Beethoven	Beethoven has composed so much music that is still played today.
+I also [verb] [thing].	avoid; spiders	I think spiders are terrifying and don't want to be around them.
+I also feel [thing] is [adjective].	travel; important	I think travel is really important for a good life.
+I also feel [thing] is [adjective].	Italy; beautiful	Italy is a picturesque place to visit.
+I also feel [thing] is [adjective].	Taylor Swift; entertaining	I love watching taylor swift perform at concerts.
+I also feel [thing] is [adjective].	Michael Jordan; the greatest	Michael Jordan is the best basketball player ever.
+I also feel [thing] is [adjective].	dogs; cute	My dog is the cutest thing in the world.
+I also feel [thing] is [adjective].	The Dark Knight; suspensful	The Dark Knight was such a suspensful movie.
+I do think [thing] is a [adjective] [noun].	Eminem; talented; rapper	Eminem is one of the best rappers of all-time because of his lyrical talent.
+I do think [thing] is a [adjective] [noun].	Twilight; great; movie	My favorite movie ever was Twilight.
+I do think [thing] is a [adjective] [noun].	New York; diverse; city	When I visited New York City, I saw so many diverse cultures.
+I do think [thing] is a [adjective] [noun].	Lebron James; impactful; athlete	Lebron James has made a huge impact off the basketball court.
+I do think [thing] is a [adjective] [noun].	Burj Khalifa; cool; building	I've always wanted to visit the Burj Khalifa because it's awesome.
+I do think [thing] is a [adjective] [noun].	the Goblet of Fire; thrilling; book	The Goblet of Fire was my favorite book in the Harry Potter series because it was so exciting.
+Yeah, [action] is very [adjective].	Cooking; relaxing	Cooking is an activity many enjoy because it alleviates stress.
+Yeah, [action] is very [adjective].	reading; educational	An important part of school is reading to learn necessary concepts.
+Yeah, [action] is very [adjective].	watching television; fun	My favorite part of the weekends is being able to watch television.
+Yeah, [action] is very [adjective].	playing basketball; strenuous	An athletic activity that requires considerable athletic and physical effort is playing basketball.
+Yeah, [action] is very [adjective].	painting; difficult	It requires a lot of skill to be able to paint well.
+Yeah, [action] is very [adjective].	driving; calming	Driving can alleviate stress and calm individuals down.
+I'm also passionate about [thing].	Astronomy	Astronomy is a natural science that studies celestial objects and phenomena.
+I'm also passionate about [thing].	football	NFL Football is the most popular league in America.
+I'm also passionate about [thing].	dogs	Americans spend billions of dollars on their dogs.
+I think you're right that <mask>.	Italy has the best soccer team	I think that the country with the best national soccer team is Italy.
+I think you're right that <mask>.	Taylor Swift is successful	I think Taylor swift is one of the most succesful singers.
+I think you're right that <mask>.	Rachel was super funny in Friends	My favorite character in Friends was rachel because she was so funny.
+Yeah, what you're saying about <mask> makes sense.	the tase of truffles	Truffles have a very pungent, earthy taste. 
+Yeah, what you're saying about <mask> makes sense.	pancakes	My favorite breakfast food is pancakes.
+Yeah, what you're saying about <mask> makes sense.	Tom Hank's career	Tom Hanks has had such a great career, especially when he acted in Forrest Gump.
+I'm glad you learned about <mask>.	serena williams	Serena Williams is one of the greatest tennis players and has won 23 grand slams.
+I'm glad you learned about <mask>.	The Denver Broncos	The Denver Broncos has won three super bowls.
+I'm glad you learned about <mask>.	the tourist attractions in London	Tourists love to visit London because of the Buckingham Palace and The Tower of London.
+Yes, <mask> really is [adjective].	Men In Black; popular	Men in Black is one of the most popular movies ever.
+Yes, <mask> really is [adjective].	skiing in the alps; exciting	I was so excited to be able to ski in the alps last year.
+Yes, <mask> really is [adjective].	starbucks coffee; addicting	Starbucks is extremely popular because its coffee is so addicting.
+Yes, <mask> really is [adjective].	eating dessert; satisfying	People typically enjoy eating dessert after dinner.

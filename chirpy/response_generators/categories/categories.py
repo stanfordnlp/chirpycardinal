@@ -1,10 +1,10 @@
 """This file is for the manually-curated categories questions we ask"""
 
-from typing import Optional, List, Dict
+from typing import List, Optional
 from dataclasses import dataclass
 from chirpy.core.entity_linker.entity_groups import ENTITY_GROUPS_FOR_EXPECTED_TYPE, EntityGroup
 
-class CategoryQuestion(object):
+class CategoryQuestion:
     """A class to represent a question the categories RG can ask"""
 
     def __init__(self, question: str, cur_entity_wiki_name: str, expected_type: Optional[EntityGroup]):
@@ -28,35 +28,16 @@ class CategoryQuestion(object):
 #     expected_type: Optional[str]  # if str, is a wikidata class that we expect the user's answer to be a member of (see WikiEntity.wikidata_categories). if None, we don't specify an expected class
 
 @dataclass
-class Category(object):
+class Category:
     """A class to represent a category supported by the categories RG"""
     activation_phrases: List[str]  # the phrases that, if said by user, activate this category
- 
     generic_prompt = False
 
-class SportsCategory(Category):
-    activation_phrases = ['sports']
-    questions = [
-        CategoryQuestion("What kind of sport do you like?", 'Sport', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("What team do you support?", 'Sport', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("Who's a player that you like?", 'Sport', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-    ]
-    personal_opinions = [
-        CategoryQuestion("I love lots of sports, but I think soccer is the most fun to watch.", 'Association football', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("I think it's really fun to root for a sport team! I love the Golden State Warriors", 'Golden State Warriors', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("I always ask people about their favorite athlete. Mine is Michael Jordan. His record is unbeatable.", 'Michael Jordan', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-    ]
-    personal_experiences = [
-        CategoryQuestion("I've always had an ambition to run a marathon. Maybe I should finally start training for it.", 'Marathon', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("Last year, I got to see the Golden State Warriors play basketball. It was so exciting!", 'Golden State Warriors', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("Growing up, I wanted to become an athlete like Serena Williams. It's too bad we don't have tennis courts in the cloud!", 'Serena Williams', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-    ]
-    general_statements = [
-        CategoryQuestion("It's amazing how many weird and wonderful sports there are in the world. For example, in England, there's an annual race where people chase a wheel of cheese down a hill.", "Cooper's Hill Cheese-Rolling and Wake", ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("Many people love watching football. The Super Bowl is the most watched television broadcast in the United States.", 'Super Bowl', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("Many people have a favorite athlete growing up! Lots of my friends say their favorite athlete was Michael Jordan.", 'Michael Jordan', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-    ]
-    generic_prompt = False
+# with open('categories.json', 'r') as f:
+#     categories = json.load(f)
+
+# for category in categories:
+
 
 class GamesCategory(Category):
     activation_phrases = ['video games', 'video game', 'gaming', 'game', 'games']
@@ -162,35 +143,35 @@ class BooksCategory(Category):
     generic_prompt = False
 
 
-class FootballCategory(Category):
-    activation_phrases = ['football']
-    questions = [
-        CategoryQuestion("What team do you support?", 'Football', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("Who's a player that you like?", 'Football', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-    ]
-    generic_prompt = False
+# class FootballCategory(Category):
+#     activation_phrases = ['football']
+#     questions = [
+#         CategoryQuestion("What team do you support?", 'Football', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
+#         CategoryQuestion("Who's a player that you like?", 'Football', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
+#     ]
+#     generic_prompt = False
 
 
-class FoodCategory(Category):
-    # See neuralchat food treelet to avoid repeating questions
-    activation_phrases = ['food']
-    questions = [
-        CategoryQuestion("What's a food that you never get tired of eating?", 'Food', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-        CategoryQuestion("What's your favorite snack?", 'Food', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-    ]
-    personal_opinions = [
-       CategoryQuestion("Ice cream is my favorite food. There are so many different flavors to try!", 'Ice cream', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-       CategoryQuestion("Pizza is delicious. It's too bad that you can't order delivery to the cloud!", 'Pizza', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-    ]
-    personal_experiences = [
-        CategoryQuestion("My favorite part of quarantine is the snacks. I ate so much ice cream yesterday!", 'Ice cream', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-        CategoryQuestion("I had the best ramen last night. It was delicious.", 'Ramen', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-    ]
-    general_statements = [
-        CategoryQuestion("I heard that more than 3 billion pizzas are sold in America every year. It's one of the most popular foods!", 'Pizza', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-        CategoryQuestion("I just learned a weird fact about food: bananas are berries, but strawberries aren’t.", 'Strawberry', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
-    ]
-    generic_prompt = True
+# class FoodCategory(Category):
+#     # See neuralchat food treelet to avoid repeating questions
+#     activation_phrases = ['food']
+#     questions = [
+#         CategoryQuestion("What's a food that you never get tired of eating?", 'Food', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#         CategoryQuestion("What's your favorite snack?", 'Food', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#     ]
+#     personal_opinions = [
+#        CategoryQuestion("Ice cream is my favorite food. There are so many different flavors to try!", 'Ice cream', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#        CategoryQuestion("Pizza is delicious. It's too bad that you can't order delivery to the cloud!", 'Pizza', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#     ]
+#     personal_experiences = [
+#         CategoryQuestion("My favorite part of quarantine is the snacks. I ate so much ice cream yesterday!", 'Ice cream', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#         CategoryQuestion("I had the best ramen last night. It was delicious.", 'Ramen', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#     ]
+#     general_statements = [
+#         CategoryQuestion("I heard that more than 3 billion pizzas are sold in America every year. It's one of the most popular foods!", 'Pizza', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#         CategoryQuestion("I just learned a weird fact about food: bananas are berries, but strawberries aren’t.", 'Strawberry', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+#     ]
+#     generic_prompt = True
 
 
 class ArtCategory(Category):
@@ -212,13 +193,14 @@ class CarsCategory(Category):
     generic_prompt = False
 
 
-class BasketballCategory(Category):
-    activation_phrases = ['basketball']
-    questions = [
-        CategoryQuestion("What team do you support?", 'Basketball', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-        CategoryQuestion("Who's a player that you like?", 'Basketball', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
-    ]
-    generic_prompt = False
+# handled by Sports RG
+# class BasketballCategory(Category):
+#     activation_phrases = ['basketball']
+#     questions = [
+#         CategoryQuestion("What team do you support?", 'Basketball', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
+#         CategoryQuestion("Who's a player that you like?", 'Basketball', ENTITY_GROUPS_FOR_EXPECTED_TYPE.sport_related),
+#     ]
+#     generic_prompt = False
 
 
 class SchoolCategory(Category):
@@ -313,7 +295,7 @@ class CookingCategory(Category):
         CategoryQuestion("My favorite part of cooking is when I get to eat what I made. Especially when it's pizza!", 'Pizza', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
     ]
     personal_experiences = [
-        CategoryQuestion("I made pasta for dinner last night. It was delicious!", 'Pasta', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
+        CategoryQuestion("I made pasta for dinner last night. It was delicious and such a fun and relaxing way to end my day!", 'Pasta', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
         CategoryQuestion("Last weekend, I baked a cake. I've been baking more during quarantine and it's a lot of fun.", 'Baking', ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related),
     ]
     general_statements = [

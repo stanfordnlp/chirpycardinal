@@ -2,7 +2,7 @@ import json
 import logging
 import operator
 
-from typing import List, Dict, Optional
+from typing import Dict, Optional
 
 from chirpy.core.callables import Annotator, get_url
 from chirpy.core.state_manager import StateManager
@@ -31,14 +31,14 @@ NO = {"no", "nope", "nah", "not really", "incorrect", "under no circumstances","
         "negative", "never", "not on your life", "no way", "no way Jose", "nay", "don't think so", "disagree", "rather not"}
 
 class DialogActAnnotator(Annotator):
-    name='dialog_act'
+    name='dialogact'
     def __init__(self, state_manager: StateManager, timeout=1.5, url=None, input_annotations = []):
         super().__init__(state_manager=state_manager, timeout=timeout, url=url, input_annotations=input_annotations)
 
     def get_default_response(self, input_data: Optional[Dict] = None):
         """The default response to be returned in case this module's execute fails, times out or is cancelled"""
         return {'probdist': dict(zip(DIALOG_ACTS, [0]*len(DIALOG_ACTS))),
-                'top_1': None, 'is_yes_answer': False, 'is_no_answer': False}
+                'top_1': None, 'is_yes_answer': False, 'is_no_answer': False, 'personal_issue_score': 0., 'top_2': None}
 
     def get_top_pred(self, pred_proba):
         """
@@ -46,9 +46,12 @@ class DialogActAnnotator(Annotator):
             pred_proba (Dict): Dict where keys are dialog acts and values are the predicted probabilities
 
         Returns:
-            dialog_act (String): the dialog act with the highest probability
+            dialogact (String): the dialog act with the highest probability
         """
         return max(pred_proba.items(), key=operator.itemgetter(1))[0]
+
+    def get_top_k_pred(self, pred_proba, k):
+        return [x[0] for x in sorted(pred_proba.items(), key=operator.itemgetter(1), reverse=True)][:k]
 
     def is_yes(self, utterance, pred_proba):
         """
@@ -120,22 +123,23 @@ class DialogActAnnotator(Annotator):
         logger.primary_info(f'Calling Dialog Act Classifier Remote module with data="{data}"')
 
         output = self.remote_call(data)
-        if output is None:
+        if output is None or 'response' not in output:
             default_response = self.get_default_response()
             logger.info(f'{type(self).__name__} using default response: {default_response}')
             return default_response
-
+        logger.primary_info(f'Received Dialog Act Classifier remote module response="{output}"')
         pred_probas = output['response']
-
         # top label will be the key of the item with the max value
-        top_1s = [self.get_top_pred(pred) for pred in pred_probas]
+        top_ks = [self.get_top_k_pred(pred_proba, k=2) for pred_proba in pred_probas]
+        top_1s = [x[0] for x in top_ks]
+        top_2s = [x[1] for x in top_ks]
         is_yes_answers = [self.is_yes(u, p) for u, p in zip(utterances, pred_probas)]
         is_no_answers = [self.is_no(u, p) for u, p in zip(utterances, pred_probas)]
-
-        dict_list = [{'probdist': pred_proba, 'top_1': top_1,
-                        'is_yes_answer': is_yes_answer, 'is_no_answer': is_no_answer}
-                        for pred_proba, top_1, is_yes_answer, is_no_answer \
-                        in list(zip(pred_probas, top_1s, is_yes_answers, is_no_answers))]
+        dict_list = [{'probdist': pred_proba, 'top_1': top_1, 'top_2': top_2,
+                        'is_yes_answer': is_yes_answer, 'is_no_answer': is_no_answer,
+                      'personal_issue_score': 0.}
+                        for pred_proba, top_1, top_2, is_yes_answer, is_no_answer \
+                        in list(zip(pred_probas, top_1s, top_2s, is_yes_answers, is_no_answers))]
 
         logger.primary_info(f'Dialog acts top 1 predictions are "{top_1s}"')
 
@@ -160,4 +164,3 @@ if __name__ == "__main__":
     module = TestModule(url)
     output = module.execute({'instances': [{"context": "do you want to talk about movies?", "utterance": "i don't"}]}).json()
     print(output)
-

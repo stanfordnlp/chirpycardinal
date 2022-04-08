@@ -1,18 +1,19 @@
 import json
 import logging
-import operator
 
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional  # NOQA
 
 from chirpy.core import flags
 from chirpy.core.callables import Annotator, get_url
 from chirpy.core.state_manager import StateManager
 from chirpy.core.util import contains_phrase
+from chirpy.core.regex.templates import CurrentEventsTemplate
 
 logger = logging.getLogger('chirpylogger')
 
 #For reference
 QUESTION_THRESHOLD = 0.60
+
 
 class QuestionAnnotator(Annotator):
     name='question'
@@ -46,6 +47,12 @@ class QuestionAnnotator(Annotator):
         if not input_data['utterance']:
             return self.get_default_response()
 
+        if CurrentEventsTemplate().execute(input_data['utterance']):
+            question_prob = 0.
+            is_question = False
+            logger.primary_info("Detected Current Events intent, setting is_question=False and question_prob=0")
+            return {"question_prob": question_prob, "is_question": is_question}
+
         # NOTE: Errors thrown (including ones for timeouts) are not caught here. They should be caught by the caller.
         # Don't return default response here. That will be handled by save_and_execute.
         # Just catch new errors and throw them, or return the result
@@ -53,13 +60,22 @@ class QuestionAnnotator(Annotator):
         logger.primary_info(f'Calling Question Classifier Remote module with data="{input_data}"')
 
         output = super().remote_call(input_data)
+        logger.primary_info(f"Question Classifier Remote module returned output: {output}")
+
         if output is None:
             default_response = self.get_default_response()
-            logger.info(f'{type(self).__name__} using default response: {default_response}')
+            logger.warning(f'{type(self).__name__} using default response: {default_response}')
             return default_response
 
-        question_prob = output['response'][0]
-        is_question = (question_prob >= QUESTION_THRESHOLD)
+        try:
+            question_prob = output['response'][0]
+            is_question = (question_prob >= QUESTION_THRESHOLD)
+        except KeyError:
+            default_response = self.get_default_response()
+            logger.warning(f'{type(self).__name__} using default response: {default_response}')
+            return default_response
+
+
 
         output_dict = {"question_prob": question_prob, "is_question": is_question}
 
@@ -81,4 +97,3 @@ if __name__ == "__main__":
     module = TestModule(url)
     output = module.execute({"utterance": "my day was good how about you"}).json()
     print(output)
-

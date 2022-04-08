@@ -1,5 +1,4 @@
 from collections import Counter
-from difflib import SequenceMatcher
 from editdistance import eval as editdist
 import re
 from typing import List, Iterable

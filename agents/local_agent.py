@@ -9,19 +9,23 @@ import time
 from typing import Dict
 
 from chirpy.response_generators.launch.launch_response_generator import LaunchResponseGenerator
-from chirpy.response_generators.fallback_response_generator import FallbackResponseGenerator
-#from chirpy.response_generators.red_question_response_generator import RedQuestionResponseGenerator
+from chirpy.response_generators.fallback.fallback_response_generator import FallbackResponseGenerator
+#from chirpy.response_generators.red_question.red_question_response_generator import RedQuestionResponseGenerator
 from chirpy.response_generators.offensive_user.offensive_user_response_generator import OffensiveUserResponseGenerator
-from chirpy.response_generators.wiki.wiki_response_generator import WikiResponseGenerator
+from chirpy.response_generators.wiki2.wiki_response_generator import WikiResponseGenerator
+from chirpy.response_generators.food.food_response_generator import FoodResponseGenerator
 from chirpy.response_generators.opinion2.opinion_response_generator import OpinionResponseGenerator2
 from chirpy.response_generators.neural_chat.neural_chat_response_generator import NeuralChatResponseGenerator
 from chirpy.response_generators.categories.categories_response_generator import CategoriesResponseGenerator
-from chirpy.response_generators.one_turn_hack_response_generator import OneTurnHackResponseGenerator
-from chirpy.response_generators.neural_fallback_response_generator import NeuralFallbackResponseGenerator
-from chirpy.response_generators.closing_confirmation_response_generator import ClosingConfirmationResponseGenerator
-from chirpy.response_generators.complaint_response_generator import ComplaintResponseGenerator
-from chirpy.response_generators.acknowledgment.acknowledgment_response_generator import AcknowledgmentResponseGenerator
+from chirpy.response_generators.neural_fallback.neural_fallback_response_generator import NeuralFallbackResponseGenerator
+from chirpy.response_generators.closing_confirmation.closing_confirmation_response_generator import ClosingConfirmationResponseGenerator
+
+## TODO: fix the PSQL endpoint
 from chirpy.response_generators.music.music_response_generator import MusicResponseGenerator
+from chirpy.response_generators.acknowledgment.acknowledgment_response_generator import AcknowledgmentResponseGenerator
+from chirpy.response_generators.personal_issues.personal_issues_response_generator import PersonalIssuesResponseGenerator
+from chirpy.response_generators.aliens.aliens_response_generator import AliensResponseGenerator
+from chirpy.response_generators.transition.transition_response_generator import TransitionResponseGenerator
 
 from chirpy.annotators.corenlp import CorenlpModule
 from chirpy.annotators.navigational_intent.navigational_intent import NavigationalIntentModule
@@ -31,6 +35,7 @@ from chirpy.annotators.emotion import EmotionAnnotator
 from chirpy.annotators.g2p import NeuralGraphemeToPhoneme
 from chirpy.annotators.gpt2ed import GPT2ED
 from chirpy.annotators.question import QuestionAnnotator
+from chirpy.annotators.blenderbot import BlenderBot
 import chirpy.core.flags as flags
 from chirpy.core.util import get_function_version_to_display
 from chirpy.annotators.dialogact import DialogActAnnotator
@@ -38,7 +43,7 @@ from chirpy.core.entity_linker.entity_linker import EntityLinkerModule
 
 import chirpy.core.flags as flags
 from chirpy.core.latency import log_events_to_dynamodb, measure, clear_events
-from chirpy.core.regex.templates import StopTemplate 
+from chirpy.core.regex.templates import StopTemplate
 from chirpy.core.handler import Handler
 from chirpy.core.logging_utils import setup_logger, update_logger, PROD_LOGGER_SETTINGS
 
@@ -73,7 +78,7 @@ class StateTable:
         self.table_name = 'StateTable'
 
     def fetch(self, session_id, creation_date_time):
-        logger.warning(f"state_table fetching last state for session {session_id}, creation_date_time {creation_date_time} from table {self.table_name}")
+        #logger.warning(f"state_table fetching last state for session {session_id}, creation_date_time {creation_date_time} from table {self.table_name}")
         if session_id is None:
             return None
         try:
@@ -85,14 +90,15 @@ class StateTable:
                 Q = '"'
                 return state_store[(Q + session_id + Q, creation_date_time)]
             if item is None:
-                logger.error(
-                    f"Timed out when fetching last state\nfor session {session_id}, creation_date_time {creation_date_time} from table {self.table_name}.")
+                #logger.error(
+                #    f"Timed out when fetching last state\nfor session {session_id}, creation_date_time {creation_date_time} from table {self.table_name}.")
+                pass
             else:
                 return item
         except:
             logger.error("Exception when fetching last state")
             return None
-    
+
     def persist(self, state: Dict):
         logger.primary_info('Using StateTable to persist state! Persisting to table {}'.format(self.table_name))
         logger.primary_info('session_id: {}'.format(state['session_id']))
@@ -121,7 +127,6 @@ class UserTable():
             start_time = time.time()
             timeout = 2  # second
             while (item is None and time.time() < start_time + timeout):
-                print(user_store)
                 item = user_store[user_id]
             if item is None:
                 logger.error(
@@ -164,7 +169,7 @@ class LocalAgent():
 
     def should_end_session(self, turn_result):
         return turn_result.should_end_session
-    
+
     def should_launch():
         return True
 
@@ -180,7 +185,7 @@ class LocalAgent():
         state_attributes['text'] = user_utterance
         state_attributes = {k: jsonpickle.encode(v) for k, v in state_attributes.items()}
         return state_attributes
-    
+
     def get_user_attributes(self):
         user_attributes = self.user_table.fetch(self.user_id)
         user_attributes['user_id'] = self.user_id
@@ -197,13 +202,23 @@ class LocalAgent():
 
     def create_handler(self):
         return Handler(
-            response_generator_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
-                                          OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
-                                          OffensiveUserResponseGenerator, OpinionResponseGenerator2, AcknowledgmentResponseGenerator,
-                                          NeuralChatResponseGenerator, CategoriesResponseGenerator, ClosingConfirmationResponseGenerator,
-                                          MusicResponseGenerator],
+                response_generator_classes=[LaunchResponseGenerator, FallbackResponseGenerator,
+                                            NeuralFallbackResponseGenerator,
+                                            NeuralChatResponseGenerator,
+                                            OffensiveUserResponseGenerator,
+                                            CategoriesResponseGenerator,
+                                            ClosingConfirmationResponseGenerator,
+                                            AcknowledgmentResponseGenerator,
+                                            PersonalIssuesResponseGenerator,
+                                            OpinionResponseGenerator2,
+                                            AliensResponseGenerator,
+                                            TransitionResponseGenerator,
+                                            FoodResponseGenerator,
+                                            WikiResponseGenerator,
+                                            MusicResponseGenerator,
+                                            ],
             annotator_classes = [QuestionAnnotator, DialogActAnnotator, NavigationalIntentModule, StanfordnlpModule, CorenlpModule,
-                                 EntityLinkerModule, NeuralGraphemeToPhoneme],
+                                 EntityLinkerModule, BlenderBot],
             annotator_timeout = NLP_PIPELINE_TIMEOUT
         )
 
@@ -217,24 +232,24 @@ class LocalAgent():
         last_state = self.get_last_state()
 
         turn_result = handler.execute(current_state, user_attributes, last_state)
-        response = turn_result.response 
+        response = turn_result.response
         try:
             # create new state? -> what do we need here?
             if user_attributes != turn_result.user_attributes:
                 self.user_table.persist(turn_result.user_attributes)
-            self.state_table.persist(turn_result.current_state) # how do we get state? 
-        
+            self.state_table.persist(turn_result.current_state) # how do we get state?
+
         except:
             logger.error("Error persisting state")
-        
+
         if self.new_session:
             self.new_session = False
-        
+
         self.last_state_creation_time = current_state['creation_date_time']
         deserialized_current_state = {k: jsonpickle.decode(v) for k, v in turn_result.current_state.items()}
-        
+
         return response, deserialized_current_state
-    
+
 
 def lambda_handler():
     local_agent = LocalAgent()
@@ -243,4 +258,3 @@ def lambda_handler():
         user_input = input()
         response, deserialized_current_state = local_agent.process_utterance(user_input)
         print(response)
-

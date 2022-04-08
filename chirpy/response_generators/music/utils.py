@@ -1,18 +1,22 @@
-from collections import Counter
 import logging
-from functools import lru_cache
-import os
-import random
 import re
 import psycopg2
+import os
+from collections import Counter
 
-from chirpy.core.entity_linker.entity_groups import EntityGroup, ENTITY_GROUPS_FOR_EXPECTED_TYPE
+from chirpy.core.entity_linker.entity_groups import EntityGroup
 from chirpy.core.entity_linker.entity_linker_simple import get_entity_by_wiki_name, link_span_to_entity
 
-from chirpy.response_generators.wiki.wiki_utils import overview_entity
+from chirpy.response_generators.wiki2.wiki_utils import overview_entity
 
 
 LOWER_CASE_TITLE_WORDS = ['a', 'an', 'the', 'and', 'or', 'of', 'to', 'with', 'without']
+
+
+logger = logging.getLogger('chirpylogger')
+
+
+REPEAT_THRESHOLD = 1
 
 
 # MusicBrainz
@@ -23,64 +27,108 @@ USER = os.environ.get('POSTGRES_USER')
 PASSWORD = os.environ.get('POSTGRES_PASSWORD')
 
 
-logger = logging.getLogger('chirpylogger')
-
-
-REPEAT_THRESHOLD = 2
-
-
 class MusicEntity:
 
-    def __init__(self, kid=None, pref_label=None, wiki_entity=None):
-        self.kid = kid
+    def __init__(self, kg_label=None, pref_label=None, wiki_entity=None):
+        self.kg_label = kg_label
         self.pref_label = pref_label
         self.wiki_entity = wiki_entity
 
     def __repr__(self):
-        return "MusicEntity: {}, {}, {}".format(self.kid, self.pref_label, self.wiki_entity)
-
-
-class KnowledgeInterface:
-
-    def __init__(self):
-        # self.knowledge_interface = AlexaKnowledgeGraphInterface()
-        self.knowledge_interface = MusicBrainzInterface()
-
-    def get_song_entity_by_musician(self, musician_name):
-        song_entities = self.knowledge_interface.get_song_entities_by_musician(musician_name)
-        if song_entities:
-            maximum_comparisons = 5
-            random.shuffle(song_entities)
-            song_entity = WikiEntityInterface.get_most_popular_music_entity(song_entities, maximum_comparisons=maximum_comparisons)
-            return song_entity
-        return None
-
-    def get_musician_entity_by_song(self, song_name):
-        musician_entities = self.knowledge_interface.get_musician_entities_by_song(song_name)
-        musician_entity = WikiEntityInterface.get_most_popular_music_entity(musician_entities)
-        if musician_entity:
-            if WikiEntityInterface.is_in_entity_group(musician_entity.wiki_entity,
-                                                      WikiEntityInterface.EntityGroup.MUSICIAN):
-                return musician_entity
-        return None
+        return "MusicEntity: {}, {}, {}".format(self.kg_label, self.pref_label, self.wiki_entity)
 
 
 class MusicBrainzInterface:
 
-    PLACEHOLDER = 'PLACEHOLDER'
-
     class Query:
-        SONG_BY_MUSICIAN = """\
-            select release.name as release_name 
-            from musicbrainz.artist_credit 
-            inner join musicbrainz.release on artist_credit.id = release.artist_credit 
-            where artist_credit.name = 'PLACEHOLDER';
+        SONG_BY_MUSICIAN = """
+            SELECT release.name AS release_name
+            FROM musicbrainz.artist_credit
+            INNER JOIN musicbrainz.release ON artist_credit.id = release.artist_credit
+            WHERE LOWER(artist_credit.name) = LOWER('{placeholder}');
             """
-        MUSICIAN_BY_SONG = """\
-            select artist_credit.name as artist_name
-            from musicbrainz.artist_credit 
-            inner join musicbrainz.release on artist_credit.id = release.artist_credit 
-            where release.name = 'PLACEHOLDER';
+        TOP_SONGS_BY_MUSICIAN = """
+            SELECT
+            track.name,
+            COUNT(*)
+            FROM musicbrainz.track
+            LEFT JOIN musicbrainz.artist_credit ON
+            track.artist_credit = artist_credit.id
+            WHERE LOWER(artist_credit.name) = LOWER('{placeholder}')
+            GROUP BY track.name
+            ORDER BY count DESC
+            LIMIT 5
+        """
+        MUSICIAN_BY_SONG = """
+            SELECT artist_credit.name AS artist_name
+            FROM musicbrainz.artist_credit
+            INNER JOIN musicbrainz.release ON artist_credit.id = release.artist_credit
+            WHERE LOWER(release.name) = LOWER('{placeholder}');
+        """
+        SONG_META = """
+            SELECT
+            release.name AS song,
+            first_release_date_year,
+            artist_credit_name.name AS musician,
+            ARRAY_AGG(DISTINCT tag.name) AS tag,
+            artist_credit.ref_count AS artist_ref_count
+            FROM musicbrainz.release
+            LEFT JOIN musicbrainz.release_group_meta
+            ON release.release_group = release_group_meta.id
+            LEFT JOIN musicbrainz.artist_credit_name
+            ON release.artist_credit = artist_credit_name.artist_credit
+            LEFT JOIN musicbrainz.artist_credit
+            ON artist_credit_name.artist = artist_credit.id
+            LEFT JOIN musicbrainz.release_group_tag
+            ON release.release_group = release_group_tag.release_group
+            LEFT JOIN musicbrainz.tag
+            ON release_group_tag.tag = tag.id
+            WHERE LOWER(release.name) = LOWER('{placeholder}')
+            AND artist_credit.ref_count IS NOT NULL
+            AND artist_credit_name.name != 'Various Artists'
+            GROUP BY release.name, first_release_date_year, artist_credit_name.name, artist_credit.ref_count
+            ORDER BY artist_credit.ref_count DESC,
+            first_release_date_year ASC
+            LIMIT 1
+        """
+        SONG_META_NAMED_SINGER = """
+            SELECT
+            release.name AS song,
+            first_release_date_year,
+            artist_credit_name.name AS musician,
+            ARRAY_AGG(DISTINCT tag.name) AS tag,
+            artist_credit.ref_count AS artist_ref_count
+            FROM musicbrainz.release
+            LEFT JOIN musicbrainz.release_group_meta
+            ON release.release_group = release_group_meta.id
+            LEFT JOIN musicbrainz.artist_credit_name
+            ON release.artist_credit = artist_credit_name.artist_credit
+            LEFT JOIN musicbrainz.artist_credit
+            ON artist_credit_name.artist = artist_credit.id
+            LEFT JOIN musicbrainz.release_group_tag
+            ON release.release_group = release_group_tag.release_group
+            LEFT JOIN musicbrainz.tag
+            ON release_group_tag.tag = tag.id
+            WHERE LOWER(release.name) = LOWER('{song}')
+            AND LOWER(artist_credit_name.name) = LOWER('{singer}')
+            AND artist_credit.ref_count IS NOT NULL
+            GROUP BY release.name, first_release_date_year, artist_credit_name.name, artist_credit.ref_count
+            ORDER BY artist_credit.ref_count DESC,
+            first_release_date_year ASC
+            LIMIT 1
+        """
+        SINGER_META = """
+            SELECT
+            tag.name
+            FROM musicbrainz.artist
+            LEFT JOIN musicbrainz.artist_tag
+            ON artist_tag.artist = artist.id
+            LEFT JOIN musicbrainz.tag
+            ON tag.id = artist_tag.tag
+            WHERE LOWER(artist.name) = LOWER('{placeholder}')
+            AND tag.name IS NOT NULL
+            ORDER BY ref_count DESC
+            LIMIT 1
         """
 
     def __init__(self):
@@ -94,18 +142,68 @@ class MusicBrainzInterface:
         self.cur = self.conn.cursor()
 
     def get_musician_entities_by_song(self, song_name):
+        # TODO: Maybe select the most common musician
         song_name = WikiEntityInterface.make_title(song_name)
-        query = MusicBrainzInterface.Query.MUSICIAN_BY_SONG
-        query = query.replace(MusicBrainzInterface.PLACEHOLDER, song_name)
+        song_name = song_name.replace("'", "''")
+        query = MusicBrainzInterface.Query.MUSICIAN_BY_SONG.format(placeholder=song_name)
         musician_entities = self.get_results(query)
         return musician_entities
 
     def get_song_entities_by_musician(self, musician_name):
         musician_name = WikiEntityInterface.make_title(musician_name)
-        query = MusicBrainzInterface.Query.SONG_BY_MUSICIAN
-        query = query.replace(MusicBrainzInterface.PLACEHOLDER, musician_name)
+        musician_name = musician_name.replace("'", "''")
+        query = MusicBrainzInterface.Query.SONG_BY_MUSICIAN.format(placeholder=musician_name)
         song_entities = self.get_results(query)
         return song_entities
+
+    def get_top_songs_by_musician(self, musician_name):
+        musician_name = WikiEntityInterface.make_title(musician_name)
+        logger.primary_info(f"Getting top songs by {musician_name}")
+        musician_name = musician_name.replace("'", "''")
+        query = MusicBrainzInterface.Query.TOP_SONGS_BY_MUSICIAN.format(placeholder=musician_name)
+        self.cur.execute(query)
+        results = self.cur.fetchall()
+        song_names = [r[0] for r in results]
+        logger.primary_info(f"Retrieved songs {song_names} by {musician_name}")
+        return song_names
+
+    def get_song_meta(self, song_name, singer_name=None):
+        logger.primary_info(f"Getting metadata for {song_name}")
+        song_name = WikiEntityInterface.make_title(song_name)
+        song_name = song_name.replace("'", "''")
+        results = []
+        if singer_name:
+            singer_name = WikiEntityInterface.make_title(singer_name)
+            singer_name = singer_name.replace("'", "''")
+            query = MusicBrainzInterface.Query.SONG_META_NAMED_SINGER.format(song=song_name, singer=singer_name)
+            self.cur.execute(query)
+            results = self.cur.fetchall()
+
+        if len(results) == 0:
+            query = MusicBrainzInterface.Query.SONG_META.format(placeholder=song_name)
+            self.cur.execute(query)
+            results = self.cur.fetchall()
+
+        logger.primary_info(f"Retrieved metadata {results} for {song_name}")
+        if len(results):
+            result = results[0]
+            return {
+                'song': result[0],
+                'year': result[1],
+                'artist': result[2],
+                'tags': result[3],
+            }
+
+    def get_singer_genre(self, singer_name):
+        logger.primary_info(f"Getting genre of {singer_name}")
+        singer_name = WikiEntityInterface.make_title(singer_name)
+        singer_name = singer_name.replace("'", "''")
+        query = MusicBrainzInterface.Query.SINGER_META.format(placeholder=singer_name)
+        self.cur.execute(query)
+        results = self.cur.fetchall()
+        logger.primary_info(f"Retrieved genre {results} for {singer_name}")
+        if len(results):
+            return results[0][0]
 
     def get_results(self, query):
         self.cur.execute(query)

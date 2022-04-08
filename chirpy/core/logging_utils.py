@@ -27,8 +27,8 @@ class LoggerSettings:
 # AWS adds a LambdaLoggerHandler to the root handler, which causes duplicate logging because we have our customized
 # StreamHandler on the root logger too. So we set remove_root_handlers=True to remove the LambdaLoggerHandler.
 # See here: https://stackoverflow.com/questions/50909824/getting-logs-twice-in-aws-lambda-function
-PROD_LOGGER_SETTINGS = LoggerSettings(logtoscreen_level=logging.DEBUG,
-                                      logtoscreen_usecolor=False,
+PROD_LOGGER_SETTINGS = LoggerSettings(logtoscreen_level=logging.INFO,
+                                      logtoscreen_usecolor=True,
                                       logtofile_level=None,
                                       logtofile_path=None,
                                       logtoscreen_allow_multiline=False,

@@ -4,10 +4,9 @@ RECOMMENDATION: use this super useful website to construct and understand regexe
 """
 
 import logging
-from chirpy.core.regex import word_lists
+from chirpy.core.regex import word_lists, response_lists
 from chirpy.core.regex.regex_template import RegexTemplate
-from chirpy.core.regex.util import NONEMPTY_TEXT, OPTIONAL_TEXT, OPTIONAL_TEXT_PRE, OPTIONAL_TEXT_POST, oneof, one_or_more_spacesep
-
+from chirpy.core.regex.util import *
 
 logger = logging.getLogger('chirpylogger')
 
@@ -102,21 +101,6 @@ class HowAreYouTemplate(RegexTemplate):
         "my day was good and i'm talking to you",
     ]
 
-class WhatAboutYouTemplate(RegexTemplate):
-    slots = {
-        'what_about_you': word_lists.WHATABOUTYOU,
-    }
-    templates = [
-        OPTIONAL_TEXT_PRE + "{what_about_you}" + OPTIONAL_TEXT_POST,
-    ]
-    positive_examples = [
-        ('what about you', {'what_about_you': 'what about you'}),
-        ('i\'m grateful for food what about you', {'what_about_you': 'what about you'}),
-        ('it\'s hard to think of one but how about you', {'what_about_you': 'how about you'}),
-    ]
-    negative_examples = [
-        "how are you",
-    ]
 
 class StopTemplate(RegexTemplate):
     slots = {
@@ -180,7 +164,10 @@ class TryingToStopTemplate(RegexTemplate):
         OPTIONAL_TEXT_PRE + "{stop}" + OPTIONAL_TEXT + "{conversation}" + OPTIONAL_TEXT_POST,
         "do you just talk all time",
         "help",
-        OPTIONAL_TEXT_PRE + "{stop_precise}" + OPTIONAL_TEXT_POST
+        OPTIONAL_TEXT_PRE + "i gotta go" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "i got to go" + OPTIONAL_TEXT_POST,
+        # OPTIONAL_TEXT_PRE + "i have to go" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{stop_precise}" + "(?! about)" + OPTIONAL_TEXT_POST
     ]
 
     positive_examples = [
@@ -195,21 +182,47 @@ class TryingToStopTemplate(RegexTemplate):
         ('stop that please can you stop', {'stop_precise': 'can you stop'}),
         ('i don\'t have favorites now shut up', {'stop_precise': 'shut up'}),
         ('you can stop now', {'stop_precise': 'stop now'}),
-        ('well i have to go now so bye stop', {'stop_precise': 'i have to go now'}),
+        ('well i have to go now so bye stop', {'stop_precise': 'i have to go'}),
         ('talking about space family drama but i\'m done', {'stop_precise': 'i\'m done'}),
         ('nice talking to you you have a good night', {'stop_precise': 'good night'}),
         ('i would like to stop chatting', {'stop': 'stop', 'conversation': 'chatting'}),
         ('okay i\'m done answering your questions alexa', {'stop_precise': 'i\'m done'}),
         ('i don\'t want to talk anymore', {'stop_precise': 'don\'t want to talk anymore'}),
         ("stop asking me questions", {"stop_precise": "stop asking"}),
-        ("stop asking questions", {"stop_precise": "stop asking"})
+        ("stop asking questions", {"stop_precise": "stop asking"}),
+        ("i have to go sleep", {'stop_precise': 'i have to go'}),
+        ("bye i have to go", {'stop_precise': 'i have to go'}),
+        ("let's talk later instead", {'stop_precise': "let's talk later"}),
+        ("talk to you later", {'stop_precise': "talk to you later"}),
     ]
 
     negative_examples = [
         "let's keep the conversation going",
         "i love this conversation",
         "i like talking about this conversation i have with my friend",
-        "why did you stop"
+        "why did you stop",
+        "i'm tired of talking about sports",
+        "let's stop talking about movies",
+        "i don't wanna tell you"
+    ]
+
+
+class CurrentEventsTemplate(RegexTemplate):
+    """Match user trying to bring up current news"""
+    slots = {
+        "whats_happening": ["what's happening", "what's going on", "the situation", "the news", "the events", "the event", "events", "what happened"],
+        "topic": NONEMPTY_TEXT,
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{whats_happening} (in )?(with )?{topic}",
+    ]
+
+    positive_examples = [
+        ("did you hear what's happening in miami", {"whats_happening": "what\'s happening", "topic": "miami"}),
+    ]
+
+    negative_examples = [
+        "what's going on",
     ]
 
 
@@ -327,17 +340,12 @@ class ComplaintClarificationTemplate(RegexTemplate):
     templates = [
         OPTIONAL_TEXT_PRE + "{clarifying_question}" + OPTIONAL_TEXT_POST,
         "what",
-        "repeat",
         "pardon me",
     ]
     positive_examples = [
         ("what", {}),
         ("what do you mean alexa", {"clarifying_question": "what do you mean"}),
         ("what are you saying", {"clarifying_question": "what are you saying"}),
-        ("what did you just say", {"clarifying_question": "what did you just say"}),
-        ("could you please repeat yourself", {"clarifying_question": "could you please repeat"}),
-        ("alexa can you ask me that again", {"clarifying_question": "can you ask me that again"}),
-        ("repeat what you just said", {"clarifying_question": "repeat what you just said"}),
         ("i don't understand what you mean", {"clarifying_question": "don't understand what you mean"}),
         ("i do not know what you're talking about", {"clarifying_question": "do not know what you're talking about"}),
         ("i don't know what you're talking about", {"clarifying_question": "don't know what you're talking about"}),
@@ -393,13 +401,11 @@ class ComplaintClarificationTemplate(RegexTemplate):
         ("pardon me", {}),
         ("but we were talking about my sister", {"clarifying_question": "but we were talking about"}),
         ("i have no idea what you're talking about", {"clarifying_question": "no idea what you're talking about"}),
-        ("say that again", {"clarifying_question": "say that again"}),
-        ("alexa say that again please", {"clarifying_question": "say that again"}),
     ]
     negative_examples = [
-        "what is your favorite color", 
+        "what is your favorite color",
         "let's talk about something else",
-        "what do you want to talk about", 
+        "what do you want to talk about",
         "i don't know what to talk about",
         "let's talk about something else",
         "let's talk about",
@@ -467,13 +473,15 @@ class ComplaintRepetitionTemplate(RegexTemplate):
     positive_examples = [
         ("you asked me that before", {"repetition": "you asked me that before"}),
         ("you said that already", {"repetition": "you said that already"}),
-        ("you already told me that", {"repetition": "you already told"}),
+        ("you already told me that", {"repetition": "you already told me that"}),
         ("alexa stop repeating yourself", {"repetition": "stop repeating"}),
         ("alexa you are repeating the same thing", {"repetition": "you are repeating"}),
         ("you keep saying that", {"repetition": "you keep saying"}),
-        ("you just told me that", {"repetition": "you just told"}),
+        ("you just told me that", {"repetition": "you just told me that"}),
         ("you asked me the same thing earlier", {"repetition": "you asked me the same thing earlier"}),
-        ("we already talked about cats", {"repetition": "we already talked about"})
+        ("we already talked about cats", {"repetition": "we already talked about"}),
+        ("i just told you", {"repetition": "i just told"}),
+        ("yeah i said that already come on", {"repetition": "i said that already"})
     ]
     negative_examples = [
         "you never said that",
@@ -481,15 +489,17 @@ class ComplaintRepetitionTemplate(RegexTemplate):
         "could you repeat that",
         "please say that again",
         "what did you say earlier",
-        "what did you just say"
+        "what did you just say",
+        "i told you so"
     ]
-    
+
 class ComplaintPrivacyTemplate(RegexTemplate):
     slots = {
         "privacy": word_lists.COMPLAINT_PRIVACY
     }
     templates = [
-        OPTIONAL_TEXT_PRE+"{privacy}"+OPTIONAL_TEXT_POST
+        OPTIONAL_TEXT_PRE + "{privacy}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "that's" + OPTIONAL_TEXT_MID + "personal" + OPTIONAL_TEXT_POST
     ]
     positive_examples = [
         ("i don't want to tell you", {"privacy": "i don't want to tell"}),
@@ -499,6 +509,7 @@ class ComplaintPrivacyTemplate(RegexTemplate):
         ("that's creepy. don't ask me that", {"privacy": "don't ask me"}),
         ("i'm not going to tell you my name", {"privacy": "i'm not going to tell you"}),
         ("i'm not telling you that", {"privacy": "i'm not telling you"}),
+        ("that's kinda personal", {})
     ]
     negative_examples = [
         "i want to tell you",
@@ -506,18 +517,12 @@ class ComplaintPrivacyTemplate(RegexTemplate):
         "what did you ask me",
         "repeat what you asked me",
         "can you ask me what my favorite color is",
-        "i want to tell you my favorite color"
-    ]     
-
-# Various templates for CATEGORY RG to reponse to shorter user responses
-
-WHAT_ABOUT_YOU_EXPRESSIONS = [
-    "(what|how) about (you|you.|you?)",
-]
+        "i want to tell you my favorite color",
+    ]
 
 class WhatAboutYouTemplate(RegexTemplate):
     slots = {
-        'what_about_you': WHAT_ABOUT_YOU_EXPRESSIONS
+        'what_about_you': word_lists.WHAT_ABOUT_YOU_EXPRESSIONS
     }
     templates = [
         OPTIONAL_TEXT_PRE + "{what_about_you}" + OPTIONAL_TEXT_POST
@@ -526,7 +531,7 @@ class WhatAboutYouTemplate(RegexTemplate):
         ('i honestly don\'t know. what about you. what do you like', {'what_about_you': 'what about you.'}),
         ('i don\'t quite know. how about you?', {'what_about_you': "how about you?"}),
         ("what about you alexa", {'what_about_you': 'what about you'}),
-        ("what about you.", {'what_about_you': 'what about you.'}), 
+        ("what about you.", {'what_about_you': 'what about you.'}),
         ("what about you alexa. I don't really remember", {'what_about_you': "what about you"}),
         ("I don't actually remember. how about you alexa", {'what_about_you': "how about you"}),
     ]
@@ -535,26 +540,10 @@ class WhatAboutYouTemplate(RegexTemplate):
         'what did you just say'
     ]
 
-RESPONSE_TO_WHAT_ABOUT_YOU = [
-    "I like so many different ones that it can be hard to answer my own questions!",
-    "Good question! I have a hard time choosing!",
-    "I'm not really sure. I can't make up my mind!"
-    "It's always hard for me to pick!",
-    "I like so many! It's hard to give just one answer.",
-    "I can never pick because I like so many."
-]
-
-DONT_KNOW_EXPRESSIONS = [
-    'don(\')?t (really |actually |quite )?know',
-    'not (really |quite )?know',
-    'not (really |so |quite )?sure',
-    'no idea',
-    "don't (really |actually |quite )?remember"
-]
 
 class DontKnowTemplate(RegexTemplate):
     slots = {
-        'dont_know': DONT_KNOW_EXPRESSIONS
+        'dont_know': word_lists.DONT_KNOW_EXPRESSIONS
     }
     templates = [
         OPTIONAL_TEXT_PRE + "{dont_know}" + OPTIONAL_TEXT_POST
@@ -563,35 +552,23 @@ class DontKnowTemplate(RegexTemplate):
         ('i honestly don\'t know', {'dont_know': 'don\'t know'}),
         ('i don\'t quite know', {'dont_know': "don't quite know"}),
         ("i don't know", {'dont_know': 'don\'t know'}),
-        ("I'm not sure", {'dont_know': 'not sure'}), 
-        ("I don't really remember", {'dont_know': "don't really remember"}),
-        ("I don't actually remember", {'dont_know': "don't actually remember"}),
-        ("I'm really not sure", {'dont_know': "not sure"}),
-        ("I don't remember", {'dont_know': "don't remember"}),
-        ("I really don't know", {'dont_know': 'don\'t know'})
+        ("i'm not sure", {'dont_know': 'not sure'}),
+        ("i don't really remember", {'dont_know': "don't really remember"}),
+        ("i don't actually remember", {'dont_know': "don't actually remember"}),
+        ("i'm really not sure", {'dont_know': "not sure"}),
+        ("i don't remember", {'dont_know': "don't remember"}),
+        ("i really don't know", {'dont_know': 'don\'t know'}),
+        ("i don't have one", {'dont_know': "don\'t have one"}),
+        ("i don't have 1", {'dont_know': "don\'t have 1"})
     ]
     negative_examples = [
-        'i know',
+        'i know'
     ]
 
-# TODO: do we want to condition on the category, on the question?
-RESPONSE_TO_DONT_KNOW = [
-    "No worries that was a hard question!",
-    "Yeah a lot of people find it hard to answer that question too.",
-    "That's ok! It's a tough question."
-]
-
-BACK_CHANNELING_EXPRESSION = [
-    '(that\'s |that )?cool',
-    'yeah',
-    'okay',
-    'yes',
-    'nice'
-] 
 
 class BackChannelingTemplate(RegexTemplate):
     slots = {
-        'ok': BACK_CHANNELING_EXPRESSION
+        'ok': word_lists.BACK_CHANNELING_EXPRESSION
     }
     templates = [
         "{ok}"
@@ -605,21 +582,10 @@ class BackChannelingTemplate(RegexTemplate):
         'i know',
     ]
 
-RESPONSE_TO_BACK_CHANNELING = [
-    "I know right!",
-    "Yeah!"
-]
-
-EVERYTHING_EXPRESSIONS = [
-    "a lot of",
-    "lots of",
-    "many",
-    "everything", 
-]
 
 class EverythingTemplate(RegexTemplate):
     slots = {
-        'everything': EVERYTHING_EXPRESSIONS
+        'everything': word_lists.EVERYTHING_EXPRESSIONS
     }
     templates = [
         OPTIONAL_TEXT_PRE + "{everything}" + OPTIONAL_TEXT_POST
@@ -632,22 +598,10 @@ class EverythingTemplate(RegexTemplate):
         'i love pasta'
     ]
 
-RESPONSE_TO_EVERYTHING_ANS = [
-    "Yeah it is always hard to pick!",
-    "A lot of people also find it is hard to pick!",
-]
-
-NOTHING_EXPRESSIONS = [
-    "nothing",
-    "none",
-    "don(\')?t have one", 
-    "don(\')?t have a (favorite|favourite)",
-    "nobody",
-]
 
 class NotThingTemplate(RegexTemplate):
     slots = {
-        'not_thing': NOTHING_EXPRESSIONS
+        'not_thing': word_lists.NOTHING_EXPRESSIONS
     }
     templates = [
         OPTIONAL_TEXT_PRE + "{not_thing}" + OPTIONAL_TEXT_POST
@@ -655,16 +609,489 @@ class NotThingTemplate(RegexTemplate):
     positive_examples = [
         ("I like nothing", {'not_thing': "nothing"}),
         ("I don't have one", {'not_thing': "don't have one"}),
-        ("I don't have a favorite", {'not_thing': "don't have a favorite"})
+        ("I don't have a favorite", {'not_thing': "don't have a favorite"}),
+        ("i'm not watching any tv show right now", {'not_thing': "i'm not"}),
+        ("i don't have 1", {'not_thing': "don't have 1"})
     ]
     negative_examples = [
         'i like pasta'
     ]
 
-RESPONSE_TO_NOTHING_ANS = [
-    "No worries!",
-    "That\'s alright.",
+class ClarifyingPhraseTemplate(RegexTemplate):
+    slots = {
+        'clarifying_phrase': word_lists.CLARIFYING_EXPRESSIONS,
+        'query': OPTIONAL_TEXT_POST
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{clarifying_phrase}",
+        OPTIONAL_TEXT_PRE + "{clarifying_phrase}{query}"
+    ]
+    positive_examples = [
+        #("wait you said that cats are carnivores", {"clarifying_phrase": "you said that", "query": " cats are carnivores"}),
+        ("i'm sorry oranges do you mean apples", {"clarifying_phrase": "do you mean", "query": " apples"}),
+        ("did you say that bananas are your favorite vegetable", {"clarifying_phrase": "did you say that", "query": " bananas are your favorite vegetable"}),
+        ("did you say mexican food", {"clarifying_phrase": "did you say", "query": " mexican food"}),
+        ("sorry did you say you're a big fan of pie", {"clarifying_phrase": "did you say", "query": " you're a big fan of pie"}),
+        ("sorry were you asking about my stuff", {"clarifying_phrase": "were you asking about", "query": " my stuff"}),
+        ("you were saying something about the dinosaurs", {"clarifying_phrase": "you were saying something about", "query": " the dinosaurs"})
+    ]
+    negative_examples = [
+        "i didn't say that",
+        "you say yes i say no",
+        "what was the first major city to get electricity",
+        "would you say that you had a good time",
+        "excuse me what the heck did you just call me",
+        "well recently i saw the movie frozen which i thought was really exceptional",
+        "i thought inception was pretty good",
+        "i heard",
+        "i thought",
+        "you said that already"
+    ]
+
+
+HOW_QUESTION_PHRASES = [
+    "(how)?(can|do) you( really)?( even)?( do( this| that)| listen( to)?| walk| run| watch| eat| drink| see)( this| that)?",
+    "how are you( really)?( even)?( doing( this| that)| listening( to)?| walking| running| watching| eating| drinking| seeing)( this| that)?",
+    "(how )?you('re| are)? a (ro)?bot",
+    "(how )?you('re| are)? not( a)?( human| person| people| living| alive)"
 ]
+class AbilitiesQuestionTemplate(RegexTemplate):
+
+    slots = {
+        'question_phrase': word_lists.HOW_QUESTION_PHRASES,
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{question_phrase}" + OPTIONAL_TEXT_POST,
+    ]
+    positive_examples = [
+        ("how can you watch a movie you're a bot", {"question_phrase": "can you watch"}),
+        ("but wait you don't have legs so can you really walk", {"question_phrase": "can you really walk"}),
+        ("how do you listen to music if you don't have ears", {"question_phrase": "how do you listen to"}),
+        ("but how you're not a person", {"question_phrase": "how you're not a person"}),
+        ("you're a robot dude", {"question_phrase": "you're a robot"}),
+        ("are you a bot", {"question_phrase": "you a bot"})
+    ]
+    negative_examples = [
+        "how do you do",
+        "can you really tell me a story",
+        "i want to hear what you like"
+    ]
+
+
+class PersonalWhQuestionTemplate(RegexTemplate):
+
+    slots = {
+        'question_phrase': word_lists.WH_PERSONAL_QUESTION_PHRASES,
+        'action': OPTIONAL_TEXT_POST
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{question_phrase}{action}",
+    ]
+    positive_examples = [
+        ("where did you use to live", {"question_phrase": "where did you", "action": " use to live"}),
+        ("which one do you like", {"question_phrase": "which one do you", "action": " like"}),
+        ("when did you last visit your family", {"question_phrase": "when did you", "action": " last visit your family"}),
+        ("what do you think about potatoes", {"question_phrase": "what do you", "action": " think about potatoes"}),
+        ("what's your favorite player", {"question_phrase": "what's your", "action": " favorite player"}),
+        ("i want to hear what you like first", {"question_phrase": "what you", "action": " like first"}),
+    ]
+
+    negative_examples = [
+        "where is france",
+        "why is the sky blue",
+    ]
+
+class InterruptionQuestionTemplate(RegexTemplate):
+
+    slots = {
+        'question_phrase': word_lists.INTERRUPTION_EXPRESSIONS,
+        'addressee': word_lists.ADDRESSEE_EXPRESSIONS,
+        'interjection': word_lists.INTERJECTIONS
+    }
+
+    templates = [
+        "question", # this is a ridonculous edge case but i have seen it happen
+        OPTIONAL_TEXT_PRE + "{question_phrase}",
+        OPTIONAL_TEXT_PRE + "{question_phrase} {addressee}",
+        "{interjection}",
+        "{interjection} question",
+        "{interjection} {question_phrase}",
+        "{interjection} {addressee}",
+        "{interjection} {question_phrase} {addressee}",
+    ]
+
+    positive_examples = [
+        ("wait a minute buddy", {"interjection": "wait a minute", "addressee": "buddy"}),
+        ("whoa hold on there man i have a question", {"question_phrase": "i have a question"}),
+        ("wait", {"interjection": "wait"}),
+        ("question", {}),
+        ("hold up", {"interjection": "hold up"}),
+        ("wait i wanted to ask something", {"question_phrase": "i wanted to ask something"}),
+        ("wait a sec", {"interjection": "wait a sec"}),
+        ("hold on question", {"interjection": "hold on"})
+    ]
+    negative_examples = [
+        "hold on to your horses buddy",
+        "you're my buddy",
+        "wait i have to go feed my cat",
+        #"i just got a call hold on", # this is a VERY hard negative -- how do we catch interjective "hold on" vs. request "hold on"?
+        "there's no question that you're my friend",
+        "i don't have a question",
+        "what is your question"
+    ]
+
+class NeverMindTemplate(RegexTemplate):
+    slots = {
+        'never_mind': word_lists.NEVER_MIND_EXPRESSIONS
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{never_mind}"
+    ]
+    positive_examples = [
+        ("never mind", {"never_mind": "never mind"}),
+        ("oh i guess i forgot", {"never_mind": "i forgot"}),
+        ("shoot i just forgot what i wanted to say", {"never_mind": "i just forgot what i wanted to say"})
+    ]
+    negative_examples =  [
+        "i never said that",
+        "i never wanted to do that",
+        "i forgot to do that"
+    ]
+
+class RequestPlayTemplate(RegexTemplate):
+    slots = {
+        "request": ["alexa", "can you", "could you", "can we", "could we", "please", "let's"],
+    }
+    templates = [
+        "{request}" + OPTIONAL_TEXT_MID + "play" + NONEMPTY_TEXT,
+        "play " + NONEMPTY_TEXT
+    ]
+    positive_examples = [
+        ("play drivers license", {}),
+        ("play some music", {}),
+        ("alexa play baby", {"request": "alexa"}),
+        ("can you play you belong with me", {"request": "can you"}),
+        ("can we play mad libs", {"request": "can we"}),
+        ("play bon jovi", {}),
+        ("let's play a game", {"request": "let's"})
+    ]
+    negative_examples = [
+        "i like to play basketball",
+        "playing video games", # what's your favorite thing to do?
+        'i like to play computer games'
+    ]
+
+class NotRequestPlayTemplate(RegexTemplate):
+    slots = {
+        'activity': word_lists.SPORTS + ["video game", "games", "outside"]
+    }
+    templates = [
+        "play" + OPTIONAL_TEXT_MID + "{activity}",
+        "play with" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "play a lot" + OPTIONAL_TEXT_POST
+    ]
+    positive_examples = [
+        ("play basketball", {'activity': 'basketball'}),
+        ('play video games', {'activity': 'games'}),
+        ('play with my friends', {}),
+        ("play a lot of xbox", {})
+    ]
+    negative_examples = [
+    ]
+
+
+class RequestPlayTemplate(RegexTemplate):
+    slots = {
+        "request": ["alexa", "can you", "could you", "can we", "could we", "please", "let's"],
+    }
+    templates = [
+        "{request}" + OPTIONAL_TEXT_MID + "play" + NONEMPTY_TEXT,
+        "play " + NONEMPTY_TEXT
+    ]
+    positive_examples = [
+        ("play drivers license", {}),
+        ("play some music", {}),
+        ("alexa play baby", {"request": "alexa"}),
+        ("can you play you belong with me", {"request": "can you"}),
+        ("can we play mad libs", {"request": "can we"}),
+        ("play bon jovi", {}),
+        ("let's play a game", {"request": "let's"})
+    ]
+    negative_examples = [
+        "i like to play basketball",
+        "playing video games", # what's your favorite thing to do?
+        'i like to play computer games'
+    ]
+
+class NotRequestPlayTemplate(RegexTemplate):
+    slots = {
+        'activity': word_lists.SPORTS + ["video game", "games", "outside"]
+    }
+    templates = [
+        "play" + OPTIONAL_TEXT_MID + "{activity}",
+        "play with" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "play a lot" + OPTIONAL_TEXT_POST
+    ]
+    positive_examples = [
+        ("play basketball", {'activity': 'basketball'}),
+        ('play video games', {'activity': 'games'}),
+        ('play with my friends', {}),
+        ("play a lot of xbox", {})
+    ]
+    negative_examples = [
+    ]
+
+class ChattyTemplate(RegexTemplate):
+    slots = {
+        'chatty_phrase': [str(key) for key in response_lists.ONE_TURN_RESPONSES.keys()],
+    }
+    templates = [
+        "{chatty_phrase}",
+        "alexa {chatty_phrase}",
+    ]
+    positive_examples = [("talk about you", {'chatty_phrase': "talk about you"}),
+                         ("can i have a conversation", {'chatty_phrase': "can i have a conversation"})]
+    negative_examples = ["let's talk about movies",
+                         "news",
+                         "politics"]
+
+class SayThatAgainTemplate(RegexTemplate):
+    slots = {
+        "say_that_again": word_lists.SAY_THAT_AGAIN
+    }
+    templates = [
+        "{say_that_again}",
+        "alexa {say_that_again}",
+        OPTIONAL_TEXT_PRE + "{say_that_again}" + OPTIONAL_TEXT_POST,
+    ]
+    positive_examples = [
+        ("what did you just say", {"say_that_again": "what did you just say"}),
+        ("could you please repeat yourself", {"say_that_again": "could you please repeat yourself"}),
+        ("alexa can you ask me that again", {"say_that_again": "can you ask me that again"}),
+        ("repeat what you just said", {"say_that_again": "repeat what you just said"}),
+        ("say that again", {"say_that_again": "say that again"}),
+        ("alexa say that again please", {"say_that_again": "say that again please"}),
+        ("what can you say that again please i didn't catch you", {"say_that_again": "can you say that again please"}),
+    ]
+    negative_examples = []
+
+class RequestNameTemplate(RegexTemplate):
+    slots = {
+        "request": ["tell", "what's", "say", "what", "know", "repeat"],
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{request}" + OPTIONAL_TEXT_MID + "my name" + OPTIONAL_TEXT_POST
+    ]
+    positive_examples = [
+        ("hey alexa what's my name", {"request": "what's"}),
+        ("say my name", {"request": "say"}),
+        ("what's my name", {'request': "what's"}),
+        ("can you tell me my name", {'request': "tell"}),
+        ("do you even know my name alexa", {'request': 'know'}),
+        ("what is my name alexa", {'request': 'what'}),
+        ("what is my name", {'request': 'what'}),
+        ("repeat my name", {'request': 'repeat'})
+    ]
+    negative_examples = [
+        "what's the name of the song",
+        "what's your name"
+    ]
+
+class RequestStoryTemplate(RegexTemplate):
+    slots = {
+        "request": ["tell", "know", "narrate", "say"],
+        "story": ["story", "stories"]
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{request}" + OPTIONAL_TEXT_MID + "{story}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{request}" + OPTIONAL_TEXT_MID + "{story}" + OPTIONAL_TEXT_POST
+    ]
+    positive_examples = [
+        ("can you tell me a story", {"request": "tell", "story": "story"}),
+        ("do you know any stories", {"request": "know", "story": "stories"}),
+        ("i like you to tell me a story", {"request": "tell", "story": "story"}),
+        ("tell me a story", {'request': 'tell', 'story': 'story'})
+    ]
+    negative_examples = [
+    ]
+
+class ComplimentTemplate(RegexTemplate):
+    slots = {
+        "target": ["you re", "your", "you're", "you are"],
+        "compliment": ["amazing", "funny", "wonderful", "great", "cool", "nice", "awesome", "fantastic"],
+        "pleasure": ["enjoy", "like", "enjoying", "liking", "love"],
+        "talk": ["talk", "talking", "conversation"],
+        "i": ['i am', "i'm", "i"],
+        "affection": ["love you"],
+        "thank": ["thank you", "thanks"],
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{target}" + OPTIONAL_TEXT_MID + "{compliment}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{target}" + OPTIONAL_TEXT_MID + "{compliment}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{affection}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{i}" + OPTIONAL_TEXT_MID + "{pleasure}" + OPTIONAL_TEXT_MID +  "{talk}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{thank}" + OPTIONAL_TEXT_MID + "{talk}" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{i}( really|do)? {pleasure} you" + OPTIONAL_TEXT_POST,
+    ]
+    positive_examples = [
+        ("you're the most amazing person ai ever", {"target": "you're", "compliment": "amazing"}),
+        ("i love you alexa", {"affection": "love you"}),
+        ("i like our conversation", {"i": "i", "pleasure": "like", "talk": "conversation"}),
+        ("i like talking to you too", {"i": "i", "pleasure": "like", "talk": "talking"}),
+        ("i enjoy my conversation with you", {"i": "i", "pleasure": "enjoy", "talk": "conversation"}),
+        ("thank you for talking to me alexa", {"thank": "thank you", "talk": "talking"}),
+        ("i really like you", {"i": "i", "pleasure": "like"})
+    ]
+    negative_examples = [
+        "that wasn't funny",
+        "i like how you do that",
+        "i like how that's the way it is",
+        "i love basketball",
+        "do you watch any cool movies",
+        "like you i really like big hero 6",
+        "i like big hero 6 too just like you do",
+        "i'm actually like you i like"
+    ]
+
+
+class RequestAgeTemplate(RegexTemplate):
+    slots = {
+        "request": ["tell", "what's", "say", "what", "know"],
+        "oldness": ["how old", "how much older", "how many years"]
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + "{request}" + OPTIONAL_TEXT_MID + "your age" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{request}" + OPTIONAL_TEXT_MID + "your birthday" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{oldness}" + OPTIONAL_TEXT_MID + "you are" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "{oldness}" + OPTIONAL_TEXT_MID + "are you" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "(you|you're) {oldness}" + OPTIONAL_TEXT_POST
+    ]
+    positive_examples = [
+        ("well how old are you", {"oldness": "how old"}),
+        ("what's your age alexa", {"request": "what's"}),
+        ("tell me your age", {"request": "tell"}),
+        ("tell me how old you are", {"oldness": "how old"}),
+        ("what's your birthday", {"request": "what's"}),
+        ("do you know how old you are", {"oldness": "how old"}),
+        ("you're how many years old", {"oldness": "how many years"})
+    ]
+    negative_examples = [
+        "how old do you think the earth is",
+    ]
+
+class WeatherTemplate(RegexTemplate):
+    slots = {
+        "weather": ["weather"],
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + '(what )?do you (think about|like) the {weather}' + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + '(how|what) is the {weather}' + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + '(isn\'t|is) the {weather} (bad|amazing|wonderful|great|nice|awesome|crazy)' + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + '(isn\'t|is) the {weather} (cloudy|rainy|sunny|hot|cold|cooling)' + OPTIONAL_TEXT_POST,
+    ]
+    positive_examples = [
+        ("what do you think about the weather", {'weather': 'weather'}),
+        ("do you like the weather", {'weather': 'weather'}),
+    ]
+    negative_examples = [
+        "how old do you think the earth is"
+    ]
+
+class WhatTimeIsItTemplate(RegexTemplate):
+    slots = {
+        "what_time": ["what time is it"]
+    }
+    templates = [
+        OPTIONAL_TEXT_PRE + '{what_time}( right now)?' + OPTIONAL_TEXT_POST,
+    ]
+    positive_examples = [
+        ("what time is it", {'what_time': 'what time is it'}),
+    ]
+    negative_examples = [
+        "how old do you think the earth is"
+    ]
+
+
+class ThatsTemplate(RegexTemplate):
+    """
+    Used to catch user responses to TILs and factoids, e.g. "That's interesting", "That's so sad."
+
+    This is high-recall, but possibly low-precision, will fail for e.g. "i think anyone that is happy should eat balloons"
+    """
+    slots = {
+    }
+
+    templates = [
+        OPTIONAL_TEXT_PRE + "that's" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "that is" + OPTIONAL_TEXT_POST
+    ]
+
+    positive_examples = [
+        ("oh hmm that's interesting", {}),
+        ("i think that is sad", {})
+    ]
+    negative_examples = []
+
+class DidntKnowTemplate(RegexTemplate):
+    """
+    Used to catch user responses to TILs and factoids
+    """
+    slots = {}
+
+    templates = [
+        OPTIONAL_TEXT_PRE + "didn't" + OPTIONAL_TEXT_MID + "know" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "did not" + OPTIONAL_TEXT_MID + "know" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "had no idea" + OPTIONAL_TEXT_POST,
+        OPTIONAL_TEXT_PRE + "never" + OPTIONAL_TEXT_MID + "knew" + OPTIONAL_TEXT_POST
+    ]
+    positive_examples = [
+        ("i honestly didn't know that", {}),
+        ("oh that's cool i didn't know that", {}),
+        ("wow i had no idea", {}),
+        ("neat i never knew", {})
+    ]
+    negative_examples = [
+        'i know',
+    ]
+
+class SurprisedReallyTemplate(RegexTemplate):
+    """
+    Used to catch user responses to TILs and factoids
+    """
+    slots = {
+        'continuer': word_lists.CONTINUER
+    }
+
+    templates = [
+        '{continuer} really' + OPTIONAL_TEXT_POST,
+        'really' + OPTIONAL_TEXT_POST
+    ]
+    positive_examples = [
+        ("oh really", {'continuer': 'oh'}),
+        ("huh really", {'continuer': 'huh'}),
+        ("really now", {}),
+    ]
+    negative_examples = [
+        "i don't really care",
+        "that's really cool"
+    ]
+class CutOffTemplate(RegexTemplate):
+    slots = {
+        'cutoff_word': word_lists.CUTOFF,
+    }
+    templates = [
+        "{cutoff_word}"
+    ]
+    positive_examples = [
+        ("i like", {'cutoff_word': "i like"}),
+        ("can you", {'cutoff_word': "can you"}),
+        ("i want to talk about", {'cutoff_word': "i want to talk about"}),
+    ]
+    negative_examples = [
+        'i like it',
+        'i want it',
+        'can we talk about it',
+    ]
 
 # Demonstration of how to use RegexTemplates:
 if __name__ == "__main__":

@@ -33,11 +33,27 @@ EXPERIMENT_PROBABILITIES = {
         0.75: 0.5
     },
     "convpara": {
-        True:0.5,
-        False:0.5
+        True: 1,
+        # False: 0.5
     },
     "opinion_policy" : {
         "random" : 1.0
+    },
+    "gpt2ed_ranking_policy": {
+        # "score_only": 0.34, # conditioned on being in the experimental path
+        # "nli_score": 0.33,
+        # "rule_based": 0.33
+        "score_only": 0.4, # conditioned on being in the experimental path
+        "senti_score": 0.2,
+        "rule_based": 0.4
+    },
+    "wikirg_policy": {
+        "original": 0,
+        "infiller": 1
+    },
+    "convpara_selection_strategy": {
+        "max-pmi": 0.5,
+        "fused-pcmi": 0.5
     }
 }
 
@@ -45,6 +61,7 @@ class Experiments:
 
     def __init__(self):
         self.experiments = {}
+        self.experiments_aux_data = {}
 
     def look_up_experiment_value(self, experiment_name):
         """
@@ -90,3 +107,5 @@ class Experiments:
         self.experiments[experiment_name] = value
         return value
 
+    def __repr__(self):
+        return "Experiments<" + ", ".join(f"{key}={value}" for key, value in self.experiments.items()) + ">"

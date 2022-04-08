@@ -7,6 +7,7 @@ import json
 import unicodedata
 import sys
 from functools import lru_cache
+import functools
 from pathlib import Path
 
 import boto3
@@ -15,11 +16,12 @@ import datetime
 import pytz
 from typing import List, Dict, Set, Optional, Iterable, Any, Callable
 from chirpy.core.latency import measure
+import random
 from random import choices
 from elasticsearch import Elasticsearch, ElasticsearchException
 from chirpy.core.flags import use_timeouts, inf_timeout
-
 from chirpy.core.canary import is_already_canary
+import threading
 
 logger = logging.getLogger('chirpylogger')
 
@@ -38,12 +40,18 @@ config_fname = 'chirpy/core/es_config.json'
 config_path = os.path.join(CHIRPY_HOME, config_fname)
 NAME_2_ES_HOST = json.load(open(config_path, 'r'))
 
+
+def sample_bernoulli(p=0.5):
+    return (random.random() < p)
+
+
+
 def get_es_host(name):
     if name in NAME_2_ES_HOST.keys():
         return NAME_2_ES_HOST[name]['url']
     else:
         return None
-    
+
 
 def get_elasticsearch():
     host = os.environ.get('ES_HOST', "localhost")
@@ -497,6 +505,37 @@ def get_pacific_us_time() -> datetime.datetime:
 def get_pacific_dayofweek() -> str:
     return DAYS_OF_WEEK[get_pacific_us_time().weekday()]  # str
 
+def killable(func):
+    """Decorator to denote a method as killable"""
+    @functools.wraps(func)
+    def wrapper_killable(*args, **kwargs):
+        current_thread = threading.currentThread()
+        killable = getattr(current_thread, "killable", False)
+        # Check if we are running in a killable thread
+        if killable:
+            logger.info(f"{func.__qualname__} running in a killable thread.")
+            out = {}
+
+            if getattr(current_thread, "isKilled", False) and current_thread.isKilled():
+                logger.primary_info(f"{func.__qualname__} preemptively killed externally.")
+                return None
+
+            def wrapper(*args, **kwargs):
+                result = func(*args, **kwargs)
+                out['out'] = result
+
+            # logging.warning(f"args {args}")
+            client_thread = threading.Thread(target=wrapper, args=args, kwargs=kwargs)
+            client_thread.start()
+            while client_thread.is_alive():
+                client_thread.join(timeout=0.1)
+                if getattr(current_thread, "isKilled", False) and current_thread.isKilled():
+                    logger.primary_info(f"{func.__qualname__} killed externally.")
+                    return None
+            return out['out']
+        else:
+            return func(*args, **kwargs)
+    return wrapper_killable
 
 @measure
 def run_module(module, function_name, args: List=[], kwargs: Dict={}):
@@ -507,3 +546,22 @@ def run_module(module, function_name, args: List=[], kwargs: Dict={}):
 def initialize_module(module_class, args: List=[], kwargs: Dict={}):
     initialized_module = module_class(*args, **kwargs)
     return initialized_module
+
+
+def infl(word, is_plural):
+    lookup = [
+        ('is', 'are'),
+        ('was', 'were'),
+        ('will be', 'will be'),
+        ('it', 'they'),
+        ('it', 'them'),
+        ('has', 'have')
+    ]
+    for sing_form, plur_form in lookup:
+        if sing_form == word or plur_form == word:
+            break
+    else:
+        logger.warning(f"Not sure how to inflect word {word}!")
+        return word #
+
+    return plur_form if is_plural else sing_form

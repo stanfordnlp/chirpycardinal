@@ -1,5 +1,3 @@
-import re
-import json
 import argparse
 
 from ast import literal_eval

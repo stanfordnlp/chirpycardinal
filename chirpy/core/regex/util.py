@@ -44,7 +44,7 @@ def one_or_more_spacesep(lst: List[str]):
     the list, space-separated (no space at the start or end).
     """
     assert isinstance(lst, list)
-    return '({})( {})*'.format(oneof(lst), oneof(lst))
+    return f'({oneof(lst)})( {oneof(lst)})*'
 
 
 def zero_or_more_spacesep(lst: List[str]):
@@ -53,4 +53,4 @@ def zero_or_more_spacesep(lst: List[str]):
     the list, space-separated (no space at the start or end).
     """
     assert isinstance(lst, list)
-    return '({})?( {})*'.format(oneof(lst), oneof(lst))
+    return '({oneof(lst)})?( {oneof(lst)})*'

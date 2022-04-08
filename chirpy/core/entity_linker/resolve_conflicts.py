@@ -43,15 +43,18 @@ def comparison_fn_nested_spans(linkedspan1: LinkedSpan, linkedspan2: LinkedSpan,
     if l2_contains_l1 or l1_contains_l2:
         if linkedspan1.protection_level == linkedspan2.protection_level:
             (outer_linkedspan, inner_linkedspan) = (linkedspan2, linkedspan1) if l2_contains_l1 else (linkedspan1, linkedspan2)
-            if expected_type and expected_type.matches(inner_linkedspan.top_ent) and not expected_type.matches(outer_linkedspan.top_ent) and inner_linkedspan.top_ent_score > SCORE_THRESHOLD_CHOOSE_INNER_SPAN_OF_TYPE:
+            if expected_type is not None:
+                if expected_type.matches(inner_linkedspan.top_ent) and not expected_type.matches(outer_linkedspan.top_ent):
+                    logger.info(f'Removing {outer_linkedspan} from high prec set because it contains {inner_linkedspan}, '
+                                f'the outer one is not of expected_type={expected_type}, the inner one is of expected_type, ')
+                    return take_max_score_and_return(inner_linkedspan, outer_linkedspan)
+                if expected_type.matches(outer_linkedspan.top_ent) and not expected_type.matches(inner_linkedspan.top_ent):
+                    logger.info(f'Removing {inner_linkedspan} from high prec set because it is contained in {outer_linkedspan}, '
+                                f'the outer one is of expected_type={expected_type}, the inner one is not of expected_type, ')
+                    return take_max_score_and_return(outer_linkedspan, inner_linkedspan)
+            if outer_linkedspan.top_ent_score < inner_linkedspan.top_ent_score:
                 logger.info(f'Removing {outer_linkedspan} from high prec set because it contains {inner_linkedspan}, '
-                            f'the outer one is not of expected_type={expected_type}, the inner one is of expected_type, '
-                            f'and the inner one has score over {SCORE_THRESHOLD_CHOOSE_INNER_SPAN_OF_TYPE}')
-                return take_max_score_and_return(inner_linkedspan, outer_linkedspan)
-            if outer_linkedspan.top_ent_score < SCORE_THRESHOLD_ELIMINATE_OUTER_SPAN and inner_linkedspan.top_ent_score > SCORE_THRESHOLD_HIGHPREC:
-                logger.info(f'Removing {outer_linkedspan} from high prec set because it contains {inner_linkedspan}, '
-                            f'the outer one has a score below {SCORE_THRESHOLD_ELIMINATE_OUTER_SPAN}, and '
-                            f'the inner one has a score above {SCORE_THRESHOLD_HIGHPREC}')
+                            f'the outer one has a score below the inner one')
                 return take_max_score_and_return(inner_linkedspan, outer_linkedspan)
             else:
                 logger.info(f'Removing {inner_linkedspan} from high prec set because it is nested inside {outer_linkedspan}')

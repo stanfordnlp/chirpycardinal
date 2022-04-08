@@ -3,7 +3,6 @@ from chirpy.core.entity_linker.lists import STOPWORDS, get_unigram_freq
 from chirpy.core.regex.regex_template import RegexTemplate
 from chirpy.core.regex.word_lists import INTENSIFIERS
 from chirpy.core.regex.util import NONEMPTY_TEXT, OPTIONAL_TEXT_PRE, OPTIONAL_TEXT_POST, OPTIONAL_TEXT_MID, oneof, one_or_more_spacesep
-from enum import Enum, auto
 from dataclasses import dataclass
 
 OTHER_STOPWORDS = ['little', 'bit', 'feeling', 'pretty', 'feel',

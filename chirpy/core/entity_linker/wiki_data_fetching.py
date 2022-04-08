@@ -2,14 +2,14 @@
 
 import logging
 import boto3
-import os
 from requests_aws4auth import AWS4Auth
 from elasticsearch import Elasticsearch, RequestsHttpConnection, ElasticsearchException
 from typing import List, Dict, Set, Optional
+import os
 
 from chirpy.core.latency import measure
 from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
-from chirpy.core.entity_linker.lists import MANUAL_SPAN2ENTINFO
+from chirpy.core.entity_linker.lists import MANUAL_SPAN2ENTINFO, MANUAL_TALKABLE_NAMES
 from chirpy.core.flags import inf_timeout, use_timeouts
 from chirpy.core.util import query_es_index, get_es_host, get_elasticsearch
 
@@ -20,19 +20,37 @@ MAX_ES_SEARCH_SIZE = 1000
 ANCHORTEXT_QUERY_TIMEOUT = 3.0  # seconds
 ENTITYNAME_QUERY_TIMEOUT = 1.0  # seconds
 
-ARTICLES_INDEX_NAME = 'enwiki-20201201-articles'
+ARTICLES_INDEX_NAME = 'enwiki-20200920-articles'
 
 # These are the fields we DO want to fetch from ES
-FIELDS_FILTER = ['doc_title', 'doc_id', 'categories', 'pageview', 'linkable_span_info', 'wikidata_categories_all', 'redirects']
+FIELDS_FILTER = ['doc_title', 'doc_id', 'categories', 'pageview', 'linkable_span_info', 'wikidata_categories_all', 'redirects', 'plural']
 
 # Entities with any of these wikidata classes are filtered out
 UNTALKABLE_WIKIDATA_CLASSES = ['catalog of works', 'Wikimedia list article', 'Wikimedia disambiguation page',
                                'sports season', 'Wikimedia internal item']
 
+# Ethan trying to remove false positives for weird entities
+UNTALKABLE_WIKIDATA_CLASSES += ['social issue', 'criterion',
+                                'disease', # Gout, False memory
+                                'crime',
+                                'artistic profession', # Pianist
+                                'weapon',
+                                'firearm',
+                                'lighting' # Electric lamp
+                               ]
+
+UNTALKABLE_CLASSES_FILEPATH = os.path.join(os.path.dirname(__file__), 'untalkable_wikidata_classes.txt')
+with open(UNTALKABLE_CLASSES_FILEPATH, 'r') as f:
+    UNTALKABLE_WIKIDATA_CLASSES += [line.strip() for line in f.readlines()]
+
+UNTALKABLE_CATEGORIES = ['Race (human categorization)']
+
+WHITELIST_IN_UNTALKABLE_CLASSES = ['Coronavirus', 'Great Wall', 'Cat', 'Giant panda']
+
+BLACKLIST_ENTITIES = ['Andijan']
 
 # Elastic Search
 es = get_elasticsearch()
-
 
 def clean_category(category: str) -> str:
     """Clean the wikipedia category"""
@@ -58,9 +76,17 @@ def result2entity(result: dict) -> Optional[WikiEntity]:
     """
     source = result['_source']
     wikidata_categories = source.get('wikidata_categories_all', set())
+    categories = source.get('categories', set())
 
     # Return None for untalkable entities
-    if any(c in wikidata_categories for c in UNTALKABLE_WIKIDATA_CLASSES):
+    bad_wikidata_categories = [c for c in wikidata_categories if c in UNTALKABLE_WIKIDATA_CLASSES]
+    bad_categories = [c for c in categories if c in UNTALKABLE_CATEGORIES]
+    bad_taxa = [c for c in categories if c.startswith('Taxa named')] if len(source['doc_title'].split()) > 1 else [] # hack to avoid things like Horse — Ethan
+    if (any([bad_wikidata_categories, bad_categories, bad_taxa]) and source['doc_title'] not in WHITELIST_IN_UNTALKABLE_CLASSES):
+        logger.warning(f"Wasn't able to load data for {source['doc_title']} because it was banned due to: {bad_wikidata_categories} {bad_categories} {bad_taxa}")
+        return None
+    if (source['doc_title'] in BLACKLIST_ENTITIES):
+        logger.warning(f"Wasn't able to load data for {source['doc_title']} because it is a blacklisted entity")
         return None
 
     # Filter wikidata_categories
@@ -73,8 +99,14 @@ def result2entity(result: dict) -> Optional[WikiEntity]:
         else:
             anchortext_counts[anchortext] = count
 
-    return WikiEntity(name=source['doc_title'], doc_id=int(source['doc_id']), pageview=source['pageview'],
-                      wikidata_categories=wikidata_categories, anchortext_counts=anchortext_counts, redirects=source['redirects'])
+    plural = source.get('plural', source['doc_title'])
+    if plural.strip() == "":
+        plural = source['doc_title']
+    plural = MANUAL_TALKABLE_NAMES.get(source['doc_title'].lower(), plural)
+    logger.primary_info(f"Plural of {source['doc_title']} is: {plural}")
+    return WikiEntity(name=source['doc_title'], doc_id=int(source['doc_id']), pageview=source['pageview'], confidence=1,
+                      wikidata_categories=wikidata_categories,anchortext_counts=anchortext_counts, redirects=source['redirects'],
+                      plural=plural)
 
 @measure
 def make_wikientities(results: List[Dict]) -> List[WikiEntity]:

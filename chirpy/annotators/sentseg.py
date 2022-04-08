@@ -16,19 +16,16 @@ class NLTKSentenceSegmenter(Annotator):
     def get_default_response(self, input_data:str) -> List[str]:
         """The default response to be returned in case this module's execute fails, times out or is cancelled"""
         try:
-            return re.split('[\.\n]', input_data)
+            return {'error': False, 'response': re.split('[.\n]', input_data)}
         except:
             return []
 
     def execute(self, input_data: Optional[str]=None) -> List[str]:
         """
-        Run emotion classifier on input_data and return an emotion label.
-        The emotion classifier is trained on Empathetic Dialogues Dataset (https://arxiv.org/abs/1811.00207)
-        to predict the emotion given an utterance
+        Run NLTK Sentence Segmenter on input_data and return a list of sentences.
 
         Args:
             input_data (str): text to be segmented into sentences
-                "utterance": Input to emotion classifier
 
         Returns:
             List[str]: List of strings, each a sentence from the text
@@ -38,14 +35,15 @@ class NLTKSentenceSegmenter(Annotator):
 
 
         logger.debug(f'Calling SentSeg Remote module with text="{input_data}"')
-        output = self.remote_call({'text': input_data})
+        #output = self.remote_call({'text': input_data})
+        output = None
         if not output or output.get('error', False):
             logger.error(f'Error when running SentSeg Remote Module. \n'
                          f'Response: {output}.')
-            return self.get_default_response(input_data)
+            return re.split('[.\n]', input_data)
+            #raise RemoteServiceModuleError
         else:
             if 'response' in output:
                 return [s.strip() for s in itertools.chain(*(s.split('\n') for s in output['response'])) if s.strip()]
             else:
                 return self.get_default_response(input_data)
-

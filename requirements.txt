@@ -13,7 +13,7 @@ six
 nltk
 
 jsonpickle==1.3  # this needs to match the version in lambda_requirements.txt
-elasticsearch
+elasticsearch==7.8.0
 requests_aws4auth
 
 # needed for dashboard
@@ -54,3 +54,5 @@ python-Levenshtein
 g2p_en
 metaphone==0.6
 pyxDamerauLevenshtein==1.6
+
+textstat

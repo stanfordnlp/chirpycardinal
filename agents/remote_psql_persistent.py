@@ -46,7 +46,11 @@ class StateTable:
                 with get_db_cursor() as curs:
                     curs.execute(f"SELECT state from {self.table_name} where session_id=%(session_id)s AND creation_date_time=%(creation_date_time)s",
                                  {'session_id':session_id, 'creation_date_time': creation_date_time})
-                    item = curs.fetchone()[0]
+                    fetched_entry = curs.fetchone()
+                if fetched_entry is None or len(fetched_entry) == 0:
+                    item = None
+                    continue
+                item = fetched_entry[0]
                 item = {k: json.dumps(v) for k, v in item.items()}
             if item is None:
                 logger.error(
@@ -119,6 +123,10 @@ class UserTable():
         """
         try:
             assert 'user_id' in user_attributes
+            if 'name' in user_attributes:
+            	decoded_name = json.loads(user_attributes['name'])
+            	decoded_name = decoded_name.replace('"', "").replace('\\', "")
+            	user_attributes['name'] = json.dumps(decoded_name)
             decoded_attributes = {k: json.loads(v) for k, v in user_attributes.items()}
 
             with get_db_cursor() as curs:

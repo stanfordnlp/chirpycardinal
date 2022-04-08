@@ -1,4 +1,3 @@
-import random
 from typing import List, Dict
 from chirpy.response_generators.opinion2.state_actions import Action, State, AdditionalFeatures
 from chirpy.response_generators.opinion2.abstract_policy import Policy

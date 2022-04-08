@@ -1,12 +1,9 @@
 import bz2
 import csv
 from chirpy.core.offensive_classifier.offensive_classifier import contains_offensive
-import json
-import random
 import psycopg2 # type: ignore
 import argparse
 import os
-from operator import add
 from ast import literal_eval
 from collections import Counter
 from dataclasses import dataclass

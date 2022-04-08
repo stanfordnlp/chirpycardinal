@@ -149,12 +149,14 @@ class FoodTreelet(Treelet):
 
     @property
     def return_question_answer(self) -> str:
-        """Gives a response to the user if they ask the "return question" to our starter question"""
+        """Gives a response to the user if they ask the "return question" to our starter question
+                
+        DEPRECATED -- No need w/ blenderbot"""
         return "Oh, I love eating Mexican food like quesadillas and tacos. I even love to tacobout them, haha!"
 
     def optionally_get_nonneural_response(self, history: List[str]):
         """
-        If we should give a non-neural response instead of calling GPT2ED, give the response here.
+        If we should give a non-neural response instead of calling DialoGPT, give the response here.
 
         Inputs:
             history: odd-length list of strings, starting and ending with user utterances

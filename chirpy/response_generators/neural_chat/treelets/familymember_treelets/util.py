@@ -1,6 +1,6 @@
 import logging
-from typing import List, Optional, Dict, Tuple
-from dataclasses import dataclass, field, asdict
+from typing import Dict, List, Tuple
+from dataclasses import asdict, dataclass
 
 logger = logging.getLogger('chirpylogger')
 

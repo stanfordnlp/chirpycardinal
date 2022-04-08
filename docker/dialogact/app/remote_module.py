@@ -1,4 +1,3 @@
-import json
 import numpy as np
 from scipy.special import softmax
 from simpletransformers.classification import ClassificationModel

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import logging
 
 import jsonpickle
+import json
 
 from chirpy.core.flags import SIZE_THRESHOLD
 from chirpy.core.util import print_dict_linebyline
@@ -30,6 +31,24 @@ class UserAttributes:
                 setattr(base_self, k, decoded_items[k])
         return base_self
 
+    def prune_jsons(self):
+        """
+        Prune jsons from getting too big
+        """
+        for key in self.__dict__.keys():
+        	res = getattr(self, key)
+        	ever_successful = False
+        	if res is None:
+        		continue
+        	while True:
+        		try:
+        			res = json.loads(res)
+        		except:
+        			break
+        		ever_successful = True
+        	if ever_successful:
+        		setattr(self, key, json.dumps(res))
+
     def serialize(self):
         logger.debug(f'Running jsonpickle version {jsonpickle.__version__}')
         logger.debug(f'jsonpickle backend names: {jsonpickle.backend.json._backend_names}')
@@ -38,13 +57,14 @@ class UserAttributes:
 
         encoded_dict = {k: jsonpickle.encode(v) for k, v in self.__dict__.items()}
         total_size = sum(len(k) + len(v) for k, v in encoded_dict.items())
+
         if total_size > SIZE_THRESHOLD:
             logger.primary_info(
                 f"Total encoded size of state is {total_size}, which is greater than allowed {SIZE_THRESHOLD}. \n"
                 f"Size of each value in the dictionary is:\n{print_dict_linebyline({k: len(v) for k, v in encoded_dict.items()})}. \n")
 
             # Tries to reduce size of the current state
-            self.reduce_size()
+            self.prune_jsons()
             encoded_dict = {k: jsonpickle.encode(v) for k, v in self.__dict__.items()}
             total_size = sum(len(k) + len(v) for k, v in encoded_dict.items())
         logger.primary_info(

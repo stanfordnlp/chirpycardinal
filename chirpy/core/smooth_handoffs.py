@@ -13,4 +13,8 @@ class SmoothHandoff(Enum):
             identifier. If so, give the scripted prompt with PromptType=FORCE_START.
     """
     LAUNCH_TO_NEURALCHAT = auto()  # This signal is given at the end of the LAUNCH sequence (greeting and getting name) and is picked up by NEURAL_CHAT
+    MOVIES_TO_CATEGORIES = auto()
     ONE_TURN_TO_WIKI_GF = auto()
+    NEURALCHAT_TO_WIKI = auto()
+    NEWS_TO_SPORTS = auto()
+    PETS_TO_WIKI = auto()

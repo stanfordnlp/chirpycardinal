@@ -5,7 +5,6 @@ in main loop:
 2. initialize text agent (run server)
 3. enter loop in commandline and interact with text agent
 """
-import json
 import os
 from pathlib import Path
 import logging

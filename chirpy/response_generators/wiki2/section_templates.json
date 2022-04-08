@@ -1,0 +1,85 @@
+{
+  "history": [
+    ["{entity} has such a rich and compelling history, including events like <mask>", ["notable", "event", "historical"]],
+    ["I wonder what it would have been like to have been around when <mask>", ["notable", "event", "historical"]],
+    ["Events in its history such as <mask> must have been truly defining moments. What a time to be alive!", ["notable", "event", "historical"]]
+  ],
+  "career": [
+    ["I'm so impressed by how much [he/she] has accomplished, working as <mask>", ["job", "role", "prominent", "achievement"]],
+    ["I think it's really remarkable how much [he/she] has achieved, working on projects like <mask>", ["job", "role", "prominent", "achievement"]]
+  ],
+  "biography": [
+    ["[he/she] has lived such a varied and interesting life <mask>", ["job", "pursuit", "role", "prominent", "achievement"]]
+  ],
+  "early-life": [
+    ["[he/she] had an interesting childhood <mask>", ["child", "young", "pursuit", "interest"]]
+  ],
+  "geography": [
+    ["{entity} is known too for its beautiful waters, I especially love the [place] which is <mask>", ["river", "water", "lake"]],
+    ["My favorite place to visit in {entity_acc} is [place] which is famous for its [thing]", ["tourist", "attraction", "visit"]],
+    ["I'd love to do some climbing in {entity}, I hear that the locals are especially fond of climbing <mask>", ["mountain", "climb", "hill"]]
+  ],
+  "background": [
+    ["Yeah, it's not so well known that {entity} was originally <mask>", ["originally", "planned", "history", "before"]]
+  ],
+  "plot": [
+    ["{entity_gen} plot was so [adjective], especially where <mask>.", ["imaginative", "novel", "popular", "creative", "plot", "arc"]],
+    ["The plot is really good and the way it was executed was even better. My favorite part was when they <mask>", ["fight", "succeeded", "won"]]
+  ],
+  "description": [
+    ["{entity} are such amazing and fantastic creatures with their <mask>", ["claws", "body", "skin", "physical"]]
+  ],
+  "reception": [
+    ["I remember when {entity} first came out, people loved its [quality] because <mask>", ["reception", "review", "critic"]],
+    ["I really agree with one critic who said <mask>", ["critic", "ebert", "analysis", "praised", "criticized"]],
+    ["Some critics had such strong opinions about it, I think [name] said that <mask>", ["travers", "ebert", "disappointed", "praised"]]
+  ],
+  "character": [
+    ["{entity} has such a great cast. I especially love [actor] in [his/her] role as <mask>", ["actor", "actress", "character", "cast"]]
+  ],
+  "education": [
+    ["I find it interesting that {entity}'s education is <mask>", ["education", "system", "supported"]],
+    ["You might find it interesting to note that students from {entity} are known for <mask>.", ["education", "system", "students"]]
+  ],
+  "legacy": [
+    ["In the end, {entity} had such a disproportionate impact on the world by <mask>", ["changing", "improving", "consequential", "remarkable"]],
+    ["What a remarkable life, I hope we remember that <mask>", ["changing", "improving", "consequential", "remarkable"]]
+  ],
+  "etymology": [
+    ["Most people don't really think about it, but it's so cool that the name {entity} has its roots in [language].", ["origin", "language", "etymology", "ancient", "latin", "greek"]]
+  ],
+  "economy": [
+    ["{entity_gen} economy is so diverse cutting across industries like [thing] and [thing].", ["export", "agriculture", "mining", "services"]],
+    ["{entity_gen} economy is so unique with its focus on industries like [thing] and [thing].", ["export", "agriculture", "mining", "services"]]
+  ],
+  "location": [
+    ["{entity} is such a special place, with its unique attractions like <mask>.", ["sights", "attractions", "special", "notable"]]
+  ],
+  "music-video": [
+    ["Personally, I found the music video really <mask>", ["moving", "exciting", "emotion", "engaging"]],
+    ["My favorite part of the music video is where <mask>", ["video", "film", "begin", "end"]]
+  ],
+  "gameplay": [
+    ["I must say I really like the {entity_gen} gameplay, which involves <mask>", ["environment", "controls", "battle", "competition"]]
+  ],
+  "politics": [
+    ["I've always thought it was fascinating that the politics in {entity} is <mask>, which seems to have resulted in <mask>", ["government", "politics"]]
+  ],
+  "culture": [
+    ["I read that the culture of {entity} has largely been influenced by <mask>. I wonder what that is like for the people.", ["culture", "arts"]]
+  ],
+  "tourism": [
+    ["I love being in {entity} for a holiday! There are so many attractions such as <mask>", ["tourism", "attraction", "culture"]],
+    ["I heard that the most interesting tourist attraction from {entity} is the <mask> because <mask>.", ["tourism", "attraction", "culture"]]
+  ],
+  "general": [
+    ["It gives me hope that <mask>", ["positive", "improvement", "success"]],
+    ["<mask> was such an exciting time, I still remember when <mask>.", ["time", "year", "happen", "occurrence"]],
+    ["Honestly, [thing] is so <mask>.", ["beautiful", "amazing", "interesting"]],
+    ["It's interesting how <mask>. I mean think about it, <mask>.", ["fact", "interesting"]],
+    ["I think it's fascinating how <mask>.", ["fact", "interesting"]],
+    ["I wonder how <mask>, don't you?", ["fact", "interesting"]],
+    ["That's cool, isn't it? I mean, <mask>.", ["fact", "interesting"]],
+    ["I have always thought that <mask>; it is so [adjective] that <mask>.", ["time", "event", "exciting", "occurrence"]]
+  ]
+}

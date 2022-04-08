@@ -1,5 +1,5 @@
 import re
-import time
+from time import perf_counter_ns
 import unittest
 import logging
 
@@ -10,6 +10,13 @@ logger = logging.getLogger('chirpylogger')
 
 MAX_TIME_FOR_EXECUTE = 0.001  # max time in seconds that we want execute() to take
 
+def print_exception(title, msg):
+    print("=" * 80)
+    print(f"FAIL: {title}")
+    print("=" * 80)
+    print()
+    print(msg)
+    print()
 
 class RegexTemplate(unittest.TestCase):
     """
@@ -42,9 +49,9 @@ class RegexTemplate(unittest.TestCase):
         TestCase needs to be able to init this class with its expected args/kwargs.
         """
         logger.debug(f'RegexTemplate ({type(self).__name__}) is starting __init__...')
-        t0 = time.perf_counter_ns()
+        t0 = perf_counter_ns()
         super().__init__(*args, **kwargs)  # init TestCase parent class
-        time_for_parent_init = time.perf_counter_ns()-t0
+        time_for_parent_init = perf_counter_ns()-t0
 
         # Only need to do the rest of initializing if we're initializing a subclass of RegexTemplate
         if type(self) == RegexTemplate:
@@ -76,16 +83,16 @@ class RegexTemplate(unittest.TestCase):
                    self.templates]
 
         # Compile the regexes
-        t0_compile = time.perf_counter_ns()
+        t0_compile = perf_counter_ns()
         self.compiled_regexes = []
         for r in regexes:
-            # t0_indiv = time.perf_counter_ns()
+            # t0_indiv = perf_counter_ns()
             self.compiled_regexes.append(re.compile(r))
-            # logger.debug(f'RegexTemplate ({type(self).__name__}) took {(time.perf_counter_ns()-t0_indiv)/10**9} seconds to compile {r}')
-        time_to_compile = time.perf_counter_ns() - t0_compile
+            # logger.debug(f'RegexTemplate ({type(self).__name__}) took {(perf_counter_ns()-t0_indiv)/10**9} seconds to compile {r}')
+        time_to_compile = perf_counter_ns() - t0_compile
 
         logger.debug(f'RegexTemplate ({type(self).__name__}) finished __init__, compiling {len(self.compiled_regexes)} regexes. '
-                     f'Took {(time.perf_counter_ns()-t0)/10**9} seconds total, of which {time_for_parent_init/10**9} seconds were for TestCase.__init__ '
+                     f'Took {(perf_counter_ns()-t0)/10**9} seconds total, of which {time_for_parent_init/10**9} seconds were for TestCase.__init__ '
                      f'and {time_to_compile/10**9} seconds were for re.compile.')
 
     def execute(self, input_string: str):
@@ -93,20 +100,21 @@ class RegexTemplate(unittest.TestCase):
         Try to match input_string against self.compiled_regexes, in order.
         Returns the slot values for the FIRST matched regex, or returns None if no match is found.
         """
-        t0 = time.perf_counter_ns()
+        t0 = perf_counter_ns()
+        logger.setLevel(logging.DEBUG)
         logger.debug(f'RegexTemplate ({type(self).__name__}) is executing on "{input_string}", checking against {len(self.compiled_regexes)} compiled regexes...')
         for idx, r in enumerate(self.compiled_regexes):
-            # t0_indiv = time.perf_counter_ns()
+            # t0_indiv = perf_counter_ns()
             matched = r.match(input_string)
-            # logger.debug(f'RegexTemplate ({type(self).__name__}) took {(time.perf_counter_ns()-t0_indiv)/10**9} seconds for regex {r}')
+            # logger.debug(f'RegexTemplate ({type(self).__name__}) took {(perf_counter_ns()-t0_indiv)/10**9} seconds for regex {r}')
             if matched:
                 logger.debug(f'RegexTemplate ({type(self).__name__}) finished executing on "{input_string}". '
                              f'Matched with compiled regex {idx} of {len(self.compiled_regexes)}, '
-                             f'Took {(time.perf_counter_ns()-t0)/10**9} seconds total')
+                             f'Took {(perf_counter_ns()-t0)/10**9} seconds total')
                 return {k: v for k,v in matched.groupdict().items() if v is not None}
         logger.debug(f'RegexTemplate ({type(self).__name__}) finished executing on "{input_string}". '
                      f'Matched with none of {len(self.compiled_regexes)} compiled regexes. '
-                     f'Took {(time.perf_counter_ns() - t0)/10**9} seconds total')
+                     f'Took {(perf_counter_ns() - t0)/10**9} seconds total')
         return None
 
     def test_examples(self):
@@ -119,13 +127,19 @@ class RegexTemplate(unittest.TestCase):
         # Test positive
         for (text, expected_slots) in self.positive_examples:
             slots = self.execute(text)
-            self.assertIsNotNone(slots, f'positive example "{text}" did not match {type(self).__name__}')
-            self.assertDictEqual(slots, expected_slots, f'positive example "{text}" matched {type(self).__name__}, but the resulting slots {slots} do not match the expected slots {expected_slots}')
+            try:
+                self.assertIsNotNone(slots, f'positive example "{text}" did not match {type(self).__name__}')
+                self.assertDictEqual(slots, expected_slots, f'positive example "{text}" matched {type(self).__name__}, but the resulting slots {slots} do not match the expected slots {expected_slots}')
+            except AssertionError as e:
+                print_exception(f"{self.__class__.__name__}.pos_test_{text.replace(' ', '_')}", e)
 
         # Test negative
         for text in self.negative_examples:
             slots = self.execute(text)
-            self.assertIsNone(slots, f'negative example "{text}" matched {type(self).__name__}')
+            try:
+                self.assertIsNone(slots, f'negative example "{text}" matched {type(self).__name__}')
+            except AssertionError as e:
+                print_exception(f"{self.__class__.__name__}.neg_test_{text.replace(' ', '_')}", e)
 
     def test_speed(self):
         if type(self) == RegexTemplate:
@@ -135,10 +149,13 @@ class RegexTemplate(unittest.TestCase):
         length2time = {}
         for length in [5, 10, 20, 50, 100]:
             text = ' '.join([word for _ in range(length)])
-            #TODO: pycharm shows that time isn't imported
-            t0 = time.perf_counter_ns()
+            t0 = perf_counter_ns()
             self.execute(text)
-            time_taken = (time.perf_counter_ns() - t0)/10**9
+            time_taken = (perf_counter_ns() - t0)/10**9
             length2time[length] = time_taken
-            self.assertLess(time_taken, MAX_TIME_FOR_EXECUTE, f'{type(self).__name__} took {time_taken} seconds (more than MAX_TIME_FOR_EXECUTE={MAX_TIME_FOR_EXECUTE}) executing on an input length {length}')
+            try:
+                self.assertLess(time_taken, MAX_TIME_FOR_EXECUTE, f'{type(self).__name__} took {time_taken} seconds (more than MAX_TIME_FOR_EXECUTE={MAX_TIME_FOR_EXECUTE}) executing on an input length {length}')
+            except AssertionError as e:
+                print_exception(f"{self.__class__.__name__}.timed_test_length_{length}", e)
+
         print(f'{type(self).__name__} speeds: ' + ', '.join([f'{length} words: {time} seconds' for length, time in length2time.items()]))

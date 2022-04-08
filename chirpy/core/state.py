@@ -1,11 +1,7 @@
 import pytz
-import os
 from typing import *
-import json
 from datetime import datetime
-from functools import singledispatch
 import copy
-from dataclasses import dataclass, asdict, field
 
 from chirpy.core.entity_tracker.entity_tracker import EntityTrackerState
 from chirpy.core.experiment import Experiments
@@ -29,13 +25,34 @@ logger = logging.getLogger('chirpylogger')
 jsonpickle.set_encoder_options('simplejson', sort_keys=True)
 jsonpickle.set_encoder_options('json', sort_keys=True)
 
-class State(object):
+'''
+@amelia: agent-side writing new code + new abstractions for classes & objects
+- copy from state, state_manager, handler w/o touching
+- agent calls handler.execute()
+- entry point changing from baseline_bot -> alexa_agent
+- alexa agent will have a lot of code from baseline_bot
+- look at how IT's work (may need to re-write)
+- look at changing interactive mode script
+'''
 
-    def __init__(self, session_id: str, creation_date_time: str = None, user_id=None) -> None:
+class State(object):
+    """
+    Encapsulates the current state of the Cobot system, as managed by the StateManager
+    """
+
+    def __init__(self, session_id: str, creation_date_time: str = None, ) -> None:
         """
         Initialize a State object with provided fields.
+        :param user_id: user id
+        :param conversation_id: conversation id
         :param session_id: session id
         :param creation_date_time: state creation timestamp, default to None
+        :param request_type: LaunchRequest, IntentRequest, or SessionEndedRequest, default to None
+        :param intent: NLU intent, default to None
+        :param topic: topic, default to None
+        :param asr: request from ASK lambda function
+        :param text: text extracted from highest confidence asr or raw TEXT slot
+        :param response: generated response
         """
         # self.user_id = user_id
         self.session_id = session_id
@@ -45,7 +62,7 @@ class State(object):
             self.creation_date_time = str(datetime.utcnow().isoformat())
         '''
         TODO: pipeline & commit_id should go to agent
-        storing commit_id as env variable so that we don't have to interface w/git 
+        storing commit_id as env variable so that we don't have to interface w/git
         '''
         # A dictionary of experiment name to value of experiment variable
         self.history = []
@@ -53,6 +70,7 @@ class State(object):
         self.entity_tracker.init_for_new_turn()
         self.turn_num = 0
         self.experiments = Experiments()
+        self.cache = {}     # for caching data
 
     def update_from_last_state(self, last_state):
         self.history = last_state.history + [last_state.text, last_state.response]
@@ -98,18 +116,25 @@ class State(object):
             return None
         return rg_states[rg_name]
 
+    def get_cache(self, key):
+        return self.cache.get(key)
+
+    def set_cache(self, key, value):
+        self.cache[key] = value
+
     def serialize(self):
         logger.debug(f'Running jsonpickle version {jsonpickle.__version__}')
         logger.debug(f'jsonpickle backend names: {jsonpickle.backend.json._backend_names}')
         logger.debug(f'jsonpickle encoder options: {jsonpickle.backend.json._encoder_options}')
         logger.debug(f'jsonpickle fallthrough: {jsonpickle.backend.json._fallthrough}')
 
-        encoded_dict = {k: jsonpickle.encode(v) for k, v in self.__dict__.items()}
+        # don't serialize cache
+        encoded_dict = {k: jsonpickle.encode(v) for k, v in self.__dict__.items() if k != 'cache'}
         total_size = sum(len(k) + len(v) for k, v in encoded_dict.items())
         if total_size > SIZE_THRESHOLD:
             logger.primary_info(
-                f"Total encoded size of state is {total_size}, which is greater than allowed {SIZE_THRESHOLD}. \n"
-                f"Size of each value in the dictionary is:\n{print_dict_linebyline({k: len(v) for k, v in encoded_dict.items()})}. \n")
+                f"Total encoded size of state is {total_size}, which is greater than allowed {SIZE_THRESHOLD}\n"
+                f"Size of each value in the dictionary is:\n{print_dict_linebyline({k: len(v) for k, v in encoded_dict.items()})}")
 
             # Tries to reduce size of the current state
             self.reduce_size()
@@ -117,22 +142,41 @@ class State(object):
             total_size = sum(len(k) + len(v) for k, v in encoded_dict.items())
         logger.primary_info(
             f"Total encoded size of state is {total_size}\n"
-            f"Size of each value in the dictionary is:\n{print_dict_linebyline({k: len(v) for k, v in encoded_dict.items()})}. \n")
+            f"Size of each value in the dictionary is:\n{print_dict_linebyline({k: len(v) for k, v in encoded_dict.items()})}")
         return encoded_dict
+
 
     @classmethod
     def deserialize(cls, mapping: dict):
         decoded_items = {}
-        logger.info(mapping.items())
+        # logger.debug(mapping.items())
         for k, v in mapping.items():
             try:
                 decoded_items[k] = jsonpickle.decode(v)
             except:
-                logger.error(f"Unable to decode {k}:{v} from past state")
+                logger.error(f"Unable to decode {k}: {v} from past state")
 
         constructor_args = ['session_id', 'creation_date_time']
-        base_self = cls(**{k: decoded_items[k] for k in constructor_args})
-        
+        base_self = cls(**{k: decoded_items.get(k, None) for k in constructor_args})
+
+        for k in decoded_items:
+            #if k not in constructor_args:
+            setattr(base_self, k, decoded_items[k])
+        return base_self
+
+    @classmethod
+    def deserialize_json(cls, mapping: dict): # this method plays nicer w/ manually reconstructed states from past convos
+        decoded_items = {}
+        # logger.debug(mapping.items())
+        for k, v in mapping.items():
+            try:
+                decoded_items[k] = v
+            except:
+                logger.error(f"Unable to decode {k}: {v} from past state")
+
+        constructor_args = ['session_id', 'creation_date_time']
+        base_self = cls(**{k: decoded_items.get(k, None) for k in constructor_args})
+
         for k in decoded_items:
             #if k not in constructor_args:
             setattr(base_self, k, decoded_items[k])

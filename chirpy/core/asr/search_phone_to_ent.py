@@ -5,9 +5,8 @@ import boto3
 import json
 import logging
 from metaphone import doublemetaphone
-import re
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional  # NOQA
 
 from chirpy.core.asr.index_phone_to_ent import PHONE_TO_ENT_INDEX, span_to_phoneme_string
 from chirpy.core.asr.lattice import span_to_lattice, get_lattice_similarity, remove_stress

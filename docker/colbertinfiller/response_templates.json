@@ -1,0 +1,39 @@
+{
+  "musician": [
+    ["I love [song] because of its [quality].", ["song", "single", "singer", "recording", "quality", "released"]],
+    ["I still remember [year], when it seemed like [song] was on every [genre] station.", ["song", "single", "released", "recording", "genre"]],
+    ["Out of the album [album], I like [song] the best because of <mask>. Did you know that <mask>?", ["album", "recording", "song", "single", "released"]],
+    ["I really like [artist] because she is so [adjective].", ["artist", "singer", "star", "great", "talented"]],
+    ["My favorite album by [artist] is [album] because it's so [adjective]. <mask>", ["album", "artist", "song"]],
+    ["I've been following her since she first started [action] at [place]", ["birthplace", "born", "child"]],
+    ["Do you remember when <mask>?", ["time", "past"]]
+  ],
+  "location": [
+    ["I love to visit [location] because of all the [things] there.", ["attraction", "tourist", "visit"]],
+    ["Honestly, [location] is such a great place to be, you can <mask>.", ["activity", "work", "tourism"]],
+    ["Did you know that [location] is a really great place to [action]?", ["activity", "work", "tourism"]],
+    ["I've heard that [location] is famous for [thing].", ["activity", "business", "economy"]],
+    ["The architecture of [location] is so beautiful, I love how [adjective] the buildings are.", ["building", "architecture"]],
+    ["I've always wanted to visit [location], I imagine that I could [action] there.", ["entertainment", "food"]],
+    ["I love the [food] you can get in [location], my favorite part about it is how [adjective] it is.", ["food", "cuisine", "dish"]],
+    ["I love the [adjective] music of [location], especially [person] and [thing]. Did you know that <mask>", ["music", "performance", "composer"]],
+    ["Did you know that in [year], [action]?", ["history", "event"]],
+    ["Did know about [event], which <mask>? It's really <mask>.", ["event", "attraction"]],
+    ["I've always been interested in [person], who is famous for <mask>.", ["person", "celebrity", "artist", "famous"]]
+  ],
+  "general": [
+    ["Yeah, it's been [time] since [event]. It was a lot of fun to watch.", ["time", "event", "happen", "occurrence"]],
+    ["I really remember when [event]; it was so [adjective] that <mask>.", ["time", "event", "exciting", "occurrence"]],
+    ["[year] was such an exciting time, I still remember when <mask>.", ["time", "year", "happen", "occurrence"]],
+    ["Honestly, [thing] is so <mask>.", ["thing"]]
+  ],
+  "acknowledgements": [
+    "Yeah, I love [person] too!",
+    "Yeah, I agree that <mask>.",
+    "Yeah, I agree that [person] is [adjective].",
+    "[Thing] is one of my favorite [things].",
+    "Yes, [thing] really is [adjective].",
+    "I know, I imagine that [thing] is so <mask>.",
+    "Yeah, can you believe that [person] [action]?"
+  ]
+}

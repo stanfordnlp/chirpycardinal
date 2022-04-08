@@ -444,22 +444,18 @@ class NumericRange(Range):
     PostgreSQL types :sql:`int4range`, :sql:`int8range`, :sql:`numrange` are
     casted into `!NumericRange` instances.
     """
-    pass
 
 
 class DateRange(Range):
     """Represents :sql:`daterange` values."""
-    pass
 
 
 class DateTimeRange(Range):
     """Represents :sql:`tsrange` values."""
-    pass
 
 
 class DateTimeTZRange(Range):
     """Represents :sql:`tstzrange` values."""
-    pass
 
 
 # Special adaptation for NumericRange. Allows to pass number range regardless

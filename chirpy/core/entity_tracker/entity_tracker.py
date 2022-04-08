@@ -1,13 +1,20 @@
+from enum import Enum
 import logging
 import jsonpickle
 from typing import List, Optional, Union, Set
 from chirpy.core.entity_linker.entity_linker_classes import WikiEntity, EntityLinkerResult
 from chirpy.core.latency import measure
-from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, UpdateEntity
+from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, UpdateEntity, AnswerType
 from chirpy.core.entity_linker.thresholds import SCORE_THRESHOLD_NAV_ABOUT, SCORE_THRESHOLD_NAV_NOT_ABOUT, SCORE_THRESHOLD_EXPECTEDTYPE
 from chirpy.core.entity_linker.entity_groups import EntityGroup
 
 logger = logging.getLogger('chirpylogger')
+
+class TransitionType(Enum):
+    POSNAV = 1                      # explicit positive navigation
+    RESPONSE_TO_QUESTION = 2
+    CHANGE_TOPIC = 3
+    IN_CONTEXT = 4
 
 class EntityTrackerState(object):
     """
@@ -18,9 +25,12 @@ class EntityTrackerState(object):
         self.cur_entity = None  # the current entity under discussion (can be None)
         self.talked_rejected = []  # entities we talked about in the past, and stopped talking about because the user indicated they didn't want to talk about it any more
         self.talked_finished = []  # entities we talked about in the past, that aren't in talked_rejected
+        self.talked_transitionable = []
+        self.transitional_entity = None
         self.user_mentioned_untalked = []  # entities the user mentioned (in high_prec set) that have not yet been the cur_entity
         self.expected_type = None  # the expected EntityType of the next user utterance
         self.user_topic_unfound = None  # On turns when the user requested a topic but we were unable to link to it, we set this to the topic (str)
+        self.is_personal_posnav = False # If the user requested posnav for a personal entity (e.g. "my girlfriend")
 
         # history is a list of dictionaries. each dictionary corresponds to one turn and has keys 'user', 'response',
         # and sometimes 'prompt'. The values are the cur_entity (WikiEntity or None) after each of those rounds
@@ -46,16 +56,8 @@ class EntityTrackerState(object):
             current_state.entity_linker = EntityLinkerResult()
         entity_linker_result = current_state.entity_linker
 
-        if self.cur_entity is None:
-            return False
-        if self.last_turn_end_entity == self.cur_entity:  # cur_entity is not new
-            return False
-        this_turn_entitylinker_entities = {e for ls in entity_linker_result.all_linkedspans for e in ls.entname2ent.values()}  # set of WikiEntities
-        if self.cur_entity not in this_turn_entitylinker_entities:
-            return False
-        logger.info(f"cur_entity {self.cur_entity} is user-initiated this turn, because it was not cur_entity at the "
-                    f"end of the previous turn, and is among the entity linker output for this turn.")
-        return True
+        return self.entity_initiated_on_turn
+
 
     @property
     def last_turn_end_entity(self) -> Optional[WikiEntity]:
@@ -88,11 +90,22 @@ class EntityTrackerState(object):
         """
         return entity == self.cur_entity or entity in self.talked_rejected or entity in self.talked_finished
 
-    def finish_entity(self, entity: Optional[WikiEntity]):
+    def finish_entity(self, entity: Optional[WikiEntity], transition_is_possible=True):
         """If entity is not None, put it on self.talked_finished"""
+        
+        if entity is not None and not isinstance(entity, WikiEntity):
+            logger.error(f"This is an error. This should be a WikiEntity object but {entity} is of type {type(entity)}")
+            entity = None
+
         if entity is not None and entity not in self.talked_finished:
             logger.info(f'Putting entity {entity} on the talked_finished list')
             self.talked_finished.append(entity)
+
+        if entity is not None and transition_is_possible:
+            self.talked_transitionable.append(entity)
+
+        if not transition_is_possible and entity in self.talked_transitionable:
+            self.talked_transitionable = [x for x in self.talked_transitionable if x is not entity]
 
     def reject_entity(self, entity: Optional[WikiEntity]):
         """If entity is not None, put it on self.talked_rejected"""
@@ -116,7 +129,7 @@ class EntityTrackerState(object):
 
             # Construct a condition fn to only return True when the entity is in the neg_topic_span and has score above score_threshold
             def condition_fn(entity_linker_result, linked_span, entity) -> bool:
-                return linked_span.span in neg_topic_span and linked_span.entname2score[entity.name] >= score_threshold
+                return linked_span.span in neg_topic_span and entity.confidence >= score_threshold
 
             negnav_slot_entity = entity_linker_result.top_ent(condition_fn)
             if negnav_slot_entity:
@@ -156,6 +169,11 @@ class EntityTrackerState(object):
                                 f"about_keyword={pos_about_keyword}, so looking for entities in '{pos_topic_span}' "
                                 f"that are a top ent in the high prec set, or a manual link, or have score over {score_threshold}")
 
+            if 'my' in pos_topic_span.split():
+                logger.primary_info("Pos topic span has `my` in it; don't link (but set IsPersonalPosNav to True).")
+                self.is_personal_posnav = True
+                return None
+
             # Construct a condition fn to filter for only the entities we want
             def condition_fn(entity_linker_result, linked_span, entity) -> bool:
                 if linked_span.span not in pos_topic_span:
@@ -164,7 +182,7 @@ class EntityTrackerState(object):
                     return True
                 if entity == linked_span.manual_top_ent:
                     return True
-                if linked_span.entname2score[entity.name] >= score_threshold:
+                if entity.confidence >= score_threshold:
                     return True
                 return False
 
@@ -179,15 +197,41 @@ class EntityTrackerState(object):
                 self.user_topic_unfound = pos_topic_span  # note that we failed to link this topic
                 return None
 
-
-    def get_new_ent_from_user(self, entity_linker_result, nav_intent_output, negnav_entities) -> Optional[WikiEntity]:
+    @measure
+    def update_from_user(self, state_manager):
         """
-        Identify the new cur_entity from the user's utterance.
-        """
+        Update at the start of the turn, after running NLP pipeline but before running RGs.
 
-        # If the user is expressing positive navigational intent, identify the new entity accordingly
+        Inputs:
+            current_state: the overall State of the bot, after running NLP pipeline but before running RGs
+        """
+        # import pdb; pdb.set_trace()
+        current_state = state_manager.current_state
+        # Get entity linker output
+        if not hasattr(current_state, 'entity_linker'):
+            logger.error('No entity_linker in current_state. This should have been caught and fixed by the NLP '
+                         'pipeline. Setting entity_linker to empty EntityLinkerResult in current_state.')
+            current_state.entity_linker = EntityLinkerResult()
+
+
+        entity_linker_result = current_state.entity_linker
+        nav_intent_output = current_state.navigational_intent
+        logger.primary_info(f'Updating the EntityTrackerState: {self}\nafter user utterance: '
+                            f'"{current_state.text}"\nwith linked entities: {entity_linker_result}'
+                            f'\nwith navigational intent output: {nav_intent_output}')
+
+        # import pdb; pdb.set_trace()
+
+        self.entity_initiated_on_turn = None
+        self.is_personal_posnav = False
+
+        negnav_entities = self.get_negnav_entities(nav_intent_output, entity_linker_result)
+
         if nav_intent_output.pos_intent:
-            return self.get_new_ent_from_posnav(nav_intent_output, entity_linker_result)
+            self.entity_initiated_on_turn = self.get_new_ent_from_posnav(nav_intent_output, entity_linker_result)
+        if nav_intent_output.neg_intent:
+            for negnav_entity in self.get_negnav_entities(nav_intent_output, entity_linker_result):
+                self.reject_entity(negnav_entity)
 
         # Otherwise, get the highest-priority WikiEntity that satisfies (a) AND (b):
         # (a) is not in negnav_entities, or in a LinkedSpan which contains any negnav_entity as an candidate entity
@@ -199,83 +243,46 @@ class EntityTrackerState(object):
                 return True
             if entity == linked_span.manual_top_ent:
                 return True
-            if self.expected_type is not None and self.expected_type.matches(entity) and linked_span.entname2score[entity.name] >= SCORE_THRESHOLD_EXPECTEDTYPE:
+            if self.expected_type is not None and self.expected_type.matches(entity) and entity.confidence >= SCORE_THRESHOLD_EXPECTEDTYPE:
                 return True
             return False
 
-        logger.primary_info(f"Searching for highest-priority entity that (a) isn't in negnav_entities={negnav_entities} or in a LinkedSpan that contains any negnav_entity, "
-                            f"and (b) is a top ent in high-prec set, or is a manual link" + (f", or matches expected_type='{self.expected_type}' and score "
-                            f"over {SCORE_THRESHOLD_EXPECTEDTYPE}" if self.expected_type else ''))
-        top_ent = entity_linker_result.top_ent(condition_fn)  # WikiEntity or None
 
-        # If we got a new entity, return it
-        if top_ent is not None:
-            logger.primary_info(f"Got a new cur_entity {top_ent}")
-            return top_ent
+        last_response = state_manager.last_state_response
+        last_answer_type = last_response.answer_type if last_response else None
 
-        # Otherwise, we got no new entity.
-        else:
+        logger.primary_info(f"Last response is {last_response}; last answer type is {last_answer_type}; options are [{AnswerType.QUESTION_SELFHANDLING}, {AnswerType.QUESTION_HANDOFF}]")
 
-            # If the user expressed NegNav intent, set cur_entity to None (i.e. reject whatever is cur_entity)
-            if nav_intent_output.neg_intent:
-                logger.primary_info(f"Got no new cur_entity. User expressed NegNav intent, so setting cur_entity to None")
-                return None
-
-            # Otherwise, preserve cur_entity
+        # Do we expect to initiate a new entity on this turn?
+        if self.entity_initiated_on_turn is None and last_answer_type in [AnswerType.QUESTION_SELFHANDLING, AnswerType.QUESTION_HANDOFF]:
+            logger.primary_info(f"Searching for highest-priority entity that (a) isn't in negnav_entities={negnav_entities} or in a LinkedSpan that contains any negnav_entity, "
+                                f"and (b) is a top ent in high-prec set, or is a manual link" + (f", or matches expected_type='{self.expected_type}' and score "
+                                f"over {SCORE_THRESHOLD_EXPECTEDTYPE}" if self.expected_type else ''))
+            self.entity_initiated_on_turn = entity_linker_result.top_ent(condition_fn)  # WikiEntity or None
+            if self.entity_initiated_on_turn is not None:
+                logger.primary_info(f"Got a new cur_entity")
             else:
-                logger.primary_info(f"Got no new cur_entity, so preserving the existing cur_entity {self.cur_entity}")
-                return self.cur_entity
+                logger.primary_info(f"Got no new cur_entity")
+
+            if self.entity_initiated_on_turn != self.cur_entity and self.cur_entity is not None:
+                if self.cur_entity not in negnav_entities:
+                    self.finish_entity(self.cur_entity)   # move to talked_finished
+                # Remove new_entity from user_mentioned_untalked
+                if self.entity_initiated_on_turn in self.user_mentioned_untalked:
+                    logger.primary_info(f'Removing {self.entity_initiated_on_turn} from {self.user_mentioned_untalked}')
+                    self.user_mentioned_untalked = [e for e in self.user_mentioned_untalked if e != self.entity_initiated_on_turn]
 
 
-    @measure
-    def update_from_user(self, current_state):
-        """
-        Update at the start of the turn, after running NLP pipeline but before running RGs.
 
-        Inputs:
-            current_state: the overall State of the bot, after running NLP pipeline but before running RGs
-        """
+        if nav_intent_output.neg_intent or nav_intent_output.pos_intent or last_answer_type in [AnswerType.QUESTION_SELFHANDLING, AnswerType.QUESTION_HANDOFF]:
+            self.cur_entity = self.entity_initiated_on_turn
 
-        # Get entity linker output
-        if not hasattr(current_state, 'entity_linker'):
-            logger.error('No entity_linker in current_state. This should have been caught and fixed by the NLP '
-                         'pipeline. Setting entity_linker to empty EntityLinkerResult in current_state.')
-            current_state.entity_linker = EntityLinkerResult()
-        entity_linker_result = current_state.entity_linker
+        for linked_span in current_state.entity_linker.high_prec:
+            if not self.talked(linked_span.top_ent):
+                logger.info(f'Adding {linked_span.top_ent} to user_mentioned_untalked')
+                self.user_mentioned_untalked.append(linked_span.top_ent)
 
-        # Get navigational intent output
-        nav_intent_output = current_state.navigational_intent
-
-        # Log
-        logger.primary_info(f'Updating the EntityTrackerState: {self}\nafter user utterance: '
-                            f'"{current_state.text}"\nwith linked entities: {entity_linker_result}'
-                            f'\nwith navigational intent output: {nav_intent_output}')
-
-        # If the user has negative navigational intent, identify the entities they're rejecting
-        negnav_entities = self.get_negnav_entities(nav_intent_output, entity_linker_result)  # set of WikiEntities
-        for negnav_entity in negnav_entities:
-            self.reject_entity(negnav_entity)
-
-        # Get the new cur_entity from the user utterance and entity linker results
-        new_entity = self.get_new_ent_from_user(entity_linker_result, nav_intent_output, negnav_entities)
-
-        # If we're changing cur_entity, and the old cur_entity is not None, put the old cur_entity on
-        # talked_rejected or talked_finished depending on whether it's in negnav_entities
-        if new_entity != self.cur_entity and self.cur_entity is not None:
-            if self.cur_entity in negnav_entities:
-                self.reject_entity(self.cur_entity)
-            else:
-                self.finish_entity(self.cur_entity)
-            # Remove new_entity from user_mentioned_untalked
-            if new_entity in self.user_mentioned_untalked:
-                logger.primary_info(f'Removing {new_entity} from {self.user_mentioned_untalked}')
-                self.user_mentioned_untalked = [e for e in self.user_mentioned_untalked if e != new_entity]
-
-        # Set new_entity as the new cur_entity
-        self.cur_entity = new_entity
-
-        # Put any undiscussed high_prec entities in user_mentioned_untalked
-        self.record_untalked_high_prec_entities(current_state)
+        logger.primary_info(f'The EntityTrackerState is now: {self}')
 
         # Update the entity tracker history
         self.history[-1]['user'] = self.cur_entity
@@ -298,7 +305,6 @@ class EntityTrackerState(object):
                 logger.info(f'Adding {ls.top_ent} to user_mentioned_untalked')
                 self.user_mentioned_untalked.append(ls.top_ent)
 
-
     def update_from_rg(self, result: Union[ResponseGeneratorResult, PromptResult, UpdateEntity], rg: str, current_state):
         """
         Update after receiving the output of a RG's get_response/get_prompt/get_entity fn.
@@ -317,10 +323,20 @@ class EntityTrackerState(object):
             if self.expected_type:
                 logger.info(f'Setting self.expected_type to "{self.expected_type}" based on {rg} RG {phase} result')
 
+        transition_is_possible = not getattr(result, 'no_transition', False)
+
         if new_entity == self.cur_entity:
             logger.primary_info(f'new_entity={new_entity} from {rg} RG {phase} is the same as cur_entity, so keeping EntityTrackerState the same')
         else:
-            self.finish_entity(self.cur_entity)
+            if phase == 'response' and transition_is_possible and self.cur_entity is not None and new_entity is None:
+                self.transitional_entity = self.cur_entity
+            else:
+                self.transitional_entity = None
+            logger.primary_info(f"In phase {phase}, transitional entity is {self.transitional_entity}")
+            if rg == 'TRANSITION' and phase == 'response':
+                self.reject_entity(self.cur_entity)
+            else:
+                self.finish_entity(self.cur_entity, transition_is_possible)
             self.cur_entity = new_entity
             # Remove new_entity from user_mentioned_untalked
             if new_entity in self.user_mentioned_untalked:
@@ -346,7 +362,10 @@ class EntityTrackerState(object):
         output += f"cur_entity={self.cur_entity.name if self.cur_entity else self.cur_entity}"
         output += f", talked_finished={[ent.name for ent in self.talked_finished]}"
         output += f", talked_rejected={[ent.name for ent in self.talked_rejected]}"
+        output += f", talked_transitionable={[ent.name for ent in self.talked_transitionable]}"
+        output += f", transitional_entity={self.transitional_entity}"
         output += f", user_mentioned_untalked={[ent.name for ent in self.user_mentioned_untalked]}"
+        output += f", is_personal_posnav={self.is_personal_posnav}"
         if show_history:
             output += f", history={self.history}"
         output += '>'

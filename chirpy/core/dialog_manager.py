@@ -1,24 +1,24 @@
 import copy
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, List, Optional
 
 from chirpy.core.callables import run_multithreaded, ResponseGenerators
+# from chirpy.core.offensive_speech_classifier import OffensiveSpeechClassifier
 from chirpy.core.state_manager import StateManager
 from chirpy.core.priority_ranking_strategy import PriorityRankingStrategy
 from chirpy.core.flags import use_timeouts, inf_timeout
 from chirpy.core.priority_ranking_strategy import RankedResults
-from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, UpdateEntity
+from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, UpdateEntity, CONTINUING_ANSWER_TYPES, is_killed
 from chirpy.core.util import print_dict_linebyline, sentence_join
 from chirpy.core.offensive_classifier.offensive_classifier import contains_offensive
-from chirpy.response_generators.closing_confirmation_response_generator import CLOSING_CONFIRMATION_STOP
+from chirpy.response_generators.closing_confirmation.closing_confirmation_response_generator import CLOSING_CONFIRMATION_STOP
 from chirpy.core.latency import measure
 
 
 logger = logging.getLogger('chirpylogger')
 
 
-class DialogManager(object):
-
+class DialogManager:
     # These timeouts are in seconds
     INIT_STATE_TIMEOUT = 1 if use_timeouts else inf_timeout
     GET_ENTITY_TIMEOUT = 1 if use_timeouts else inf_timeout
@@ -67,6 +67,12 @@ class DialogManager(object):
                 self.state_manager.current_state.turns_since_last_active[rg_name] += 1
         except Exception as e:
             logger.error(f"Error in incrementing the turns_since_last_active field! Error is {e}")
+
+        # save turns_since_last_active state in User Table. only start saving after initial launch phase verifies
+        # whether we recognize the user
+        if len(self.state_manager.current_state.history) >= 6:
+            setattr(self.state_manager.user_attributes, 'turns_since_last_active',
+                    self.state_manager.current_state.turns_since_last_active)
 
         # Get response (and possibly prompt)
         selected_response_rg, selected_response, selected_prompt_rg, selected_prompt = self.get_response_and_prompt()
@@ -135,7 +141,7 @@ class DialogManager(object):
                 logger.primary_info(f"Ran last_active_rg={last_active_rg}'s get_entity() function. It returned "
                                     f"{update_entity_result}, so the entity tracker will update its state in the normal way",
                                     extra={'color_msg_by_component': last_active_rg})
-            self.state_manager.current_state.entity_tracker.update_from_user(self.state_manager.current_state)
+            self.state_manager.current_state.entity_tracker.update_from_user(self.state_manager)
 
 
     def get_response_and_prompt(self)  -> (str, ResponseGeneratorResult, Optional[str], Optional[PromptResult]):
@@ -158,7 +164,7 @@ class DialogManager(object):
 
         # Choose the top response
         selected_response, selected_response_rg = ranked_responses.top_result, ranked_responses.top_rg
-        logger.primary_info('Selected response from {}: {}'.format(selected_response_rg, selected_response),
+        logger.primary_info(f'Selected response from {selected_response_rg}: {selected_response}',
                             extra={'color_msg_by_component': selected_response_rg})
 
         # If the responding RG gave a smooth_handoff identifier, put it in current_state
@@ -190,7 +196,7 @@ class DialogManager(object):
 
             # Choose the top prompt
             selected_prompt, selected_prompt_rg = ranked_prompts.top_result, ranked_prompts.top_rg
-            logger.primary_info('Selected prompt from {}: {}'.format(selected_prompt_rg, selected_prompt),
+            logger.debug('Selected prompt from {}: {}'.format(selected_prompt_rg, selected_prompt),
                                 extra={'color_msg_by_component': selected_prompt_rg})
 
             # Update the RG states
@@ -244,6 +250,7 @@ class DialogManager(object):
 
         # Put in current_state
         setattr(self.state_manager.current_state, 'response_generator_states', rg_states)
+        logger.info(f"Current rg states are {rg_states}")
 
 
     def update_rg_states(self, results: RankedResults, selected_rg: str):
@@ -275,7 +282,8 @@ class DialogManager(object):
                 selected_rg, results[selected_rg].conditional_state, output[selected_rg]), extra={'color_msg_by_component': selected_rg})
 
         # Get the args needed for the update_state_if_not_chosen fn. That's (state, conditional_state) for all RGs except selected_rg
-        other_rgs = [rg for rg in results.keys() if rg != selected_rg]
+        other_rgs = [rg for rg in results.keys() if rg != selected_rg and not is_killed(results[rg])]
+        logger.info(f"now, current states are {rg_states}")
         args_list = [[rg_states[rg], results[rg].conditional_state] for rg in other_rgs]
 
         # Run update_state_if_not_chosen for other RGs
@@ -313,7 +321,7 @@ class DialogManager(object):
         # Get list of RGs to run (all except exclude_rgs, and any that don't have a state due to an earlier error)
         rgs_list = []
         for rg in self.response_generators.name_to_class:
-            if rg in exclude_rgs:
+            if rg in exclude_rgs or self.state_manager.current_state.turn_num == 0 and rg not in ('LAUNCH', 'FALLBACK'):
                 continue
             if rg in rg_states:
                 rgs_list.append(rg)
@@ -325,16 +333,24 @@ class DialogManager(object):
         logger.debug('Copying RG states to use as input...')
         input_rg_states = copy.copy([rg_states[rg] for rg in rgs_list])  # list of dicts
 
+        # import pdb; pdb.set_trace()
+
         # Get results from the RGs in parallel, running either get_response or get_prompt.
         # results_dict is a dict mapping from RG name to a ResponseGeneratorResult/PromptResult
         timeout = DialogManager.GET_RESPONSE_TIMEOUT if phase == 'response' else DialogManager.GET_PROMPT_TIMEOUT
+        last_state_active_rg = self.state_manager.last_state_active_rg
+        if last_state_active_rg and self.state_manager.last_state_response.answer_type in CONTINUING_ANSWER_TYPES:
+            priority_modules = [last_state_active_rg]
+        else:
+            priority_modules = []
         results_dict = self.response_generators.run_multithreaded(rg_names=rgs_list,
-                                         function_name='get_{}'.format(phase),
+                                         function_name=f'get_{phase}',
                                          timeout=timeout,
-                                         args_list=[[state] for state in input_rg_states])
+                                         args_list=[[state] for state in input_rg_states],
+                                         priority_modules=priority_modules)
 
         # Log the initial results
-        logger.debug('RG {} results:\n{}'.format(phase, print_dict_linebyline(results_dict)), extra={'color_lines_by_component': True})
+        logger.primary_info('RG {} results:\n{}'.format(phase, print_dict_linebyline(results_dict)), extra={'color_lines_by_component': True})
 
         # Check results are correct type
         correct_result_type = ResponseGeneratorResult if phase == 'response' else PromptResult
@@ -357,11 +373,14 @@ class DialogManager(object):
         for rg in list(rg_states.keys()):
             if rg in rgs_list:  # If the rg's phase function was run
                 if rg in results_dict:
-                    rg_states[rg] = results_dict[rg].state
+                    if is_killed(results_dict[rg]):
+                        logger.primary_info(f'{rg} was killed during get_{phase}, so its state will be retained.')
+                    else:
+                        rg_states[rg] = results_dict[rg].state
 
                 else:  # If it gave an error or timed out, delete the state as it will be inconsistent
-                    logger.warning('{} had an error or timed out during get_{}, so its state is no longer correct. '
-                                   'Deleting its state from self.state_manager.current_state.response_generator_states'.format(rg, phase))
+                    logger.warning(f'{rg} had an error or timed out during get_{phase}, so its state is no longer correct. '
+                                   'Deleting its state from self.state_manager.current_state.response_generator_states')
                     del rg_states[rg]
 
         # Sort results using priority ranking strategy
@@ -370,7 +389,7 @@ class DialogManager(object):
         else:
             turns_since_last_active = None
             if hasattr(self.state_manager.current_state, 'turns_since_last_active'):
-                turns_since_last_active = self.state_manager.current_state.turns_since_last_active 
+                turns_since_last_active = self.state_manager.current_state.turns_since_last_active
             ranked_results = self.ranking_strategy.rank_prompts(results_dict, turns_since_last_active) # type: ignore
 
         # Log the results, sorted by priority

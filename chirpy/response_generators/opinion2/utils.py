@@ -1,9 +1,8 @@
 from chirpy.core.util import contains_phrase
 import os
 import csv
-import string
 import chirpy.response_generators.opinion2.opinion_sql as opinion_sql
-from typing import List, Tuple, Dict, Optional, Set
+from typing import List, Optional, Tuple
 from chirpy.core.regex.regex_template import RegexTemplate
 from chirpy.core.regex.util import OPTIONAL_TEXT, NONEMPTY_TEXT, OPTIONAL_TEXT_PRE, OPTIONAL_TEXT_MID
 
@@ -128,7 +127,7 @@ def get_reasons(phrase : str) -> Tuple[List[str], List[str]]:
     :return: a list of positive reasons and a list of negative reasons
     :rtype: Tuple[List[str], List[str]]
     """
-    opinions = opinion_sql.get_opinions(phrase)
+    opinions = opinion_sql.get_opinions(phrase.lower())
     positive_reasons = [opinion.reason for opinion in opinions if opinion.sentiment == 4]
     negative_reasons = [opinion.reason for opinion in opinions if opinion.sentiment == 0]
     return positive_reasons, negative_reasons

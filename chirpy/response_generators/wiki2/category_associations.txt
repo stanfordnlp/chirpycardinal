@@ -1,0 +1,40 @@
+('artist', 'human', 'politician'): politician
+('app_or_website', 'general_technology'): app_or_website
+('app_or_website', 'company', 'general_technology'): company
+('academic_subject', 'group_of_people', 'human'): group_of_people
+('fictional_character', 'toy'): toy
+('human', 'politician'): politician
+('actor', 'artist', 'athlete', 'human'): actor
+('athlete', 'human'): athlete
+('general_technology', 'toy'): general_technology
+('artist', 'athlete', 'human'): athlete
+('actor', 'artist', 'dancer', 'human', 'musician'): musician
+('food', 'taxon'): food
+('film', 'musical_work'): musical_work
+('artist', 'human', 'musician'): musician
+('animal', 'food'): food
+('film', 'media_franchise'): media_franchise
+('actor', 'artist', 'human', 'musician'): musician
+('animal', 'food', 'taxon'): animal
+('group_of_people', 'human'): group_of_people
+('artist', 'human'): artist
+('animal', 'taxon'): animal
+('book', 'musical_work'): musical_work
+('actor', 'artist', 'athlete', 'musician'): musician
+('media_franchise', 'toy'): toy
+('app_or_website', 'tv_channel'): app_or_website
+('game', 'media_franchise'): game
+('fictional_character', 'human'): fictional_character
+('human', 'location', 'politician'): location
+('app_or_website', 'general_technology', 'tv_channel'): app_or_website
+('anime', 'tv_show'): tv_show
+('actor', 'artist', 'comedian', 'human', 'musician'): actor
+('actor', 'artist', 'dancer', 'fashion_designer', 'human', 'musician'): musician
+('artist', 'dancer', 'human', 'musician'): musician
+('actor', 'artist', 'human'): actor
+('artist', 'athlete', 'human', 'politician', 'sport'): actor
+('company', 'restaurant_chain'): restaurant_chain
+('artist', 'human', 'musical_group'): musical_group
+('athlete', 'fictional_character', 'human'): fictional_character
+('actor', 'artist', 'comedian', 'human'): actor
+('artist', 'fictional_character', 'human'): fictional_character

@@ -4,6 +4,7 @@ from collections import OrderedDict
 from typing import List, Dict, Optional
 from tabulate import tabulate
 import re
+import requests
 
 from chirpy.core.entity_linker.util import wiki_name_to_url
 from chirpy.core.latency import measure
@@ -11,8 +12,11 @@ from chirpy.response_generators.categories.categories import CATEGORYNAME2CLASS
 from chirpy.core.offensive_classifier.offensive_classifier import contains_offensive
 from chirpy.core.util import filter_and_log, make_text_like_user_text
 from chirpy.core.entity_linker.lists import MANUAL_SPAN2ENTINFO, ENTITY_WHITELIST, WIKIDATA_CATEGORY_WHITELIST, STOPWORDS, DONT_LINK_WORDS
-from chirpy.core.entity_linker.thresholds import SCORE_THRESHOLD_ELIMINATE_DONT_LINK_WORDS, SCORE_THRESHOLD_ELIMINATE, SCORE_THRESHOLD_ELIMINATE_HIGHFREQUNIGRAM_SPAN, UNIGRAM_FREQ_THRESHOLD, SCORE_THRESHOLD_HIGHPREC
+from chirpy.core.entity_linker.thresholds import SCORE_THRESHOLD_ELIMINATE_DONT_LINK_WORDS, SCORE_THRESHOLD_ELIMINATE, SCORE_THRESHOLD_ELIMINATE_HIGHFREQUNIGRAM_SPAN, UNIGRAM_FREQ_THRESHOLD, SCORE_THRESHOLD_EXPECTEDTYPE
 from chirpy.core.entity_linker.entity_groups import EntityGroup
+
+import inflect
+engine = inflect.engine()
 
 logger = logging.getLogger('chirpylogger')
 
@@ -35,11 +39,10 @@ dont_singularize_entgroup = EntityGroup(
     {'video game', 'video game series', 'board game', 'film', 'film series', 'television film', 'television program',
      'human', 'musical work', 'written work'})
 
-
 class WikiEntity(object):
     """Class to represent an entity (Wikipedia article)"""
 
-    def __init__(self, name: str, doc_id: int, pageview: int, wikidata_categories: List[str], anchortext_counts: Dict[str, int], redirects: List[str]):
+    def __init__(self, name: str, doc_id: int, pageview: int, confidence: float, wikidata_categories: List[str], anchortext_counts: Dict[str, int], redirects: List[str], plural: str):
         """
         @param name: the canonical name of the entity / the title of the article
         @param doc_id: unique identifier for the article
@@ -51,19 +54,24 @@ class WikiEntity(object):
         self.name = name
         self.doc_id = doc_id
         self.pageview = pageview
+        self.confidence = confidence
         self.wikidata_categories = sorted(wikidata_categories)
         self.redirects = redirects
         self.anchortext_counts = OrderedDict(sorted(anchortext_counts.items(), key=lambda x: x[1], reverse=True))  # span->count, ordered descending by count
         self.sum_anchortext_counts = sum(self.anchortext_counts.values())
         self.url = wiki_name_to_url(self.name)
         self.is_category = self.name in CATEGORY_ENTITY_NAMES  # bool
+        self.talkable_name = self._get_talkable_name(name, plural)
 
-    def prob_anchortext(self, span) -> float:
-        """
-        Returns P_anchortext(span|entity). The P_anchortext distribution is just anchortext_counts normalized.
-        If span is not among the anchortexts for this entity, returns 0.
-        """
-        return self.anchortext_counts.get(span, 0.0) / (self.sum_anchortext_counts + 1e-12)
+    def _get_talkable_name(self, name, plural):
+        """Checks to ensure that the plural name is sensible"""
+        if len(plural) - len(name) <= 6:
+            return plural
+        else: # invalid plural
+            if "(" in name: # Halo (franchise)
+                return ' '.join([tok for tok in name.split() if "(" not in tok])
+            else:
+                return name
 
     def __hash__(self):
         return hash(self.doc_id)
@@ -75,7 +83,7 @@ class WikiEntity(object):
         where P_anchortext is self.anchortext_counts normalized.
         If span is not among the anchortexts for this entity, returns 0.
         """
-        return self.pageview * self.prob_anchortext(span)
+        return self.confidence
 
     def is_type(self, type_str: str):
         """
@@ -98,7 +106,11 @@ class WikiEntity(object):
         return re.sub("\(.*?\)", "", self.name).strip()
 
     def __repr__(self):
-        return f"<WikiEntity: {self.name}>"
+        if hasattr(self, "confidence"):
+            return f"<WikiEntity: {self.name}> (confidence={self.confidence:.3f}, sum_anchortext_counts={self.sum_anchortext_counts})>"
+        else:
+            logger.warning("DEPRECATION: WikiEntity object has no attribute 'confidence', so you are likely using an outdated version of the global State (older than April 2021). Make sure this is intentional.")
+            return f"<WikiEntity: {self.name}>"
 
     def __eq__(self, other) -> bool:
         """
@@ -108,6 +120,10 @@ class WikiEntity(object):
         if not isinstance(other, WikiEntity):
             return False
         return self.doc_id == other.doc_id
+
+    @property
+    def is_plural(self) -> bool:
+        return bool(engine.singular_noun(self.talkable_name))
 
 
 def is_offensive_entity(entity: WikiEntity):
@@ -125,14 +141,13 @@ def is_offensive_entity(entity: WikiEntity):
                 return True
     return False
 
-
 class LinkedSpan(object):
     """Class to represent a span and the candidate entities to which it could be linked"""
     MAX_SHOW = 5  # how many to show when doing detail_repr or html
 
     def __init__(self, span: str, candidate_entities: List[WikiEntity], min_unigram_freq: Optional[int] = None,
                  span_used_for_search: Optional[str] = None, ner_type=None, is_proper_noun=False,
-                 span_similarities: Dict[str, float] = {}, expected_type: Optional[EntityGroup] = None):
+                 ):
         """
         @param span: the span appearing in the original text
         @param candidate_entities: list of WikiEntities
@@ -141,22 +156,16 @@ class LinkedSpan(object):
             but is not what originally appeared in the text. If None, will assume "span" was used for search.
         @param ner_type: the NER type of this span
         @param is_proper_noun: whether this span is a proper noun
-        @param span_similarities: phonetic similarities between span_used_for_search and anchortexts
-            of Wikipedia entities (span_used_for_search is always in this dictionary with similarity 1 for convenience)
-        @param expected_type: EntityGroup representing the type of entities we expect the user to mention, or None.
         """
         self.span = span
         self.min_unigram_freq = min_unigram_freq
         self.span_used_for_search = span_used_for_search
         self.ner_type = ner_type
         self.is_proper_noun = is_proper_noun
-        self.span_similarities = span_similarities
         assert len(candidate_entities) > 0, 'candidate_entities should not be empty'
-        if len(self.span_similarities) == 1:
-            # No ASR-corrected anchortexts added (the span itself is always in the dictionary)
-            for cand_ent in candidate_entities:
-                assert self.span_used_for_search in cand_ent.anchortext_counts, \
-                    f'Span "{self.span_used_for_search}" is not in span_counts for WikiEntity {cand_ent}'
+
+        self.entname2ent = {ent.name: ent for ent in candidate_entities}
+        self.top_ent_score = max(entity.confidence for entity in self.entname2ent.values())
 
         # If this span has a manually linked entity, identify it
         self.manual_top_ent_name = None
@@ -175,47 +184,11 @@ class LinkedSpan(object):
                 logger.error('Span "{}" is manually linked to entity "{}" but there is no candidate entity with that '
                              'name'.format(span, manual_top_ent_name))
 
-        # Calculate score for each entity (ordered descending). Score = pageview(entity) * max_{anchortext} P(anchortext|entity) * ASR_sim(span|anchortext)
-        self.entname2score = OrderedDict(sorted([(cand_ent.name,
-                                                  max(cand_ent.score(anchortext) * self.span_similarities[anchortext]
-                                                      for anchortext in self.span_similarities))
-                                                  for cand_ent in candidate_entities], key=lambda x: x[1], reverse=True))
-
-        # Find the anchortext used to calculate linking score for each entity
-        self.entname2anchortext = {ent.name: [anchortext for anchortext in self.span_similarities
-                                              if ent.score(anchortext) * self.span_similarities[anchortext]
-                                                == self.entname2score[ent.name]][0] for ent in candidate_entities}
-
-        # Unordered mapping from entity name to entity
-        self.entname2ent = {ent.name: ent for ent in candidate_entities}
-
-        # If we don't already have a manual link, and the span's min_unigram_freq is below UNIGRAM_FREQ_THRESHOLD,
-        # and we have an expected_type, and the top entity is not of expected type,
-        # and there exists a non-top-entity of expected_type with score above SCORE_THRESHOLD_HIGHPREC,
-        # (i.e. the entity is of expected type and qualifies as a high precision match), make it top entity.
-        # This helps in cases where there are two high prec entities for a span e.g. HTTP Cookie and Cookie for 'cookie'.
-        self.type_based_top_ent_name = None
-        if not self.manual_top_ent_name and self.min_unigram_freq < UNIGRAM_FREQ_THRESHOLD and expected_type and not expected_type.matches(self.top_ent):
-            for idx, (ent_name, score) in enumerate(self.entname2score.items()):
-                if idx == 0:
-                    continue
-                if score > SCORE_THRESHOLD_HIGHPREC and expected_type.matches(self.entname2ent[ent_name]):
-                    logger.info(f'In the LinkedSpan for span="{self.span}", the entity "{ent_name}" is ranked '
-                                f'{idx+1} of {len(self.entname2ent)} but it is of expected_type={expected_type} and qualifies '
-                                f'as a high prec link (i.e. has score over {SCORE_THRESHOLD_HIGHPREC}, and the span\'s '
-                                f'min_unigram_freq is below {UNIGRAM_FREQ_THRESHOLD}), so marking it as type_based_top_ent.')
-                    self.type_based_top_ent_name = ent_name
-
-        # Filter entities by score threshold, MAX_ENTITIES_PER_SPAN, and offensiveness.
-        # Note: this LinkedSpan might be empty after filtering
-        self.filter_unlikely(expected_type)
-        self.filter_top_n(MAX_ENTITIES_PER_SPAN)
         self.filter_offensive()  # do this last as it's most expensive
 
     def update_candidate_entities(self, new_candidate_entities: List[WikiEntity]):
         """Update the LinkedSpan to only contain new_candidate_entities"""
         assert all(ent in self.entname2ent.values() for ent in new_candidate_entities)  # check that all new_candidate_entities are already in this LinkedSpan
-        self.entname2score = OrderedDict([(ent_name, score) for (ent_name, score) in self.entname2score.items() if self.entname2ent[ent_name] in new_candidate_entities])
         self.entname2ent = {ent.name: ent for ent in new_candidate_entities}
 
     def filter_offensive(self):
@@ -224,66 +197,15 @@ class LinkedSpan(object):
                                                 'it contains an offensive phrase in the title or wikidata categories')
         self.update_candidate_entities(new_candidate_entities)
 
-    def should_keep_entity(self, ent, expected_type: Optional[EntityGroup] = None):
-        """Returns True iff we should keep the entity, and False if the entity is deemed unlikely so we should remove it"""
-
-        # If ent is a manual link or type_based_top_ent_name, keep
-        if ent.name in [self.manual_top_ent_name, self.type_based_top_ent_name]:
-            return True
-
-        # If ent has score below SCORE_THRESHOLD_ELIMINATE, remove
-        if self.entname2score[ent.name] < SCORE_THRESHOLD_ELIMINATE:
-            logger.debug(f'Removing candidate entity {ent} from the LinkedSpan for "{self.span}" because it has '
-                        f'score under {SCORE_THRESHOLD_ELIMINATE}')
-            return False
-
-        # If ent has score below SCORE_THRESHOLD_ELIMINATE_DONT_LINK_WORDS, and self.span consists
-        # entirely of DONT_LINK_WORDS, remove it.
-        if self.entname2score[ent.name] < SCORE_THRESHOLD_ELIMINATE_DONT_LINK_WORDS and all(w in DONT_LINK_WORDS for w in self.span.split()):
-            logger.debug(f'Removing candidate entity {ent} from the LinkedSpan for "{self.span}" because it has '
-                        f'score under {SCORE_THRESHOLD_ELIMINATE_DONT_LINK_WORDS} and consists of DONT_LINK_WORDS')
-            return False
-
-        # If self.span is plural, and self.span_used_for_search is a singularized version, and ent is in
-        # dont_singularize_entgroup, remove ent
-        # For now we're just looking for "s" difference at the end; doing something more exact would require more
-        # bookkeeping when we originally singularized the span.
-        if self.span == self.span_used_for_search+'s' and dont_singularize_entgroup.matches(ent):
-            logger.debug(f'Removing candidate entity {ent} from the LinkedSpan with span="{self.span}", '
-                        f'span_used_for_search="{self.span_used_for_search}", because the entity is of a type that '
-                        f'doesn\'t get pluralized when mentioned. This entity will only be considered a candidate '
-                        f'for the LinkedSpan for the original span ("{self.span}")')
-            return False
-
-        # If self.span consists of high freq unigrams and ent has score below SCORE_THRESHOLD_ELIMINATE_HIGHFREQUNIGRAM_SPAN,
-        # and ent is a type of entity that people usually say the "whole name" for, only keep it if all the
-        # words in ent.common_name are in self.span.
-        if self.entname2score[ent.name] < SCORE_THRESHOLD_ELIMINATE_HIGHFREQUNIGRAM_SPAN and self.min_unigram_freq > UNIGRAM_FREQ_THRESHOLD and whole_name_entgroup.matches(ent):
-            if any(w not in self.span.split() for w in make_text_like_user_text(ent.common_name).split()):
-                logger.debug(f'Removing candidate entity {ent} from the LinkedSpan for span="{self.span}" because it has '
-                            f'score under {SCORE_THRESHOLD_ELIMINATE_HIGHFREQUNIGRAM_SPAN}, the span consists of high '
-                            f'frequency words, the entity is of a type which is usually referred to by its whole name, '
-                            f'and the entity\'s common_name "{ent.common_name}" contains words not in the span')
-                return False
-
-        return True
-
-    def filter_unlikely(self, expected_type: Optional[EntityGroup] = None):
-        """
-        Update the LinkedSpan to remove unlikely entities.
-        """
-        new_candidate_entities = [ent for ent in self.entname2ent.values() if self.should_keep_entity(ent, expected_type)]
-        self.update_candidate_entities(new_candidate_entities)
-
-    def filter_top_n(self, n):
-        """Update the LinkedSpan to only contain entities which are in the top n highest priority"""
-        new_candidate_entities = self.ents_by_priority[:n]
-        self.update_candidate_entities(new_candidate_entities)
+    @property
+    def is_empty(self):
+        return len(self.entname2ent) == 0
 
     @property
-    def is_empty(self) -> bool:
-        """Returns True iff this LinkedSpan contains no entities"""
-        return len(self.entname2ent) == 0
+    def top_ent(self):
+        return max(self.entname2ent.values(), key=lambda ent: (
+            ent.name == self.manual_top_ent_name,
+            ent.confidence))
 
     @property
     def manual_top_ent(self) -> Optional[WikiEntity]:
@@ -293,85 +215,15 @@ class LinkedSpan(object):
         return None
 
     @property
-    def type_based_top_ent(self) -> Optional[WikiEntity]:
-        """Returns the type-based high prec top entity if there is one, otherwise returns None"""
-        if self.type_based_top_ent_name:
-            return self.entname2ent[self.type_based_top_ent_name]
-        return None
+    def protection_level(self):
+        return 0
 
     @property
-    def ents_by_priority(self) -> List[WikiEntity]:
-        """
-        Returns a list of the WikiEntities in priority order. If there's a manual_top_ent or type_based_top_ent_name,
-        put that first. Otherwise sort by score.
-        """
+    def ents_by_priority(self):
         return sorted(self.entname2ent.values(), key=lambda ent: (
             ent.name == self.manual_top_ent_name,
-            ent.name == self.type_based_top_ent_name,
-            self.entname2score[ent.name],
+            ent.confidence
         ), reverse=True)
-
-    @property
-    def top_ent(self) -> WikiEntity:
-        """Returns the top WikiEntity in ent_by_priority"""
-        return self.ents_by_priority[0]
-
-    @property
-    def top_ent_score(self) -> float:
-        """If we have a override top_ent_score, return that. Otherwise, the score of the top WikiEntity"""
-        if hasattr(self, 'override_top_ent_score'):
-            return self.override_top_ent_score
-        return self.entname2score[self.top_ent.name]
-
-    @top_ent_score.setter
-    def top_ent_score(self, override_top_ent_score: float):
-        """Manually override the top_ent_score to be something else"""
-        self.override_top_ent_score = override_top_ent_score
-
-    @property
-    def protection_level(self) -> int:
-        """
-        Returns an int that is used to sort LinkedSpans, and determine which LinkedSpan should be eliminated in case of
-        conflicts (e.g. nested LinkedSpans).
-        """
-        if self.manual_top_ent_name and self.manual_top_ent_force_highprec:
-            return 1
-        else:
-            return 0
-
-    @property
-    def detail_repr(self) -> str:
-        """Returns a detailed printout showing a table of all WikiEntities"""
-
-        output = "LinkedSpan: span='{}' (min_unigram_freq={})".format(self.span, self.min_unigram_freq)
-        if self.span_used_for_search != self.span:
-            output += f" (used '{self.span_used_for_search}' to search)"
-        if self.is_proper_noun:
-            output += f", is_proper_noun=True"
-        if self.ner_type:
-            output += f", ner_type={self.ner_type}"
-        if self.manual_top_ent:
-            output += f", manual_top_ent={self.manual_top_ent}"
-        if self.type_based_top_ent:
-            output += f", type_based_top_ent={self.type_based_top_ent}"
-        if hasattr(self, 'override_top_ent_score'):
-            output += f", override_top_ent_score={self.override_top_ent_score}"
-        table = tabulate([[
-            ent.pageview,
-            ent.anchortext_counts[self.entname2anchortext[ent.name]],
-            ent.prob_anchortext(self.entname2anchortext[ent.name]),
-            f'{self.span_similarities[self.entname2anchortext[ent.name]]:.4f} (anchortext="{self.entname2anchortext[ent.name]}")',
-            self.entname2score[ent.name],
-            self.entname2ent[ent.name].doc_id,
-            ent.name,
-            ', '.join(sorted(self.entname2ent[ent.name].wikidata_categories))
-        ] for ent in self.ents_by_priority[:self.MAX_SHOW]],
-            headers=['pageview', 'count(anchortext->entity)', 'P(anchortext|entity)', 'sim(span, anchortext)', 'score', 'doc_id', 'name',
-                     'wikidata_categories'])
-        output += '\n' + table
-        if len(self.entname2ent) > self.MAX_SHOW:
-            output += f'\n+ {len(self.entname2ent)-self.MAX_SHOW} more candidate entities'
-        return output
 
     @property
     def html(self) -> str:
@@ -387,24 +239,19 @@ class LinkedSpan(object):
             output += f", ner_type={self.ner_type}"
         if self.manual_top_ent:
             output += f", manual_top_ent={self.manual_top_ent.name}"
-        if self.type_based_top_ent:
-            output += f", type_based_top_ent={self.type_based_top_ent}"
-        if hasattr(self, 'override_top_ent_score'):
-            output += f", override_top_ent_score={self.override_top_ent_score}"
-
-        # Table
-        headers = ['pageview', 'count(anchortext->entity)', 'P(anchortext|entity)', 'sim(span, anchortext)', 'score',
-                   'doc_id', 'name', 'wikidata_categories'
-                   ]
+        # if self.type_based_top_ent:
+        #     output += f", type_based_top_ent={self.type_based_top_ent}"
+        # if hasattr(self, 'override_top_ent_score'):
+        #     output += f", override_top_ent_score={self.override_top_ent_score}"
+        #
+        # # Table
+        headers = ['pageview', 'score', 'doc_id', 'name', 'wikidata_categories']
         output += '<table id="dashboard-table">'
         output += '<tr>{}</tr>'.format(''.join(['<th>{}</th>'.format(header) for header in headers]))
         for ent in self.ents_by_priority[:self.MAX_SHOW]:
             row = [
                 ent.pageview,
-                ent.anchortext_counts[self.entname2anchortext[ent.name]],
-                ent.prob_anchortext(self.entname2anchortext[ent.name]),
-                f'{self.span_similarities[self.entname2anchortext[ent.name]]:.4f} (anchortext="{self.entname2anchortext[ent.name]}")',
-                '{:.2f}'.format(self.entname2score[ent.name]),
+                '{:.2f}'.format(ent.confidence),
                 self.entname2ent[ent.name].doc_id,
                 '<a href="{}">{}</a>'.format(ent.url, ent.name),
                 ', '.join(sorted(self.entname2ent[ent.name].wikidata_categories))
@@ -424,21 +271,27 @@ class LinkedSpan(object):
         if self.span_used_for_search != self.span:
             output += f" (used '{self.span_used_for_search}' to search)"
         output += ', min_unigram_freq={}'.format(self.min_unigram_freq)
-        if self.is_proper_noun:
-            output += f", is_proper_noun=True"
-        if self.ner_type:
-            output += f", ner_type={self.ner_type}"
-        output += f", top_entity='{self.top_ent.name}'"
-        if self.manual_top_ent:
-            output += " (manually chosen)"
-        if self.type_based_top_ent:
-            output += f", (high prec type-matching top entity)"
-        output += f", score={self.top_ent_score}"
-        if hasattr(self, 'override_top_ent_score'):
-            output += f" (override)"
+        if self.is_empty:
+            output += f" (is empty)"
+        else:
+            if self.is_proper_noun:
+                output += f", is_proper_noun=True"
+            if self.ner_type:
+                output += f", ner_type={self.ner_type}"
+            output += f", top_entity='{self.top_ent.name}'"
+            if self.manual_top_ent:
+                output += " (manually chosen)"
+            # if self.type_based_top_ent:
+            #     output += f", (high prec type-matching top entity)"
+            output += f", score={self.top_ent_score}"
+            # if hasattr(self, 'override_top_ent_score'):
+            #     output += f" (override)"
         output += ">"
         return output
 
+    @property
+    def detail_repr(self):
+        return self.__repr__()
 
 class EntityLinkerResult(object):
     """A class to represent the output of the entity linker module"""
@@ -480,7 +333,7 @@ class EntityLinkerResult(object):
         return None
 
     @measure
-    def top_ent(self, condition_fn=(lambda x: True)) -> Optional[WikiEntity]:
+    def top_ent(self, condition_fn=(lambda x, y, z: True)) -> Optional[WikiEntity]:
         """
         Returns the highest-priority entity which satisfies condition_fn.
         If no condition_fn is supplied, gives top entity of highest-priority LinkedSpan.
@@ -490,7 +343,6 @@ class EntityLinkerResult(object):
             and returns a bool.
         """
         logger.info(f'Searching for highest-priority entity in EntityLinkerResults satisfying condition {condition_fn}')
-
         # First look through all top entities of high_prec and threshold_removed linked spans in order
         for linked_span in self.high_prec + self.threshold_removed:
             if condition_fn(self, linked_span, linked_span.top_ent):
@@ -498,7 +350,7 @@ class EntityLinkerResult(object):
                 return linked_span.top_ent
 
         # Then look through all other entities in score order
-        ents_and_scores = [(ls, ent, ls.entname2score[ent.name]) for ls in self.all_linkedspans for ent in
+        ents_and_scores = [(ls, ent, ent.confidence) for ls in self.all_linkedspans for ent in
                            ls.entname2ent.values() if not (ls in self.high_prec + self.threshold_removed and ent == ls.top_ent)]
         ents_and_scores = sorted(ents_and_scores, key=lambda x: x[2], reverse=True)  # sort by score
         for (linked_span, ent, _) in ents_and_scores:

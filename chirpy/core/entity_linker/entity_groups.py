@@ -5,7 +5,7 @@ This file defines EntityGroups, which capture certain groups of WikiEntities, de
 import logging
 from dataclasses import dataclass, asdict, field
 from functools import lru_cache
-from typing import List, Optional, Tuple, Set
+from typing import List, Set, Tuple
 
 logger = logging.getLogger('chirpylogger')
 
@@ -103,8 +103,32 @@ class EntityGroupsForExpectedType:
          'tourist attraction', 'point of interest', 'group of physical objects', 'business', 'restaurant chain',
          'brick and mortar company'})
     clothing_related: EntityGroup = EntityGroup({'clothing', 'fashion house', 'fashion label', 'clothing store chain'}, set())
-    film: EntityGroup = EntityGroup({'film', 'film series', 'television film'}, {'genre'})  # used by Movies RG, when asking the user to name a film. Kathleen you can refine this if you wish
-
+    film: EntityGroup = EntityGroup({'film', 'film series', 'television film'}, {'genre'}) 
+    actor: EntityGroup = EntityGroup({'film actor', 'television actor', 'stage actor'}, {'politician'}, entity_blacklist={
+        'LeBron James', 'Ronald Reagan', 'Donald Trump'})  # problem: there are quite a few musicians in here like Taylor Swift
+    musical_instrument: EntityGroup = EntityGroup({'musical instrument'}, set(), entity_blacklist={'Musical instrument'})
+    musical_work: EntityGroup = EntityGroup({'song', 'musical work'}, {'genre'}, entity_blacklist={'Song', 'Album'})
+    musical_group: EntityGroup = EntityGroup({'musical group'}, entity_whitelist={'BTS'}, entity_blacklist={'Musical ensemble'})
+    musician: EntityGroup = EntityGroup({'musician', 'musical group', 'singer'},
+                                        entity_blacklist={'Tom Hanks', 'Keanu Reeves', 'Leonardo da Vinci',
+                                                          'Charlie Chaplin',
+                                                          'Kim Kardashian', 'Stephen King', 'Florence Pugh',
+                                                          'Carrie Fisher',
+                                                          'Adam Sandler', 'Tom Hiddleston', 'Diane Keaton',
+                                                          'Zooey Deschanel',
+                                                          'John Lithgow', 'Robert Downey Jr.', 'Clint Eastwood',
+                                                          'Julia Louis-Dreyfus',
+                                                          'Rashida Jones', 'Maya Rudolph', 'Jennifer Lawrence',
+                                                          'Viggo Mortensen',
+                                                          'Ryan Gosling', 'Bruce Willis', 'Gwyneth Paltrow',
+                                                          'Jamie Dornan',
+                                                          'Emma Stone', 'Paul Bettany', 'Michelle Rodriguez',
+                                                          'Sarah Silverman',
+                                                          'Jackie Chan', 'Johnny Depp', 'Scarlett Johansson',
+                                                          'Naomi Scott',
+                                                          'Christopher Lee', 'Martin Luther', 'Matthew Broderick',
+                                                          'Kirsten Dunst', 'Musician', 'Patrick Swayze',
+                                                          })  # problem: many actors are also musicians
 
 @dataclass
 class EntityGroupsForClassification:

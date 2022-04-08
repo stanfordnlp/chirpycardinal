@@ -3,7 +3,6 @@ import logging
 from chirpy.core.callables import Annotator
 from chirpy.core.state_manager import StateManager
 from typing import Optional, List
-import re
 import itertools
 logger = logging.getLogger('chirpylogger')
 

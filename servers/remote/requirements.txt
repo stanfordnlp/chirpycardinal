@@ -13,13 +13,17 @@ colorama==0.4.3
 nltk==3.4.5
 text2digits==0.0.9
 tabulate==0.8.7
-
+inflect==5.0.2
 metaphone==0.6
+textstat==0.7.1
 
 editdistance==0.5.3
 
 psycopg2-binary==2.8.6
 
 flask==1.1.2
+jinja2==3.0.3
+itsdangerous==2.0.1
+werkzeug==2.0.2
 gunicorn==20.0.4
 flask-cors==3.0.8
