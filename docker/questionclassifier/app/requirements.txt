@@ -3,7 +3,7 @@ Flask-RESTful==0.3.5
 Werkzeug==0.15.3
 future==0.16.0
 jsonpickle==0.9.4
-numpy==1.16.4
+numpy==1.21.0
 pandoc==1.0.0b2
 six==1.10.0
 typing==3.6.2
