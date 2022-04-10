@@ -41,6 +41,9 @@ class OpenEndedUserCommentTreelet(Treelet):
         # entity = self.get_current_entity()
         entity = state.cur_food
         cur_food = entity.name
+        if entity.is_plural:
+            cur_food = entity.talkable_name
+
         cur_talkable_food = entity.talkable_name
 
         # if question, sample an unconditional response; if statement, just agree

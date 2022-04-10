@@ -119,6 +119,8 @@ def get_time_comment(year, food):
 
 def get_factoid(cur_entity):
     food = cur_entity.name.lower()
+    if cur_entity.is_plural:
+        food = cur_entity.talkable_name
     talkable_food = cur_entity.talkable_name
 
     copula = infl('was', cur_entity.is_plural)
