@@ -74,7 +74,7 @@ class AcknowledgmentResponseGenerator(ResponseGenerator):
         for ent_group_name, ent_group in ENTITY_GROUPS_FOR_CLASSIFICATION.ordered_items:
             if ent_group.matches(cur_entity) and ent_group_name in ACKNOWLEDGMENT_DICTIONARY:
                 logger.primary_info(f'cur_entity {cur_entity} matches EntityGroup "{ent_group_name}" which we have an acknowledgment for, so giving acknowledgment')
-                acknowledgments = [a.format(entity=cur_entity.common_name) for a in ACKNOWLEDGMENT_DICTIONARY[ent_group_name]]
+                acknowledgments = [a.format(entity=cur_entity.talkable_name) for a in ACKNOWLEDGMENT_DICTIONARY[ent_group_name]]
                 acknowledgment = self.choose(acknowledgments)
 
                 # Set priority to FORCE_START if the last active RG was Categories or Fallback (which ask questions that they don't handle), or if the user gave PosNav intent on this turn

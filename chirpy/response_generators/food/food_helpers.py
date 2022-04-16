@@ -119,8 +119,6 @@ def get_time_comment(year, food):
 
 def get_factoid(cur_entity):
     food = cur_entity.name.lower()
-    if cur_entity.is_plural:
-        food = cur_entity.talkable_name
     talkable_food = cur_entity.talkable_name
 
     copula = infl('was', cur_entity.is_plural)
@@ -128,14 +126,14 @@ def get_factoid(cur_entity):
 
     if food not in FOODS: return None
     food_data = get_food_data(food)
-    if 'year' in food_data and 'origin' in food_data and get_time_comment(food_data['year'], food) is not None:
-        year, time_comment = get_time_comment(food_data['year'], food)
+    if 'year' in food_data and 'origin' in food_data and get_time_comment(food_data['year'], talkable_food) is not None:
+        year, time_comment = get_time_comment(food_data['year'], talkable_food)
         return f"Did you know that {talkable_food} {copula} first made in {food_data['origin']} around {year}? {time_comment}"
-    elif 'year' in food_data and get_time_comment(food_data['year'], food) is not None:
-        year, time_comment = get_time_comment(food_data['year'], food)
+    elif 'year' in food_data and get_time_comment(food_data['year'], talkable_food) is not None:
+        year, time_comment = get_time_comment(food_data['year'], talkable_food)
         if time_comment is not None: return f"Did you know that {talkable_food} {have} been made since {year}? {time_comment}"
     elif 'origin' in food_data:
-        return f"Did you know that {food} {copula} originally from {food_data['origin']}?"
+        return f"Did you know that {talkable_food} {copula} originally from {food_data['origin']}?"
     return None
 
 def get_types_of(food_class: str) -> set:

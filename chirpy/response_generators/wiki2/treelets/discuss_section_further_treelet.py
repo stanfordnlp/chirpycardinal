@@ -25,8 +25,7 @@ HANDOVER_TEXTS = ["Alright!", "Okay! Moving on.", "Sounds good!"]
 def open_answer_prompts(entity: WikiEntity):
     prompts = [
         f"I'm curious to hear what you think about {entity.talkable_name}?",
-        f"Do you have any thoughts on {entity.talkable_name}?",
-        # f"What about {entity.common_name}, Do you have any thoughts on that?",
+        f"Do you have any thoughts on {entity.talkable_name}?"
     ]
     return prompts
 

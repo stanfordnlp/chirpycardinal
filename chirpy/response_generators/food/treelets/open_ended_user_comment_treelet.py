@@ -41,8 +41,6 @@ class OpenEndedUserCommentTreelet(Treelet):
         # entity = self.get_current_entity()
         entity = state.cur_food
         cur_food = entity.name
-        if entity.is_plural:
-            cur_food = entity.talkable_name
 
         cur_talkable_food = entity.talkable_name
 
@@ -52,7 +50,7 @@ class OpenEndedUserCommentTreelet(Treelet):
         elif len(utterance.split()) < 2:
             prefix = ''
         else:
-            prefix = f'yeah, i think {cur_food}'
+            prefix = f'yeah, i think {cur_talkable_food}'
 
         neural_response = self.get_neural_response(prefix=prefix)
 

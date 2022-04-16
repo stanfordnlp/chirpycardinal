@@ -107,7 +107,7 @@ class TransitionResponseGenerator(ResponseGenerator):
             starter_text = f"I remember you mentioned {from_entity.talkable_name} earlier. " + starter_text
             prompt_type = PromptType.CONTEXTUAL
         else:
-            starter_text = f"Speaking of {from_entity.name}, " + starter_text
+            starter_text = f"Speaking of {from_entity.talkable_name}, " + starter_text
             prompt_type = PromptType.CURRENT_TOPIC
 
         logger.primary_info("Chose to produce a transition.")

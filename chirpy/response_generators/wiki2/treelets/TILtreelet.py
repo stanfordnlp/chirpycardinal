@@ -168,8 +168,8 @@ class TILTreelet(Treelet):
                 cleaned_wiki_text = cleaned_wiki_text.lower()
                 if cleaned_wiki_text.startswith('that '): offer_til = offer_til.replace(' that', '')
                 ack = random.choice([
-                    f'Ah, {entity.name}.',
-                    f'Oh, {entity.name}.'
+                    f'Ah, {entity.talkable_name}.',
+                    f'Oh, {entity.talkable_name}.'
                 ])
                 ack = ack if len(ack) <= 4 else '' # no ack for entities with long names
 

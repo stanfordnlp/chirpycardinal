@@ -20,7 +20,7 @@ class FactoidTreelet(Treelet):
         logger.info(f"Top ack is: {top_ack}")
         if top_res is not None:
             return ResponseGeneratorResult(
-                text=f"Cool, {top_res}. What are your thoughts on {entity.name}?",
+                text=f"Cool, {top_res}. What are your thoughts on {entity.talkable_name}?",
                 priority=priority,
                 state=self.rg.state, needs_prompt=False, cur_entity=entity,
                 conditional_state=ConditionalState(prev_treelet_str=self.name,

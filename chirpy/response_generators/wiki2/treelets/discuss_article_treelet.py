@@ -198,7 +198,7 @@ class DiscussArticleTreelet(Treelet):
                     chosen_section_titles = [s.title for s in chosen_sections]
                     logger.info(f"Chose {chosen_section_titles} to suggest.")
                     text = self.choose(
-                        subsection_prompts(entity.common_name, last_discussed_section.title, chosen_section_titles,
+                        subsection_prompts(entity.talkable_name, last_discussed_section.title, chosen_section_titles,
                                            repeat=repeat or False))
                     conditional_state.suggested_sections = chosen_sections
                     conditional_state.prompted_options = chosen_section_titles
@@ -223,7 +223,7 @@ class DiscussArticleTreelet(Treelet):
                     chosen_sections = choose_from_sections(valid_siblings)
                     chosen_section_titles = [s.title for s in chosen_sections]
                     logger.info(f"Chose {chosen_section_titles} to suggest.")
-                    text = self.choose(subsection_prompts(entity.common_name, parent_section, chosen_section_titles,
+                    text = self.choose(subsection_prompts(entity.talkable_name, parent_section, chosen_section_titles,
                                                           repeat=repeat or True))
                     conditional_state.suggested_sections = chosen_sections
                     conditional_state.prompted_options = chosen_section_titles
@@ -242,7 +242,7 @@ class DiscussArticleTreelet(Treelet):
             chosen_sections = choose_from_sections(first_level_sections)
             chosen_section_titles = [s.title for s in chosen_sections]
             logger.primary_info(f"Chose {chosen_section_titles} to suggest.")
-            text = self.choose(section_prompt_text(entity.common_name, [s.title for s in chosen_sections],
+            text = self.choose(section_prompt_text(entity.talkable_name, [s.title for s in chosen_sections],
                                                    repeat=have_response or repeat or last_discussed_section is not None))
             conditional_state.suggested_sections = chosen_sections
             conditional_state.prompted_options = chosen_section_titles
@@ -272,7 +272,7 @@ class DiscussArticleTreelet(Treelet):
                 for f_title in chosen_first_level_section_titles]
             logger.info(
                 f"Chose {[s.title for s in chosen_sections]} with titles {chosen_first_level_section_titles} to suggest.")
-            text = self.choose(section_prompt_text(entity.common_name, chosen_first_level_section_titles,
+            text = self.choose(section_prompt_text(entity.talkable_name, chosen_first_level_section_titles,
                                                    repeat=have_response or repeat or last_discussed_section is not None))
             conditional_state.suggested_sections = chosen_sections
             conditional_state.prompted_options = chosen_first_level_section_titles

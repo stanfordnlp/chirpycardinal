@@ -33,7 +33,7 @@ class CommentOnFavoriteTypeTreelet(Treelet):
             text = custom_question
         # things that are subclassable, e.g. cheese.
         elif is_subclassable(cur_food.name.lower()):
-            text = f"What type of {cur_food.name} do you like the most?"
+            text = f"What type of {cur_food.talkable_name} do you like the most?"
         else:
             return None
 
