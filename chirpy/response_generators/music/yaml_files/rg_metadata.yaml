@@ -1,0 +1,9 @@
+name: MUSIC
+entry_points:
+  - music_introductory
+  - music_handle_opinion
+  - music_get_song
+  - music_get_singer
+  - music_get_instrument
+exit_points:
+  - exit

@@ -1,0 +1,39 @@
+name: music_get_song
+trigger_response: None
+global_state_entry_requirements:
+  - bot_asked_song: True
+    cur_song_str: None
+    never_listens: False
+nlu:
+  - entry_conditions: None
+    set_state_on_finish:
+      bot_asked_song: False
+    action_after_node:
+      - func_call: "update_ask_song"
+        possible_state_updates:
+          - 'cur_song_ent': 'dummy'
+          - 'cur_singer_str': 'dummy'
+          - 'cur_song_str': 'dummy'
+  - entry_conditions: None
+    set_state_on_finish: None
+    action_after_node:
+      - func_call: "update_ask_song"
+        possible_state_updates:
+          - 'cur_song_ent': 'dummy'
+          - 'cur_singer_str': 'dummy'
+          - 'cur_song_str': 'dummy'
+  - entry_conditions: None
+    set_state_on_finish:
+      bot_prompt_singer: True
+      bot_asked_song: False
+    action_after_node:
+      - func_call: "update_ask_song"
+        possible_state_updates:
+          - 'cur_song_ent': 'dummy'
+          - 'cur_singer_str': 'dummy'
+          - 'cur_song_str': 'dummy'
+  - entry_conditions: None
+    set_state_on_finish:
+      never_listens: True
+      bot_asked_song: False
+    action_after_node: None

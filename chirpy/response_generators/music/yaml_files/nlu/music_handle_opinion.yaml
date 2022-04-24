@@ -1,0 +1,79 @@
+name: music_handle_opinion
+trigger_response:
+  - entry_conditions:
+      state_must_have: None
+    set_state_on_finish: None
+    action_after_node:
+      - func_call: "update_opinion_state"
+        possible_state_updates:
+          - 'bot_asked_instrument': True
+          - 'bot_asked_singer': True
+          - 'bot_asked_song': True
+          - 'likes_music': True
+# define global coarse-grained treelet entry requirements here
+# (for ALL convo entering this treelet)
+global_state_entry_requirements:
+  - cur_song_str: None
+    cur_singer_str: None
+    prev_treelet_str: 'music_introductory'
+# nlu define unique convo paths that result in different STATE changes
+# convo paths are unique IF AND ONLY IF something about the state is different between them. Conditioning on
+# response types and producing different textual outcomes is not a different path UNLESS these paths
+# cause the state to be updated differently -- fine-grained response-type and other checking is NLG's job.
+
+# It is ok to defer fine-grained checks to NLG. Only coarse state-checks per convo path should be included here
+nlu:
+  # functions like switch statement -- put most restrictive conditions near top, catch-alls near bottom
+  - entry_conditions:
+      state_must_have:
+        frequently_listens: True
+    set_state_on_finish:
+      prev_treelet_str: 'music_handle_opinion' 
+    action_after_node:
+      - func_call: "update_opinion_state"
+        possible_state_updates:
+          - 'bot_asked_instrument': True
+          - 'bot_asked_singer': True
+          - 'bot_asked_song': True
+          - 'likes_music': True
+  - entry_conditions:
+      state_must_have:
+        not_interested: True
+    set_state_on_finish:
+      prev_treelet_str: 'music_handle_opinion' 
+    action_after_node:
+      - func_call: "update_opinion_state"
+        possible_state_updates:
+          - 'bot_asked_instrument': True
+          - 'bot_asked_singer': True
+          - 'bot_asked_song': True
+          - 'likes_music': True
+  - entry_conditions:
+      state_must_have:
+        unsure_about_music: True
+    set_state_on_finish:
+      prev_treelet_str: 'music_handle_opinion' 
+    action_after_node:
+      - func_call: "update_opinion_state"
+        possible_state_updates:
+          - 'bot_asked_instrument': True
+          - 'bot_asked_singer': True
+          - 'bot_asked_song': True
+          - 'likes_music': True
+  - entry_conditions:
+      state_must_have:
+        likes_music: True
+    set_state_on_finish:
+      prev_treelet_str: 'music_handle_opinion'
+    action_after_node:
+      - func_call: "update_opinion_state"
+        possible_state_updates:
+          - 'bot_asked_instrument': True
+          - 'bot_asked_singer': True
+          - 'bot_asked_song': True
+          - 'likes_music': True
+  - entry_conditions: None # catch all, user doesn't want to talk
+    set_state_on_finish:
+      not_interested: True # goto exit
+      prev_treelet_str: 'music_handle_opinion'
+    action_after_node: None

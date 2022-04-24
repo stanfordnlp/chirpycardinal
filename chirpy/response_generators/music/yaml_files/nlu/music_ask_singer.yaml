@@ -1,0 +1,22 @@
+name: music_ask_singer
+trigger_response: None
+global_state_entry_requirements:
+  - bot_prompt_singer: True
+    never_listens: False
+nlu:
+  - entry_conditions:
+      state_must_have:
+        prev_treelet_str: 'music_ask_singer'
+    set_state_on_finish:
+      goto_handoff: True
+      bot_prompt_singer: False
+    action_after_node: None
+  - entry_conditions: None
+    set_state_on_finish:
+      just_used_til: True
+    action_after_node: None
+  - entry_conditions: None
+    set_state_on_finish:
+      goto_handoff: True
+      bot_prompt_singer: False
+    action_after_node: None

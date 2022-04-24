@@ -1,0 +1,50 @@
+name: music_get_instrument
+trigger_response: None
+global_state_entry_requirements:
+  - bot_asked_instrument: True
+    never_listens: False
+  # - user_mentioned_instrument: True
+  #   never_listens: False
+nlu:
+  - entry_conditions:
+      state_must_have:
+        chose_instrument: False
+    set_state_on_finish:
+      just_used_til: True
+      chose_instrument: True
+    action_after_node: None
+  - entry_conditions:
+      state_must_have:
+        chose_instrument: True
+        just_used_til: True
+    set_state_on_finish:
+      bot_asked_song: True
+      bot_asked_instrument: False
+    action_after_node: None
+  - entry_conditions:
+      state_must_have:
+        chose_instrument: True
+        just_used_til: True
+    set_state_on_finish:
+      bot_asked_singer: True
+      bot_asked_instrument: False
+    action_after_node:
+      - func_call: "update_singer_state"
+        possible_state_updates:
+          - 'cur_singer_ent': 'dummy' # some non-None value
+          - 'cur_singer_str': 'dummy'
+  - entry_conditions: None
+    set_state_on_finish:
+      bot_asked_singer: True
+      bot_asked_instrument: False
+    action_after_node:
+      - func_call: "update_singer_state"
+        possible_state_updates:
+          - 'cur_singer_ent': 'dummy'
+          - 'cur_singer_str': 'dummy'
+  - entry_conditions: None
+    set_state_on_finish:
+      bot_asked_song: True
+      bot_asked_instrument: False
+    action_after_node: None
+

@@ -1,0 +1,11 @@
+name: music_ask_song
+trigger_response: None
+global_state_entry_requirements:
+  - bot_prompt_song: True
+    never_listens: False
+nlu:
+  - entry_conditions: None
+    set_state_on_finish:
+      goto_handoff: True
+      bot_prompt_song: False
+    action_after_node: None
