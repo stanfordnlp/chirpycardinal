@@ -1,5 +1,5 @@
 ---
-title: Hindsight: Posterior-guided training of retrievers for improved open-ended generation 
+title: "Hindsight: Posterior-guided training of retrievers for improved open-ended generation"
 extlink: https://openreview.net/pdf?id=Vr_BTpw3wz
 authors: Ashwin Paranjape, Omar Khattab, Chrisopher Potts, Matei Zaharia and Christopher D. Manning
 venue: The International Conference on Learning Representations (ICLR) 2022
