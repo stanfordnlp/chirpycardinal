@@ -1,0 +1,38 @@
+import random
+
+from chirpy.response_generators.music.music_helpers import ResponseType
+
+def nlu_processing(rg, state, utterance, response_types):
+	# flags is recommended to contain prompt_treelet as a key
+	flags = {
+		'listens_frequently': False,
+		'listens_everday': False,
+		'does_not_listen': False,
+		'unsure_about_music': False,
+		'likes_music': False,
+		'catch_all': False
+		'prompt_treelet': '' 
+	}
+	if ResponseType.FREQ in response_types:
+		if 'everyday' in utterance:
+			flags['listens_everday'] = True
+			# flags['listens_everday'] = 'Well for me, I love listening to music everyday too!'
+		else:
+			flags['listens_frequently'] = True
+			# flags['freq_prefix'] = 'Well for me, I love listening to music everyday!'
+	elif (ResponseType.NO in response_types or ResponseType.NEGATIVE in response_types) and not ResponseType.DONT_KNOW in response_types:
+		flags['does_not_listen'] = True
+	elif ResponseType.DONT_KNOW in response_types:
+		flags['unsure_about_music'] = True
+	elif ResponseType.YES in response_types or ResponseType.POSITIVE in response_types or ResponseType.MUSIC_RESPONSE in response_types:
+		flags['likes_music'] = True
+	else:
+		flags['catch_all'] = True
+
+	if flags['catch_all'] or flags['does_not_listen']:
+		flags['prompt_treelet'] = 'exit'
+	else:
+		next_node = random.choice(['music_get_instrument', 'music_get_singer', 'music_get_song'])
+		flags['prompt_treelet'] = next_node
+
+	return flags

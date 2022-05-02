@@ -1,0 +1,18 @@
+name: music_ask_singer_respond_til
+trigger_response: None
+global_state_entry_requirements:
+  - prompt_treelet: music_ask_singer_respond_til
+    exit_music_rg: False
+  - next_treelet_str: music_ask_singer_respond_til
+    exit_music_rg: False
+
+subnode_state_updates:
+  next_song:
+    next_treelet_str: music_handoff
+  comment_on_singer_only:
+    next_treelet_str: music_handoff
+    
+
+prompt_treelet_options:
+  - 'music_handoff'
+

@@ -1,0 +1,13 @@
+nlg:
+  - node_name: 'thats_cool'
+    required_flags:
+      thats: True
+    response: "{flags['response']} {flags['entity_suffix']}"
+  - node_name: 'didnt_know'
+    required_flags:
+      did_not_know: True
+    response: "{flags['response']} {flags['entity_suffix']}"
+  - node_name: 'catch_all'
+    required_flags:
+      catch_all: True
+    response: "{flags['entity_suffix']}"

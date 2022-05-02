@@ -1,0 +1,55 @@
+name: music_ask_song
+trigger_response: None
+global_state_entry_requirements:
+  - prompt_treelet: music_ask_song
+    exit_music_rg: False
+  - next_treelet_str: music_ask_song
+    exit_music_rg: False
+
+subnode_state_updates:
+  thats:
+    cur_singer_str: flags['cur_singer_str']
+    cur_singer_ent: flags['cur_singer_ent']
+    cur_song_str: flags['cur_song_str']
+    cur_song_ent: flags['cur_song_ent']
+    prompt_treelet: music_handoff
+  didnt_know:
+    cur_singer_str: flags['cur_singer_str']
+    cur_singer_ent: flags['cur_singer_ent']
+    cur_song_str: flags['cur_song_str']
+    cur_song_ent: flags['cur_song_ent']
+    prompt_treelet: music_handoff
+  answered_no:
+    cur_singer_str: flags['cur_singer_str']
+    cur_singer_ent: flags['cur_singer_ent']
+    cur_song_str: flags['cur_song_str']
+    cur_song_ent: flags['cur_song_ent']
+    prompt_treelet: music_handoff
+  answered_yes:
+    cur_singer_str: flags['cur_singer_str']
+    cur_singer_ent: flags['cur_singer_ent']
+    cur_song_str: flags['cur_song_str']
+    cur_song_ent: flags['cur_song_ent']
+    prompt_treelet: music_handoff
+  questioned:
+    cur_singer_str: flags['cur_singer_str']
+    cur_singer_ent: flags['cur_singer_ent']
+    cur_song_str: flags['cur_song_str']
+    cur_song_ent: flags['cur_song_ent']
+    prompt_treelet: music_handoff
+  opinion:
+    cur_singer_str: flags['cur_singer_str']
+    cur_singer_ent: flags['cur_singer_ent']
+    cur_song_str: flags['cur_song_str']
+    cur_song_ent: flags['cur_song_ent']
+    prompt_treelet: music_handoff
+  only_til:
+    cur_singer_str: flags['cur_singer_str']
+    cur_singer_ent: flags['cur_singer_ent']
+    cur_song_str: flags['cur_song_str']
+    cur_song_ent: flags['cur_song_ent']
+    prompt_treelet: music_handoff
+
+prompt_treelet_options:
+  - 'music_handoff'
+

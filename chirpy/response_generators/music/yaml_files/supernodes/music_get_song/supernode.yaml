@@ -1,0 +1,34 @@
+name: music_get_song
+trigger_response: None
+global_state_entry_requirements:
+  - prompt_treelet: 'music_get_song'
+    exit_music_rg: False
+subnode_state_updates:
+  song_ent_w_til:
+    just_used_til: True
+    prompt_treelet: music_response_to_song
+  song_ent_no_til_no_meta:
+    exit_music_rg: True
+  song_ent_no_til_meta:
+    cur_singer_str: "{flags['metadata']['artist']}"
+    prompt_treelet: music_response_to_song
+  song_ent_no_til_no_meta:
+    exit_music_rg: True
+  no_song_yes_singer:
+    next_treelet_str: music_response_to_song
+  no_song_yes_singer_str_no_meta:
+    exit_music_rg: True
+  no_song_yes_singer_str_meta:
+    cur_singer_str: "{flags['metadata']['artist']}"
+    prompt_treelet: music_response_to_song
+  dont_know:
+    exit_music_rg: True
+  no_fav_song:
+    exit_music_rg: True
+  catch_all:
+    exit_music_rg: True
+
+prompt_treelet_options:
+  - music_response_to_song
+  - music_ask_singer
+  - exit

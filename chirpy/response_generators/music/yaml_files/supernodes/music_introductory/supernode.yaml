@@ -1,0 +1,13 @@
+name: music_introductory
+trigger_response:
+  entry_conditions:
+    - has_entered_music_rg: False
+  set_state_on_finish:
+    has_entered_music_rg: True
+    prev_treelet_str: 'music_introductory'
+global_state_entry_requirements:
+  - has_entered_music_rg: False
+subnode_state_updates:
+  introductory_node:
+    has_entered_music_rg: True
+    prev_treelet_str: 'music_introductory'

@@ -1,0 +1,27 @@
+name: music_get_singer
+trigger_response: None
+global_state_entry_requirements:
+  - prompt_treelet: 'music_get_singer'
+    exit_music_rg: False
+subnode_state_updates:
+  musical_group_with_til:
+    just_used_til: True
+    prompt_treelet: music_ask_song
+  musical_group_wo_til:
+    prompt_treelet: music_ask_song
+  single_musician_with_til:
+    just_used_til: True
+    prompt_treelet: music_ask_song
+  single_musician_wo_til:
+    prompt_treelet: music_ask_song
+  only_know_singer_str_no_genre:
+    prompt_treelet: music_get_song
+  only_know_singer_str_w_genre:
+    prompt_treelet: music_ask_song
+  no_fav_musician:
+    prompt_treelet: music_get_song
+  catch_all:
+    prompt_treelet: music_get_song
+prompt_treelet_options:
+  - music_get_song
+  - music_ask_song

@@ -1,0 +1,13 @@
+nlg:
+  - node_name: 'no'
+    required_flags:
+      'no': True
+    response: 'I\'m sorry I must have heard you wrongly. How about we discuss something else.'
+  - node_name: thats
+    required_flags:
+      thats: True
+    response: "{comment_genre(flags['metadata'], flags['cur_song_str'], flags['cur_singer_str'], flags['response'])}"
+  - node_name: did_not_know
+    required_flags:
+      did_not_know: True
+    response: "{comment_genre(flags['metadata'], flags['cur_song_str'], flags['cur_singer_str'], flags['response'])}"

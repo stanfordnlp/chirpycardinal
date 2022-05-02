@@ -1,0 +1,15 @@
+name: music_response_to_song
+trigger_response: None
+global_state_entry_requirements:
+  - prompt_treelet: music_response_to_song
+    exit_music_rg: False
+
+subnode_state_updates:
+  no:
+    exit_music_rg: True
+  thats:
+    cur_singer_str: flags['metadata']['artist']
+    prompt_treelet: music_ask_singer
+  did_not_know:
+    cur_singer_str: flags['metadata']['artist']
+    prompt_treelet: music_ask_singer

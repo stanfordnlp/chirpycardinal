@@ -1,0 +1,20 @@
+nlg:
+  - node_name: instr_exists_with_til
+    required_flags:
+      instr_exists_with_til: True
+    response: 'The {flags['entity_name']} is a really fascinating instrument! {get_til_response(flags['tils'])}'
+  - node_name: instr_exists_wo_til
+    required_flags:
+      instr_exists_wo_til: True
+    response: 'The {flags['entity_name']} is a really fascinating instrument! I wish I can learn to play it one day.'
+  - node_name: no_fav_instrument
+    required_flags:
+      no_fav_instrument: True
+    response: 'It\'s alright, I think most people don\'t have a favorite instrument either. Maybe we can discuss another topic.'
+  - node_name: catch_all
+    required_flags:
+      catch_all: True
+    response: 'I don\'t seem to recognize that instrument, maybe I need to go back to music class. Let\'s talk about something else then.'
+
+
+

@@ -1,0 +1,9 @@
+nlg:
+  - node_name: til_exists
+    required_flags:
+      til_exists: True
+    response: "{get_til_response(flags['tils'])}"
+  - node_name: no_til_exists
+    required_flags:
+      til_exists: False
+    response: ''
