@@ -2,34 +2,28 @@ name: music_handle_opinion
 # define global coarse-grained treelet entry requirements here
 # (for ALL convo entering this treelet)
 global_state_entry_requirements:
-  - cur_song_str: None
-    cur_singer_str: None
-    exit_music_rg: False
-    prev_treelet_str: 'music_introductory'
+  - entering_music_rg: True
 # define the convo-path relevant state updates made by each subnode
 # each subnode MUST define a prompt_treelet
 subnode_state_updates:
   listens_frequently:
     answer_type: 'AnswerType.QUESTION_SELFHANDLING'
-    prompt_treelet: flags['prompt_treelet']
+    start_discussing_music: True
   listens_everday:
     answer_type: 'AnswerType.QUESTION_SELFHANDLING'
-    prompt_treelet: flags['prompt_treelet']
+    start_discussing_music: True
   does_not_listen:
     answer_type: 'AnswerType.NONE'
     exit_music_rg: True
-    prompt_treelet: 'exit'
   unsure_about_music:
     answer_type: 'AnswerType.QUESTION_SELFHANDLING'
-    prompt_treelet: flags['prompt_treelet']
+    start_discussing_music: True
   likes_music:
     answer_type: 'AnswerType.QUESTION_SELFHANDLING'
-    prompt_treelet: flags['prompt_treelet']
+    start_discussing_music: True
   catch_all:
     exit_music_rg: True
-    prompt_treelet: 'exit'
-prompt_treelet_options:
-  - 'music_get_instrument'
-  - 'music_get_singer'
-  - 'music_get_song'
-  - 'exit'
+
+global_post_supernode_state_updates:
+  # state updates done by all paths out of this supernode (regardless of subnode)
+  entering_music_rg: False

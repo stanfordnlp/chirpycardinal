@@ -1,27 +1,30 @@
 name: music_get_singer
 trigger_response: None
 global_state_entry_requirements:
-  - prompt_treelet: 'music_get_singer'
+  - start_discussing_music: True
+    exit_music_rg: False
+  - continue_after_instrument: True
     exit_music_rg: False
 subnode_state_updates:
   musical_group_with_til:
     just_used_til: True
-    prompt_treelet: music_ask_song
+    ask_user_about_specific_song: True # goes to ask_song supernode
   musical_group_wo_til:
-    prompt_treelet: music_ask_song
+    ask_user_about_specific_song: True
   single_musician_with_til:
     just_used_til: True
-    prompt_treelet: music_ask_song
+    ask_user_about_specific_song: True
   single_musician_wo_til:
-    prompt_treelet: music_ask_song
+    ask_user_about_specific_song: True
   only_know_singer_str_no_genre:
-    prompt_treelet: music_get_song
+    get_user_fav_song: True # goes to music_get_song supernode
   only_know_singer_str_w_genre:
-    prompt_treelet: music_ask_song
+    ask_user_about_specific_song: True
   no_fav_musician:
-    prompt_treelet: music_get_song
+    get_user_fav_song: True
   catch_all:
-    prompt_treelet: music_get_song
-prompt_treelet_options:
-  - music_get_song
-  - music_ask_song
+    get_user_fav_song: True
+
+global_post_supernode_state_updates:
+  start_discussing_music: False
+  continue_after_instrument: False

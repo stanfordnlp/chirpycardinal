@@ -1,26 +1,31 @@
 name: music_get_song
 trigger_response: None
 global_state_entry_requirements:
-  - prompt_treelet: 'music_get_song'
+  - start_discussing_music: True
+    exit_music_rg: False
+  - continue_after_instrument: True
+    exit_music_rg: False
+  - get_user_fav_song: True
     exit_music_rg: False
 subnode_state_updates:
   song_ent_w_til:
     just_used_til: True
-    prompt_treelet: music_response_to_song
+    user_has_song_opinion: True # goes to music_response_to_song supernode 
   song_ent_no_til_no_meta:
     exit_music_rg: True
   song_ent_no_til_meta:
     cur_singer_str: "{flags['metadata']['artist']}"
-    prompt_treelet: music_response_to_song
+    user_has_song_opinion: True
   song_ent_no_til_no_meta:
     exit_music_rg: True
   no_song_yes_singer:
-    next_treelet_str: music_response_to_song
+    # next_treelet_str: ask_singer_treelet
+    ask_user_about_specific_singer: True # goes to music_ask_singer supernode
   no_song_yes_singer_str_no_meta:
     exit_music_rg: True
   no_song_yes_singer_str_meta:
     cur_singer_str: "{flags['metadata']['artist']}"
-    prompt_treelet: music_response_to_song
+    user_has_song_opinion: True
   dont_know:
     exit_music_rg: True
   no_fav_song:
@@ -28,7 +33,12 @@ subnode_state_updates:
   catch_all:
     exit_music_rg: True
 
-prompt_treelet_options:
-  - music_response_to_song
-  - music_ask_singer
-  - exit
+global_post_supernode_state_updates:
+  start_discussing_music: False
+  continue_after_instrument: False
+  get_user_fav_song: False
+
+# prompt_treelet_options:
+#   - music_response_to_song
+#   - music_ask_singer
+#   - exit

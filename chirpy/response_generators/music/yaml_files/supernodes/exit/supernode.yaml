@@ -1,5 +1,9 @@
 name: exit
 trigger_response: None
 global_state_entry_requirements:
-  - next_treelet_str: 'exit'
   - exit_music_rg: True
+
+subnode_state_updates:
+  exit: None
+
+global_post_supernode_state_updates: None

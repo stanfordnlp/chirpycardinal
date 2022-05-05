@@ -6,8 +6,9 @@ trigger_response:
     has_entered_music_rg: True
     prev_treelet_str: 'music_introductory'
 global_state_entry_requirements:
-  - has_entered_music_rg: False
+  - entering_music_rg: False
 subnode_state_updates:
   introductory_node:
-    has_entered_music_rg: True
+    entering_music_rg: True
     prev_treelet_str: 'music_introductory'
+global_post_supernode_state_updates: None

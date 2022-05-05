@@ -1,16 +1,13 @@
 name: music_handoff
 trigger_response: None
 global_state_entry_requirements:
-  - prompt_treelet: music_handoff
-    exit_music_rg: False
-  - next_treelet_str: music_handoff
+  - go_to_handoff: True
     exit_music_rg: False
 
 subnode_state_updates:
   til_exists:
-    next_treelet_str: exit
+    exit_music_rg: True
   no_til_exists:
-    next_treelet_str: exit
+    exit_music_rg: True
 
-prompt_treelet_options:
-  - exit
+global_post_supernode_state_updates: None

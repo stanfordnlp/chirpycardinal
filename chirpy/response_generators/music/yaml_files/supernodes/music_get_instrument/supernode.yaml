@@ -1,12 +1,10 @@
 name: music_get_instrument
 trigger_response: None
 global_state_entry_requirements:
-  - prompt_treelet: 'music_get_instrument'
-    exit_music_rg: False
-  - next_treelet_str: 'music_get_instrument'
+  - start_discussing_music: True
     exit_music_rg: False
 
-prompt_leading_responses:
+prompt_leading_questions:
   - required:
       prev_treelet_str: music_handle_opinion
     prompt: 'There are so many instruments in the world. What is your favorite one?'
@@ -14,18 +12,14 @@ prompt_leading_responses:
 subnode_state_updates:
   instr_exists_with_til:
     just_used_til: True
-    bot_getting_instrument: False
-    prompt_treelet: 'instrument_til_reply'
+    instrument_til_followup: True
   instr_exists_wo_til:
-    bot_getting_instrument: False
-    prompt_treelet: flags['prompt_treelet']
+    continue_after_instrument: True # goes to one of get_singer or get_song supernode
   no_fav_instrument:
-    bot_getting_instrument: False
-    prompt_treelet: flags['prompt_treelet']
+    continue_after_instrument: True
   catch_all:
-    bot_getting_instrument: False
-    prompt_treelet: flags['prompt_treelet']
-prompt_treelet_options:
-  - 'instrument_til_reply'
-  - 'music_get_singer'
-  - 'music_get_song'
+    continue_after_instrument: True
+
+global_post_supernode_state_updates:
+  # state updates done by all paths out of this supernode
+  start_discussing_music: False

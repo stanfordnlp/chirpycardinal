@@ -1,18 +1,13 @@
 name: music_ask_singer_respond_til
 trigger_response: None
 global_state_entry_requirements:
-  - prompt_treelet: music_ask_singer_respond_til
-    exit_music_rg: False
-  - next_treelet_str: music_ask_singer_respond_til
+  - music_ask_singer_respond_til: True
     exit_music_rg: False
 
 subnode_state_updates:
-  next_song:
-    next_treelet_str: music_handoff
-  comment_on_singer_only:
-    next_treelet_str: music_handoff
-    
+  next_song: None
+  comment_on_singer_only: None
 
-prompt_treelet_options:
-  - 'music_handoff'
-
+global_post_supernode_state_updates:
+  go_to_handoff: True
+  music_ask_singer_respond_til: False
