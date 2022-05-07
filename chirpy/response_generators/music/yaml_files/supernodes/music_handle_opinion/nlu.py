@@ -10,7 +10,7 @@ def nlu_processing(rg, state, utterance, response_types):
 		'does_not_listen': False,
 		'unsure_about_music': False,
 		'likes_music': False,
-		'catch_all': False
+		'catch_all': False,
 		'prompt_treelet': '' 
 	}
 	if ResponseType.FREQ in response_types:

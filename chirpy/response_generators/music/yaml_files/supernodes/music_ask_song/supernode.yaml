@@ -4,6 +4,11 @@ global_state_entry_requirements:
   - ask_user_about_specific_song: True
     exit_music_rg: False
 
+prompt_leading_questions:
+  - required:
+      prev_supernode: music_get_singer
+    prompt: ''
+
 subnode_state_updates:
   thats: None
   didnt_know: None
