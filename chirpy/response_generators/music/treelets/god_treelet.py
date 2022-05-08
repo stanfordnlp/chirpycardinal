@@ -13,20 +13,32 @@ from chirpy.response_generators.music.state import ConditionalState
 
 logger = logging.getLogger('chirpylogger')
 
+def effify(non_f_str: str):
+    return eval(f'f"""{non_f_str}"""')
+
 
 class GodTreelet(Treelet):
     def __init__(self, rg):
         super().__init__(rg)
         self.name = 'god_treelet'
         self.can_prompt = True
-        supernodes = glob.glob('./**/supernode.yaml', recursive=True)
+        supernodes = glob.glob('../**/response_generators/music/**/supernode.yaml', recursive=True)
         self.supernode_content = {}
+        self.supernode_files = []
         for s in supernodes:
             supernode_name = s.split('/')[-2]
             self.supernode_files.append('/'.join(s.split('/')[:-1]))
             with open(s, "r") as stream:
                 d = yaml.safe_load(stream)
                 self.supernode_content[supernode_name] = d
+
+        self.nlg_yamls = {}
+        for node_name in self.supernode_content:
+            nlg_yaml_file = glob.glob(f'../**/response_generators/music/**/{node_name}/nlg.yaml', recursive=True)[0]
+            with open(nlg_yaml_file, "r") as stream:
+                d = yaml.safe_load(stream)
+                self.nlg_yamls[node_name] = d['nlg']
+
 
 
     def get_trigger_response(self, **kwargs):
@@ -63,28 +75,51 @@ class GodTreelet(Treelet):
                     return name
         return None
 
+    def get_subnode(flags, supernode):
+    	subnode_nlgs = self.nlg_yamls[supernode]
+    	for nlg in subnode_nlgs:
+    		requirements = nlg['required_flags']
+    		matches_entry_criteria = True
+    		for key in requirements:
+    			if flags[key] != requirements[key]:
+    				matches_entry_criteria = False
+    				break
+    		if matches_entry_criteria:
+    			return nlg['node_name'], nlg['response']
+    	return None
+
     def get_response(self, priority=ResponsePriority.STRONG_CONTINUE, **kwargs):
         logger.primary_info(f'{self.name} - Get response')
         state, utterance, response_types = self.get_state_utterance_response_types()
         needs_prompt = False
         # supernode_path = 'yaml_files/supernodes/'
         cur_supernode = self.get_next_supernode(state)
-        mod = import_module('chirpy.response_generators.music.yaml_files.supernodes.music_handle_opinion.nlu')
+        # nlu = import_module('chirpy.response_generators.music.yaml_files.supernodes.music_handle_opinion.nlu')
 
+        # NLU processing
+        nlu = import_module(f'chirpy.response_generators.music.yaml_files.supernodes.{cur_supernode}.nlu')
+        flags = nlu.nlu_processing(self.rg, state, utterance, response_types)
+
+        # NLG processing
+        subnode_name, nlg_response = self.get_subnode(flags, cur_supernode)
+        nlg_helpers = import_module(f'chirpy.response_generators.music.yaml_files.supernodes.{cur_supernode}.nlg_helpers')
+        response = effify(nlg_response)
+
+        # post-node state updates
 
 
         # YAML parse logic here
         return ResponseGeneratorResult(text='chungus', priority=ResponsePriority.STRONG_CONTINUE, needs_prompt=False, state=state,
                                        cur_entity=None,
-                                       conditional_state=None,
+                                       conditional_state=ConditionalState(
+                                           prev_treelet_str=self.name,
+                                           prompt_treelet=self.name),
                                        answer_type=AnswerType.QUESTION_SELFHANDLING)
 
-    def get_prompt(self, **kwargs):
+    def get_prompt(self, conditional_state=None):
         state, utterance, response_types = self.get_state_utterance_response_types()
         cur_supernode = self.get_next_supernode(state)
-        mod = import_module('chirpy.response_generators.music.yaml_files.supernodes.music_handle_opinion.nlu')
         # print('chungus', dir(mod))
-        print('chungus', cur_supernode)
         if cur_supernode is None:
             if state.have_prompted:
                 return None
@@ -96,13 +131,17 @@ class GodTreelet(Treelet):
             else:
                 prompt_type = PromptType.GENERIC
                 prompt_text = 'By the way, I\'ve been listening to a lot of new songs lately, and I\'d love to hear what you think.'
+
+            if conditional_state is None:
+            	conditional_state = ConditionalState(
+                    prev_treelet_str=self.name,
+                    next_treelet_str=self.name,
+                    prev_supernode_str='music_introductory',
+                    entering_music_rg=True
+                )
             # next_treelet_str, question = self.get_next_treelet()
             return PromptResult(text=prompt_text, prompt_type=prompt_type, state=state, cur_entity=None,
-                                conditional_state=ConditionalState(
-                                    have_prompted=True,
-                                    prev_treelet_str=self.name,
-                                    next_treelet_str=self.name,
-                                ))
+                                conditional_state=conditional_state)
 
         prompt_leading_questions = self.supernode_content[cur_supernode]['prompt_leading_questions']
         prompt_text = ''
@@ -122,5 +161,5 @@ class GodTreelet(Treelet):
 
         # YAML processing for prompt treelet leading question
         return PromptResult(text=prompt_text, prompt_type=PromptType.CONTEXTUAL, state=state, cur_entity=entity,
-                        conditional_state=ConditionalState())
+                        conditional_state=conditional_state)
 
