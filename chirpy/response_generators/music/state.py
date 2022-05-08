@@ -12,6 +12,9 @@ class State(BaseState):
     discussed_entities: List = field(default_factory=list)
     just_used_til: bool = False
 
+    prev_supernode_str: Optional = None
+    entering_music_rg: bool = False
+
 @dataclass
 class ConditionalState(BaseConditionalState):
     have_prompted: bool = NO_UPDATE
@@ -20,3 +23,6 @@ class ConditionalState(BaseConditionalState):
     cur_song_str: Optional = NO_UPDATE
     cur_singer_str: Optional = NO_UPDATE
     just_used_til: bool = False
+
+    prev_supernode_str: Optional = NO_UPDATE
+    entering_music_rg: bool = False

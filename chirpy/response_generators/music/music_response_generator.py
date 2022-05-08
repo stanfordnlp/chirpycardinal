@@ -20,25 +20,19 @@ class MusicResponseGenerator(ResponseGenerator):
     name = "MUSIC"
     def __init__(self, state_manager) -> None:
 
-        self.introductory_treelet = treelets.IntroductoryTreelet(self)
-        self.handle_opinion_treelet = treelets.HandleOpinionTreelet(self)
-        self.get_song_treelet = treelets.GetSongTreelet(self)
-        self.ask_singer_treelet = treelets.AskSingerTreelet(self)
-        self.get_singer_treelet = treelets.GetSingerTreelet(self)
-        self.ask_song_treelet = treelets.AskSongTreelet(self)
-        self.get_instrument_treelet = treelets.GetInstrumentTreelet(self)
-        self.handoff_treelet = treelets.HandoffTreelet(self)
+        # self.introductory_treelet = treelets.IntroductoryTreelet(self)
+        # self.handle_opinion_treelet = treelets.HandleOpinionTreelet(self)
+        # self.get_song_treelet = treelets.GetSongTreelet(self)
+        # self.ask_singer_treelet = treelets.AskSingerTreelet(self)
+        # self.get_singer_treelet = treelets.GetSingerTreelet(self)
+        # self.ask_song_treelet = treelets.AskSongTreelet(self)
+        # self.get_instrument_treelet = treelets.GetInstrumentTreelet(self)
+        # self.handoff_treelet = treelets.HandoffTreelet(self)
+        self.god_treelet = treelets.GodTreelet(self)
 
         self.treelets = {
             treelet.name: treelet for treelet in [
-                self.introductory_treelet,
-                self.handle_opinion_treelet,
-                self.get_song_treelet,
-                self.ask_singer_treelet,
-                self.get_singer_treelet,
-                self.ask_song_treelet,
-                self.get_instrument_treelet,
-                self.handoff_treelet,
+                self.god_treelet
             ]
         }
 
