@@ -1,0 +1,5 @@
+nlg:
+  - node_name: 'intro'
+    required_flags:
+      'intro': True
+    response: 'Music is one of my favorite things and I was wondering if we could talk about it.'

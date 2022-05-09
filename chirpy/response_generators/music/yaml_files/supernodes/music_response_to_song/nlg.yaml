@@ -2,7 +2,7 @@ nlg:
   - node_name: 'no'
     required_flags:
       'no': True
-    response: 'I\'m sorry I must have heard you wrongly. How about we discuss something else.'
+    response: "I'm sorry I must have heard you wrongly. How about we discuss something else."
   - node_name: thats
     required_flags:
       thats: True

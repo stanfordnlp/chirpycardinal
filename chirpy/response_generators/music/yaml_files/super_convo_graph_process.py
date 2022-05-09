@@ -220,3 +220,21 @@ if draw_graph:
 	nx.draw(nx_G, with_labels = True, node_size=800)
 	plt.show()
 
+### other stuff
+
+
+# Verify every state access exists in initial state
+state_vals = set()
+for n in nodes:
+	for d in n.all_possible_entry:
+		for key in d:
+			state_vals.add(key)
+	for d in n.all_possible_exit_states:
+		for key in d:
+			state_vals.add(key)
+state_vals = list(state_vals)
+state_vals.sort()
+for t in state_vals:
+	print(t)
+# Very every func call in NLG exists in nlg_helpers
+# verify that a node contains and intro & exit node

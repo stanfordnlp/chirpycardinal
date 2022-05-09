@@ -2,7 +2,9 @@
 Helper functions that are used by both ResponseGenerator and Treelet
 """
 from functools import partial, update_wrapper
+from collections import defaultdict
 import re
+import inspect
 from typing import Tuple
 from chirpy.core.regex.word_lists import CUTOFF
 from chirpy.core.regex import response_lists
@@ -99,6 +101,19 @@ import os
 STOPWORDS_FILEPATH = os.path.join(os.path.dirname(__file__), '../../data/long_stopwords.txt')
 STOPWORDS = load_text_file(STOPWORDS_FILEPATH)
 
+global_nlg_helpers_cache = defaultdict(lambda: {})
+def nlg_helper(func):
+    supernode_path = inspect.getfile(func)# get path to current rg+supernode, i.e. "MUSIC/music_ask_song"
+    components = supernode_path.split('/')
+    supernode_name = components[-2]
+    global_nlg_helpers_cache[supernode_name][func.__name__] = func
+    return func
+
+def get_context_for_supernode(supernode):
+    # context = GLOBAL_CONTEXT -- do this once we have actual global context
+    context = {}
+    context.update(global_nlg_helpers_cache[supernode])
+    return context
 
 def wrapped_partial(func, *args, **kwargs):
     partial_func = partial(func, *args, **kwargs)

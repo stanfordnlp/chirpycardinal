@@ -10,11 +10,11 @@ nlg:
   - node_name: does_not_listen
     required_flags:
       does_not_listen: True
-    response: 'No problem! Everyone has different interests and it sounds like music isn\'t your thing.'
+    response: "No problem! Everyone has different interests and it sounds like music isn't your thing."
   - node_name: unsure_about_music
     required_flags:
       unsure_about_music: True
-    response: 'It\'s okay, sometimes I am not sure how I feel about music either. But in some ways, music is tremendously fascinating. A physical dancing of air molecules that translates to figurative dancing of neurons. But philosophical musings aside, '
+    response: "It's okay, sometimes I am not sure how I feel about music either. But in some ways, music is tremendously fascinating. A physical dancing of air molecules that translates to figurative dancing of neurons. But philosophical musings aside, "
   - node_name: likes_music
     required_flags:
       likes_music: True
