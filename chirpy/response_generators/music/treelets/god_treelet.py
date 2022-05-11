@@ -47,21 +47,21 @@ class GodTreelet(Treelet):
         # Triggered by KEYWORD_MUSIC
         logger.primary_info(f'{self.name} - Triggered')
         state, utterance, response_types = self.get_state_utterance_response_types()
-        if ResponseType.YES in response_types:
-            priority = ResponsePriority.CAN_START
-            response = handle_opinion_template.HandleLikeMusicResponseTemplate().sample()
-            # next_treelet_str, question = self.get_next_treelet()
-            return ResponseGeneratorResult(
-                text=response+question, needs_prompt=False, cur_entity=None,
-                priority=priority,
-                state=self.rg.state, conditional_state=ConditionalState(
-                    prev_treelet_str=self.name,
-                    next_treelet_str=self.name,
+
+        priority = self.rg._get_priority_from_answer_type()
+        response = random.choice([
+            'Music is one of my favorite things and I was wondering if we could talk about it.',
+            'There\'s so much music here in the cloud and I\'m curious to know what you think about it.',
+        ])
+        return ResponseGeneratorResult(
+            text=response, needs_prompt=False, cur_entity=None,
+            priority=priority,
+            state=state, conditional_state=ConditionalState(
+                    prompt_treelet=self.name,
                     prev_supernode_str='music_introductory',
                     entering_music_rg=True
-                ),
-                answer_type=AnswerType.QUESTION_SELFHANDLING
-            )
+            ),
+        )
 
     def get_next_supernode(self, state):
         for name in self.supernode_content:
