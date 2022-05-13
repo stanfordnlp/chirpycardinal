@@ -238,3 +238,7 @@ for t in state_vals:
 	print(t)
 # Very every func call in NLG exists in nlg_helpers
 # verify that a node contains and intro & exit node
+# Verify that variables that need to be exposed are actually exposed in nlg.yaml
+# Verify that all subnodes defined in supernode.yaml exist in nlg.yaml
+# Robust error logging when something in yaml causes crash
+# Verify all yamls obey correct format (correct categories, etc.)

@@ -1,0 +1,28 @@
+- node_name: no_prefix_yes_factoid
+  required_flags:
+    user_asked_q: True
+    factoid_exists: True
+  response: "{rg.get_neural_response(prefix='')}"
+  expose_vars:
+    cur_entity: state.cur_food
+- node_name: no_prefix_no_factoid
+  required_flags:
+    user_asked_q: True
+    factoid_exists: False
+  response: "{rg.get_neural_response(prefix='')} {get_concluding_statement(state.cur_food.talkable_name)}"
+  expose_vars:
+    cur_entity: None
+- node_name: yes_prefix_yes_factoid
+  required_flags:
+    user_made_statement: True
+    factoid_exists: True
+  response: "{rg.get_neural_response(prefix=f'yeah, i think {state.cur_food.talkable_name}')}"
+  expose_vars:
+    cur_entity: state.cur_food
+- node_name: yes_prefix_no_factoid
+  required_flags:
+    user_made_statement: True
+    factoid_exists: False
+  response: "{rg.get_neural_response(prefix=f'yeah, i think {state.cur_food.talkable_name}')} {get_concluding_statement(state.cur_food.talkable_name)}"
+  expose_vars:
+    cur_entity: None

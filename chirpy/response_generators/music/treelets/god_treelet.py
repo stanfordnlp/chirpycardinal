@@ -64,6 +64,7 @@ class GodTreelet(Treelet):
         )
 
     def get_next_supernode(self, state):
+    	# DONT actually do it like this! Randomize next state selection!!
         for name in self.supernode_content:
             d = self.supernode_content[name]
             entry_reqs = d['global_state_entry_requirements']

@@ -1,0 +1,25 @@
+name: comment_on_favorite_type
+# define global coarse-grained treelet entry requirements here
+# (for ALL convo entering this treelet)
+global_state_entry_requirements:
+  - food_type_exists: True
+    exit_food: False
+# define the convo-path relevant state updates made by each subnode
+# each subnode MUST define a prompt_treelet
+prompt_leading_questions:
+  call_method: get_prompt_for_fav_food_type
+
+required_exposed_variables:
+  # variables that must be defined & exposed in nlg.yaml
+  - cur_food_entity
+
+subnode_state_updates:
+  custom_dont_know: None
+  custom_no: None
+  custom_neural: None
+  sample_of_same_type: None
+
+global_post_supernode_state_updates:
+  cur_food: cur_food_entity
+  open_ended: True
+  food_type_exists: False

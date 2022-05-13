@@ -1,0 +1,34 @@
+- node_name: custom_dont_know
+  required_flags:
+    has_custom_food: True
+    dont_know: True
+  response: "No worries, it can be difficult to pick just one! Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
+  expose_vars:
+    entity: rg.get_current_entity(initiated_this_turn=False)
+    cur_food_entity: state.cur_food # state.cur_food
+- node_name: custom_no
+  required_flags:
+    has_custom_food: True
+    response_no: True
+  response: "Okay, no worries. Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
+  expose_vars:
+    entity: rg.get_current_entity(initiated_this_turn=False)
+    cur_food_entity: state.cur_food # state.cur_food
+- node_name: custom_neural
+  required_flags:
+    has_custom_food: True
+    response_no: False
+    dont_know: False
+  response: "{get_neural_response_food_type(rg)} Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
+  expose_vars:
+    entity: rg.get_current_entity(initiated_this_turn=False)
+    cur_food_entity: state.cur_food # state.cur_food
+- node_name: sample_of_same_type
+  required_flags:
+    has_custom_food: False
+    response_no: False
+    dont_know: False
+  response: "That totally makes sense! I also really enjoy {get_user_answer(rg)}. Personally, I really like {comment_on_other_food_type(rg)}."
+  expose_vars:
+    entity: rg.state_manager.current_state.entity_tracker.cur_entity
+    cur_food_entity: state.cur_food # state.cur_food

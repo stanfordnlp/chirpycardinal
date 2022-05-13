@@ -1,0 +1,8 @@
+name: exit
+global_state_entry_requirements:
+  - exit_food: True
+
+subnode_state_updates:
+  exit: None
+
+global_post_supernode_state_updates: None
