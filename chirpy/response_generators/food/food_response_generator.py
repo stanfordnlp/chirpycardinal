@@ -11,6 +11,7 @@ from chirpy.response_generators.food.regex_templates import *
 from chirpy.core.regex.util import OPTIONAL_TEXT_PRE, OPTIONAL_TEXT_POST
 
 from chirpy.response_generators.food.treelets.introductory_treelet import IntroductoryTreelet
+from chirpy.response_generators.food.treelets.god_treelet import GodTreelet
 # from chirpy.response_generators.food.treelets.get_other_type_treelet import GetOtherTypeTreelet
 from chirpy.response_generators.food.treelets.open_ended_user_comment_treelet import OpenEndedUserCommentTreelet
 from chirpy.response_generators.food.treelets.comment_on_favorite_type_treelet import CommentOnFavoriteTypeTreelet
@@ -26,15 +27,17 @@ class FoodResponseGenerator(ResponseGenerator):
     name='FOOD'
 
     def __init__(self, state_manager) -> None:
-        self.introductory_treelet = IntroductoryTreelet(self)
-        self.open_ended_user_comment_treelet = OpenEndedUserCommentTreelet(self)
-        self.comment_on_favorite_type_treelet = CommentOnFavoriteTypeTreelet(self)
-        self.ask_favorite_food_treelet = AskFavoriteFoodTreelet(self)
-        self.factoid_treelet = FactoidTreelet(self)
-        treelets = {
-            treelet.name: treelet for treelet in [self.introductory_treelet, self.open_ended_user_comment_treelet,
-                                                  self.comment_on_favorite_type_treelet, self.factoid_treelet, self.ask_favorite_food_treelet]
-        }
+        # self.introductory_treelet = IntroductoryTreelet(self)
+        # self.open_ended_user_comment_treelet = OpenEndedUserCommentTreelet(self)
+        # self.comment_on_favorite_type_treelet = CommentOnFavoriteTypeTreelet(self)
+        # self.ask_favorite_food_treelet = AskFavoriteFoodTreelet(self)
+        # self.factoid_treelet = FactoidTreelet(self)
+        self.god_treelet = GodTreelet(self)
+        # treelets = {
+        #     treelet.name: treelet for treelet in [self.introductory_treelet, self.open_ended_user_comment_treelet,
+        #                                           self.comment_on_favorite_type_treelet, self.factoid_treelet, self.ask_favorite_food_treelet]
+        # }
+        treelets = {treelet.name: treelet for treelet in [self.god_treelet]}
         super().__init__(state_manager, treelets=treelets, intent_templates=[], can_give_prompts=True,
                          state_constructor=State,
                          conditional_state_constructor=ConditionalState,
@@ -53,13 +56,16 @@ class FoodResponseGenerator(ResponseGenerator):
 
     def get_treelet_for_entity(self, entity):
         # logger.primary_info("Get_treelet_for_entity was called")
-        if entity.name == 'Food':
-            return AskFavoriteFoodTreelet(self).name
-        logger.primary_info(f"Food had its get_treelet_for_entity called: {is_known_food(entity.name.lower())}")
-        if is_known_food(entity.name.lower()):
-            return IntroductoryTreelet(self).name
-        else:
-            return None # can't handle this food entity
+        # if entity.name == 'Food':
+        #     return AskFavoriteFoodTreelet(self).name
+        # logger.primary_info(f"Food had its get_treelet_for_entity called: {is_known_food(entity.name.lower())}")
+        # if is_known_food(entity.name.lower()):
+        #     return IntroductoryTreelet(self).name
+        # else:
+        #     return None # can't handle this food entity
+        if entity.name == 'Food' or is_known_food(entity.name.lower()):
+            return GodTreelet(self).name
+        return None
 
 
     def handle_rejection_response(self, prefix='', main_text=None, suffix='',

@@ -5,11 +5,7 @@ global_state_entry_requirements:
   - cur_entity_is_food: True
 # define the convo-path relevant state updates made by each subnode
 # each subnode MUST define a prompt_treelet
-prompt_leading_questions:
-  # multiple matching prompts will be returned uniformly at random
-  # perhaps put this in trigger_conditions?
-  - required: None
-    prompt: 'Do you like music too?'
+prompt_leading_questions: None
 
 subnode_state_updates:
   ask_food:
