@@ -8,6 +8,7 @@ from importlib import import_module
 
 from chirpy.core.response_generator import Treelet, get_context_for_supernode
 from chirpy.core.response_priority import ResponsePriority
+from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
 from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, PromptType, AnswerType
 from chirpy.response_generators.music.response_templates import handle_opinion_template
 from chirpy.response_generators.music.music_helpers import ResponseType
@@ -46,7 +47,7 @@ class GodTreelet(Treelet):
             nlg_yaml_file = os.path.join(path, 'nlg.yaml')
             with open(nlg_yaml_file, "r") as stream:
                 d = yaml.safe_load(stream)
-                self.nlg_yamls[node_name] = d['nlg']
+                self.nlg_yamls[node_name] = d
 
     def get_next_supernode(self, state):
     	# Get matching next supernodes and return one sampled at random
@@ -81,32 +82,42 @@ class GodTreelet(Treelet):
                 return nlg['node_name'], nlg['response']
         return None
 
+    def get_exposed_subnode_vars(self, supernode, subnode_name):
+    	subnode_nlgs = self.nlg_yamls[supernode]
+    	for nlg in subnode_nlgs:
+    		if nlg['node_name'] == subnode_name:
+    			if nlg['expose_vars'] == 'None': return None
+    			return nlg['expose_vars']
+    	return None
+
+    def check_and_set_entry_conditions(self, state):
+    	cur_state = state.copy()
+    	entity = self.rg.get_current_entity(initiated_this_turn=True)
+    	if entity.name == 'Food':
+    		cur_state.cur_entity_is_food = True
+    	elif is_known_food(entity.name.lower()):
+    		cur_state.cur_entity_known_food = True
+    	return cur_state
+
+
     def get_response(self, priority=ResponsePriority.STRONG_CONTINUE, **kwargs):
         logger.primary_info(f'{self.name} - Get response')
         state, utterance, response_types = self.get_state_utterance_response_types()
         needs_prompt = False
         # supernode_path = 'yaml_files/supernodes/'
-        cur_supernode = self.get_next_supernode(state)
-        if cur_supernode is None:
+        # cur_supernode = self.get_next_supernode(state)
+        cur_supernode = state.cur_supernode
+        if state.cur_supernode is None:
         	# RG is being entered (introductory response)
         	# Return empty string, but set state appropriately so prompt_treelet can take over
-        	entity = self.rg.state_manager.current_state.entity_tracker.cur_entity
-        	if entity.name == 'Food':
-        		return ResponseGeneratorResult(text='', priority=priority, needs_prompt=False, state=state,
-                                       cur_entity=None,
-                                       conditional_state=ConditionalState(
-                                           prompt_treelet=self.name,
-                                           cur_entity_is_food=True))
-        	elif is_known_food(entity.name.lower()):
-        		return ResponseGeneratorResult(text='', priority=priority, needs_prompt=False, state=state,
-                                       cur_entity=None,
-                                       conditional_state=ConditionalState(
-                                           prompt_treelet=self.name,
-                                           cur_entity_known_food=True))
+        	# entity = self.rg.state_manager.current_state.entity_tracker.cur_entity
+        	state = self.check_and_set_entry_conditions(state)
+        	cur_supernode = self.get_next_supernode(state)
 
-        	return ResponseGeneratorResult(text='', priority=priority, needs_prompt=True, state=state,
-                                       cur_entity=None,
-                                       conditional_state=ConditionalState())
+        	# CURRENTLY A HACK FOR AN EXCEPTIONAL CASE
+        	neural_chat_state = self.rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+	        if cur_supernode == 'food_introductory' and neural_chat_state is not None and getattr(neural_chat_state, 'next_treelet', None):
+	            priority = ResponsePriority.FORCE_START
 
 
         # NLU processing
@@ -117,19 +128,54 @@ class GodTreelet(Treelet):
         # NLG processing
         subnode_name, nlg_response = self.get_subnode(flags, cur_supernode)
 
-        context = get_context_for_supernode(self.name + '/' + cur_supernode)
+        context = get_context_for_supernode(cur_supernode)
+        cntxt = {
+            'rg': self.rg,
+            'state': state
+        }
+        context.update(cntxt)
         response = effify(nlg_response, global_context=context)
 
-        # post-node state updates (maybe do this in prompt treelet?)
+        # post-subnode state updates
+        expose_vars = self.get_exposed_subnode_vars(cur_supernode, subnode_name)
+        exposed_context = {}
+        if expose_vars is not None:
+	        for key in expose_vars:
+	        	exposed_context['key'] = eval(expose_vars[key], context)
 
+	    context.update(exposed_context)
+	    subnode_state_updates = self.supernode_content[cur_supernode]['subnode_state_updates'][subnode_name]
+	    if subnode_state_updates == 'None': subnode_state_updates = {}
+	    global_post_state_updates = self.supernode_content[cur_supernode]['global_post_supernode_state_updates']
+	    if global_post_state_updates == 'None': global_post_state_updates = {}
+
+	    subnode_state_updates.update(global_post_state_updates)
+
+	   	if 'priority' in subnode_state_updates:
+	   		priority = eval(subnode_state_updates['priority'])
+	   		assert isinstance(priority, ResponsePriority)
+	   		del subnode_state_updates['priority']
+	   	if 'needs_prompt' in subnode_state_updates:
+	   		needs_prompt = eval(subnode_state_updates['needs_prompt'])
+	   		assert type(needs_prompt) == type(True) # make sure it is a boolean
+	   		del subnode_state_updates['needs_prompt']
+	   	else:
+	   		needs_prompt = False
+
+	   	if 'cur_entity' in subnode_state_updates:
+	   		cur_entity = eval(subnode_state_updates['cur_entity'])
+	   		assert isinstance(cur_entity, WikiEntity)
+	   		del subnode_state_updates['cur_entity']
+	   	else:
+	   		cur_entity = None
+
+	   	subnode_state_updates['prompt_treelet'] = self.name
+	   	subnode_state_updates['prev_treelet_str'] = self.name
 
         # YAML parse logic here
-        return ResponseGeneratorResult(text='chungus', priority=ResponsePriority.STRONG_CONTINUE, needs_prompt=False, state=state,
-                                       cur_entity=None,
-                                       conditional_state=ConditionalState(
-                                           prev_treelet_str=self.name,
-                                           prompt_treelet=self.name),
-                                       answer_type=AnswerType.QUESTION_SELFHANDLING)
+        return ResponseGeneratorResult(text=response, priority=priority, needs_prompt=needs_prompt, state=state,
+                                       cur_entity=cur_entity,
+                                       conditional_state=ConditionalState(**subnode_state_updates))
 
     def get_prompt(self, conditional_state=None):
         state, utterance, response_types = self.get_state_utterance_response_types()
@@ -152,7 +198,7 @@ class GodTreelet(Treelet):
     		func = function_cache[method]
     		return func(self.rg, conditional_state)
 
-        prompt_text = ''
+        prompt_texts = []
         for i in range(len(prompt_leading_questions)):
             case = prompt_leading_questions[i]
             requirements = case['required']
@@ -167,11 +213,17 @@ class GodTreelet(Treelet):
             		'state': state
             	}
                 prompt_text = effify(case['prompt'], cntxt)
-                break
+                prompt_texts.append(prompt_text)
 
         entity = self.rg.state_manager.current_state.entity_tracker.cur_entity
 
+        text = ''
+        if len(prompt_texts) > 0:
+        	text = random.choice(prompt_texts)
+
+       	conditional_state.cur_supernode = cur_supernode
+
         # YAML processing for prompt treelet leading question
-        return PromptResult(text=prompt_text, prompt_type=PromptType.CONTEXTUAL, state=state, cur_entity=entity,
+        return PromptResult(text=text, prompt_type=PromptType.CONTEXTUAL, state=state, cur_entity=entity,
                         conditional_state=conditional_state)
 

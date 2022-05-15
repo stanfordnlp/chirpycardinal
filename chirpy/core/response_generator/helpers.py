@@ -105,7 +105,14 @@ global_nlg_helpers_cache = defaultdict(lambda: {})
 def nlg_helper(func):
     supernode_path = inspect.getfile(func)# get path to current rg+supernode, i.e. "MUSIC/music_ask_song"
     components = supernode_path.split('/')
-    supernode_name = components[-2]
+    ind = -1
+    for i in range(len(components)):
+        if components[i] == 'supernodes':
+            ind = i
+            break
+    supernode_name = components[ind+1]
+    if func.__name__ in global_nlg_helpers_cache[supernode_name]:
+        raise KeyError(f'Duplicate function name {func.__name__} found in cache for {supernode_name}')
     global_nlg_helpers_cache[supernode_name][func.__name__] = func
     return func
 
