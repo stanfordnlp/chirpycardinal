@@ -3,6 +3,7 @@ import logging
 from functools import cmp_to_key
 from chirpy.core.util import infl
 from chirpy.core.response_generator.response_type import add_response_types, ResponseType
+from chirpy.core.response_generator import nlg_helper
 from chirpy.response_generators.food.regex_templates import FavoriteTypeTemplate
 from chirpy.response_generators.food.regex_templates import FOODS, CATEGORIES, INGREDIENTS
 import logging

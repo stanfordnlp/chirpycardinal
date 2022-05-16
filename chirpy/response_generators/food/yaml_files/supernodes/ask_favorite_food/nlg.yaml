@@ -1,0 +1,5 @@
+- node_name: ask_food
+  required_flags:
+    unconditional: True
+  response: "Sure! What's your favorite food?"
+  expose_vars: None

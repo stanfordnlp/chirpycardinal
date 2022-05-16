@@ -21,3 +21,4 @@ subnode_state_updates:
 global_post_supernode_state_updates:
   cur_food: cur_food
   exit_food: True
+  needs_prompt: True

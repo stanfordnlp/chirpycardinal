@@ -1,13 +1,15 @@
 from chirpy.response_generators.food.state import State, ConditionalState
 from chirpy.response_generators.food.food_helpers import *
 from chirpy.core.response_generator_datatypes import AnswerType
+from chirpy.core.response_generator import nlg_helper
 from chirpy.core.response_priority import PromptType
 from chirpy.core.entity_linker.entity_groups import EntityGroupsForExpectedType
 from chirpy.core.util import infl
 
+@nlg_helper
 def get_prompt_for_fav_food_type(rg, conditional_state=None):
     state, utterance, response_types = rg.get_state_utterance_response_types()
-	entity = rg.get_current_entity()
+    entity = rg.get_current_entity()
     if conditional_state and conditional_state.cur_food:
         cur_food = conditional_state.cur_food
     else:
@@ -44,6 +46,7 @@ def get_best_candidate_user_entity(rg, utterance, cur_food):
 
     return user_answer, plural
 
+@nlg_helper
 def get_neural_response_food_type(rg):
     state, utterance, response_types = rg.get_state_utterance_response_types()
     user_answer, is_plural = get_best_candidate_user_entity(rg, utterance, state.cur_food.name)
@@ -54,20 +57,24 @@ def get_neural_response_food_type(rg):
     resp = resp.replace('!', '.').split('.')[0] + '.' # only take one sentence
     return resp
 
+@nlg_helper
 def get_custom_q_answer(rg):
     state, utterance, response_types = rg.get_state_utterance_response_types()
     custom_question_answer = get_custom_question_answer(state.cur_food.name)
     return custom_question_answer
 
+@nlg_helper
 def get_cur_talkable_food(rg):
     state, utterance, response_types = rg.get_state_utterance_response_types()
     return state.cur_food.talkable_name
 
+@nlg_helper
 def get_user_answer(rg):
     state, utterance, response_types = rg.get_state_utterance_response_types()
     user_answer, is_plural = get_best_candidate_user_entity(rg, utterance, cur_food)
     return user_answer
 
+@nlg_helper
 def comment_on_other_food_type(rg):
     state, utterance, response_types = rg.get_state_utterance_response_types()
     other_type = sample_from_type(state.cur_food.name)

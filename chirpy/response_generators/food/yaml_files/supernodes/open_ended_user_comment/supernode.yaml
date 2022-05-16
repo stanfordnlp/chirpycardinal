@@ -18,10 +18,12 @@ subnode_state_updates:
     need_factoid: True
   no_prefix_no_factoid:
     exit_food: True
+    needs_prompt: True
   yes_prefix_yes_factoid:
     need_factoid: True
   yes_prefix_no_factoid:
     exit_food: True
+    needs_prompt: True
 
 global_post_supernode_state_updates:
   cur_food: None # this might be wrong?

@@ -2,7 +2,7 @@ name: food_introductory
 # define global coarse-grained treelet entry requirements here
 # (for ALL convo entering this treelet)
 global_state_entry_requirements:
-  - cur_entity_is_food: False
+  - entry_entity_is_food: False
     cur_entity_known_food: True
     exit_food: False
   - acknowledge_fav_food: True
@@ -18,6 +18,7 @@ required_exposed_variables:
 subnode_state_updates:
   no_entity:
     exit_food: True
+    needs_prompt: True
   food_type_comment:
     food_type_exists: True
   custom_comment_exists:
@@ -33,3 +34,5 @@ subnode_state_updates:
 
 global_post_supernode_state_updates:
   cur_food: entity # must be explicitly exposed by nlg.yaml!
+  cur_entity_known_food: False
+  acknowledge_fav_food: False
