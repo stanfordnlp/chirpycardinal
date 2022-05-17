@@ -6,7 +6,7 @@ def nlu_processing(rg, state, utterance, response_types):
 		'dont_know': False,
 		'response_no': False
 	}
-	entity = rg.get_current_entity(initiated_this_turn=False)
+	cur_food_entity = state.cur_food
 	cur_food = cur_food_entity.name
 	if get_custom_question(cur_food) is not None:
 		flags['has_custom_food'] = True

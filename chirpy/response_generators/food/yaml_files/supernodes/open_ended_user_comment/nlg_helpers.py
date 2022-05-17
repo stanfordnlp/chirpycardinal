@@ -14,7 +14,10 @@ def get_prompt_for_open_ended(rg, conditional_state=None):
             entity = conditional_state.cur_food
     else:
         entity = state.cur_food
-        conditional_state = ConditionalState(cur_food=entity)
+        if conditional_state:
+            conditional_state = ConditionalState(cur_food=entity, prompt_treelet=conditional_state.prompt_treelet)
+        else:
+            conditional_state = ConditionalState(cur_food=entity)
 
     if entity is None: return rg.emptyPrompt()
 

@@ -141,13 +141,14 @@ class GodTreelet(Treelet):
         }
         context.update(cntxt)
 
-        print('wtf', context, cur_supernode)
         try:
             response = effify(nlg_response, global_context=context)
         except NameError as nameerr:
             logger.error(nameerr)
             logger.error(f'We had an NLG error in the supernode {cur_supernode} and subnode {subnode_name}. The problematic string inside the yaml file is "{nlg_response}". Check whether you have decorated the right functions!')
             raise
+
+        print('*sentinel* food response', response)
 
         # post-subnode state updates
         expose_vars = self.get_exposed_subnode_vars(cur_supernode, subnode_name)
@@ -169,7 +170,7 @@ class GodTreelet(Treelet):
             assert isinstance(priority, ResponsePriority)
             del subnode_state_updates['priority']
         if 'needs_prompt' in subnode_state_updates:
-            needs_prompt = eval(subnode_state_updates['needs_prompt'], context)
+            needs_prompt = eval(str(subnode_state_updates['needs_prompt']), context)
             assert type(needs_prompt) == type(True) # make sure it is a boolean
             del subnode_state_updates['needs_prompt']
         else:
@@ -196,13 +197,13 @@ class GodTreelet(Treelet):
 
     def get_prompt(self, conditional_state=None):
         state, utterance, response_types = self.get_state_utterance_response_types()
-        cur_supernode = self.get_next_supernode(state)
-        # print('chungus', dir(mod))
+        cur_supernode = self.get_next_supernode(conditional_state)
+        print('food prompt treelet/supernode', cur_supernode)
         if cur_supernode is None or conditional_state is None or cur_supernode == 'exit':
             # next_treelet_str, question = self.get_next_treelet()
             return None
 
-        function_cache = get_context_for_supernode(supernode)
+        function_cache = get_context_for_supernode(cur_supernode)
 
         prompt_leading_questions = self.supernode_content[cur_supernode]['prompt_leading_questions']
         if prompt_leading_questions == 'None':
@@ -212,7 +213,8 @@ class GodTreelet(Treelet):
             if method_name not in function_cache:
                 logger.error(f"Function {method_name} declared in yaml file not defined in function cache")
                 raise KeyError(f'NLG helpers function cache error {method_name}')
-            func = function_cache[method]
+            func = function_cache[method_name]
+            conditional_state.cur_supernode = cur_supernode
             return func(self.rg, conditional_state)
 
         prompt_texts = []

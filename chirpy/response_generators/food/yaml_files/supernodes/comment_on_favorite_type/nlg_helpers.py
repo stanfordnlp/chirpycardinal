@@ -1,6 +1,6 @@
 from chirpy.response_generators.food.state import State, ConditionalState
 from chirpy.response_generators.food.food_helpers import *
-from chirpy.core.response_generator_datatypes import AnswerType
+from chirpy.core.response_generator_datatypes import AnswerType, PromptResult
 from chirpy.core.response_generator import nlg_helper
 from chirpy.core.response_priority import PromptType
 from chirpy.core.entity_linker.entity_groups import EntityGroupsForExpectedType
@@ -13,7 +13,10 @@ def get_prompt_for_fav_food_type(rg, conditional_state=None):
     if conditional_state and conditional_state.cur_food:
         cur_food = conditional_state.cur_food
     else:
-        conditional_state = ConditionalState()
+        if conditional_state:
+            conditional_state = ConditionalState(cur_supernode=conditional_state.cur_supernode)
+        else:
+            conditional_state = ConditionalState()
         cur_food = state.cur_food
     custom_question = get_custom_question(cur_food.name.lower())
 
