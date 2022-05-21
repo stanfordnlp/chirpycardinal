@@ -3,6 +3,8 @@ import yaml
 import networkx as nx
 import matplotlib.pyplot as plt
 import sys
+import os
+import ast
 
 # modified BFS
 def find_all_parents(G, s):
@@ -83,19 +85,46 @@ def parse_all_exit_states(entry_conditions, set_state_on_finish, possible_state_
 
 	return all_possible_exit_states
 
+def check_correct_yaml_format(d, yaml_file):
+	assert 'name' in d, f'{yaml_file} needs to define a name field'
+	assert 'global_state_entry_requirements' in d, f'{yaml_file} needs to define a global_state_entry_requirements field'
+	assert 'subnode_state_updates' in d, f'{yaml_file} needs to define a subnode_state_updates field'
+	assert 'prompt_leading_questions' in d, f'{yaml_file} needs to define a prompt_leading_questions field'
+	assert 'required_exposed_variables' in d, f'{yaml_file} needs to define a required_exposed_variables field'
+
+def check_global_entry_reqs_are_booleans(d):
+	global_reqs = d['global_state_entry_requirements']
+	for entry_reqs in global_reqs:
+		for key in entry_reqs:
+			val = entry_reqs[key]
+			assert type(val) == type(True), f"key,val pair {key},{val} in {d.name}'s global entry reqs needs to be boolean flags"
+
 class TreeletNode:
 	def __init__(self, yaml_file):
+		self.path = yaml_file
 		with open(yaml_file, "r") as stream:
 			d = yaml.safe_load(stream)
 			self.name = d['name']
-			# self.trigger_response = d['trigger_response']
+
+			# --- Formatting checks -----
+			check_correct_yaml_format(d, yaml_file)
+			check_global_entry_reqs_are_booleans(d)
+			# ----------------------
+
 			self.all_possible_entry = []
 			self.all_possible_exit_states = []
+			self.subnode_names = set()
+
+			self.req_exposed_vars = set()
+			for var in d['required_exposed_variables']:
+				self.req_exposed_vars.add(var)
+
 			global_entry_requirements = d['global_state_entry_requirements']
 			for e in global_entry_requirements:
 				self.all_possible_entry.append(e)
 				subnode_state_updates = d['subnode_state_updates']
 				for subnode in subnode_state_updates:
+					self.subnode_names.add(subnode)
 					exit_state = e.copy()
 					exit_actions = subnode_state_updates[subnode]
 					if exit_actions == 'None':
@@ -113,60 +142,50 @@ class TreeletNode:
 		# treat self as src, second_node as dst
 		exit_conds = self.all_possible_exit_states
 		entry_conds = second_node.all_possible_entry
-		# print(exit_conds, entry_conds)
 		for i in entry_conds:
 			for e in exit_conds:
 				equal = True
 				for key in i:
-					# if 'bot_asked_singer' in e:
-					# 	print('laj', i, e, key)
 					if key not in e:
 						if type(i[key]) == type(True) and i[key] == True:
 							equal = False
 						elif type(i[key]) != type(True) and i[key] != 'None': 
 							equal = False
 					elif i[key] != e[key]:
-						# print('wtf', i, e, key)
 						equal = False
 				if equal:
 					return True
 
 		return False
 
-# MAKE ALL OF FOLLOWING WORK WITH COMMAND LINE ARGS (to any specific yaml dir)
+import glob
+import argparse
+parser = argparse.ArgumentParser()
 
-'''
-./music_get_song/supernode.yaml
-./music_get_instrument/supernode.yaml
-./music_get_singer/supernode.yaml
-./music_handle_opinion/supernode.yaml
-./music_ask_song/supernode.yaml
-./music_ask_singer_respond_til/supernode.yaml
-./music_ask_singer/supernode.yaml
-./instrument_til_reply/supernode.yaml
-./exit/supernode.yaml
-./music_response_to_song/supernode.yaml
-./music_introductory/supernode.yaml
-./music_handoff/supernode.yaml
-'''
+parser.add_argument('--path', help='path to folder of supernodes', default='./supernodes')
+parser.add_argument('--intro_node', help='name of supernode to treat as RG entry point', required=True)
+parser.add_argument('--draw_graph', action='store_true')
+parser.set_defaults(draw_graph=False)
 
-intro = TreeletNode('supernodes/food_introductory/supernode.yaml')
-food_factoid = TreeletNode('supernodes/food_factoid/supernode.yaml')
-open_ended = TreeletNode('supernodes/open_ended_user_comment/supernode.yaml')
-exit = TreeletNode('supernodes/exit/supernode.yaml')
-ask_fav = TreeletNode('supernodes/ask_favorite_food/supernode.yaml')
-comment_on_fav = TreeletNode('supernodes/comment_on_favorite_type/supernode.yaml')
+args = parser.parse_args()
 
+assert os.path.isdir(args.path), '--path must be a valid path to a directory'
+assert os.path.basename(args.path) == 'supernodes', '--path directory must be named supernodes'
 
-# print('chungoose', get_instr.does_edge_exist(get_instr))
-
-# ask_fav.does_edge_exist(intro)
-# sys.exit()
+print('Building & Checking Conversational Graph...')
+treelet_node_files = glob.glob(os.path.join(args.path, '**/supernode.yaml'), recursive=True)
+nodes = []
+for f in treelet_node_files:
+	n = TreeletNode(f)
+	assert n.name == os.path.basename(os.path.dirname(f)), f'{f} should define the supernode name to be equal to the name of its enclosing folder'
+	nodes.append(n)
 
 G = {}
 
-nodes = [intro, food_factoid, open_ended, ask_fav, comment_on_fav, exit]
-assert any([n.name == 'exit' for n in nodes]) # make sure an exit node exists
+# verify that a node contains and intro & exit node - DONE
+assert any([n.name == 'exit' for n in nodes]), 'make sure a supernode titled exit exists'
+assert any([n.name == args.intro_node for n in nodes]), 'make sure the specified intro_node exists as a supernode'
+
 for i in range(len(nodes)):
 	for j in range(len(nodes)):
 		# if i == j: continue
@@ -178,54 +197,42 @@ for i in range(len(nodes)):
 			else:
 				G[src.name + ' '].append(dst.name + ' ')
 
-del G[exit.name + ' ']
+del G['exit ']
 
 is_cylic = cyclic(G)
 if is_cylic:
-	print('Treelet Graph is cyclic. Fix yaml files')
+	print('ERROR: Treelet/Supernode Graph is cyclic. Fix yaml files')
 	print(G)
 	sys.exit(1)
 
-print('treelet graph', G)
+print('Treelet graph', G)
 print('--------')
-self_loops = set()
-no_cycle_G = {}
-for key in G:
-	no_cycle_G[key] = []
-	for child in G[key]:
-		if child != key:
-			no_cycle_G[key].append(child)
-		else:
-			self_loops.add(child[:-1])
+print()
 
-# G = {'0 ': ['1 '], '1 ': ['2 ', '3 ', '4 '], '2 ': ['3 ', '4 '], '3 ': ['4 ', '5 '], '4 ': ['6 ', '8 '], '5 ': ['7 '], '6 ': ['7 '], '7 ': ['8 ']}
-# print('chungus')
-paths = find_all_paths(find_all_parents(no_cycle_G, 'food_introductory '), 'food_introductory ', 'exit ')
+paths = find_all_paths(find_all_parents(G, f'{args.intro_node} '), f'{args.intro_node} ', 'exit ')
 
-# print(paths[0].split())
-# self_loops = {'2', '4', '6'}
-
-print('number of unique convo paths between food_introductory and exit: {}'.format(len(paths)))
+print('number of unique convo paths between {} and exit: {}'.format(args.intro_node, len(paths)))
 print('---- List of unique paths --------')
 for p in paths:
 	print(p)
 print('-----------')
+input("Convo Graph checks complete. Press Enter to continue static checker...\n")
 
-# print('number of convo paths including self loops: {}'.format(count_with_self_loops(paths, self_loops)))
-
-draw_graph = True
+draw_graph = args.draw_graph
 if draw_graph:
 	nx_G = nx.DiGraph()
+	print('Displaying Graph... Make sure to close popup to continue rest of static checks.')
 	for key in G:
 		for child in G[key]:
 			nx_G.add_edge(key[:-1], child[:-1])
 	nx.draw(nx_G, with_labels = True, node_size=800)
 	plt.show()
 
-### other stuff
 
 
 # Verify every state access exists in initial state
+print('Assessing declared state variables...')
+
 state_vals = set()
 for n in nodes:
 	for d in n.all_possible_entry:
@@ -240,13 +247,62 @@ state_vals.discard('needs_prompt')
 state_vals.discard('cur_entity')
 state_vals = list(state_vals)
 state_vals.sort()
-# remove priority, needs_prompt, and cur_entity?
-print('state params:')
+print('The following state variables were found: (MAKE SURE THESE ARE DEFINED IN state.py, otherwise errors will occur)')
 for t in state_vals:
 	print(t)
-# Very every func call in NLG exists in nlg_helpers
-# verify that a node contains and intro & exit node
-# Verify that variables that need to be exposed are actually exposed in nlg.yaml
+print('---------')
+input("Press Enter to continue static checker...\n")
+
+# check that nlu.py defines method nlu_processing
+print('Checking nlu.pu files...')
+nlu_files = glob.glob(os.path.join(args.path, '**/nlu.py'), recursive=True)
+assert len(nodes) >= len(nlu_files) - 1, 'all supernodes except for exit must define an nlu.py file'
+for nlu in nlu_files:
+	if '/exit/' in nlu: continue # ignore exit supernode
+	file_content = None
+	with open(nlu, 'r') as f:
+		file_content = f.read()
+	a = ast.parse(file_content)
+	definitions = [n for n in ast.walk(a) if type(n) == ast.FunctionDef]
+	found_nlu_processing = False
+	for d in definitions:
+		if d.name == 'nlu_processing':
+	 		found_nlu_processing = True
+	 		args = d.args.args
+	 		assert len(args) == 4, f'{nlu} must define the method nlu_processing with the four args: rg, state, utterance, response_types'
+
+	assert found_nlu_processing, f"method nlu_processing not found in file {nlu} and must be defined"
+
+input("nlu.py checks complete. Press Enter to continue static checker...\n")
+
 # Verify that all subnodes defined in supernode.yaml exist in nlg.yaml
+# Verify that variables that need to be exposed are actually exposed in nlg.yaml
+print('Checking nlg.yaml files...')
+for n in nodes:
+	if n.name == 'exit': continue
+	head_path = os.path.dirname(n.path)
+	nlg_path = os.path.join(head_path, 'nlg.yaml')
+	with open(nlg_path, "r") as stream:
+		nlg_yaml = yaml.safe_load(stream)
+	subnode_names = set()
+	for subnode in nlg_yaml:
+		assert 'node_name' in subnode, f'all subnodes in {n.name} must define a node_name field'
+		sub_name = subnode['node_name']
+		assert 'required_flags' in subnode, f'{sub_name} subnode in {n.name} must define a required_flags field'
+		assert 'response' in subnode, f'{sub_name} subnode in {n.name} must define a response field'
+		assert 'expose_vars' in subnode, f'{sub_name} subnode in {n.name} must define a expose_vars field'
+
+		exposed_vars = set()
+		for var in subnode['expose_vars']:
+			exposed_vars.add(var)
+
+		assert n.req_exposed_vars.issubset(exposed_vars), f'{sub_name} must expose the required variables specified by {n.path}'
+
+		subnode_names.add(sub_name)
+	assert subnode_names == n.subnode_names, f'The subnodes defined in {n.path} must exactly equal the defined subnodes in the corresponding nlg.yaml file'
+
+input("nlg yaml checks complete. Press Enter to continue static checker...\n")
+
+print('static checker COMPLETED.')
 # Robust error logging when something in yaml causes crash
 # Verify all yamls obey correct format (correct categories, etc.)

@@ -198,7 +198,6 @@ class GodTreelet(Treelet):
     def get_prompt(self, conditional_state=None):
         state, utterance, response_types = self.get_state_utterance_response_types()
         cur_supernode = self.get_next_supernode(conditional_state)
-        print('food prompt treelet/supernode', cur_supernode)
         if cur_supernode is None or conditional_state is None or cur_supernode == 'exit':
             # next_treelet_str, question = self.get_next_treelet()
             return None
