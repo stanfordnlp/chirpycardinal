@@ -99,6 +99,17 @@ def check_global_entry_reqs_are_booleans(d):
 			val = entry_reqs[key]
 			assert type(val) == type(True), f"key,val pair {key},{val} in {d.name}'s global entry reqs needs to be boolean flags"
 
+def check_prompt_leading_questions_reqs_are_booleans(d):
+	prompt_leading_questions = d['prompt_leading_questions']
+	if prompt_leading_questions == 'None' or 'call_method' in prompt_leading_questions:
+		return
+	for case in prompt_leading_questions:
+		assert 'required' in case
+		assert 'prompt' in case
+		for key in case['requred']:
+			val = entry_reqs[key]
+			assert type(val) == type(True), f"key,val pair {key},{val} in {d.name}'s prompt_leading_questions reqs needs to be boolean flags"
+
 class TreeletNode:
 	def __init__(self, yaml_file):
 		self.path = yaml_file
@@ -304,5 +315,4 @@ for n in nodes:
 input("nlg yaml checks complete. Press Enter to continue static checker...\n")
 
 print('static checker COMPLETED.')
-# Robust error logging when something in yaml causes crash
-# Verify all yamls obey correct format (correct categories, etc.)
+# Ensure prompt leading q requirements are always boolean flags (like global state reqs)
