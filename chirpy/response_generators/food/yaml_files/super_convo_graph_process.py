@@ -97,7 +97,7 @@ def check_global_entry_reqs_are_booleans(d):
 	for entry_reqs in global_reqs:
 		for key in entry_reqs:
 			val = entry_reqs[key]
-			assert type(val) == type(True), f"key,val pair {key},{val} in {d.name}'s global entry reqs needs to be boolean flags"
+			assert type(val) == type(True), f"key,val pair {key},{val} in {d['name']}'s global entry reqs needs to be boolean flags"
 
 def check_prompt_leading_questions_reqs_are_booleans(d):
 	prompt_leading_questions = d['prompt_leading_questions']
@@ -106,9 +106,9 @@ def check_prompt_leading_questions_reqs_are_booleans(d):
 	for case in prompt_leading_questions:
 		assert 'required' in case
 		assert 'prompt' in case
-		for key in case['requred']:
+		for key in case['required']:
 			val = entry_reqs[key]
-			assert type(val) == type(True), f"key,val pair {key},{val} in {d.name}'s prompt_leading_questions reqs needs to be boolean flags"
+			assert type(val) == type(True), f"key,val pair {key},{val} in {d['name']}'s prompt_leading_questions reqs needs to be boolean flags"
 
 class TreeletNode:
 	def __init__(self, yaml_file):
@@ -120,6 +120,7 @@ class TreeletNode:
 			# --- Formatting checks -----
 			check_correct_yaml_format(d, yaml_file)
 			check_global_entry_reqs_are_booleans(d)
+			check_prompt_leading_questions_reqs_are_booleans(d)
 			# ----------------------
 
 			self.all_possible_entry = []

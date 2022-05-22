@@ -165,7 +165,7 @@ Based on the flags set in the previous section, we need to define the subnodes t
 This is best illustrated by an example:
 ```yaml
 - node_name: custom_dont_know
-  required_flags: # set in nlu.pu
+  required_flags: # set in nlu.py
     has_custom_food: True
     dont_know: True
   response: "No worries, it can be difficult to pick just one! Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
