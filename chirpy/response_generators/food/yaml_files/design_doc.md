@@ -211,6 +211,10 @@ We've described a lot of rules and regulations to use the intra-RG scaffolding p
 
 It is important to note that the static checker is **not perfect**. There are many errors that are either **impossible or highly inconvenient to check statically** (ex. improperly formatted f-string or undecorated method), and we attempt to include clear error logging in the supporting Python code that will hopefully make it easier to resolve such runtime errors. However, runtime errors without a helpful message may also be thrown; make sure all checks in the static checker pass and the convo graph looks reasonable before digging deeper.
 
+Run the checker as follows (note name_of_supernode_to_treat_as_entrypoint could be multiple different supernodes depending on how an RG can get triggered, so run multiple times with each option if you want to generate convo paths for each - convo paths are enumerated from the specified intro node to exit):
+```sh
+python3 super_convo_graph_process.py --intro_node name_of_supernode_to_treat_as_entrypoint [--draw_graph]
+```
 
 
 
