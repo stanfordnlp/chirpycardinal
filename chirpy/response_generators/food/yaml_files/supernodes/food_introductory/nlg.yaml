@@ -4,39 +4,46 @@
   response: ''
   expose_vars:
     entity: None
+    neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
 - node_name: food_type_comment
   required_flags:
     food_type_comment: True
   response: '{intro_response(rg)}'
   expose_vars:
     entity: rg.get_current_entity()
+    neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
 - node_name: custom_comment_exists
   required_flags:
     custom_comment_exists: True
   response: "{intro_response(rg)} {get_custom_comment(rg.get_current_entity().name.lower())}"
   expose_vars:
     entity: rg.get_current_entity()
+    neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
 - node_name: best_attribute_ingredient
   required_flags:
     best_attribute_ingredient: True
   response: "{intro_response(rg)} {ingredient_attribute(rg, rg.get_current_entity().name.lower()))}"
   expose_vars:
     entity: rg.get_current_entity()
+    neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
 - node_name: best_attribute_texture
   required_flags:
     best_attribute_texture: True
   response: "{intro_response(rg)} {texture_attribute(rg, rg.get_current_entity().name.lower()))}"
   expose_vars:
     entity: rg.get_current_entity()
+    neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
 - node_name: is_ingredient
   required_flags:
     is_ingredient: True
   response: "{intro_response(rg)} {food_is_ingr_response(rg, rg.get_current_entity().name.lower()))}"
   expose_vars:
     entity: rg.get_current_entity()
+    neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
 - node_name: catch_all
   required_flags:
     catch_all: True
   response: "{intro_response(rg)} {rg.get_neural_response(prefix=f'I especially love how {get_pronoun(rg)}')}"
   expose_vars:
     entity: rg.get_current_entity()
+    neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)

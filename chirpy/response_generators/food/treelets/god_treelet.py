@@ -120,12 +120,6 @@ class GodTreelet(Treelet):
             state = self.check_and_set_entry_conditions(state)
             cur_supernode = self.get_next_supernode(state)
 
-            # CURRENTLY A HACK FOR AN EXCEPTIONAL CASE
-            neural_chat_state = self.rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
-            if cur_supernode == 'food_introductory' and neural_chat_state is not None and getattr(neural_chat_state, 'next_treelet', None):
-                priority = ResponsePriority.FORCE_START
-
-
         # NLU processing
         
         nlu = self.nlu_libraries[cur_supernode]
@@ -166,7 +160,9 @@ class GodTreelet(Treelet):
         subnode_state_updates.update(global_post_state_updates)
 
         if 'priority' in subnode_state_updates:
-            priority = eval(subnode_state_updates['priority'])
+            priority_context = dict(exposed_context)
+            priority_context.update(globals())
+            priority = eval(subnode_state_updates['priority'], priority_context)
             assert isinstance(priority, ResponsePriority)
             del subnode_state_updates['priority']
         if 'needs_prompt' in subnode_state_updates:
@@ -226,11 +222,13 @@ class GodTreelet(Treelet):
                     matches_entry_criteria = False
                     break
             if matches_entry_criteria:
+                context = get_context_for_supernode(cur_supernode)
                 cntxt = {
                     'rg': self.rg,
                     'state': state
                 }
-                prompt_text = effify(case['prompt'], cntxt)
+                context.update(cntxt)
+                prompt_text = effify(case['prompt'], context)
                 prompt_texts.append(prompt_text)
 
         entity = self.rg.state_manager.current_state.entity_tracker.cur_entity

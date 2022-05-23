@@ -14,6 +14,7 @@ prompt_leading_questions: None
 required_exposed_variables:
   # variables that must be defined & exposed in nlg.yaml
   - entity
+  - neural_chat_state
 
 subnode_state_updates:
   no_entity:
@@ -36,3 +37,4 @@ global_post_supernode_state_updates:
   cur_food: entity # must be explicitly exposed by nlg.yaml!
   cur_entity_known_food: False
   acknowledge_fav_food: False
+  priority: ResponsePriority.FORCE_START if neural_chat_state is not None and getattr(neural_chat_state, 'next_treelet', None) else priority
