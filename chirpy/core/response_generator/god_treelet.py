@@ -4,30 +4,27 @@ import glob
 import yaml
 import os
 from importlib import import_module
-import copy
-
-# from typing import Any
 
 from chirpy.core.response_generator import Treelet, get_context_for_supernode
 from chirpy.core.response_priority import ResponsePriority
 from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
 from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, PromptType, AnswerType
 from chirpy.core.response_generator.response_type import ResponseType
-from chirpy.response_generators.food.state import ConditionalState
-from chirpy.response_generators.food.food_helpers import *
 
 logger = logging.getLogger('chirpylogger')
 
 def effify(non_f_str: str, global_context: dict):
     return eval(f'f"""{non_f_str}"""', global_context)
 
-
 class GodTreelet(Treelet):
-    def __init__(self, rg):
+    def __init__(self, rg, rg_folder_name):
         super().__init__(rg)
         self.name = 'god_treelet'
         self.can_prompt = True
-        supernodes = glob.glob('../**/response_generators/food/**/supernode.yaml', recursive=True)
+
+        self.state_module = import_module(f'chirpy.response_generators.{rg_folder_name}.state')
+
+        supernodes = glob.glob(f'../**/response_generators/{rg_folder_name}/**/supernode.yaml', recursive=True)
         self.supernode_content = {}
         self.supernode_files = []
         for s in supernodes:
@@ -39,12 +36,12 @@ class GodTreelet(Treelet):
 
         self.nlu_libraries = {}
         for name in self.supernode_content:
-            nlu = import_module(f'chirpy.response_generators.food.yaml_files.supernodes.{name}.nlu')
+            nlu = import_module(f'chirpy.response_generators.{rg_folder_name}.yaml_files.supernodes.{name}.nlu')
             self.nlu_libraries[name] = nlu
 
             # force all decorators to run by importing the nlg files, but we discard output
             if name != 'exit':
-                dummy = import_module(f'chirpy.response_generators.food.yaml_files.supernodes.{name}.nlg_helpers')
+                dummy = import_module(f'chirpy.response_generators.{rg_folder_name}.yaml_files.supernodes.{name}.nlg_helpers')
 
         self.nlg_yamls = {}
         for path in self.supernode_files:
@@ -96,16 +93,6 @@ class GodTreelet(Treelet):
                 return nlg['expose_vars']
         return None
 
-    def check_and_set_entry_conditions(self, state):
-        cur_state = copy.copy(state)
-        entity = self.rg.get_current_entity(initiated_this_turn=True)
-        if entity.name == 'Food':
-            cur_state.entry_entity_is_food = True
-        elif is_known_food(entity.name.lower()):
-            cur_state.cur_entity_known_food = True
-        return cur_state
-
-
     def get_response(self, priority=ResponsePriority.STRONG_CONTINUE, **kwargs):
         logger.primary_info(f'{self.name} - Get response')
         state, utterance, response_types = self.get_state_utterance_response_types()
@@ -117,7 +104,7 @@ class GodTreelet(Treelet):
             # RG is being entered (introductory response)
             # Return empty string, but set state appropriately so prompt_treelet can take over
             # entity = self.rg.state_manager.current_state.entity_tracker.cur_entity
-            state = self.check_and_set_entry_conditions(state)
+            state = self.rg.check_and_set_entry_conditions(state)
             cur_supernode = self.get_next_supernode(state)
 
         # NLU processing
@@ -142,7 +129,7 @@ class GodTreelet(Treelet):
             logger.error(f'We had an NLG error in the supernode {cur_supernode} and subnode {subnode_name}. The problematic string inside the yaml file is "{nlg_response}". Check whether you have decorated the right functions!')
             raise
 
-        print('*sentinel* food response', response)
+        print('*sentinel* god treelet response', response)
 
         # post-subnode state updates
         expose_vars = self.get_exposed_subnode_vars(cur_supernode, subnode_name)
@@ -189,7 +176,7 @@ class GodTreelet(Treelet):
         # YAML parse logic here
         return ResponseGeneratorResult(text=response, priority=priority, needs_prompt=needs_prompt, state=state,
                                        cur_entity=cur_entity,
-                                       conditional_state=ConditionalState(**subnode_state_updates))
+                                       conditional_state=self.state_module.ConditionalState(**subnode_state_updates))
 
     def get_prompt(self, conditional_state=None):
         state, utterance, response_types = self.get_state_utterance_response_types()
