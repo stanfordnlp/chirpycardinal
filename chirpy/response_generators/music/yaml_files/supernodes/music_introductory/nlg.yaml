@@ -1,5 +1,7 @@
-nlg:
-  - node_name: 'intro'
-    required_flags:
-      'intro': True
-    response: 'Music is one of my favorite things and I was wondering if we could talk about it.'
+- node_name: 'intro'
+  required_flags:
+    'intro': True
+  response: >-
+    {choose_random(
+    "Music is one of my favorite things and I was wondering if we could talk about it.",
+    "There's so much music here in the cloud and I'm curious to know what you think about it.")}

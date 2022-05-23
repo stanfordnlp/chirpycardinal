@@ -12,6 +12,8 @@ prompt_leading_questions:
   - required: None
     prompt: 'Do you listen to music often?'
 
+required_exposed_variables: None
+
 subnode_state_updates:
   listens_frequently:
     answer_type: 'AnswerType.QUESTION_SELFHANDLING'

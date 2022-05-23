@@ -1,14 +1,14 @@
 name: music_introductory
-trigger_response:
-  entry_conditions:
-    - has_entered_music_rg: False
-  set_state_on_finish:
-    has_entered_music_rg: True
-    prev_treelet_str: 'music_introductory'
 global_state_entry_requirements:
   - entering_music_rg: False
+
+prompt_leading_questions: None
+
+required_exposed_variables: None
+
 subnode_state_updates:
   introductory_node:
     entering_music_rg: True
-    prev_treelet_str: 'music_introductory'
-global_post_supernode_state_updates: None
+
+global_post_supernode_state_updates:
+  priority: rg._get_priority_from_answer_type()

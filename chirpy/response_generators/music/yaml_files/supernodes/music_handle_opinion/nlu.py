@@ -10,8 +10,7 @@ def nlu_processing(rg, state, utterance, response_types):
 		'does_not_listen': False,
 		'unsure_about_music': False,
 		'likes_music': False,
-		'catch_all': False,
-		'prompt_treelet': '' 
+		'catch_all': False
 	}
 	if ResponseType.FREQ in response_types:
 		if 'everyday' in utterance:
@@ -28,11 +27,5 @@ def nlu_processing(rg, state, utterance, response_types):
 		flags['likes_music'] = True
 	else:
 		flags['catch_all'] = True
-
-	if flags['catch_all'] or flags['does_not_listen']:
-		flags['prompt_treelet'] = 'exit'
-	else:
-		next_node = random.choice(['music_get_instrument', 'music_get_singer', 'music_get_song'])
-		flags['prompt_treelet'] = next_node
 
 	return flags

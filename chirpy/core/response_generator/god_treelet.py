@@ -166,6 +166,15 @@ class GodTreelet(Treelet):
         else:
             cur_entity = None
 
+        if 'answer_type' in subnode_state_updates:
+            answer_context = dict(exposed_context)
+            answer_context.update(globals())
+            answer_type = eval(subnode_state_updates['answer_type'], answer_context)
+            assert isinstance(answer_type, AnswerType)
+            del subnode_state_updates['answer_type']
+        else:
+            answer_type = AnswerType.NONE
+
         for key in subnode_state_updates:
             if type(subnode_state_updates[key]) != type(True):
                 # eval non boolean flags
@@ -175,7 +184,7 @@ class GodTreelet(Treelet):
 
         # YAML parse logic here
         return ResponseGeneratorResult(text=response, priority=priority, needs_prompt=needs_prompt, state=state,
-                                       cur_entity=cur_entity,
+                                       cur_entity=cur_entity, answer_type=answer_type,
                                        conditional_state=self.state_module.ConditionalState(**subnode_state_updates))
 
     def get_prompt(self, conditional_state=None):

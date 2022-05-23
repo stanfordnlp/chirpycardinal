@@ -107,6 +107,19 @@ class MusicResponseGenerator(ResponseGenerator):
         return link_span_to_entity(string, self.state_manager.current_state,
             expected_type=ENTITY_GROUPS_FOR_EXPECTED_TYPE.musician)
 
+    def get_instrument_entity(self):
+        def is_instrument(ent):
+            return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_instrument)
+        cur_entity = self.get_current_entity()
+        entity_linker_results = self.state_manager.current_state.entity_linker
+        entities = []
+        if cur_entity: entities.append(cur_entity)
+        if len(entity_linker_results.high_prec): entities.append(entity_linker_results.high_prec[0].top_ent)
+        if len(entity_linker_results.threshold_removed): entities.append(entity_linker_results.threshold_removed[0].top_ent)
+        if len(entity_linker_results.conflict_removed): entities.append(entity_linker_results.conflict_removed[0].top_ent)
+        for e in entities:
+            if is_instrument(e): return e
+
     @staticmethod
     def try_talking_about_fav_song_else_exit(response=''):
         """
