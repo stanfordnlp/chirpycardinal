@@ -2,6 +2,19 @@ name: music_introductory
 global_state_entry_requirements:
   - entering_music_rg: False
 
+prompt_ranking: 1 # ranking relative to other supernodes' unconditional prompt
+unconditional_prompt_updates:
+  - name: contextual_prompt
+    state_updates:
+      prompt_type: PromptType.CONTEXTUAL
+      entering_music_rg: True
+      have_prompted: True
+  - name: generic_prompt
+    state_updates:
+      prompt_type: PromptType.GENERIC
+      entering_music_rg: True
+      have_prompted: True
+
 prompt_leading_questions: None
 
 required_exposed_variables: None

@@ -7,6 +7,7 @@ from importlib import import_module
 
 from chirpy.core.response_generator import Treelet, get_context_for_supernode
 from chirpy.core.response_priority import ResponsePriority
+from chirpy.core.response_generator.state import NO_UPDATE
 from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
 from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, PromptResult, PromptType, AnswerType
 from chirpy.core.response_generator.response_type import ResponseType
@@ -83,6 +84,18 @@ class GodTreelet(Treelet):
                     break
             if matches_entry_criteria:
                 return nlg['node_name'], nlg['response']
+        return None
+
+    def get_unconditional_prompt_text(self, flags, supernode):
+        for cases in self.nlg_yamls[supernode]['unconditional_prompt']:
+            requirements = cases['required_flags']
+            matches_entry_criteria = True
+            for key in requirements:
+                if flags[key] != requirements[key]:
+                    matches_entry_criteria = False
+                    break
+            if matches_entry_criteria:
+                return nlg['case_name'], nlg['prompt']
         return None
 
     def get_exposed_subnode_vars(self, supernode, subnode_name):
@@ -189,6 +202,46 @@ class GodTreelet(Treelet):
 
     def get_prompt(self, conditional_state=None):
         state, utterance, response_types = self.get_state_utterance_response_types()
+
+        if getattr(conditional_state, 'prompt_treelet', NO_UPDATE) == NO_UPDATE:
+            # no prompt_treelet given. Respond with unconditional prompt
+
+            prompting_supernodes = []
+            for supernode_name in self.supernode_content:
+                # ORDER MATTERS
+                content = self.supernode_content[supernode_name]
+                if 'unconditional_prompt_updates' in content:
+                    prompting_supernodes.append((supernode_name, content['prompt_ranking']))
+
+            prompt_supernodes_by_rank = sorted(prompting_supernodes, key = lambda x: x[1])
+            for supernode_name, _ in prompt_supernodes_by_rank:
+                nlu = self.nlu_libraries[supernode_name]
+                flags = nlu.prompt_nlu_processing(self.rg, state, utterance, response_types)
+                prompt_res = get_unconditional_prompt_text(self, flags, supernode)
+                if prompt_res:
+                    case_name, prompt_text = prompt_res
+
+                    context = get_context_for_supernode(cur_supernode)
+                    cntxt = {
+                        'rg': self.rg,
+                        'state': state
+                    }
+                    context.update(cntxt)
+                    
+                    prompt_text = effify(prompt_text, context)
+                    prompt_state_updates = self.supernode_content[supernode_name]['unconditional_prompt_updates'][case_name]
+                    if prompt_state_updates == 'None': prompt_state_updates = {}
+                    if 'prompt_type' in prompt_state_updates:
+                        prompt_type = eval(str(prompt_state_updates['prompt_type']), context)
+                        assert isinstance(prompt_type, PromptType)
+                        del subnode_state_updates['prompt_type']
+                    else:
+                        prompt_type = PromptType.CONTEXTUAL
+                    return PromptResult(text=prompt_text, prompt_type=prompt_type, state=state, cur_entity=None,
+                            conditional_state=self.state_module.ConditionalState(**prompt_state_updates))
+
+            return None
+
         cur_supernode = self.get_next_supernode(conditional_state)
         if cur_supernode is None or conditional_state is None or cur_supernode == 'exit':
             # next_treelet_str, question = self.get_next_treelet()
