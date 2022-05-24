@@ -318,7 +318,7 @@ input("nlg yaml checks complete. Press Enter to continue static checker...\n")
 print('static checker COMPLETED.')
 # Ensure prompt leading q requirements are always boolean flags (like global state reqs)
 
-# Ensure the unconditional prompt stuff has right formatting (when it appears, otherwise optional)
+# Ensure the unconditional prompt stuff has right formatting (when it appears, otherwise optional). Remember new formatting in nlg.yaml
 # Make required exposed vars optional (but if it appears, enforce all guidelines)
 
 
