@@ -23,3 +23,19 @@ def nlu_processing(rg, state, utterance, response_types):
 		flags['catch_all'] = True
 
 	return flags
+
+def prompt_nlu_processing(rg, state, utterance, response_types):
+	flags {
+		'use_til': False,
+		'generic': False
+	}
+	entity = rg.get_instrument_entity()
+	if entity:
+		tils = get_til_title(entity.name)
+		if len(tils):
+			flags['use_til'] = True
+		else:
+			flags['generic'] = True
+	return flags
+
+

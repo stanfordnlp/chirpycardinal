@@ -2,12 +2,23 @@ nlg:
   - node_name: 'thats_cool'
     required_flags:
       thats: True
-    response: "{flags['response']} {flags['entity_suffix']}"
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(get_responses_to_thats())} 
+      {f'Say, I really wish I can learn to play the {rg.get_instrument_entity().name} one day.
+      It seems like a great instrument.' if rg.get_instrument_entity() else 
+      'Say, I really wish I can learn to play it one day. It seems like a great instrument.'}
   - node_name: 'didnt_know'
     required_flags:
       did_not_know: True
-    response: "{flags['response']} {flags['entity_suffix']}"
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(get_responses_to_didnt_know())} 
+      {f'Say, I really wish I can learn to play the {rg.get_instrument_entity().name} one day.
+      It seems like a great instrument.' if rg.get_instrument_entity() else 
+      'Say, I really wish I can learn to play it one day. It seems like a great instrument.'}
   - node_name: 'catch_all'
     required_flags:
       catch_all: True
-    response: "{flags['entity_suffix']}"
+    response: >-
+      'Say, I really wish I can learn to play the {rg.get_instrument_entity().name} one day. 
+      It seems like a great instrument.' if rg.get_instrument_entity() else 
+      'Say, I really wish I can learn to play it one day. It seems like a great instrument.'}

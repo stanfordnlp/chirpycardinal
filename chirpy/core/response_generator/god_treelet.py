@@ -156,6 +156,8 @@ class GodTreelet(Treelet):
         if subnode_state_updates == 'None': subnode_state_updates = {}
         global_post_state_updates = self.supernode_content[cur_supernode]['global_post_supernode_state_updates']
         if global_post_state_updates == 'None': global_post_state_updates = {}
+        assert isinstance(subnode_state_updates, dict), f"subnode_state_updates of {subnode_name} in {cur_supernode} needs to be a dict or None"
+        assert isinstance(global_post_state_updates, dict), f"global_post_state_updates of {subnode_name} in {cur_supernode} needs to be a dict or None"
 
         subnode_state_updates.update(global_post_state_updates)
 
@@ -265,6 +267,8 @@ class GodTreelet(Treelet):
         for i in range(len(prompt_leading_questions)):
             case = prompt_leading_questions[i]
             requirements = case['required']
+            if requirements == 'None': requirements = {}
+            assert isinstance(requirements, dict), f"requirements in prompt_leading_questions (supernode {cur_supernode}) needs to define a dict or None"
             matches_entry_criteria = True
             for key in requirements:
                 if state.__dict__[key] != req_dict[key]:

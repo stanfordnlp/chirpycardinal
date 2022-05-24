@@ -1,8 +1,0 @@
-name: exit
-trigger_response: None
-global_state_entry_requirements:
-  - never_listens: True
-nlu:
-  - entry_conditions: None
-    set_state_on_finish: None
-    action_after_node: None

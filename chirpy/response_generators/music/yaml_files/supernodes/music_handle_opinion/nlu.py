@@ -29,3 +29,14 @@ def nlu_processing(rg, state, utterance, response_types):
 		flags['catch_all'] = True
 
 	return flags
+
+def prompt_nlu_processing(rg, state, utterance, response_types):
+	flags = {
+		'have_prompted': False,
+		'user_mentioned_music_positive': False
+	}
+	flags['have_prompted'] = state.have_prompted
+	if ResponseType.MUSIC_KEYWORD in response_types and \
+           ResponseType.POSITIVE in response_types:
+        flags['user_mentioned_music_positive'] = True
+

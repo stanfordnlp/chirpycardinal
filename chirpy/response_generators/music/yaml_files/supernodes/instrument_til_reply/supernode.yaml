@@ -1,5 +1,4 @@
 name: instrument_til_reply
-trigger_response: None
 global_state_entry_requirements:
   - instrument_til_followup: True
     exit_music_rg: False
@@ -12,3 +11,4 @@ global_post_supernode_state_updates:
   # state updates done by all paths out of this supernode
   instrument_til_followup: False
   continue_after_instrument: True
+  cur_entity: rg.get_instrument_entity()

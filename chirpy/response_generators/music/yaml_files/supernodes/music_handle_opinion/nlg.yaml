@@ -1,4 +1,4 @@
-nlg:
+response:
   - node_name: listens_frequently
     required_flags:
       listens_frequently: True
@@ -23,6 +23,11 @@ nlg:
     required_flags:
       catch_all: True
     response: 'Okay, sure!'
-
+unconditional_prompt:
+  - case_name: contextual_prompt
+    required_flags:
+      'have_prompted': False
+      'user_mentioned_music_positive': True
+    prompt: "{get_likes_music_response()}"
 
 
