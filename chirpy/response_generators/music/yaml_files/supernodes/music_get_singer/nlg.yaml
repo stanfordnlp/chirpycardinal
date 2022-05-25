@@ -1,28 +1,28 @@
-nlg:
+response:
   - node_name: musical_group_with_til
     required_flags:
       singer_ent_exists: True
       is_musical_group: True
       tils_exist: True
-    response: "{flags['response']} {flags['singer_str']} is definitely a great band! {pick_til(tils)}"
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {pick_til(get_tils(get_singer_str(rg)))}"
   - node_name: musical_group_wo_til
     required_flags:
       singer_ent_exists: True
       is_musical_group: True
       tils_exist: False
-    response: "{flags['response']} {flags['singer_str']} is definitely a great band! {singer_comment(flags['singer_str'])}"
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {singer_comment(get_singer_str(rg))}"
   - node_name: single_musician_with_til
     required_flags:
       singer_ent_exists: True
       is_musical_group: False
       tils_exist: True
-    response: "{flags['response']} {flags['singer_str']} is definitely a great musician! {pick_til(tils)}"
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {pick_til(get_tils(get_singer_str(rg)))}"
   - node_name: single_musician_wo_til
     required_flags:
       singer_ent_exists: True
       is_musical_group: False
       tils_exist: False
-    response: "{flags['response']} {flags['singer_str']} is definitely a great musician! {singer_comment(flags['singer_str'])}"
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {singer_comment(get_singer_str(rg))}"
   - node_name: only_know_singer_str_no_genre
     required_flags:
       singer_ent_exists: False
@@ -33,7 +33,7 @@ nlg:
       singer_ent_exists: False
       singer_str_exists: True
       no_genre: False 
-    response: "{flags['response']} I love {flags['singer_str']} too! {singer_comment(flags['singer_str'])}"
+    response: "{least_repetitive_compliment(rg)} I love {get_singer_str(rg)} too! {singer_comment(get_singer_str(rg))}"
   - node_name: no_fav_musician
     required_flags:
       no_fav_musician: True
@@ -42,5 +42,19 @@ nlg:
     required_flags:
       catch_all: True
     response: 'Yeah it can be hard to pick a particular musician when there are so many.'
-
+unconditional_prompt:
+  - case_name: til_prompt
+    required_flags:
+      singer_ent_exists: True
+      tils_exist: True
+    prompt: >-
+      I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}. 
+      {pick_til(get_tils(rg.get_singer_entity().name))}
+  - case_name: singer_comment_prompt
+    required_flags:
+      singer_ent_exists: True
+      tils_exist: False
+    prompt: >-
+      I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}. 
+      {comment_singer(get_talkable_singer_name(rg.get_singer_entity()))[0]}
 

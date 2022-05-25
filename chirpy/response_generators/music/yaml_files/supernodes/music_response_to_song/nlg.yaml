@@ -1,4 +1,4 @@
-nlg:
+response:
   - node_name: 'no'
     required_flags:
       'no': True
@@ -6,8 +6,12 @@ nlg:
   - node_name: thats
     required_flags:
       thats: True
-    response: "{comment_genre(flags['metadata'], flags['cur_song_str'], flags['cur_singer_str'], flags['response'])}"
+    response: >-
+      {thats_response(rg)} 
+      {comment_genre(rg, state.cur_song_str, state.cur_singer_str)}
   - node_name: did_not_know
     required_flags:
       did_not_know: True
-    response: "{comment_genre(flags['metadata'], flags['cur_song_str'], flags['cur_singer_str'], flags['response'])}"
+    response: >-
+      {didnt_know_response(rg)} 
+      {comment_genre(rg, state.cur_song_str, state.cur_singer_str)}

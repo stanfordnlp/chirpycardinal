@@ -1,63 +1,71 @@
-nlg:
+response:
   - node_name: song_ent_w_til
     required_flags:
       song_ent_exists: True
       tils_exist: True
-    response: "{flags['response']} {pick_til(tils)}"
+    response: "{least_repetitive_compliment(rg)} {pick_til(state.cur_song_ent)}"
   - node_name: song_ent_no_til_no_meta
     required_flags:
       song_ent_exists: True
       tils_exist: False
-      no_metadata: True
+      metadata_exists: False
     response: "Oh I don't seem to recognize that song."
-  - node_name: song_ent_no_til_meta
+  - node_name: song_ent_no_til_yes_meta
     required_flags:
       song_ent_exists: True
       tils_exist: False
-      no_metadata: False
-    response: "{flags['response']}"
-  - node_name: song_ent_no_til_no_meta
-    required_flags:
-      song_ent_exists: True
-      tils_exist: False
-      no_metadata: True
-    response: "Oh I don't seem to recognize that song."
-  - node_name: no_song_yes_singer
-    required_flags:
-      song_ent_exists: False
-      singer_ent_exists: True
-    response: ''
-  - node_name: no_song_yes_singer_str_no_meta
-    required_flags:
-      song_ent_exists: False
-      singer_ent_exists: False
-      cur_song_str_exists: True
-      no_metadata: True
-    response: "Oh I don't seem to recognize that song."
-  - node_name: no_song_yes_singer_str_meta
-    required_flags:
-      song_ent_exists: False
-      singer_ent_exists: False
-      cur_song_str_exists: True
-      no_metadata: False
-    response: "{flags['response']}"
+      metadata_exists: True
+    response: "{rg.comment_song(state.cur_song_str, state.cur_singer_ent.talkable_name if state.cur_singer_ent else None)[0]}"
   - node_name: dont_know
     required_flags:
+      song_ent_exists: False
       dont_know: True
     response: "I understand. I like different songs depending on how I'm feeling and I don't really have a favorite either."
   - node_name: no_fav_song
     required_flags:
+      song_ent_exists: False
+      dont_know: False
       no_fav_song: True
     response: "Oh it's okay, maybe you will find a song that touches your heart one day!"
+  - node_name: parse_utterance_til
+    required_flags:
+      song_ent_exists: False
+      dont_know: False
+      no_fav_song: False
+      tils_exist: True
+    response: "{least_repetitive_compliment(rg)} {pick_til(state.cur_song_ent)}"
+  - node_name: parse_utterance_no_til_yes_meta
+    required_flags:
+      song_ent_exists: False
+      dont_know: False
+      no_fav_song: False
+      tils_exist: False
+      metadata_exists: True
+    response: "{rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg)[0]}"
   - node_name: catch_all
     required_flags:
-      song_ent_exists: False,
-      singer_ent_exists: False,
-      dont_know: False,
-      no_fav_song: False,
-      tils_exist: False,
-      cur_song_str_exists: False,
-      no_metadata: False,
+      song_ent_exists: False
+      dont_know: False
+      no_fav_song: False
+      tils_exist: False
+      metadata_exists: False
     response: "Oh I don't seem to recognize that song."
+unconditional_prompt:
+  - case_name: til_prompt
+    required_flags:
+      tils_exist: True
+      cur_song_ent_exists: True
+    prompt: >-
+      It's interesting that you mentioned {state.cur_song_str}. {least_repetitive_compliment(rg)} 
+      {pick_til(state.cur_song_ent)}
+  - case_name: metadata_prompt
+    required_flags:
+      cur_song_ent_exists: True
+      tils_exist: False
+      metadata_exists: True
+    prompt: >-
+      It's interesting that you mentioned {state.cur_song_str}. {least_repetitive_compliment(rg)} 
+      {rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg)[0]}
+
 
 

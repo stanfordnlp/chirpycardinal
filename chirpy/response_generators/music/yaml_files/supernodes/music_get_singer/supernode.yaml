@@ -5,6 +5,24 @@ global_state_entry_requirements:
   - continue_after_instrument: True
     exit_music_rg: False
 
+prompt_ranking: 4
+unconditional_prompt_updates:
+  - name: til_prompt
+    state_updates:
+      prompt_type: PromptType.CURRENT_TOPIC
+      just_used_til: True
+      have_prompted: True
+      ask_user_about_specific_song: True
+      cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
+      cur_singer_ent: rg.get_singer_entity()
+  - name: singer_comment_prompt
+    state_updates:
+      prompt_type: PromptType.CURRENT_TOPIC
+      ask_user_about_specific_song: True
+      have_prompted: True
+      cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
+      cur_singer_ent: rg.get_singer_entity()
+
 prompt_leading_questions:
   - required: None
     prompt: 'Do you have a favorite singer? Who is it?'
@@ -34,3 +52,6 @@ subnode_state_updates:
 global_post_supernode_state_updates:
   start_discussing_music: False
   continue_after_instrument: False
+  cur_singer_str: get_singer_str(rg)
+  cur_singer_ent: singer_parsed_ent(rg)
+  cur_entity: singer_parsed_ent(rg)

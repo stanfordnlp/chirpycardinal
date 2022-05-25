@@ -8,12 +8,33 @@ global_state_entry_requirements:
   - get_user_fav_song: True
     exit_music_rg: False
 
+prompt_ranking: 3 # ranking relative to other supernodes' unconditional prompt
+unconditional_prompt_updates:
+  - name: til_prompt
+    state_updates:
+      prompt_type: PromptType.CURRENT_TOPIC
+      just_used_til: True
+      have_prompted: True
+      get_user_fav_song: True
+      cur_song_str: state.cur_song_str
+      cur_song_ent: state.cur_song_ent
+      cur_singer_str: state.cur_singer_str
+  - name: metadata_prompt
+    state_updates:
+      prompt_type: PromptType.CURRENT_TOPIC
+      just_used_til: True
+      have_prompted: True
+      get_user_fav_song: True
+      cur_song_str: state.cur_song_str
+      cur_song_ent: state.cur_song_ent
+      cur_singer_str: state.cur_singer_str
+
 prompt_leading_questions:
   - required:
-      prev_supernode: music_handle_opinion
+      start_discussing_music: True
     prompt: 'What is a song you love listening to?'
   - required:
-      prev_supernode: music_get_singer
+      get_user_fav_song: True
     prompt: 'How about a favorite song? Do you have a song you really like?'
 
 subnode_state_updates:
@@ -22,19 +43,15 @@ subnode_state_updates:
     user_has_song_opinion: True # goes to music_response_to_song supernode 
   song_ent_no_til_no_meta:
     exit_music_rg: True
-  song_ent_no_til_meta:
-    cur_singer_str: "{flags['metadata']['artist']}"
+  song_ent_no_til_yes_meta:
     user_has_song_opinion: True
-  song_ent_no_til_no_meta:
-    exit_music_rg: True
-  no_song_yes_singer:
-    # next_treelet_str: ask_singer_treelet
-    ask_user_about_specific_singer: True # goes to music_ask_singer supernode
-  no_song_yes_singer_str_no_meta:
-    exit_music_rg: True
-  no_song_yes_singer_str_meta:
-    cur_singer_str: "{flags['metadata']['artist']}"
+
+  parse_utterance_til:
+    just_used_til: True
     user_has_song_opinion: True
+  parse_utterance_no_til_yes_meta:
+    user_has_song_opinion: True
+
   dont_know:
     exit_music_rg: True
   no_fav_song:
@@ -46,6 +63,9 @@ global_post_supernode_state_updates:
   start_discussing_music: False
   continue_after_instrument: False
   get_user_fav_song: False
+  cur_song_str: state.cur_song_str
+  cur_song_ent: state.cur_song_ent
+  cur_singer_str: state.cur_singer_str
 
 # prompt_treelet_options:
 #   - music_response_to_song

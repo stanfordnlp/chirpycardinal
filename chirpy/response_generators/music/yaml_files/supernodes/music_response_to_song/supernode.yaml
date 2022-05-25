@@ -5,18 +5,17 @@ global_state_entry_requirements:
     exit_music_rg: False
 
 prompt_leading_questions:
-  - required:
-      prev_supernode: music_get_song
+  - required: None
     prompt: ''
 
 subnode_state_updates:
   no:
     exit_music_rg: True
   thats:
-    cur_singer_str: flags['metadata']['artist']
+    cur_singer_str: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']
     ask_user_about_specific_singer: True
   did_not_know:
-    cur_singer_str: flags['metadata']['artist']
+    cur_singer_str: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']
     ask_user_about_specific_singer: True
 global_post_supernode_state_updates:
   user_has_song_opinion: False

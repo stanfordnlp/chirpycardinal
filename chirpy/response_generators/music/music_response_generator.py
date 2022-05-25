@@ -120,6 +120,54 @@ class MusicResponseGenerator(ResponseGenerator):
         for e in entities:
             if is_instrument(e): return e
 
+    def get_singer_entity(self):
+        def is_singer(ent):
+            return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musician)
+        cur_entity = self.get_current_entity()
+        entity_linker_results = self.state_manager.current_state.entity_linker
+        entities = []
+        if cur_entity: entities.append(cur_entity)
+        if len(entity_linker_results.high_prec): entities.append(entity_linker_results.high_prec[0].top_ent)
+        if len(entity_linker_results.threshold_removed): entities.append(entity_linker_results.threshold_removed[0].top_ent)
+        if len(entity_linker_results.conflict_removed): entities.append(entity_linker_results.conflict_removed[0].top_ent)
+        for e in entities:
+            if is_singer(e): return e
+
+    def get_song_and_singer_entity(self):
+        def is_song(ent):
+            return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_work)
+        def is_singer(ent):
+            return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musician)
+        cur_entity = self.get_current_entity()
+        entity_linker_results = self.state_manager.current_state.entity_linker
+        song, singer = None, None
+        entities = []
+        if cur_entity: entities.append(cur_entity)
+        if len(entity_linker_results.high_prec): entities.append(entity_linker_results.high_prec[0].top_ent)
+        if len(entity_linker_results.threshold_removed): entities.append(entity_linker_results.threshold_removed[0].top_ent)
+        if len(entity_linker_results.conflict_removed): entities.append(entity_linker_results.conflict_removed[0].top_ent)
+        for e in entities:
+            if is_song(e) and song is None: song = e
+            elif is_singer(e) and singer is None: singer = e
+        return song, singer
+
+    def comment_song(self, song_name, singer_name=None, response=None):
+    """
+    Make a relevant comment about the song
+    and end with a followup question.
+    """
+        metadata = self.get_song_meta(song_name, singer_name)
+        if metadata:
+            comment = random.choice([
+                f'Oh yeah, {metadata["song"]} is a song by {metadata["artist"]} released in {metadata["year"]} right?',
+                f'{metadata["song"]} was released by {metadata["artist"]} in {metadata["year"]} right?',
+            ])
+            if response is None: response = comment
+            else: response = f'{response} {comment}'
+        else:
+            response = None
+        return response, metadata
+
     @staticmethod
     def try_talking_about_fav_song_else_exit(response=''):
         """

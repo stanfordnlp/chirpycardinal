@@ -1,6 +1,18 @@
 import random
 
-def comment_genre(metadata, song_name, singer_name=None, response=None):
+from chirpy.core.response_generator import nlg_helper
+from chirpy.core.regex.response_lists import RESPONSE_TO_THATS, RESPONSE_TO_DIDNT_KNOW
+
+@nlg_helper
+def thats_response(rg):
+    return rg.state_manager.current_state.choose_least_repetitive(RESPONSE_TO_THATS)
+
+@nlg_helper
+def didnt_know_response(rg):
+    return rg.state_manager.current_state.choose_least_repetitive(RESPONSE_TO_DIDNT_KNOW)
+
+@nlg_helper
+def comment_genre(rg, song_name, singer_name=None, response=None):
         genre_comments = {
             'rock': '{genre} songs are just the best. You can really connect with the sound and even feel like you are part of the action, nodding your head and just immersing yourself in the beat.',
             'electronic': 'I really love the selection of synthetic instruments used in {genre} music. They give it this unique sound that I don\'t think I\'ve ever heard before with other genres.',
@@ -13,6 +25,7 @@ def comment_genre(metadata, song_name, singer_name=None, response=None):
             'folk': 'I love the unique sound of {genre} music. It is unlike any other genre and is characterized by a very pure sound.',
         }
         comment = None
+        metadata = rg.get_song_meta(song_name, singer_name)
         if metadata and len(metadata['tags']) and metadata['tags'][0] is not None:
             tag = metadata['tags'][0].lower()
             for genre, comment in genre_comments.items():
@@ -32,4 +45,4 @@ def comment_genre(metadata, song_name, singer_name=None, response=None):
             else: response = f'{response} {comment}'
         # else:
         #     logger.warning('This should have been caught in the previous turn.')
-        return response, metadata
+        return response
