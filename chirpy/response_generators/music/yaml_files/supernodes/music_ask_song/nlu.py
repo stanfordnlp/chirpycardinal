@@ -10,10 +10,7 @@ def nlu_processing(rg, state, utterance, response_types):
 		'answered_yes': False,
 		'questioned': False,
 		'opinion': False,
-		'only_til': False,
-		'cur_singer_str': '',
-		'cur_singer_ent': None,
-		'rg': None
+		'just_used_til_only': False
 	}
 
 	if ResponseType.THATS in response_types and state.just_used_til:
@@ -31,21 +28,7 @@ def nlu_processing(rg, state, utterance, response_types):
     elif ResponseType.OPINION in response_types:
     	flags['opinion'] = True
     elif state.just_used_til:
-    	flags['only_til'] = True
-
-    flags['cur_singer_ent'] = rg.state.cur_singer_ent
-    flags['cur_singer_str'] = rg.state.cur_singer_str
-
-    top_songs = rg.get_songs_by_musician(flags['cur_singer_str'])
-    cur_song_str = None
-    cur_song_ent = None
-    if top_songs: cur_song_str = top_songs[0]
-    if cur_song_str:
-        cur_song_ent = rg.get_song_entity(cur_song_str)
-    flags['cur_song_str'] = cur_song_str
-    flags['cur_song_ent'] = cur_song_ent
-
-    flags['rg'] = rg
+    	flags['just_used_til_only'] = True
 
     return flags
 

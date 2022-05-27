@@ -1,9 +1,9 @@
-nlg:
-  - node_name: next_song
+response:
+  - node_name: cur_song_is_top_song
     required_flags:
-      next_song: True
-    response: "Oh I really love {flags['next_song']} by {flags['cur_singer_str']} too! Do you like it as well?"
+      cur_song_is_top_song: True
+    response: "Oh I really love {state.cur_song_str} by {state.cur_singer_str} too! Do you like it as well?"
   - node_name: comment_on_singer_only
     required_flags:
       comment_on_singer_only: True
-    response: "{flags['cur_singer_str']} seems to be really talented! Do you like any other songs by {flags['cur_singer_str']}?"
+    response: "{state.cur_singer_str} seems to be really talented! Do you like any other songs by {state.cur_singer_str}?"

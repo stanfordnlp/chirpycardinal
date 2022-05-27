@@ -1,12 +1,10 @@
 name: music_ask_song
-trigger_response: None
 global_state_entry_requirements:
   - ask_user_about_specific_song: True
     exit_music_rg: False
 
 prompt_leading_questions:
-  - required:
-      prev_supernode: music_get_singer
+  - required: None
     prompt: ''
 
 subnode_state_updates:
@@ -16,14 +14,14 @@ subnode_state_updates:
   answered_yes: None
   questioned: None
   opinion: None
-  only_til: None
+  just_used_til_only: None
+  catch_all: None
 
 global_post_supernode_state_updates:
   # state updates done by all paths out of this supernode
   ask_user_about_specific_song: False
-  cur_singer_str: flags['cur_singer_str']
-  cur_singer_ent: flags['cur_singer_ent']
-  cur_song_str: flags['cur_song_str']
-  cur_song_ent: flags['cur_song_ent']
+  cur_song_str: get_cur_song_str(rg)
+  cur_song_ent: rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None
+  cur_entity: (rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None) or state.cur_singer_ent
   go_to_handoff: True
 

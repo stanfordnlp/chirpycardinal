@@ -1,42 +1,56 @@
-nlg:
-  - node_name: cur_song_ent_exists
-    required_flags:
-      cur_song_ent_exists: True
-    response: "{cur_song_ent_exists_response(flags['rg'])}"
-  - node_name: song_slots_exists
-    required_flags:
-      song_slots_exists: True
-    response: "{song_slots_exists_response(flags['rg'])}"
+response:
   - node_name: thats
     required_flags:
       thats: True
-    response: "{thats_response(flags['rg'])}"
+    response: >-
+      {thats_response(rg)} 
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: didnt_know
     required_flags:
       didnt_know: True
-    response: "{didnt_know_response(flags['rg'])}"
+    response: >-
+      {didnt_know_response(rg)} 
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: answered_no
     required_flags:
       answered_no: True
-    response: "{no_response(flags['rg'])}"
+    response: >-
+      {no_response(rg)}
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: answered_yes
     required_flags:
       answered_yes: True
-    response: "{yes_response(flags['rg'])}"
+    response: >-
+      {yes_response(rg)} 
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: question
     required_flags:
       question: True
-    response: "{question_response(flags['rg'])}"
+    response: >-
+      {question_response(rg)} 
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: opinion
     required_flags:
       opinion: True
-    response: "{opinion_response(flags['rg'])}"
-  - node_name: til_only
+    response: >-
+      {opinion_response(rg)} 
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
+  - node_name: just_used_til_only
     required_flags:
       til_only: True
-    response: "{til_response(flags['rg'])}"
+    response: >-
+      {til_only_response(rg)} 
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: catch_all
     required_flags:
-      catch_all: True
-    response: "{catch_all_response(flags['rg'])}"
+      thats: False
+      didnt_know: False
+      answered_no: False
+      answered_yes: False
+      questioned: False
+      opinion: False
+      only_til: False
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive([ 'That\'s great!', 'Awesome!', 'Cool!', ])} 
+      {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
 

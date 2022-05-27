@@ -23,7 +23,7 @@ def nlu_processing(rg, state, utterance, response_types):
         'catch_all': False
     }
 
-    cur_song_ent, cur_singer_ent = get_music_entity(rg)
+    cur_song_ent, cur_singer_ent = rg.get_song_and_singer_entity()
     song_slots = NameFavoriteSongTemplate().execute(utterance)
     # First, if user mentions a song we try to compliment it
     if cur_song_ent:
@@ -49,26 +49,6 @@ def nlu_processing(rg, state, utterance, response_types):
         flags['til_only'] = True
     else:
         flags['catch_all'] = True
-    flags['rg'] = rg
 
     return flags
-
-def get_music_entity(rg):
-    def is_song(ent):
-        return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_work)
-    def is_singer(ent):
-        return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musician)
-    cur_entity = rg.get_current_entity()
-    entity_linker_results = rg.state_manager.current_state.entity_linker
-    song, singer = None, None
-    entities = []
-    if cur_entity: entities.append(cur_entity)
-    if len(entity_linker_results.high_prec): entities.append(entity_linker_results.high_prec[0].top_ent)
-    if len(entity_linker_results.threshold_removed): entities.append(entity_linker_results.threshold_removed[0].top_ent)
-    if len(entity_linker_results.conflict_removed): entities.append(entity_linker_results.conflict_removed[0].top_ent)
-    for e in entities:
-        if is_song(e) and song is None: song = e
-        elif is_singer(e) and singer is None: singer = e
-    return song, singer
-
 

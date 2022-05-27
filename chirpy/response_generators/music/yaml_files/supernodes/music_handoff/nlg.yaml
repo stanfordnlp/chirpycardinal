@@ -1,9 +1,70 @@
-nlg:
-  - node_name: til_exists
+response:
+  - node_name: cur_song_ent_exists
     required_flags:
-      til_exists: True
-    response: "{get_til_response(flags['tils'])}"
-  - node_name: no_til_exists
+      cur_song_ent_exists: True
+    response: "{cur_song_ent_exists_response(rg)}"
+  - node_name: song_slots_exists
     required_flags:
-      til_exists: False
-    response: ''
+      song_slots_exists: True
+    response: "{song_slots_exists_response(rg)}"
+  - node_name: thats
+    required_flags:
+      thats: True
+    response: "{thats_response(rg)}"
+  - node_name: didnt_know
+    required_flags:
+      didnt_know: True
+    response: "{didnt_know_response(rg)}"
+  - node_name: answered_no
+    required_flags:
+      answered_no: True
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(
+        ['It\'s okay!',,
+         'Don\'t worry about it!']
+      )}
+  - node_name: answered_yes
+    required_flags:
+      answered_yes: True
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(
+        ['I know, right?',
+         "It's great that you do!"]
+      )}
+  - node_name: question
+    required_flags:
+      question: True
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(
+        ['Oh I\'m not too sure about that.',
+          'Ah I\'m not sure, I\'ll need to check about that.',
+          'Oh hmm, I\'m not too sure about that.',
+          'Oh dear I don\'t know, I\'ll need to find out.']
+      )}
+  - node_name: opinion
+    required_flags:
+      opinion: True
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(
+        ['Yeah I totally agree with that!',
+         'Me too!',
+         'Absolutely!']
+      )}
+  - node_name: til_only
+    required_flags:
+      til_only: True
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(
+        ['I thought that was an interesting tidbit!',
+         'I hope you found that interesting!']
+      )}
+  - node_name: catch_all
+    required_flags:
+      catch_all: True
+    response: >-
+      {rg.state_manager.current_state.choose_least_repetitive(
+        ['That\'s great!',
+            'Awesome!',
+            'Cool!']
+      )}
+

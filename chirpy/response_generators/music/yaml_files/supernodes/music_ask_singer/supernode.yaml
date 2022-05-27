@@ -5,15 +5,20 @@ global_state_entry_requirements:
     exit_music_rg: False
 
 prompt_leading_questions:
-  - required:
-      prev_supernode: music_get_singer
+  - required: None
     prompt: ''
 
 subnode_state_updates:
-  til_exists: None
-  no_til_exists: None
+  til_exists:
+    just_used_til: True
+    music_ask_singer_respond_til: True # go to music_ask_singer_respond_til supernode
+  no_til_cur_song_is_top_song:
+    go_to_handoff: True
+  no_til_comment_on_singer_only:
+    go_to_handoff: True
 
 global_post_supernode_state_updates:
-  music_ask_singer_respond_til: True # go to music_ask_singer_respond_til supernode
   ask_user_about_specific_singer: False
+  cur_singer_str: state.cur_singer_str
+  cur_singer_ent: state.cur_singer_ent
 

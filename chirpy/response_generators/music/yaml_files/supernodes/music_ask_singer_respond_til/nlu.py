@@ -4,7 +4,7 @@ from chirpy.response_generators.music.music_helpers import ResponseType
 
 def nlu_processing(rg, state, utterance, response_types):
     flags = {
-        'has_next_song': False,
+        'cur_song_is_top_song': False,
         'comment_on_singer_only': False
     }
 
@@ -15,12 +15,9 @@ def nlu_processing(rg, state, utterance, response_types):
         if next_song != cur_song_str:
             break
     if next_song:
-        flags['has_next_song'] = True
-        flags['next_song'] = next_song
+        flags['cur_song_is_top_song'] = True
     else:
         flags['comment_on_singer_only'] = True
-
-    flags['cur_singer_str'] = cur_singer_str
 
     return flags
 

@@ -1,5 +1,4 @@
 name: music_handoff
-trigger_response: None
 global_state_entry_requirements:
   - go_to_handoff: True
     exit_music_rg: False
@@ -9,9 +8,16 @@ prompt_leading_questions:
     prompt: ''
 
 subnode_state_updates:
-  til_exists:
-    exit_music_rg: True
-  no_til_exists:
-    exit_music_rg: True
+  cur_song_ent_exists: None
+  song_slots_exists: None
+  thats: None
+  didnt_know: None
+  answered_no: None
+  answered_yes: None
+  question: None
+  opinion: None
+  til_only: None
+  catch_all: None
 
-global_post_supernode_state_updates: None
+global_post_supernode_state_updates:
+  exit_music_rg: True
