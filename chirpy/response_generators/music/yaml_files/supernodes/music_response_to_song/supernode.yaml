@@ -1,5 +1,4 @@
 name: music_response_to_song
-trigger_response: None
 global_state_entry_requirements:
   - user_has_song_opinion: True
     exit_music_rg: False
@@ -9,7 +8,7 @@ prompt_leading_questions:
     prompt: ''
 
 subnode_state_updates:
-  no:
+  no_response:
     exit_music_rg: True
   thats:
     cur_singer_str: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']

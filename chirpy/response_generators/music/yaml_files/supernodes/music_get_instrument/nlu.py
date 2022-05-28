@@ -25,7 +25,7 @@ def nlu_processing(rg, state, utterance, response_types):
 	return flags
 
 def prompt_nlu_processing(rg, state, utterance, response_types):
-	flags {
+	flags = {
 		'use_til': False,
 		'generic': False
 	}

@@ -37,6 +37,6 @@ def prompt_nlu_processing(rg, state, utterance, response_types):
 	}
 	flags['have_prompted'] = state.have_prompted
 	if ResponseType.MUSIC_KEYWORD in response_types and \
-           ResponseType.POSITIVE in response_types:
-        flags['user_mentioned_music_positive'] = True
+		   ResponseType.POSITIVE in response_types:
+		flags['user_mentioned_music_positive'] = True
 

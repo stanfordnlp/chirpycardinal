@@ -1,5 +1,5 @@
 response:
-  - node_name: 'intro'
+  - node_name: intro
     required_flags:
       'intro': True
     response: >-

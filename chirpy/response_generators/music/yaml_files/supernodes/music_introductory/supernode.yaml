@@ -1,6 +1,7 @@
 name: music_introductory
 global_state_entry_requirements:
   - entering_music_rg: False
+    trigger_music: True
 
 prompt_ranking: 1 # ranking relative to other supernodes' unconditional prompt
 unconditional_prompt_updates:
@@ -20,8 +21,9 @@ prompt_leading_questions: None
 required_exposed_variables: None
 
 subnode_state_updates:
-  introductory_node:
+  intro:
     entering_music_rg: True
 
 global_post_supernode_state_updates:
   priority: rg._get_priority_from_answer_type()
+  trigger_music: False

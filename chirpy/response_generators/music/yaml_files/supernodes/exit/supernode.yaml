@@ -1,7 +1,8 @@
 name: exit
-trigger_response: None
 global_state_entry_requirements:
   - exit_music_rg: True
+
+prompt_leading_questions: None
 
 subnode_state_updates:
   exit: None

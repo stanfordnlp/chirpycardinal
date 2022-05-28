@@ -1,4 +1,4 @@
-nlg:
+response:
   - node_name: 'thats_cool'
     required_flags:
       thats: True

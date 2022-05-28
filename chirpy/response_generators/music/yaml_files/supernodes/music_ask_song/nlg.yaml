@@ -23,9 +23,9 @@ response:
     response: >-
       {yes_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: question
+  - node_name: questioned
     required_flags:
-      question: True
+      questioned: True
     response: >-
       {question_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}

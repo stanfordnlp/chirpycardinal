@@ -26,9 +26,9 @@ def nlu_processing(rg, state, utterance, response_types):
     if cur_singer_str:
         cur_singer_ent = rg.get_musician_entity(cur_singer_str)
     if cur_singer_ent:
-    	tils = get_til_title(cur_singer_ent.name)
-    	if len(tils):
-    		flags['til_exists'] = True
+        tils = get_til_title(cur_singer_ent.name)
+        if len(tils):
+            flags['til_exists'] = True
             return flags
 
     cur_singer_str = rg.state.cur_singer_str

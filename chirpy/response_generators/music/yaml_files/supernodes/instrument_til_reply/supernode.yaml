@@ -3,6 +3,8 @@ global_state_entry_requirements:
   - instrument_til_followup: True
     exit_music_rg: False
 
+prompt_leading_questions: None
+
 subnode_state_updates:
   thats_cool: None
   didnt_know: None

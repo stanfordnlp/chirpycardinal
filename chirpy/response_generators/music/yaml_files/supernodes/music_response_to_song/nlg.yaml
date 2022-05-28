@@ -1,7 +1,7 @@
 response:
-  - node_name: 'no'
+  - node_name: no_response
     required_flags:
-      'no': True
+      no_response: True
     response: "I'm sorry I must have heard you wrongly. How about we discuss something else."
   - node_name: thats
     required_flags:

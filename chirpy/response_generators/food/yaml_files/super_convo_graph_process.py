@@ -90,7 +90,7 @@ def check_correct_yaml_format(d, yaml_file):
 	assert 'global_state_entry_requirements' in d, f'{yaml_file} needs to define a global_state_entry_requirements field'
 	assert 'subnode_state_updates' in d, f'{yaml_file} needs to define a subnode_state_updates field'
 	assert 'prompt_leading_questions' in d, f'{yaml_file} needs to define a prompt_leading_questions field'
-	assert 'required_exposed_variables' in d, f'{yaml_file} needs to define a required_exposed_variables field'
+	# assert 'required_exposed_variables' in d, f'{yaml_file} needs to define a required_exposed_variables field'
 
 def check_global_entry_reqs_are_booleans(d):
 	global_reqs = d['global_state_entry_requirements']
@@ -106,9 +106,27 @@ def check_prompt_leading_questions_reqs_are_booleans(d):
 	for case in prompt_leading_questions:
 		assert 'required' in case
 		assert 'prompt' in case
-		for key in case['required']:
-			val = entry_reqs[key]
+		cases = {} if case['required'] == 'None' else case['required']
+		for key in cases:
+			val = cases[key]
 			assert type(val) == type(True), f"key,val pair {key},{val} in {d['name']}'s prompt_leading_questions reqs needs to be boolean flags"
+
+def check_unconditional_prompt(d):
+	assert ('prompt_ranking' in d and 'unconditional_prompt_updates' in d) \
+	 or ('prompt_ranking' not in d and 'unconditional_prompt_updates' not in d), \
+	 f"if supernode {d['name']} defines an unconditional prompt, it must have the requisite yaml keys, otherwise it shouldn't have these keys"
+
+	if 'prompt_ranking' not in d:
+		return False
+
+	assert isinstance(d['prompt_ranking'], int), f"supernode {d['name']} needs to define an integer prompt_ranking"
+
+	for case in d['unconditional_prompt_updates']:
+		assert 'name' in case, "Each case of unconditional_prompt_updates needs to define a name field"
+		assert 'state_updates' in case, "Each case of unconditional_prompt_updates needs to define a name field"
+
+	return True
+
 
 class TreeletNode:
 	def __init__(self, yaml_file):
@@ -121,15 +139,26 @@ class TreeletNode:
 			check_correct_yaml_format(d, yaml_file)
 			check_global_entry_reqs_are_booleans(d)
 			check_prompt_leading_questions_reqs_are_booleans(d)
+			self.has_unconditional_prompt = check_unconditional_prompt(d)
 			# ----------------------
+
+			if self.has_unconditional_prompt:
+				self.prompt_case_names = set()
+				for case in d['unconditional_prompt_updates']:
+					self.prompt_case_names.add(case['name'])
+				self.prompt_ranking = d['prompt_ranking']
 
 			self.all_possible_entry = []
 			self.all_possible_exit_states = []
 			self.subnode_names = set()
 
 			self.req_exposed_vars = set()
-			for var in d['required_exposed_variables']:
-				self.req_exposed_vars.add(var)
+			if 'required_exposed_variables' in d and d['required_exposed_variables'] != 'None':
+				self.exposing_vars = True
+				for var in d['required_exposed_variables']:
+					self.req_exposed_vars.add(var)
+			else:
+				self.exposing_vars = False
 
 			global_entry_requirements = d['global_state_entry_requirements']
 			for e in global_entry_requirements:
@@ -213,7 +242,7 @@ del G['exit ']
 
 is_cylic = cyclic(G)
 if is_cylic:
-	print('ERROR: Treelet/Supernode Graph is cyclic. Fix yaml files')
+	print('ERROR: Treelet/Supernode Graph is cyclic. Fix yaml files. You should always be able to add/split supernodes until the graph is not cyclic.')
 	print(G)
 	sys.exit(1)
 
@@ -239,6 +268,8 @@ if draw_graph:
 			nx_G.add_edge(key[:-1], child[:-1])
 	nx.draw(nx_G, with_labels = True, node_size=800)
 	plt.show()
+	# Can i enforce topological ordering
+	# 
 
 
 
@@ -267,23 +298,32 @@ input("Press Enter to continue static checker...\n")
 
 # check that nlu.py defines method nlu_processing
 print('Checking nlu.pu files...')
-nlu_files = glob.glob(os.path.join(args.path, '**/nlu.py'), recursive=True)
-assert len(nodes) >= len(nlu_files) - 1, 'all supernodes except for exit must define an nlu.py file'
-for nlu in nlu_files:
-	if '/exit/' in nlu: continue # ignore exit supernode
+for n in nodes:
+	if n.name == 'exit': continue
+	head_path = os.path.dirname(n.path)
+	nlu = os.path.join(head_path, 'nlu.py')
+	assert os.path.exists(nlu), f"check {n.name}; all supernodes except exit must define nlu.py"
+
+
 	file_content = None
 	with open(nlu, 'r') as f:
 		file_content = f.read()
 	a = ast.parse(file_content)
 	definitions = [n for n in ast.walk(a) if type(n) == ast.FunctionDef]
 	found_nlu_processing = False
+	found_prompt_nlu_processing = False
 	for d in definitions:
 		if d.name == 'nlu_processing':
-	 		found_nlu_processing = True
-	 		args = d.args.args
-	 		assert len(args) == 4, f'{nlu} must define the method nlu_processing with the four args: rg, state, utterance, response_types'
+			found_nlu_processing = True
+			args = d.args.args
+			assert len(args) == 4, f'{nlu} must define the method nlu_processing with the four args: rg, state, utterance, response_types'
+		elif d.name == 'prompt_nlu_processing' and n.has_unconditional_prompt:
+			found_prompt_nlu_processing = True
+			args = d.args.args
+			assert len(args) == 4, f'{nlu} must define the method prompt_nlu_processing with the four args: rg, state, utterance, response_types'
 
 	assert found_nlu_processing, f"method nlu_processing not found in file {nlu} and must be defined"
+	assert found_prompt_nlu_processing if n.has_unconditional_prompt else True, f"{n.name} is a supernode with unconditional prompt, so its nlu.py file must define a prompt_nlu_processing method"
 
 input("nlu.py checks complete. Press Enter to continue static checker...\n")
 
@@ -294,24 +334,41 @@ for n in nodes:
 	if n.name == 'exit': continue
 	head_path = os.path.dirname(n.path)
 	nlg_path = os.path.join(head_path, 'nlg.yaml')
+	assert os.path.exists(nlg_path), f"check {n.name}; all supernodes except exit must define nlg.yaml"
 	with open(nlg_path, "r") as stream:
 		nlg_yaml = yaml.safe_load(stream)
 	subnode_names = set()
-	for subnode in nlg_yaml:
+	assert 'response' in nlg_yaml, f"{nlg_path} must define a response field to store subnode responses"
+
+	for subnode in nlg_yaml['response']:
 		assert 'node_name' in subnode, f'all subnodes in {n.name} must define a node_name field'
 		sub_name = subnode['node_name']
 		assert 'required_flags' in subnode, f'{sub_name} subnode in {n.name} must define a required_flags field'
 		assert 'response' in subnode, f'{sub_name} subnode in {n.name} must define a response field'
-		assert 'expose_vars' in subnode, f'{sub_name} subnode in {n.name} must define a expose_vars field'
 
-		exposed_vars = set()
-		for var in subnode['expose_vars']:
-			exposed_vars.add(var)
+		if 'expose_vars' in subnode:
+			assert n.exposing_vars, f"supernode.yaml for {n.name} must define required_exposed_variables if subnode declares 'expose_vars'"
+		if n.exposing_vars:
+			assert 'expose_vars' in subnode, f'{sub_name} subnode in {n.name} must define a expose_vars field'
 
-		assert n.req_exposed_vars.issubset(exposed_vars), f'{sub_name} must expose the required variables specified by {n.path}'
+			exposed_vars = set()
+			for var in subnode['expose_vars']:
+				exposed_vars.add(var)
+
+			assert n.req_exposed_vars.issubset(exposed_vars), f'{sub_name} must expose the required variables specified by {n.path}'
 
 		subnode_names.add(sub_name)
 	assert subnode_names == n.subnode_names, f'The subnodes defined in {n.path} must exactly equal the defined subnodes in the corresponding nlg.yaml file'
+
+	if n.has_unconditional_prompt:
+		# if supernode.yaml defines unconditional stuff, nlg.yaml must also match
+		assert 'unconditional_prompt' in nlg_yaml, f"{nlg_path} must define a unconditional_prompt field"
+		prompt_case_names = set()
+		for case in nlg_yaml['unconditional_prompt']:
+			assert 'case_name' in case and 'required_flags' in case and 'prompt' in case, f"check {nlg_path} for right keys in unconditional_prompt"
+			prompt_case_names.add(case['case_name'])
+
+		assert n.prompt_case_names == prompt_case_names, f"{n.name} supernode must define the exact same unconditional prompt case names as in the nlg.yaml file"
 
 input("nlg yaml checks complete. Press Enter to continue static checker...\n")
 
