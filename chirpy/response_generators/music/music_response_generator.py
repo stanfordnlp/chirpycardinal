@@ -2,7 +2,7 @@
 MUSIC RG
 """
 import logging
-from chirpy.core.response_generator import ResponseGenerator
+from chirpy.core.response_generator import ResponseGenerator, GodTreelet
 from chirpy.core.response_priority import ResponsePriority, PromptType
 from chirpy.response_generators.music.regex_templates.word_lists import KEYWORD_MUSIC
 import chirpy.response_generators.music.treelets as treelets
@@ -20,28 +20,30 @@ class MusicResponseGenerator(ResponseGenerator):
     name = "MUSIC"
     def __init__(self, state_manager) -> None:
 
-        self.introductory_treelet = treelets.IntroductoryTreelet(self)
-        self.handle_opinion_treelet = treelets.HandleOpinionTreelet(self)
-        self.get_song_treelet = treelets.GetSongTreelet(self)
-        self.ask_singer_treelet = treelets.AskSingerTreelet(self)
-        self.get_singer_treelet = treelets.GetSingerTreelet(self)
-        self.ask_song_treelet = treelets.AskSongTreelet(self)
-        self.get_instrument_treelet = treelets.GetInstrumentTreelet(self)
-        self.handoff_treelet = treelets.HandoffTreelet(self)
+        # self.introductory_treelet = treelets.IntroductoryTreelet(self)
+        # self.handle_opinion_treelet = treelets.HandleOpinionTreelet(self)
+        # self.get_song_treelet = treelets.GetSongTreelet(self)
+        # self.ask_singer_treelet = treelets.AskSingerTreelet(self)
+        # self.get_singer_treelet = treelets.GetSingerTreelet(self)
+        # self.ask_song_treelet = treelets.AskSongTreelet(self)
+        # self.get_instrument_treelet = treelets.GetInstrumentTreelet(self)
+        # self.handoff_treelet = treelets.HandoffTreelet(self)
         # self.god_treelet = treelets.GodTreelet(self)
+        self.god_treelet = GodTreelet(self, 'music')
 
-        self.treelets = {
-            treelet.name: treelet for treelet in [
-                self.introductory_treelet,
-                self.handle_opinion_treelet,
-                self.get_song_treelet,
-                self.ask_singer_treelet,
-                self.get_singer_treelet,
-                self.ask_song_treelet,
-                self.get_instrument_treelet,
-                self.handoff_treelet
-            ]
-        }
+        # self.treelets = {
+        #     treelet.name: treelet for treelet in [
+        #         self.introductory_treelet,
+        #         self.handle_opinion_treelet,
+        #         self.get_song_treelet,
+        #         self.ask_singer_treelet,
+        #         self.get_singer_treelet,
+        #         self.ask_song_treelet,
+        #         self.get_instrument_treelet,
+        #         self.handoff_treelet
+        #     ]
+        # }
+        self.treelets = {treelet.name: treelet for treelet in [self.god_treelet]}
 
         self.musicbrainz = MusicBrainzInterface()
 
@@ -80,6 +82,16 @@ class MusicResponseGenerator(ResponseGenerator):
     def update_state_if_not_chosen(self, state, conditional_state):
         state = super().update_state_if_not_chosen(state, conditional_state)
         return state
+
+    def handle_user_trigger(self, **kwargs):
+        # override 
+        response = self.god_treelet.get_response()
+        if response: return response
+
+    def check_and_set_entry_conditions(self, state):
+        cur_state = copy.copy(state)
+        cur_state.trigger_music = True
+        return cur_state
 
     def get_song_meta(self, song_name, singer_name=None):
         if ' by ' in song_name:
@@ -152,10 +164,10 @@ class MusicResponseGenerator(ResponseGenerator):
         return song, singer
 
     def comment_song(self, song_name, singer_name=None, response=None):
-    """
-    Make a relevant comment about the song
-    and end with a followup question.
-    """
+        """
+        Make a relevant comment about the song
+        and end with a followup question.
+        """
         metadata = self.get_song_meta(song_name, singer_name)
         if metadata:
             comment = random.choice([

@@ -75,7 +75,7 @@ class GodTreelet(Treelet):
 
     def get_subnode(self, flags, supernode):
         subnode_nlgs = self.nlg_yamls[supernode]
-        for nlg in subnode_nlgs:
+        for nlg in subnode_nlgs['response']:
             requirements = nlg['required_flags']
             matches_entry_criteria = True
             for key in requirements:
@@ -95,12 +95,12 @@ class GodTreelet(Treelet):
                     matches_entry_criteria = False
                     break
             if matches_entry_criteria:
-                return nlg['case_name'], nlg['prompt']
+                return cases['case_name'], cases['prompt']
         return None
 
     def get_exposed_subnode_vars(self, supernode, subnode_name):
         subnode_nlgs = self.nlg_yamls[supernode]
-        for nlg in subnode_nlgs:
+        for nlg in subnode_nlgs['response']:
             if nlg['node_name'] == subnode_name:
                 if nlg['expose_vars'] == 'None': return None
                 return nlg['expose_vars']
@@ -207,7 +207,6 @@ class GodTreelet(Treelet):
 
         if getattr(conditional_state, 'prompt_treelet', NO_UPDATE) == NO_UPDATE:
             # no prompt_treelet given. Respond with unconditional prompt
-
             prompting_supernodes = []
             for supernode_name in self.supernode_content:
                 # ORDER MATTERS
@@ -219,16 +218,17 @@ class GodTreelet(Treelet):
             for supernode_name, _ in prompt_supernodes_by_rank:
                 nlu = self.nlu_libraries[supernode_name]
                 flags = nlu.prompt_nlu_processing(self.rg, state, utterance, response_types)
-                prompt_res = get_unconditional_prompt_text(self, flags, supernode)
+                prompt_res = self.get_unconditional_prompt_text(flags, supernode_name)
                 if prompt_res:
                     case_name, prompt_text = prompt_res
 
-                    context = get_context_for_supernode(cur_supernode)
-                    cntxt = {
+                    cntxt = get_context_for_supernode(supernode_name)
+                    context = {
                         'rg': self.rg,
                         'state': state
                     }
                     context.update(cntxt)
+                    context.update(globals())
                     
                     prompt_text = effify(prompt_text, context)
                     prompt_state_updates = self.supernode_content[supernode_name]['unconditional_prompt_updates'][case_name]
@@ -236,9 +236,11 @@ class GodTreelet(Treelet):
                     if 'prompt_type' in prompt_state_updates:
                         prompt_type = eval(str(prompt_state_updates['prompt_type']), context)
                         assert isinstance(prompt_type, PromptType)
-                        del subnode_state_updates['prompt_type']
+                        del prompt_state_updates['prompt_type']
                     else:
                         prompt_type = PromptType.CONTEXTUAL
+
+                    logger.info(f'chungus {prompt_text}')
                     return PromptResult(text=prompt_text, prompt_type=prompt_type, state=state, cur_entity=None,
                             conditional_state=self.state_module.ConditionalState(**prompt_state_updates))
 

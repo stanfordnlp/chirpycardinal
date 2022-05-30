@@ -5,17 +5,15 @@ global_state_entry_requirements:
 
 prompt_ranking: 7 # ranking relative to other supernodes' unconditional prompt
 unconditional_prompt_updates:
-  - name: til_prompt
-    state_updates:
-      prompt_type: PromptType.CURRENT_TOPIC
-      just_used_til: True
-      have_prompted: True
-      instrument_til_followup: True
-  - name: generic_prompt
-    state_updates:
-      prompt_type: PromptType.CURRENT_TOPIC
-      continue_after_instrument: True
-      have_prompted: True
+  til_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    just_used_til: True
+    have_prompted: True
+    instrument_til_followup: True
+  generic_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    continue_after_instrument: True
+    have_prompted: True
 
 prompt_leading_questions:
   - required: None

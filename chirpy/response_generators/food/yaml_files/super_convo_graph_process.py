@@ -122,9 +122,8 @@ def check_unconditional_prompt(d):
 	assert isinstance(d['prompt_ranking'], int), f"supernode {d['name']} needs to define an integer prompt_ranking"
 
 	for case in d['unconditional_prompt_updates']:
-		assert 'name' in case, "Each case of unconditional_prompt_updates needs to define a name field"
-		assert 'state_updates' in case, "Each case of unconditional_prompt_updates needs to define a name field"
-
+		val = d['unconditional_prompt_updates'][case]
+		assert isinstance(val, dict) or val == 'None', f"Each case of prompt updates in supernode {d['name']} should be a dict or None"
 	return True
 
 
@@ -145,7 +144,7 @@ class TreeletNode:
 			if self.has_unconditional_prompt:
 				self.prompt_case_names = set()
 				for case in d['unconditional_prompt_updates']:
-					self.prompt_case_names.add(case['name'])
+					self.prompt_case_names.add(case)
 				self.prompt_ranking = d['prompt_ranking']
 
 			self.all_possible_entry = []

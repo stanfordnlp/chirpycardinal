@@ -6,11 +6,10 @@ global_state_entry_requirements:
 
 prompt_ranking: 2 # ranking relative to other supernodes' unconditional prompt
 unconditional_prompt_updates:
-  - name: contextual_prompt
-    state_updates:
-      prompt_type: PromptType.CONTEXTUAL
-      start_discussing_music: True
-      have_prompted: True
+  contextual_prompt:
+    prompt_type: PromptType.CONTEXTUAL
+    start_discussing_music: True
+    have_prompted: True
 
 # define the convo-path relevant state updates made by each subnode
 # each subnode MUST define a prompt_treelet

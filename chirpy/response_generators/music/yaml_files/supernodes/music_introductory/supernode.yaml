@@ -5,16 +5,14 @@ global_state_entry_requirements:
 
 prompt_ranking: 1 # ranking relative to other supernodes' unconditional prompt
 unconditional_prompt_updates:
-  - name: contextual_prompt
-    state_updates:
-      prompt_type: PromptType.CONTEXTUAL
-      entering_music_rg: True
-      have_prompted: True
-  - name: generic_prompt
-    state_updates:
-      prompt_type: PromptType.GENERIC
-      entering_music_rg: True
-      have_prompted: True
+  contextual_prompt:
+    prompt_type: PromptType.CONTEXTUAL
+    entering_music_rg: True
+    have_prompted: True
+  generic_prompt:
+    prompt_type: PromptType.GENERIC
+    entering_music_rg: True
+    have_prompted: True
 
 prompt_leading_questions: None
 

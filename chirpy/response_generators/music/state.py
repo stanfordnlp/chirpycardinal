@@ -24,8 +24,9 @@ class State(BaseState):
     music_ask_singer_respond_til: bool = False
     start_discussing_music: bool = False
     user_has_song_opinion: bool = False
+    trigger_music: bool = False
 
-    prev_supernode_str: Optional = None
+    # prev_supernode_str: Optional = None
 
 @dataclass
 class ConditionalState(BaseConditionalState):
@@ -48,5 +49,6 @@ class ConditionalState(BaseConditionalState):
     music_ask_singer_respond_til: bool = False
     start_discussing_music: bool = False
     user_has_song_opinion: bool = False
+    trigger_music: bool = False
     
-    prev_supernode_str: Optional = NO_UPDATE
+    # prev_supernode_str: Optional = NO_UPDATE
