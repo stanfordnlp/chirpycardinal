@@ -3,4 +3,3 @@ response:
     required_flags:
       unconditional: True
     response: "Sure! What's your favorite food?"
-    expose_vars: None

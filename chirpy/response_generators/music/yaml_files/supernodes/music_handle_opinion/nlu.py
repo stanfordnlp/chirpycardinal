@@ -39,4 +39,5 @@ def prompt_nlu_processing(rg, state, utterance, response_types):
 	if ResponseType.MUSIC_KEYWORD in response_types and \
 		   ResponseType.POSITIVE in response_types:
 		flags['user_mentioned_music_positive'] = True
+	return flags
 

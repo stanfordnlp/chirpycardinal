@@ -20,8 +20,8 @@ response:
       answered_no: True
     response: >-
       {rg.state_manager.current_state.choose_least_repetitive(
-        ['It\'s okay!',,
-         'Don\'t worry about it!']
+        ["It's okay!",
+         "Don't worry about it!"]
       )}
   - node_name: answered_yes
     required_flags:
@@ -36,10 +36,10 @@ response:
       question: True
     response: >-
       {rg.state_manager.current_state.choose_least_repetitive(
-        ['Oh I\'m not too sure about that.',
-          'Ah I\'m not sure, I\'ll need to check about that.',
-          'Oh hmm, I\'m not too sure about that.',
-          'Oh dear I don\'t know, I\'ll need to find out.']
+        ["Oh I'm not too sure about that.",
+          "Ah I'm not sure, I'll need to check about that.",
+          "Oh hmm, I'm not too sure about that.",
+          "Oh dear I don't know, I'll need to find out."]
       )}
   - node_name: opinion
     required_flags:
@@ -63,7 +63,7 @@ response:
       catch_all: True
     response: >-
       {rg.state_manager.current_state.choose_least_repetitive(
-        ['That\'s great!',
+        ["That's great!",
             'Awesome!',
             'Cool!']
       )}

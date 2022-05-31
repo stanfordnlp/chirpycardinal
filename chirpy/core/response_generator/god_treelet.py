@@ -84,6 +84,7 @@ class GodTreelet(Treelet):
                     break
             if matches_entry_criteria:
                 return nlg['node_name'], nlg['response']
+
         return None
 
     def get_unconditional_prompt_text(self, flags, supernode):
@@ -102,7 +103,7 @@ class GodTreelet(Treelet):
         subnode_nlgs = self.nlg_yamls[supernode]
         for nlg in subnode_nlgs['response']:
             if nlg['node_name'] == subnode_name:
-                if nlg['expose_vars'] == 'None': return None
+                if 'expose_vars' not in nlg or nlg['expose_vars'] == 'None': return None
                 return nlg['expose_vars']
         return None
 
@@ -126,7 +127,9 @@ class GodTreelet(Treelet):
         flags = nlu.nlu_processing(self.rg, state, utterance, response_types)
 
         # NLG processing
-        subnode_name, nlg_response = self.get_subnode(flags, cur_supernode)
+        result = self.get_subnode(flags, cur_supernode)
+        assert result is not None, f"There was no matching subnode in the supernode {cur_supernode} for the current state/utterance. Make sure the nlu covers all possible cases."
+        subnode_name, nlg_response = result
 
         context = get_context_for_supernode(cur_supernode)
         cntxt = {
@@ -137,8 +140,8 @@ class GodTreelet(Treelet):
 
         try:
             response = effify(nlg_response, global_context=context)
-        except NameError as nameerr:
-            logger.error(nameerr)
+        except Exception as e:
+            logger.error(e)
             logger.error(f'We had an NLG error in the supernode {cur_supernode} and subnode {subnode_name}. The problematic string inside the yaml file is "{nlg_response}". Check whether you have decorated the right functions!')
             raise
 
@@ -164,6 +167,7 @@ class GodTreelet(Treelet):
         if 'priority' in subnode_state_updates:
             priority_context = dict(exposed_context)
             priority_context.update(globals())
+            priority_context.update(cntxt)
             priority = eval(subnode_state_updates['priority'], priority_context)
             assert isinstance(priority, ResponsePriority)
             del subnode_state_updates['priority']
@@ -176,7 +180,7 @@ class GodTreelet(Treelet):
 
         if 'cur_entity' in subnode_state_updates:
             cur_entity = eval(subnode_state_updates['cur_entity'], context)
-            assert isinstance(cur_entity, WikiEntity)
+            assert cur_entity is None or isinstance(cur_entity, WikiEntity), f"error on {cur_entity}, eval string {subnode_state_updates['cur_entity']}"
             del subnode_state_updates['cur_entity']
         else:
             cur_entity = None
@@ -184,6 +188,7 @@ class GodTreelet(Treelet):
         if 'answer_type' in subnode_state_updates:
             answer_context = dict(exposed_context)
             answer_context.update(globals())
+            answer_context.update(cntxt)
             answer_type = eval(subnode_state_updates['answer_type'], answer_context)
             assert isinstance(answer_type, AnswerType)
             del subnode_state_updates['answer_type']
@@ -273,14 +278,14 @@ class GodTreelet(Treelet):
             assert isinstance(requirements, dict), f"requirements in prompt_leading_questions (supernode {cur_supernode}) needs to define a dict or None"
             matches_entry_criteria = True
             for key in requirements:
-                if state.__dict__[key] != req_dict[key]:
+                if conditional_state.__dict__[key] != requirements[key]:
                     matches_entry_criteria = False
                     break
             if matches_entry_criteria:
                 context = get_context_for_supernode(cur_supernode)
                 cntxt = {
                     'rg': self.rg,
-                    'state': state
+                    'state': conditional_state
                 }
                 context.update(cntxt)
                 prompt_text = effify(case['prompt'], context)
@@ -293,8 +298,9 @@ class GodTreelet(Treelet):
             text = random.choice(prompt_texts)
 
         conditional_state.cur_supernode = cur_supernode
+        prompt_type = PromptType.NO if text == '' else PromptType.CONTEXTUAL
 
         # YAML processing for prompt treelet leading question
-        return PromptResult(text=text, prompt_type=PromptType.CONTEXTUAL, state=state, cur_entity=entity,
+        return PromptResult(text=text, prompt_type=prompt_type, state=state, cur_entity=entity,
                         conditional_state=conditional_state)
 

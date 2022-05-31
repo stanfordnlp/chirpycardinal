@@ -51,6 +51,6 @@ response:
       opinion: False
       only_til: False
     response: >-
-      {rg.state_manager.current_state.choose_least_repetitive([ 'That\'s great!', 'Awesome!', 'Cool!', ])} 
+      {rg.state_manager.current_state.choose_least_repetitive([ 'That is great!', 'Awesome!', 'Cool!'])} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
 

@@ -5,6 +5,7 @@ from chirpy.core.response_generator import nlg_helper
 
 import chirpy.response_generators.music.response_templates.general_templates as templates
 from chirpy.response_generators.wiki2.wiki_utils import get_til_title
+from chirpy.response_generators.music.regex_templates import NameFavoriteSongTemplate
 
 @nlg_helper
 def pick_til(tils):
@@ -24,19 +25,21 @@ def get_singer_str(rg):
 	singer_str = ''
 	cur_singer_ent = rg.get_singer_entity()
 	if cur_singer_ent is None:
-		slots = NameFavoriteSongTemplate().execute(utterance)
+		slots = NameFavoriteSongTemplate().execute(rg.utterance)
 		if slots is not None and 'favorite' in slots:
 			singer_str = slots['favorite']
 			temp = rg.get_song_entity(singer_str)
-			singer_str = temp.name
+			if temp:
+				singer_str = temp.name
 	else:
 		singer_str = re.sub(r'\(.*?\)', '', cur_singer_ent.talkable_name)
 	return singer_str
 
+@nlg_helper
 def singer_parsed_ent(rg):
 	cur_singer_ent = rg.get_singer_entity()
 	if cur_singer_ent is None:
-		slots = NameFavoriteSongTemplate().execute(utterance)
+		slots = NameFavoriteSongTemplate().execute(rg.utterance)
 		if slots is not None and 'favorite' in slots:
 			singer_str = slots['favorite']
 			cur_singer_ent = rg.get_song_entity(singer_str)
@@ -44,7 +47,7 @@ def singer_parsed_ent(rg):
 
 @nlg_helper
 def get_talkable_singer_name(singer_ent):
-	cur_singer_str = cur_singer_ent.talkable_name
+	cur_singer_str = singer_ent.talkable_name
 	cur_singer_str = re.sub(r'\(.*?\)', '', cur_singer_str)
 	return cur_singer_str
 
@@ -53,7 +56,7 @@ def get_tils(singer_name):
 	return get_til_title(singer_name)
 
 @nlg_helper
-def comment_singer(singer_name):
+def comment_singer(rg, singer_name):
     """
     Make a relevant comment about the singer and returns (comment, genre)
     """

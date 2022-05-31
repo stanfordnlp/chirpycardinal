@@ -11,6 +11,7 @@ class State(BaseState):
     cur_singer_str: Optional = None
     discussed_entities: List = field(default_factory=list)
     just_used_til: bool = False
+    cur_supernode: Optional = None
 
 
     ask_user_about_specific_singer: bool = False
@@ -37,6 +38,7 @@ class ConditionalState(BaseConditionalState):
     cur_singer_str: Optional = NO_UPDATE
     just_used_til: bool = False
     prompt_treelet: Optional[str] = NO_UPDATE
+    cur_supernode: Optional = None
 
     ask_user_about_specific_singer: bool = False
     ask_user_about_specific_song: bool = False

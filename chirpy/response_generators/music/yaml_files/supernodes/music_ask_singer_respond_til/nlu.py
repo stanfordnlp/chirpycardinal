@@ -9,6 +9,7 @@ def nlu_processing(rg, state, utterance, response_types):
     }
 
     cur_singer_str = rg.state.cur_singer_str
+    cur_song_str = state.cur_song_str
     top_songs = rg.get_songs_by_musician(cur_singer_str)
     next_song = None
     for next_song in top_songs:

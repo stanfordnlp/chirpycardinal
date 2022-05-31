@@ -74,7 +74,7 @@ def get_cur_talkable_food(rg):
 @nlg_helper
 def get_user_answer(rg):
     state, utterance, response_types = rg.get_state_utterance_response_types()
-    user_answer, is_plural = get_best_candidate_user_entity(rg, utterance, cur_food)
+    user_answer, is_plural = get_best_candidate_user_entity(rg, utterance, state.cur_food.name)
     return user_answer
 
 @nlg_helper

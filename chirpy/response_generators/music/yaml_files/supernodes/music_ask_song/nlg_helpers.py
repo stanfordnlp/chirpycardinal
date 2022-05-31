@@ -9,14 +9,14 @@ def choose(rg, items):
 @nlg_helper
 def get_cur_song_str(rg):
     cur_song_str = None
-    top_songs = self.rg.get_songs_by_musician(cur_singer_str)
+    top_songs = rg.get_songs_by_musician(rg.state.cur_singer_str)
     if top_songs: cur_song_str = top_songs[0]
     return cur_song_str
 
 @nlg_helper
 def complement_fav_song(rg, cur_singer_str, cur_song_str):
     if cur_song_str:
-        return choose([
+        return choose(rg, [
             f'As a fan of {cur_singer_str}, I must say that my favorite song is {cur_song_str}. Do you like that too?',
             f'Oh I really love {cur_song_str} by {cur_singer_str}! How about you? Do you like it as well?',
         ])

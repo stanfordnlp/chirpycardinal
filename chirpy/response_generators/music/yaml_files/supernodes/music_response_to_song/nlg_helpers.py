@@ -37,7 +37,7 @@ def comment_genre(rg, song_name, singer_name=None, response=None):
             if response is None: response = comment
             else: response = f'{response} {comment}'
         elif metadata:
-            comment = random.choose([
+            comment = random.choice([
                 'Nice! Which is your favorite part of the song?',
                 'Sounds great! Do you have a part of the song that you like the most?',
             ])

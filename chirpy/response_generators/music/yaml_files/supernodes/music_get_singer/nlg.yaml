@@ -56,5 +56,5 @@ unconditional_prompt:
       tils_exist: False
     prompt: >-
       I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}. 
-      {comment_singer(get_talkable_singer_name(rg.get_singer_entity()))[0]}
+      {comment_singer(rg, get_talkable_singer_name(rg.get_singer_entity()))[0]}
 

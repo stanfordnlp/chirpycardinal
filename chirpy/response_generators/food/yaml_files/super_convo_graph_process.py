@@ -5,49 +5,51 @@ import matplotlib.pyplot as plt
 import sys
 import os
 import ast
+import py_compile
+import tempfile
 
 # modified BFS
 def find_all_parents(G, s):
-    Q = [s]
-    parents = defaultdict(set)
-    while len(Q) != 0:
-        v = Q[0]
-        Q.pop(0)
-        for w in G.get(v, []):
-            parents[w].add(v)
-            Q.append(w)
-    return parents
+	Q = [s]
+	parents = defaultdict(set)
+	while len(Q) != 0:
+		v = Q[0]
+		Q.pop(0)
+		for w in G.get(v, []):
+			parents[w].add(v)
+			Q.append(w)
+	return parents
 
 def cyclic(g):
-    """Return True if the directed graph g has a cycle.
-    g must be represented as a dictionary mapping vertices to
-    iterables of neighbouring vertices. For example:
+	"""Return True if the directed graph g has a cycle.
+	g must be represented as a dictionary mapping vertices to
+	iterables of neighbouring vertices. For example:
 
-    >>> cyclic({1: (2,), 2: (3,), 3: (1,)})
-    True
-    >>> cyclic({1: (2,), 2: (3,), 3: (4,)})
-    False
+	>>> cyclic({1: (2,), 2: (3,), 3: (1,)})
+	True
+	>>> cyclic({1: (2,), 2: (3,), 3: (4,)})
+	False
 
-    """
-    path = set()
-    visited = set()
+	"""
+	path = set()
+	visited = set()
 
-    def visit(vertex):
-        if vertex in visited:
-            return False
-        visited.add(vertex)
-        path.add(vertex)
-        for neighbour in g.get(vertex, ()):
-            if neighbour in path or visit(neighbour):
-                return True
-        path.remove(vertex)
-        return False
+	def visit(vertex):
+		if vertex in visited:
+			return False
+		visited.add(vertex)
+		path.add(vertex)
+		for neighbour in g.get(vertex, ()):
+			if neighbour in path or visit(neighbour):
+				return True
+		path.remove(vertex)
+		return False
 
-    return any(visit(v) for v in g)
+	return any(visit(v) for v in g)
 
 # recursive path-finding function (assumes that there exists a path in G from a to b)   
 def find_all_paths(parents, a, b):
-    return [a] if a == b else [y + b for x in list(parents[b]) for y in find_all_paths(parents, a, x)]
+	return [a] if a == b else [y + b for x in list(parents[b]) for y in find_all_paths(parents, a, x)]
 
 def count_with_self_loops(paths, self_loops):
 	cycle_num_paths = 0
@@ -61,10 +63,10 @@ def count_with_self_loops(paths, self_loops):
 	return cycle_num_paths
 
 def powerset(s):
-    x = len(s)
-    masks = [1 << i for i in range(x)]
-    for i in range(1 << x):
-        yield [ss for mask, ss in zip(masks, s) if i & mask]
+	x = len(s)
+	masks = [1 << i for i in range(x)]
+	for i in range(1 << x):
+		yield [ss for mask, ss in zip(masks, s) if i & mask]
 
 def parse_all_exit_states(entry_conditions, set_state_on_finish, possible_state_updates):
 	exit_state = entry_conditions.copy()
@@ -249,6 +251,8 @@ print('Treelet graph', G)
 print('--------')
 print()
 
+input('Press enter to continue...\n')
+
 paths = find_all_paths(find_all_parents(G, f'{args.intro_node} '), f'{args.intro_node} ', 'exit ')
 
 print('number of unique convo paths between {} and exit: {}'.format(args.intro_node, len(paths)))
@@ -303,7 +307,6 @@ for n in nodes:
 	nlu = os.path.join(head_path, 'nlu.py')
 	assert os.path.exists(nlu), f"check {n.name}; all supernodes except exit must define nlu.py"
 
-
 	file_content = None
 	with open(nlu, 'r') as f:
 		file_content = f.read()
@@ -324,8 +327,32 @@ for n in nodes:
 	assert found_nlu_processing, f"method nlu_processing not found in file {nlu} and must be defined"
 	assert found_prompt_nlu_processing if n.has_unconditional_prompt else True, f"{n.name} is a supernode with unconditional prompt, so its nlu.py file must define a prompt_nlu_processing method"
 
-input("nlu.py checks complete. Press Enter to continue static checker...\n")
+input("nlu.py checks complete. Press Enter to continue static checker and find major linter errors in nlu.py files ...\n")
+print('Running (please be patient)...\n')
+for n in nodes:
+	if n.name == 'exit': continue
+	head_path = os.path.dirname(n.path)
+	nlu = os.path.join(head_path, 'nlu.py')
+	os.system(f'pylint --errors-only --disable=import-error {nlu}')
 
+input("nlu.py ERROR-only (no style checks, etc.) linter checks complete. Fix any error msgs printed above. Press Enter to continue static checker...\n")
+
+print('Checking for syntax errors in nlg_helpers.py files')
+for n in nodes:
+	if n.name == 'exit': continue
+	head_path = os.path.dirname(n.path)
+	nlg_path = os.path.join(head_path, 'nlg_helpers.py')
+	# run pylint as well
+	try:
+		py_compile.compile(f'{nlg_path}', doraise=True)
+	except py_compile.PyCompileError as e:
+		raise Exception(f"Syntax error detected in {nlg_path}. Fix error given in PyCompileError msg above.") from e
+
+	# pylint --errors-only --disable=import-error music_response_generator.py
+	os.system(f'pylint --errors-only --disable=import-error {nlg_path}')
+
+
+input("nlg_helpers.py checks complete. Fix any linter errors raised above. Press Enter to continue static checker...\n")
 # Verify that all subnodes defined in supernode.yaml exist in nlg.yaml
 # Verify that variables that need to be exposed are actually exposed in nlg.yaml
 print('Checking nlg.yaml files...')
@@ -344,6 +371,19 @@ for n in nodes:
 		sub_name = subnode['node_name']
 		assert 'required_flags' in subnode, f'{sub_name} subnode in {n.name} must define a required_flags field'
 		assert 'response' in subnode, f'{sub_name} subnode in {n.name} must define a response field'
+		non_f_string = subnode['response']
+
+		# Check syntax/formatting errors in all nlg response format strings:
+		a = f"s = f\"\"\"{non_f_string}\"\"\""
+
+		with open("tmp.py", 'w') as f:
+			f.write(f'{a}\n')
+		
+		try:
+			py_compile.compile('tmp.py', doraise=True)
+		except py_compile.PyCompileError as e:
+			raise Exception(f"Format error detected in f-string response of subnode {sub_name} inside {nlg_path}. Fix f-string syntax error given in the py_compile.PyCompileError msg above") from e
+		os.remove('tmp.py')
 
 		if 'expose_vars' in subnode:
 			assert n.exposing_vars, f"supernode.yaml for {n.name} must define required_exposed_variables if subnode declares 'expose_vars'"
@@ -372,9 +412,6 @@ for n in nodes:
 input("nlg yaml checks complete. Press Enter to continue static checker...\n")
 
 print('static checker COMPLETED.')
-# Ensure prompt leading q requirements are always boolean flags (like global state reqs)
 
-# Ensure the unconditional prompt stuff has right formatting (when it appears, otherwise optional). Remember new formatting in nlg.yaml
-# Make required exposed vars optional (but if it appears, enforce all guidelines)
-
-
+# Need syntax checks on nlg responses in nlg.yaml - use ast.parse to check syntax + func decorations
+# or something like python -m py_compile nlg_helpers.py

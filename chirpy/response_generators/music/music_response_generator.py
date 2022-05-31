@@ -9,9 +9,13 @@ import chirpy.response_generators.music.treelets as treelets
 import chirpy.response_generators.music.music_helpers as helpers
 from chirpy.response_generators.music.music_helpers import ResponseType, tags
 from chirpy.response_generators.music.state import State, ConditionalState
+from chirpy.response_generators.music.utils import WikiEntityInterface
 from chirpy.core.entity_linker.entity_groups import ENTITY_GROUPS_FOR_EXPECTED_TYPE
 from chirpy.core.entity_linker.entity_linker_simple import link_span_to_entity
 from chirpy.response_generators.music.utils import MusicBrainzInterface
+
+import copy
+import random
 
 logger = logging.getLogger('chirpylogger')
 
@@ -123,6 +127,7 @@ class MusicResponseGenerator(ResponseGenerator):
         def is_instrument(ent):
             return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_instrument)
         cur_entity = self.get_current_entity()
+        print(cur_entity)
         entity_linker_results = self.state_manager.current_state.entity_linker
         entities = []
         if cur_entity: entities.append(cur_entity)

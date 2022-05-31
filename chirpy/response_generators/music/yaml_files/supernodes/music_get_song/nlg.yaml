@@ -41,7 +41,7 @@ response:
       no_fav_song: False
       tils_exist: False
       metadata_exists: True
-    response: "{rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg)[0]}"
+    response: "{rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg))[0]}"
   - node_name: catch_all
     required_flags:
       song_ent_exists: False

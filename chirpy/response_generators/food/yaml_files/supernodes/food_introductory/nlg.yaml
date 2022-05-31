@@ -23,21 +23,21 @@ response:
   - node_name: best_attribute_ingredient
     required_flags:
       best_attribute_ingredient: True
-    response: "{intro_response(rg)} {ingredient_attribute(rg, rg.get_current_entity().name.lower()))}"
+    response: "{intro_response(rg)} {ingredient_attribute(rg, rg.get_current_entity().name.lower())}"
     expose_vars:
       entity: rg.get_current_entity()
       neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
   - node_name: best_attribute_texture
     required_flags:
       best_attribute_texture: True
-    response: "{intro_response(rg)} {texture_attribute(rg, rg.get_current_entity().name.lower()))}"
+    response: "{intro_response(rg)} {texture_attribute(rg, rg.get_current_entity().name.lower())}"
     expose_vars:
       entity: rg.get_current_entity()
       neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
   - node_name: is_ingredient
     required_flags:
       is_ingredient: True
-    response: "{intro_response(rg)} {food_is_ingr_response(rg, rg.get_current_entity().name.lower()))}"
+    response: "{intro_response(rg)} {food_is_ingr_response(rg, rg.get_current_entity().name.lower())}"
     expose_vars:
       entity: rg.get_current_entity()
       neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
