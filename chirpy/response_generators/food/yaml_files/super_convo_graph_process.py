@@ -135,6 +135,7 @@ class TreeletNode:
 		with open(yaml_file, "r") as stream:
 			d = yaml.safe_load(stream)
 			self.name = d['name']
+			self.decorated_functions = {}
 
 			# --- Formatting checks -----
 			check_correct_yaml_format(d, yaml_file)
@@ -311,7 +312,9 @@ for n in nodes:
 	with open(nlu, 'r') as f:
 		file_content = f.read()
 	a = ast.parse(file_content)
+
 	definitions = [n for n in ast.walk(a) if type(n) == ast.FunctionDef]
+
 	found_nlu_processing = False
 	found_prompt_nlu_processing = False
 	for d in definitions:
@@ -337,7 +340,7 @@ for n in nodes:
 
 input("nlu.py ERROR-only (no style checks, etc.) linter checks complete. Fix any error msgs printed above. Press Enter to continue static checker...\n")
 
-print('Checking for syntax errors in nlg_helpers.py files')
+print('Checking for syntax errors in nlg_helpers.py files...')
 for n in nodes:
 	if n.name == 'exit': continue
 	head_path = os.path.dirname(n.path)
@@ -347,6 +350,18 @@ for n in nodes:
 		py_compile.compile(f'{nlg_path}', doraise=True)
 	except py_compile.PyCompileError as e:
 		raise Exception(f"Syntax error detected in {nlg_path}. Fix error given in PyCompileError msg above.") from e
+
+	file_content = None
+	with open(nlg_path, 'r') as f:
+		file_content = f.read()
+
+	a = ast.parse(file_content)
+	definitions = [n for n in ast.walk(a) if type(n) == ast.FunctionDef]
+	for d in definitions:
+		for dec in d.decorator_list:
+			if 'id' in dec.__dict__ and dec.id == 'nlg_helper':
+				# d is decorated with nlg_helper
+				n.decorated_functions[d.name] = d
 
 	# pylint --errors-only --disable=import-error music_response_generator.py
 	os.system(f'pylint --errors-only --disable=import-error {nlg_path}')
@@ -374,16 +389,22 @@ for n in nodes:
 		non_f_string = subnode['response']
 
 		# Check syntax/formatting errors in all nlg response format strings:
-		a = f"s = f\"\"\"{non_f_string}\"\"\""
+		a = f"f\"\"\"{non_f_string}\"\"\""
 
-		with open("tmp.py", 'w') as f:
-			f.write(f'{a}\n')
-		
 		try:
-			py_compile.compile('tmp.py', doraise=True)
-		except py_compile.PyCompileError as e:
-			raise Exception(f"Format error detected in f-string response of subnode {sub_name} inside {nlg_path}. Fix f-string syntax error given in the py_compile.PyCompileError msg above") from e
-		os.remove('tmp.py')
+			parsed = ast.parse(a)
+			funcs = [n for n in ast.walk(parsed) if type(n) == ast.Call]
+		except Exception as e:
+			raise Exception(f"Format error detected in f-string response of subnode {sub_name} inside {nlg_path}. Fix f-string syntax error given in the error msg above") from e
+
+		for f in funcs:
+			if 'id' in f.func.__dict__:
+				# make sure that this func is decorated
+				assert f.func.id in n.decorated_functions, f"detected function {f.func.id} in f-string response of subnode {sub_name} inside supernode {n.name} that was not decorated with @nlg_helper."
+				num_defaults = len(n.decorated_functions[f.func.id].args.defaults)
+				num_total_args = len(n.decorated_functions[f.func.id].args.args)
+
+				assert len(f.args) <= num_total_args and len(f.args) >= num_total_args - num_defaults, f"function {f.func.id} in f-string response of subnode {sub_name} inside supernode {n.name} not called with correct num args."
 
 		if 'expose_vars' in subnode:
 			assert n.exposing_vars, f"supernode.yaml for {n.name} must define required_exposed_variables if subnode declares 'expose_vars'"
@@ -401,11 +422,33 @@ for n in nodes:
 
 	if n.has_unconditional_prompt:
 		# if supernode.yaml defines unconditional stuff, nlg.yaml must also match
+
+		# NEED SYNTAX CHECKS!!		
 		assert 'unconditional_prompt' in nlg_yaml, f"{nlg_path} must define a unconditional_prompt field"
 		prompt_case_names = set()
 		for case in nlg_yaml['unconditional_prompt']:
 			assert 'case_name' in case and 'required_flags' in case and 'prompt' in case, f"check {nlg_path} for right keys in unconditional_prompt"
 			prompt_case_names.add(case['case_name'])
+
+			prompt_text = case['prompt']
+			a = f"f\"\"\"{prompt_text}\"\"\""
+
+			try:
+				parsed = ast.parse(a)
+				funcs = [n for n in ast.walk(parsed) if type(n) == ast.Call]
+			except Exception as e:
+				print(prompt_text)
+				raise Exception(f"Format error detected in f-string prompt of case {case['case_name']} inside {nlg_path}. Fix f-string syntax error given in the error msg above") from e
+
+			for f in funcs:
+				if 'id' in f.func.__dict__:
+					# make sure that this func is decorated
+					assert f.func.id in n.decorated_functions, f"detected function {f.func.id} in f-string prompt of prompt case {case['case_name']} inside supernode {n.name} that was not decorated with @nlg_helper."
+					num_defaults = len(n.decorated_functions[f.func.id].args.defaults)
+					num_total_args = len(n.decorated_functions[f.func.id].args.args)
+
+					assert len(f.args) <= num_total_args and len(f.args) >= num_total_args - num_defaults, f"function {f.func.id} in f-string response of prompt case {case['case_name']} inside supernode {n.name} not called with correct num args."
+
 
 		assert n.prompt_case_names == prompt_case_names, f"{n.name} supernode must define the exact same unconditional prompt case names as in the nlg.yaml file"
 
@@ -415,3 +458,5 @@ print('static checker COMPLETED.')
 
 # Need syntax checks on nlg responses in nlg.yaml - use ast.parse to check syntax + func decorations
 # or something like python -m py_compile nlg_helpers.py
+
+# DO CHECKS FOR NLG.YAML prompt responses!!

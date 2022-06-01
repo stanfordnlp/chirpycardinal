@@ -2,7 +2,7 @@ response:
   - node_name: instr_exists_with_til
     required_flags:
       instr_exists_with_til: True
-    response: "The {rg.get_instrument_entity().name} is a really fascinating instrument! {get_til_response(get_til_title(rg.get_instrument_entity().name))}"
+    response: "The {rg.get_instrument_entity().name} is a really fascinating instrument! {get_til_response(get_til_title_helper(rg.get_instrument_entity().name))}"
   - node_name: instr_exists_wo_til
     required_flags:
       instr_exists_wo_til: True
@@ -19,7 +19,7 @@ unconditional_prompt:
   - case_name: til_prompt
     required_flags:
       'use_til': True
-    prompt: "It's interesting that you mentioned the {rg.get_instrument_entity().name}. {get_til_response(get_til_title(rg.get_instrument_entity().name))}"
+    prompt: "It's interesting that you mentioned the {rg.get_instrument_entity().name}. {get_til_response(get_til_title_helper(rg.get_instrument_entity().name))}"
   - case_name: generic_prompt
     required_flags:
       'generic': True

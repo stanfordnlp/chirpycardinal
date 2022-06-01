@@ -10,3 +10,7 @@ from chirpy.core.response_generator import nlg_helper
 def get_til_response(tils):
 	til = re.sub(r'\(.*?\)', '', random.choice(tils)[0])
 	return process_til(til)
+
+@nlg_helper
+def get_til_title_helper(title):
+	return get_til_title(title)

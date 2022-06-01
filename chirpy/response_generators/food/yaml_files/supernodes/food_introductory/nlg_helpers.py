@@ -1,4 +1,4 @@
-from chirpy.response_generators.food.food_helpers import *
+from chirpy.response_generators.food.food_helpers import get_intro_acknowledgement, sample_food_containing_ingredient, get_attribute
 from chirpy.core.response_generator import nlg_helper
 
 import inflect
@@ -41,3 +41,12 @@ def get_pronoun(rg):
     entity = rg.get_current_entity()
     pronoun = 'they' if entity.is_plural else 'it'
     return pronoun
+
+CUSTOM_STATEMENTS = {
+    'chocolate': "I especially love how rich and smooth it is."
+}
+
+@nlg_helper
+def get_custom_comment(cur_food):
+    return CUSTOM_STATEMENTS.get(cur_food, None)
+

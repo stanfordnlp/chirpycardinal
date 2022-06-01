@@ -65,7 +65,7 @@ unconditional_prompt:
       metadata_exists: True
     prompt: >-
       It's interesting that you mentioned {state.cur_song_str}. {least_repetitive_compliment(rg)} 
-      {rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg)[0]}
+      {rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg))[0]}
 
 
 

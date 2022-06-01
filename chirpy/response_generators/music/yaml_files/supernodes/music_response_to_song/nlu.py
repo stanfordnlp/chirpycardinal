@@ -21,7 +21,7 @@ def nlu_processing(rg, state, utterance, response_types):
 	if ResponseType.NO in response_types or ResponseType.NEGATIVE in response_types:
 		flags['no_response'] = True
 	else:
-		if ResponseType.THATS in response_types and state.just_used_til:
+		if (ResponseType.THATS in response_types or ResponseType.YES in response_types) and state.just_used_til:
 			flags['thats'] = True
 		elif ResponseType.DIDNT_KNOW in response_types and state.just_used_til:
 			flags['did_not_know'] = True
