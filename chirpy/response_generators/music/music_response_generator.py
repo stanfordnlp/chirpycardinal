@@ -16,6 +16,7 @@ from chirpy.response_generators.music.utils import MusicBrainzInterface
 
 import copy
 import random
+import functools
 
 logger = logging.getLogger('chirpylogger')
 
@@ -50,6 +51,8 @@ class MusicResponseGenerator(ResponseGenerator):
         self.treelets = {treelet.name: treelet for treelet in [self.god_treelet]}
 
         self.musicbrainz = MusicBrainzInterface()
+        self.songs_by_musician_cache = {}
+        self.song_entity_cache = {}
 
         super().__init__(state_manager, treelets=self.treelets, can_give_prompts=True, state_constructor=State,
                          conditional_state_constructor=ConditionalState,
@@ -113,11 +116,17 @@ class MusicResponseGenerator(ResponseGenerator):
         return genre
 
     def get_songs_by_musician(self, musician_name):
-        return self.musicbrainz.get_top_songs_by_musician(musician_name)
+        if musician_name in self.songs_by_musician_cache:
+            return self.songs_by_musician_cache[musician_name]
+        self.songs_by_musician_cache[musician_name] = self.musicbrainz.get_top_songs_by_musician(musician_name)
+        return self.songs_by_musician_cache[musician_name]
 
     def get_song_entity(self, string):
-        return link_span_to_entity(string, self.state_manager.current_state,
-            expected_type=ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_work)
+        if string in self.song_entity_cache:
+            return self.song_entity_cache[string]
+        self.song_entity_cache[string] = link_span_to_entity(string, self.state_manager.current_state,
+                                        expected_type=ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_work)
+        return self.song_entity_cache[string]
 
     def get_musician_entity(self, string):
         return link_span_to_entity(string, self.state_manager.current_state,
@@ -128,6 +137,7 @@ class MusicResponseGenerator(ResponseGenerator):
             return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_instrument)
         cur_entity = self.get_current_entity()
         entity_linker_results = self.state_manager.current_state.entity_linker
+        print(cur_entity, entity_linker_results)
         entities = []
         if cur_entity: entities.append(cur_entity)
         if len(entity_linker_results.high_prec): entities.append(entity_linker_results.high_prec[0].top_ent)
