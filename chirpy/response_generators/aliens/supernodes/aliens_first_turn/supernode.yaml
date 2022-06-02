@@ -1,0 +1,23 @@
+name: aliens_first_turn
+
+global_state_entry_requirements:
+  entering_aliens: True
+
+prompt_leading_questions: None
+
+subnode_state_updates:
+  monologue:
+    answer_type: AnswerType.STATEMENT
+    second_turn: True
+  neutral_monologue:
+    answer_type: AnswerType.STATEMENT
+    second_turn: True
+    priority: ResponsePriority.WEAK_CONTINUE
+  rejection_response:
+    priority: ResponsePriority.STRONG_CONTINUE
+    needs_prompt: True
+    exit_aliens: True
+    answer_type: AnswerType.ENDING
+
+global_post_supernode_state_updates:
+  entering_aliens: False

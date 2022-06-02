@@ -1,0 +1,22 @@
+response:
+  - node_name: user_has_opinion
+    required_flags:
+      has_opinion: True
+    response: >-
+      {get_ack()} Some say that if there was intelligent life out there, 
+      then we should have already found evidence of it by now, especially with our space explorations 
+      and powerful telescopes searching every day for signs of alien life. 
+      But maybe this paradox can be explained by the Great Filter, 
+      which hypothesizes that there exists a barrier preventing civilizations developing further and traversing the galaxy. 
+      For example, a civilization might run out of resources or encounter a planet-destroying asteroid. Isn't that intriguing?
+  - node_name: user_is_neutral
+    required_flags:
+      has_opinion: False
+    response: >-
+      Right, some say that if there was intelligent life out there, 
+      then we should have already found evidence of it by now, especially with our space explorations 
+      and powerful telescopes searching every day for signs of alien life. 
+      But maybe this paradox can be explained by the Great Filter, 
+      which hypothesizes that there exists a barrier preventing civilizations developing further and traversing the galaxy. 
+      For example, a civilization might run out of resources or encounter a planet-destroying asteroid. Isn't that intriguing?
+      

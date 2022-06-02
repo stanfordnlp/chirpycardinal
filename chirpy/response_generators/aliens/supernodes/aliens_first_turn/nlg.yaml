@@ -1,0 +1,19 @@
+response:
+  - node_name: monologue
+    required_flags:
+      user_interested: True
+    response: >-
+      After talking to people every day, I’ve been contemplating my own place in the universe and wondering what else 
+      exists out there. Of course, there’s all kinds of life on Earth, and then there are artificial 
+      beings like me, but have you ever wondered if there might be life elsewhere on other planets or in other galaxies?
+  - node_name: neutral_monologue
+    required_flags:
+      neutral: True
+    response: >-
+      After talking to people every day, I’ve been contemplating my own place in the universe and wondering what else 
+      exists out there. Of course, there’s all kinds of life on Earth, and then there are artificial 
+      beings like me, but have you ever wondered if there might be life elsewhere on other planets or in other galaxies?
+  - node_name: rejection_response
+    required_flags:
+      user_not_interested: True
+    response: Sure, no worries. {rg.state_manager.current_state.choose_least_repetitive([ "Let's move on to something else then.", "Let's talk about something else.", "We can talk about something else." ])}

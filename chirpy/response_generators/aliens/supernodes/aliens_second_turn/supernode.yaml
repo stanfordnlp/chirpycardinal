@@ -1,0 +1,13 @@
+name: aliens_second_turn
+
+global_state_entry_requirements:
+  second_turn: True
+
+subnode_state_updates:
+  user_said_yes: None
+  user_is_neutral: None
+
+global_post_supernode_state_updates:
+  second_turn: False
+  answer_type: AnswerType.STATEMENT
+  third_turn: True

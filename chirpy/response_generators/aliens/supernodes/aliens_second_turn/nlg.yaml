@@ -1,0 +1,18 @@
+response:
+  - node_name: user_said_yes
+    required_flags:
+      user_said_yes: True
+    response: >-
+      Exactly! There are so many strange and fantastic planets scattered across the Milky Way Galaxy, over a hundred billion 
+      actually! Some of them are located at just the right distance from a star to support life. 
+      Perhaps there is life there, but why haven’t we heard anything from them? Can it really be that we are so 
+      alone in the universe?
+  - node_name: user_is_neutral
+    required_flags:
+      user_said_yes: False
+    response: >-
+      Well, please let me know if this is boring to you, but there are so many strange 
+      and fantastic planets scattered across the Milky Way Galaxy, over a hundred billion 
+      actually! Some of them are located at just the right distance from a star to support life. 
+      Perhaps there is life there, but why haven’t we heard anything from them? Can it really be that we are so 
+      alone in the universe?

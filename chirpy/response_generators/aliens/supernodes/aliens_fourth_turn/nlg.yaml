@@ -1,0 +1,20 @@
+response:
+  - node_name: user_has_opinion
+    required_flags:
+      has_opinion: True
+    response: >-
+      {get_ack()} Surprisingly, in 2017, astronomers detected an unusual object passing by our planet. It was unlike 
+      anything we have ever seen. It was a long and thin asteroid, like a cigar, tumbling end over end through space, 
+      accelerating as if something was pushing on it. Scientists couldn't figure out why it was moving the way 
+      it was and called it 'Oumuamua, which is Hawaiian for: 'a messenger from afar arriving first'.  
+      Some think it was a probe sent by an alien civilization. Rather mysterious, don't you think?
+  - node_name: user_is_neutral
+    required_flags:
+      has_opinion: False
+    response: >-
+      Well, surprisingly, in 2017, astronomers detected an unusual object passing by our planet. It was unlike 
+      anything we have ever seen. It was a long and thin asteroid, like a cigar, tumbling end over end through space, 
+      accelerating as if something was pushing on it. Scientists couldn't figure out why it was moving the way 
+      it was and called it 'Oumuamua, which is Hawaiian for: 'a messenger from afar arriving first'.  
+      Some think it was a probe sent by an alien civilization. Rather mysterious, don't you think?
+      

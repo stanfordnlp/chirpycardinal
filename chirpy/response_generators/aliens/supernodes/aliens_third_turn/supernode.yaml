@@ -1,0 +1,13 @@
+name: aliens_third_turn
+
+global_state_entry_requirements:
+  third_turn: True
+
+subnode_state_updates:
+  user_has_opinion: None
+  user_is_neutral: None
+
+global_post_supernode_state_updates:
+  third_turn: False
+  answer_type: AnswerType.STATEMENT
+  fourth_turn: True
