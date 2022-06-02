@@ -15,3 +15,9 @@ response:
     response: >-
       {didnt_know_response(rg)} 
       {comment_genre(rg, state.cur_song_str, state.cur_singer_str)}
+  - node_name: catch_all
+    required_flags:
+      no_response: False
+      thats: False
+      did_not_know: False
+    response: "{comment_genre(rg, state.cur_song_str, state.cur_singer_str)}"

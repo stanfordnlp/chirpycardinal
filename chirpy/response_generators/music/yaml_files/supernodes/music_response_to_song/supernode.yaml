@@ -16,5 +16,8 @@ subnode_state_updates:
   did_not_know:
     cur_singer_str: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']
     ask_user_about_specific_singer: True
+  catch_all:
+    cur_singer_str: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']
+    ask_user_about_specific_singer: True
 global_post_supernode_state_updates:
   user_has_song_opinion: False

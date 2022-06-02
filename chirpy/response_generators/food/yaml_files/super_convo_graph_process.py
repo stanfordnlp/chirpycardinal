@@ -68,25 +68,6 @@ def powerset(s):
 	for i in range(1 << x):
 		yield [ss for mask, ss in zip(masks, s) if i & mask]
 
-def parse_all_exit_states(entry_conditions, set_state_on_finish, possible_state_updates):
-	exit_state = entry_conditions.copy()
-	if set_state_on_finish == 'None':
-		set_state_on_finish = dict()
-	for key in set_state_on_finish:
-		exit_state[key] = set_state_on_finish[key]
-
-	all_possible_exit_states = []
-
-	subset = powerset(possible_state_updates)
-	for upds in subset:
-		this_state = exit_state.copy()
-		for u in upds:
-			key = list(u.keys())[0]
-			this_state[key] = u[key]
-		all_possible_exit_states.append(this_state)
-
-	return all_possible_exit_states
-
 def check_correct_yaml_format(d, yaml_file):
 	assert 'name' in d, f'{yaml_file} needs to define a name field'
 	assert 'global_state_entry_requirements' in d, f'{yaml_file} needs to define a global_state_entry_requirements field'
@@ -427,7 +408,7 @@ for n in nodes:
 		assert 'unconditional_prompt' in nlg_yaml, f"{nlg_path} must define a unconditional_prompt field"
 		prompt_case_names = set()
 		for case in nlg_yaml['unconditional_prompt']:
-			assert 'case_name' in case and 'required_flags' in case and 'prompt' in case, f"check {nlg_path} for right keys in unconditional_prompt"
+			assert 'case_name' in case and 'required_flags' in case and 'prompt' in case, f"make sure {nlg_path} has required categories defined in unconditional_prompt"
 			prompt_case_names.add(case['case_name'])
 
 			prompt_text = case['prompt']

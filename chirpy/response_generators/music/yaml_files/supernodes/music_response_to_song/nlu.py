@@ -29,5 +29,4 @@ def nlu_processing(rg, state, utterance, response_types):
 		# flags['metadata'] = rg.get_song_meta(state.cur_song_str, state.cur_singer_str)
 		# flags['cur_song_str'] = state.cur_song_str
 		# flags['cur_singer_str'] = state.cur_singer_str
-
 	return flags

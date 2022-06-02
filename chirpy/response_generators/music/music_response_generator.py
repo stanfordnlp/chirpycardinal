@@ -127,7 +127,6 @@ class MusicResponseGenerator(ResponseGenerator):
         def is_instrument(ent):
             return ent and WikiEntityInterface.is_in_entity_group(ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_instrument)
         cur_entity = self.get_current_entity()
-        print(cur_entity)
         entity_linker_results = self.state_manager.current_state.entity_linker
         entities = []
         if cur_entity: entities.append(cur_entity)

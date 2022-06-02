@@ -145,7 +145,7 @@ class GodTreelet(Treelet):
             logger.error(f'We had an NLG error in the supernode {cur_supernode} and subnode {subnode_name}. The problematic string inside the yaml file is "{nlg_response}". Check whether you have decorated the right functions!')
             raise
 
-        print('*sentinel* god treelet response', response)
+        print('*sentinel* god treelet response', response, f'subnode: {subnode_name}')
 
         # post-subnode state updates
         expose_vars = self.get_exposed_subnode_vars(cur_supernode, subnode_name)
@@ -252,6 +252,7 @@ class GodTreelet(Treelet):
             return None
 
         cur_supernode = self.get_next_supernode(conditional_state)
+        print('prompt treelet to {}'.format(cur_supernode))
         if cur_supernode is None or conditional_state is None or cur_supernode == 'exit':
             # next_treelet_str, question = self.get_next_treelet()
             return None
@@ -299,6 +300,7 @@ class GodTreelet(Treelet):
 
         conditional_state.cur_supernode = cur_supernode
         prompt_type = PromptType.NO if text == '' else PromptType.CONTEXTUAL
+        if text == '': print('no prompt')
 
         # YAML processing for prompt treelet leading question
         return PromptResult(text=text, prompt_type=prompt_type, state=state, cur_entity=entity,
