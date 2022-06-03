@@ -1,0 +1,49 @@
+name: categories_handle_answer
+global_state_entry_requirements:
+  - handle_answer: True
+
+prompt_leading_questions: None
+
+required_exposed_variables: None
+
+subnode_state_updates:
+  dont_know:
+    cur_entity: None
+    cur_category_name: state.cur_category_name
+    statement: None
+    question: None
+    just_asked: True
+    priority: ResponsePriority.STRONG_CONTINUE
+  back_channel:
+    cur_entity: rg.get_entity_tracker().history[-2]['prompt'] if 'prompt' in rg.get_entity_tracker().history[-2] else rg.get_entity_tracker().history[-2]['response']
+    cur_category_name: state.cur_category_name
+    statement: None
+    question: None
+    just_asked: True
+    priority: ResponsePriority.STRONG_CONTINUE
+  everything_ans:
+    cur_entity: rg.get_entity_tracker().history[-2]['prompt'] if 'prompt' in rg.get_entity_tracker().history[-2] else rg.get_entity_tracker().history[-2]['response']
+    cur_category_name: state.cur_category_name
+    statement: None
+    question: None
+    just_asked: True
+    priority: ResponsePriority.STRONG_CONTINUE
+  nothing_ans:
+    cur_entity: None
+    cur_category_name: state.cur_category_name
+    statement: None
+    question: None
+    just_asked: True
+    priority: ResponsePriority.STRONG_CONTINUE
+  catch_all_no_fallback:
+    exit_categories: True
+    priority: ResponsePriority.NO
+    handle_answer: False
+  catch_all_with_fallback:
+    cur_entity: rg.get_entity_tracker().history[-2]['prompt'] if 'prompt' in rg.get_entity_tracker().history[-2] else rg.get_entity_tracker().history[-2]['response']
+    priority: ResponsePriority.CAN_START
+
+global_post_supernode_state_updates:
+  needs_prompt: True
+
+  

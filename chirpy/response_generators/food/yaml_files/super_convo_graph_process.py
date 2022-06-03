@@ -203,7 +203,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--path', help='path to folder of supernodes', default='./supernodes')
 parser.add_argument('--intro_node', help='name of supernode to treat as RG entry point', required=True)
 parser.add_argument('--draw_graph', action='store_true')
+parser.add_argument('--ignore_cycles', action='store_true')
 parser.set_defaults(draw_graph=False)
+parser.set_defaults(ignore_cycles=False)
+
 
 args = parser.parse_args()
 
@@ -238,8 +241,8 @@ for i in range(len(nodes)):
 del G['exit ']
 
 is_cylic = cyclic(G)
-if is_cylic:
-	print('ERROR: Treelet/Supernode Graph is cyclic. Fix yaml files. You should always be able to add/split supernodes until the graph is not cyclic.')
+if is_cylic and not args.ignore_cycles:
+	print('ERROR: Treelet/Supernode Graph is cyclic. Fix yaml files. You should try to add/split supernodes until the graph is not cyclic.')
 	print(G)
 	sys.exit(1)
 
@@ -249,14 +252,16 @@ print()
 
 input('Press enter to continue...\n')
 
-paths = find_all_paths(find_all_parents(G, f'{args.intro_node} '), f'{args.intro_node} ', 'exit ')
+if not args.ignore_cycles:
+	# only run path finding if the convo graph is supposed to not have cycles
+	paths = find_all_paths(find_all_parents(G, f'{args.intro_node} '), f'{args.intro_node} ', 'exit ')
 
-print('number of unique convo paths between {} and exit: {}'.format(args.intro_node, len(paths)))
-print('---- List of unique paths --------')
-for p in paths:
-	print(p)
-print('-----------')
-input("Convo Graph checks complete. Press Enter to continue static checker...\n")
+	print('number of unique convo paths between {} and exit: {}'.format(args.intro_node, len(paths)))
+	print('---- List of unique paths --------')
+	for p in paths:
+		print(p)
+	print('-----------')
+	input("Convo Graph checks complete. Press Enter to continue static checker...\n")
 
 draw_graph = args.draw_graph
 if draw_graph:
@@ -266,17 +271,21 @@ if draw_graph:
 		for child in G[key]:
 			temp_G.add_edge(key[:-1], child[:-1])
 
-	hierarchy = list(topological_sort_grouped(temp_G))
+	if args.ignore_cycles:
+		# assume we cannot topological sort
+		nx_G = temp_G
+	else:
+		hierarchy = list(topological_sort_grouped(temp_G))
 
-	nx_G = nx.DiGraph()
-	for i in range(len(hierarchy)):
-		level = hierarchy[i]
-		for node in level:
-			nx_G.add_node(node, level=i+1)
+		nx_G = nx.DiGraph()
+		for i in range(len(hierarchy)):
+			level = hierarchy[i]
+			for node in level:
+				nx_G.add_node(node, level=i+1)
 
-	for key in G:
-		for child in G[key]:
-			nx_G.add_edge(key[:-1], child[:-1])
+		for key in G:
+			for child in G[key]:
+				nx_G.add_edge(key[:-1], child[:-1])
 
 	pos = nx.nx_pydot.graphviz_layout(nx_G, prog="dot")
 	nx.draw(nx_G, pos=pos, with_labels=True, node_size=800, font_weight='bold')

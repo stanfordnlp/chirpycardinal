@@ -11,6 +11,7 @@ from chirpy.response_generators.categories.treelets.introductory_treelet import 
 from chirpy.response_generators.categories.treelets.handle_answer_treelet import HandleAnswerTreelet
 from chirpy.core.entity_linker.entity_linker_simple import get_entity_by_wiki_name
 from chirpy.core.smooth_handoffs import SmoothHandoff
+from chirpy.response_generators.categories.categories import HistoryCategory
 from chirpy.response_generators.categories.categories_helpers import *
 
 logger = logging.getLogger('chirpylogger')

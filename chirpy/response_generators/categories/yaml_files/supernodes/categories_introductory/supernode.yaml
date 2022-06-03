@@ -1,0 +1,37 @@
+name: categories_introductory
+global_state_entry_requirements:
+  - trigger_categories: True
+
+prompt_ranking: 1 # ranking relative to other supernodes' unconditional prompt
+unconditional_prompt_updates:
+  has_question:
+    prompt_type: PromptType.CURRENT_TOPICS
+    answer_type: AnswerType.QUESTION_HANDOFF
+    cur_category_name: state.cur_category_name
+    statement: None
+    question: state.get_first_unasked_question(state.cur_category_name).question
+    just_asked: False
+
+    handle_answer: True # go to handle answer supernode
+  no_question:
+    prompt_type: PromptType.NO
+
+prompt_leading_questions: None
+
+required_exposed_variables: None
+
+subnode_state_updates:
+  has_question:
+    handle_answer: True
+    cur_category_name: state.cur_category_name
+    statement: state.get_first_unasked_question(state.cur_category_name).statement
+    statement: state.get_first_unasked_question(state.cur_category_name).question
+    just_asked: False
+    priority: ResponsePriority.CAN_START if state.cur_category_name == HistoryCategory.__name__ else ResponsePriority.FORCE_START
+  no_question:
+    priority: ResponsePriority.NO
+
+global_post_supernode_state_updates:
+  trigger_categories: False
+
+  
