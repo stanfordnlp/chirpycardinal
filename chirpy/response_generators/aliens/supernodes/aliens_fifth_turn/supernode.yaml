@@ -1,18 +1,17 @@
-name: aliens_first_turn
+name: aliens_fifth_turn
 
 global_state_entry_requirements:
-  - entering_aliens: True
+  - fifth_turn: True
 
 prompt_leading_questions: None
 
 subnode_state_updates:
-  monologue:
+  user_has_opinion:
     answer_type: AnswerType.STATEMENT
-    second_turn: True
-  neutral_monologue:
+    exit_aliens: True
+  user_is_neutral:
     answer_type: AnswerType.STATEMENT
-    second_turn: True
-    priority: ResponsePriority.WEAK_CONTINUE
+    exit_aliens: True
   rejection_response:
     priority: ResponsePriority.STRONG_CONTINUE
     needs_prompt: True
@@ -23,4 +22,4 @@ subnode_state_updates:
     question_handoff: True
 
 global_post_supernode_state_updates:
-  entering_aliens: False
+  fifth_turn: False

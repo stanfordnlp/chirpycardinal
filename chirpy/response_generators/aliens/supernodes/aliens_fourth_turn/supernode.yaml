@@ -1,13 +1,25 @@
 name: aliens_fourth_turn
 
 global_state_entry_requirements:
-  fourth_turn: True
+  - fourth_turn: True
+
+prompt_leading_questions: None
 
 subnode_state_updates:
-  user_has_opinion: None
-  user_is_neutral: None
+  user_has_opinion:
+    answer_type: AnswerType.STATEMENT
+    fifth_turn: True
+  user_is_neutral:
+    answer_type: AnswerType.STATEMENT
+    fifth_turn: True
+  rejection_response:
+    priority: ResponsePriority.STRONG_CONTINUE
+    needs_prompt: True
+    exit_aliens: True
+    answer_type: AnswerType.ENDING
+  handle_question:
+    answer_type: AnswerType.STATEMENT
+    question_handoff: True
 
 global_post_supernode_state_updates:
   fourth_turn: False
-  answer_type: AnswerType.STATEMENT
-  fifth_turn: True

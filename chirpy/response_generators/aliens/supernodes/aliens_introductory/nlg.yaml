@@ -1,7 +1,7 @@
 response:
   - node_name: intro
     required_flags:
-      'entering_aliens': True
+      entering_aliens: True
     response: ""
 unconditional_prompt:
   - case_name: start_aliens

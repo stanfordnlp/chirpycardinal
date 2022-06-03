@@ -62,6 +62,19 @@ def count_with_self_loops(paths, self_loops):
 		cycle_num_paths += (2 ** num_self_loops)
 	return cycle_num_paths
 
+def topological_sort_grouped(G):
+	indegree_map = {v: d for v, d in G.in_degree() if d > 0}
+	zero_indegree = [v for v, d in G.in_degree() if d == 0]
+	while zero_indegree:
+		yield zero_indegree
+		new_zero_indegree = []
+		for v in zero_indegree:
+			for _, child in G.edges(v):
+				indegree_map[child] -= 1
+				if not indegree_map[child]:
+					new_zero_indegree.append(child)
+		zero_indegree = new_zero_indegree
+
 def powerset(s):
 	x = len(s)
 	masks = [1 << i for i in range(x)]
@@ -77,6 +90,7 @@ def check_correct_yaml_format(d, yaml_file):
 
 def check_global_entry_reqs_are_booleans(d):
 	global_reqs = d['global_state_entry_requirements']
+	assert isinstance(global_reqs, list), f"global reqs in supernode {d['name']} must be a list of non-trivial conditions"
 	for entry_reqs in global_reqs:
 		for key in entry_reqs:
 			val = entry_reqs[key]
@@ -246,13 +260,29 @@ input("Convo Graph checks complete. Press Enter to continue static checker...\n"
 
 draw_graph = args.draw_graph
 if draw_graph:
-	nx_G = nx.DiGraph()
+	temp_G = nx.DiGraph()
 	print('Displaying Graph... Make sure to close popup to continue rest of static checks.')
 	for key in G:
 		for child in G[key]:
+			temp_G.add_edge(key[:-1], child[:-1])
+
+	hierarchy = list(topological_sort_grouped(temp_G))
+
+	nx_G = nx.DiGraph()
+	for i in range(len(hierarchy)):
+		level = hierarchy[i]
+		for node in level:
+			nx_G.add_node(node, level=i+1)
+
+	for key in G:
+		for child in G[key]:
 			nx_G.add_edge(key[:-1], child[:-1])
-	nx.draw(nx_G, with_labels = True, node_size=800)
+
+	pos = nx.nx_pydot.graphviz_layout(nx_G, prog="dot")
+	nx.draw(nx_G, pos=pos, with_labels=True, node_size=800, font_weight='bold')
 	plt.show()
+	# nx.draw(nx_G, with_labels = True, node_size=800)
+	# plt.show()
 	# Can i enforce topological ordering
 	# 
 
@@ -326,6 +356,7 @@ for n in nodes:
 	if n.name == 'exit': continue
 	head_path = os.path.dirname(n.path)
 	nlg_path = os.path.join(head_path, 'nlg_helpers.py')
+	if not os.path.exists(nlg_path): continue
 	# run pylint as well
 	try:
 		py_compile.compile(f'{nlg_path}', doraise=True)
