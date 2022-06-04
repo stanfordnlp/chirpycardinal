@@ -21,12 +21,13 @@ In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assist
 
 {: .fs-6 .fw-300 }
 
-## Updates
+## Publications and Media
+* [**ICLR 2022**](https://openreview.net/pdf?id=Vr_BTpw3wz): New research paper on jointly training neural retriever and generator for knowledge-grounded conversations.
 * [**NAACL 2021 and SIGDIAL 2021**](/chirpycardinal/publications): 4 new research papers accepted! 
 * [**Stanford AI Lab Blog**](https://ai.stanford.edu/blog/chirpy-cardinal/): _Inside Chirpy Cardinal: Stanford's Open-Source Social Chatbot that Won 2nd place in the Alexa Prize_
 * [**Stanford HAI**](https://hai.stanford.edu/news/how-create-better-chatbot-conversations): _How to Create Better Chatbot Conversations_
-* [**Forbes**]((https://www.forbes.com/sites/craigsmith/2020/08/04/talking-machines-who-won-this-years-alexa-prize/#a3a73d54c40f)): _Talking Machines: Who Won This Year’s Alexa Prize?_
-* [**Amazon.science**]((https://www.amazon.science/latest-news/amazon-announces-2020-alexa-prize-winner-emory-university)): _"This technology will be transformative in ways we can barely comprehend"_ - includes interviews with faculty advisor Chris Manning, team leads Ashwin Paranjape and Abigail See, and other participants.
+* [**Forbes**](https://www.forbes.com/sites/craigsmith/2020/08/04/talking-machines-who-won-this-years-alexa-prize/#a3a73d54c40f): _Talking Machines: Who Won This Year’s Alexa Prize?_
+* [**Amazon.science**](https://www.amazon.science/latest-news/amazon-announces-2020-alexa-prize-winner-emory-university): _"This technology will be transformative in ways we can barely comprehend"_ - includes interviews with faculty advisor Chris Manning, team leads Ashwin Paranjape and Abigail See, and other participants.
 * [**Let's Talk AI Podcast**](https://aitalk.podbean.com/e/interview-alexa-prize/): Abi and Ashwin discuss their experience of the Alexa Prize, lessons learned, and future paths.
 
 ---
