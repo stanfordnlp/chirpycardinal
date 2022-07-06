@@ -1,50 +1,52 @@
 response:
   - node_name: no_entity
-    required_flags:
+    entry_conditions:
       no_entity: True
     response: ''
-    expose_vars:
-      entity: None
-      neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+    needs_prompt: True
+    state_updates:
+      no_entity: True
+      exit_food: True
+    
   - node_name: food_type_comment
-    required_flags:
+    entry_conditions:
       food_type_comment: True
-    response: '{intro_response(rg)}'
-    expose_vars:
-      entity: rg.get_current_entity()
-      neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+    response: '{intro_response()}'
+    state_updates:
+      food_type_exists: True
+    
   - node_name: custom_comment_exists
-    required_flags:
+    entry_conditions:
       custom_comment_exists: True
-    response: "{intro_response(rg)} {get_custom_comment(rg.get_current_entity().name.lower())}"
-    expose_vars:
-      entity: rg.get_current_entity()
-      neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+    response: "{intro_response()} {get_custom_comment(rg.get_current_entity().name.lower())}"
+    set_state:
+      open_ended: True
+    
   - node_name: best_attribute_ingredient
-    required_flags:
+    entry_conditions:
       best_attribute_ingredient: True
-    response: "{intro_response(rg)} {ingredient_attribute(rg, rg.get_current_entity().name.lower())}"
-    expose_vars:
-      entity: rg.get_current_entity()
-      neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+    response: "{intro_response()} {ingredient_attribute(rg, rg.get_current_entity().name.lower())}"
+    set_state:
+      open_ended: True
+
   - node_name: best_attribute_texture
-    required_flags:
+    entry_conditions:
       best_attribute_texture: True
-    response: "{intro_response(rg)} {texture_attribute(rg, rg.get_current_entity().name.lower())}"
-    expose_vars:
-      entity: rg.get_current_entity()
-      neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+    response: "{intro_response()} {texture_attribute(rg, rg.get_current_entity().name.lower())}"
+    set_state:
+      open_ended: True
+
   - node_name: is_ingredient
-    required_flags:
+    entry_conditions:
       is_ingredient: True
-    response: "{intro_response(rg)} {food_is_ingr_response(rg, rg.get_current_entity().name.lower())}"
-    expose_vars:
-      entity: rg.get_current_entity()
-      neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+    response: "{intro_response()} {food_is_ingr_response(rg, rg.get_current_entity().name.lower())}"
+    set_state:
+      open_ended: True
+
   - node_name: catch_all
-    required_flags:
+    entry_conditions:
       catch_all: True
-    response: "{intro_response(rg)} {rg.get_neural_response(prefix=f'I especially love how {get_pronoun(rg)}')}"
-    expose_vars:
-      entity: rg.get_current_entity()
-      neural_chat_state: rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', None)
+    response: "{intro_response()} {rg.get_neural_response(prefix=f'I especially love how {get_pronoun(rg)}')}"
+    set_state:
+      open_ended: True
+

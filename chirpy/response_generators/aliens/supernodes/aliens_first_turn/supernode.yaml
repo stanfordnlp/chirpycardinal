@@ -1,9 +1,9 @@
 name: aliens_first_turn
 
-global_state_entry_requirements:
+requirements:
   - entering_aliens: True
 
-prompt_leading_questions: None
+prompt: None
 
 subnode_state_updates:
   monologue:

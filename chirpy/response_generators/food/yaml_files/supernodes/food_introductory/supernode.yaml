@@ -1,20 +1,14 @@
 name: food_introductory
-# define global coarse-grained treelet entry requirements here
-# (for ALL convo entering this treelet)
-global_state_entry_requirements:
+
+# Requirements to enter this supernode.
+requirements:
   - entry_entity_is_food: False
     cur_entity_known_food: True
     exit_food: False
   - acknowledge_fav_food: True
     exit_food: False
-# define the convo-path relevant state updates made by each subnode
-# each subnode MUST define a prompt_treelet
-prompt_leading_questions: None
 
-required_exposed_variables:
-  # variables that must be defined & exposed in nlg.yaml
-  - entity
-  - neural_chat_state
+prompt: None
 
 subnode_state_updates:
   no_entity:
@@ -34,7 +28,13 @@ subnode_state_updates:
     open_ended: True
 
 global_post_supernode_state_updates:
-  cur_food: entity # must be explicitly exposed by nlg.yaml!
+  cur_food: rg.get_current_entity()
   cur_entity_known_food: False
   acknowledge_fav_food: False
-  priority: ResponsePriority.FORCE_START if neural_chat_state is not None and getattr(neural_chat_state, 'next_treelet', None) else priority
+  priority: ResponsePriority.FORCE_START if getattr(rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', {}), 'next_treelet', None) else priority
+
+# these are just for typechecking...
+  # required_exposed_variables:
+  #   # variables that must be defined & exposed in nlg.yaml
+  #   - entity
+  #   - neural_chat_state

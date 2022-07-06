@@ -1,18 +1,18 @@
 response:
   - node_name: has_question
-    required_flags:
+    entry_conditions:
       has_q: True
     response: "{best_acknow(rg)} {get_question_str(state.get_first_category_response(state.cur_category_name, rg.state_manager))}"
   - node_name: no_question
-    required_flags:
+    entry_conditions:
       has_q: False
     response: ""
 unconditional_prompt:
   - case_name: has_question
-    required_flags:
+    entry_conditions:
       has_question: True
     prompt: "{choose_random_bridge()} {state.get_first_unasked_question(category_name).question}"
   - case_name: no_question
-    required_flags:
+    entry_conditions:
       has_question: False 
     prompt: ""

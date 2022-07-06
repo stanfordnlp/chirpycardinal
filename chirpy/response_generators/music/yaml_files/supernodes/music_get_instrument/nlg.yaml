@@ -1,26 +1,26 @@
 response:
   - node_name: instr_exists_with_til
-    required_flags:
+    entry_conditions:
       instr_exists_with_til: True
     response: "The {rg.get_instrument_entity().name} is a really fascinating instrument! {get_til_response(get_til_title_helper(rg.get_instrument_entity().name))}"
   - node_name: instr_exists_wo_til
-    required_flags:
+    entry_conditions:
       instr_exists_wo_til: True
     response: "The {rg.get_instrument_entity().name} is a really fascinating instrument! I wish I can learn to play it one day."
   - node_name: no_fav_instrument
-    required_flags:
+    entry_conditions:
       no_fav_instrument: True
     response: "It's alright, I think most people don't have a favorite instrument either. Maybe we can discuss another topic."
   - node_name: catch_all
-    required_flags:
+    entry_conditions:
       catch_all: True
     response: "I don't seem to recognize that instrument, maybe I need to go back to music class. Let's talk about something else then."
 unconditional_prompt:
   - case_name: til_prompt
-    required_flags:
+    entry_conditions:
       'use_til': True
     prompt: "It's interesting that you mentioned the {rg.get_instrument_entity().name}. {get_til_response(get_til_title_helper(rg.get_instrument_entity().name))}"
   - case_name: generic_prompt
-    required_flags:
+    entry_conditions:
       'generic': True
     prompt: "It's interesting that you mentioned the {rg.get_instrument_entity().name}. I wish I can learn to play it one day."

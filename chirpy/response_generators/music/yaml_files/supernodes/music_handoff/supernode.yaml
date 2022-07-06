@@ -1,9 +1,9 @@
 name: music_handoff
-global_state_entry_requirements:
+requirements:
   - go_to_handoff: True
     exit_music_rg: False
 
-prompt_leading_questions:
+prompt:
   - required: None
     prompt: ''
 

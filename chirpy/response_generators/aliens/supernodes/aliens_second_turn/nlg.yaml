@@ -1,6 +1,6 @@
 response:
   - node_name: user_said_yes
-    required_flags:
+    entry_conditions:
       user_said_yes: True
     response: >-
       Exactly! There are so many strange and fantastic planets scattered across the Milky Way Galaxy, over a hundred billion 
@@ -8,7 +8,7 @@ response:
       Perhaps there is life there, but why haven’t we heard anything from them? Can it really be that we are so 
       alone in the universe?
   - node_name: user_is_neutral
-    required_flags:
+    entry_conditions:
       user_said_yes: False
     response: >-
       Well, please let me know if this is boring to you, but there are so many strange 
@@ -17,7 +17,7 @@ response:
       Perhaps there is life there, but why haven’t we heard anything from them? Can it really be that we are so 
       alone in the universe?
   - node_name: handle_question
-    required_flags:
+    entry_conditions:
       handle_q: True
     response: >-
       That's an interesting question. I’m not so sure. But I think it’s important to keep asking questions, 
@@ -25,6 +25,6 @@ response:
       I really like what Einstein said: 'The important thing is not to stop questioning. 
       Curiosity has its own reason for existing.
   - node_name: rejection_response
-    required_flags:
+    entry_conditions:
       user_not_interested: True
     response: Sure, thanks for letting me share my thoughts on this. You're such a great listener! {rg.state_manager.current_state.choose_least_repetitive([ "Let's move on to something else then.", "Let's talk about something else.", "We can talk about something else." ])}

@@ -1,12 +1,12 @@
 name: open_ended_user_comment
 # define global coarse-grained treelet entry requirements here
 # (for ALL convo entering this treelet)
-global_state_entry_requirements:
+requirements:
   - open_ended: True
     exit_food: False
 # define the convo-path relevant state updates made by each subnode
 # each subnode MUST define a prompt_treelet
-prompt_leading_questions:
+prompt:
   call_method: get_prompt_for_open_ended
 
 required_exposed_variables:

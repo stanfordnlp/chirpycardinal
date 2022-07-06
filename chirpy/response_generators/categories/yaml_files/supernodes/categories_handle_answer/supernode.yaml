@@ -1,8 +1,8 @@
 name: categories_handle_answer
-global_state_entry_requirements:
+requirements:
   - handle_answer: True
 
-prompt_leading_questions: None
+prompt: None
 
 required_exposed_variables: None
 

@@ -71,7 +71,7 @@ name: food_introductory
 ##### Supernode Entry Requirements
 We also need to specify the entry requirements for this supernode; in other words, what state must the current conversation have to enter this supernode? This should be specified as a list of valid entry conditions, which **must be static boolean flags**; for example:
 ```yaml
-global_state_entry_requirements:
+requirements:
   - entry_entity_is_food: False
     cur_entity_known_food: True
     exit_food: False
@@ -84,7 +84,7 @@ The above defines two sets of entry conditions to the food introductory supernod
 
 Suppose the conversation is currently in supernode A. As conversational logic is processed, it is determined that following the current turn, the conversation will proceed to supernode B. Chirpy will then return the response `{Supernode A's response} {Prompt leading to supernode B}`. This ensures smooth transitions between supernodes. However, Chirpy needs to know the appropriate prompt to supernode B, even though control is still with supernode A. Hence, supernode B will need to define something that looks like the following:
 ```yaml
-prompt_leading_questions:
+prompt:
   - required:
       just_was_in_A: True
     prompt: 'Are you ready to talk about supernode B?!?'
@@ -94,13 +94,13 @@ prompt_leading_questions:
 ```
 The above is somewhat contrived, but specifies that B will give the prompt `Are you ready to talk about supernode B?!?` that will be tacked on to A's response, before control fully passes to B. The following are also possible if no prompt is ever required, or we should unconditionally return a prompt, or we want to fall back on python to return the appropriate prompt:
 ```yaml
-prompt_leading_questions: None
+prompt: None
 #########
-prompt_leading_questions:
+prompt:
   - required: None
     prompt: 'Are you ready to talk about food?'
 #########
-prompt_leading_questions:
+prompt:
   call_method: get_prompt_for_fav_food_type # method must be decorated - see NLG section
 ```
 
@@ -158,14 +158,14 @@ The logic here is similar to how NLU was done previously to intra-rg standardiza
 
 Based on the flags set in the previous section, we need to define the subnodes that actually perform the response generation. Again, we want to separate NLG from NLU, which is the reason we structure it this way. `nlg.yaml` will be a list of subnodes that define all possible response generations of this supernode, and each subnode possesses the following fields:
 - `node_name` - the name of the subnode
-- `required_flags` - a dictionary specifying the required flags (set by `nlu.py`) needed to enter this subnode
+- `entry_conditions` - a dictionary specifying the required flags (set by `nlu.py`) needed to enter this subnode
 - `response` - the actual response given by this subnode. Should be formatted like a python f-string. **The f-string will have access to the variables `rg`, `state`, and all properly decorated methods of the supernode (see the next section). The f-string will not be allowed to execute arbitrary python code.**
 - `expose_vars` - dynamically define variables to be exposed to supernode.yaml for post-node state updates. Also has access to `rg`, `state`, and decorated methods, but no more.
 
 This is best illustrated by an example:
 ```yaml
 - node_name: custom_dont_know
-  required_flags: # set in nlu.py
+  entry_conditions: # set in nlu.py
     has_custom_food: True
     dont_know: True
   response: "No worries, it can be difficult to pick just one! Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
@@ -204,7 +204,7 @@ Notice how we have added the decorator `@nlg_helper` to each method, allowing th
 We've described a lot of rules and regulations to use the intra-RG scaffolding properly! To make it easier to follow the rules, we've built a kind of compile/static-time checker that makes a **best-effort** attempt to enforce the rules. Some of the things the checker verifies (not a comprehensive list):
 - The correct folder structure
 - The correct syntax for all yaml files
-- global_state_entry_requirements in `supernode.yaml` defines only static boolean expressions
+- requirements in `supernode.yaml` defines only static boolean expressions
 - `nlu.py` declares a `nlu_processing` method with the correct signature
 - There is a reasonable path through the conversational graph, and there are no cycles (you should always be able to define additional supernodes to remove cycles). It also lists & counts possible conversational paths, and visualizes the graph. **Make sure that this graph looks good - if you start running the RG and the conversation gets stuck in a cycle or makes an illegal transition, you should've caught it here**.
 - Provides a list of variables that must be declared in the RG's `state.py` file

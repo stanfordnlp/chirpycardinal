@@ -1,9 +1,9 @@
 name: music_ask_singer_respond_til
-global_state_entry_requirements:
+requirements:
   - music_ask_singer_respond_til: True
     exit_music_rg: False
 
-prompt_leading_questions:
+prompt:
   - required: None
     prompt: ''
 

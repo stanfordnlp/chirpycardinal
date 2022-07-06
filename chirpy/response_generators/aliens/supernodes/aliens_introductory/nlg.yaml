@@ -1,14 +1,14 @@
 response:
   - node_name: intro
-    required_flags:
+    entry_conditions:
       entering_aliens: True
     response: ""
 unconditional_prompt:
   - case_name: start_aliens
-    required_flags:
+    entry_conditions:
       discuss_aliens: True
     prompt: "Hey, so lately I've been thinking a lot about something that might be considered pretty nerdy. Would you like to hear about it?"
   - case_name: dont_start_aliens
-    required_flags:
+    entry_conditions:
       already_discussed_aliens: True
     prompt: ""

@@ -1,6 +1,6 @@
 name: music_get_song
 trigger_response: None
-global_state_entry_requirements:
+requirements:
   - start_discussing_music: True
     exit_music_rg: False
   - continue_after_instrument: True
@@ -27,7 +27,7 @@ unconditional_prompt_updates:
     cur_song_ent: state.cur_song_ent
     cur_singer_str: state.cur_singer_str
 
-prompt_leading_questions:
+prompt:
   - required:
       start_discussing_music: True
     prompt: 'What is a song you love listening to?'

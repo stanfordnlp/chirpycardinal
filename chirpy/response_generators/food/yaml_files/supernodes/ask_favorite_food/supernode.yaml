@@ -1,11 +1,11 @@
 name: ask_favorite_food
 # define global coarse-grained treelet entry requirements here
 # (for ALL convo entering this treelet)
-global_state_entry_requirements:
+requirements:
   - entry_entity_is_food: True
 # define the convo-path relevant state updates made by each subnode
 # each subnode MUST define a prompt_treelet
-prompt_leading_questions: None
+prompt: None
 
 subnode_state_updates:
   ask_food:

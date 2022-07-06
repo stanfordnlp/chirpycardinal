@@ -1,5 +1,5 @@
 response:
   - node_name: ask_food
-    required_flags:
+    entry_conditions:
       unconditional: True
     response: "Sure! What's your favorite food?"

@@ -115,6 +115,24 @@ def nlg_helper(func):
         raise KeyError(f'Duplicate function name {func.__name__} found in cache for {supernode_name}')
     global_nlg_helpers_cache[supernode_name][func.__name__] = func
     return func
+    
+def nlg_helper_augmented(func):
+    supernode_path = inspect.getfile(func)# get path to current rg+supernode, i.e. "MUSIC/music_ask_song"
+    components = supernode_path.split('/')
+    ind = -1
+    for i in range(len(components)):
+        if components[i] == 'supernodes':
+            ind = i
+            break
+    supernode_name = components[ind+1]
+    if func.__name__ in global_nlg_helpers_cache[supernode_name]:
+        raise KeyError(f'Duplicate function name {func.__name__} found in cache for {supernode_name}')
+        
+    def modified_func(*args, **kwargs):
+        print("calling modified_func with", args, kwargs, "globals are", globals().keys(), "locals are", locals().keys())
+        return func(*args, **kwargs)
+    global_nlg_helpers_cache[supernode_name][func.__name__] = modified_func
+    return func
 
 def get_context_for_supernode(supernode):
     # context = GLOBAL_CONTEXT -- do this once we have actual global context

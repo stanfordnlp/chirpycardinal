@@ -1,18 +1,18 @@
 response:
   - node_name: thats
-    required_flags:
+    entry_conditions:
       thats: True
     response: "{get_thats_response()} {get_factoid_concluding_statement(state.cur_food.talkable_name)}"
     expose_vars:
       cur_food: state.cur_food.name
   - node_name: didnt_know
-    required_flags:
+    entry_conditions:
       didnt_know: True
     response: "{get_didnt_know_response()} {get_factoid_concluding_statement(state.cur_food.talkable_name)}"
     expose_vars:
       cur_food: state.cur_food.name
   - node_name: catch_all
-    required_flags:
+    entry_conditions:
       agree_with_user: True
     response: "{get_neural_agreement(rg)} {get_factoid_concluding_statement(state.cur_food.talkable_name)}"
     expose_vars:

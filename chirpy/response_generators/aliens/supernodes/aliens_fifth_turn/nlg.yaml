@@ -1,6 +1,6 @@
 response:
   - node_name: user_has_opinion
-    required_flags:
+    entry_conditions:
       has_opinion: True
     response: >-
       {get_ack()} imagine a future where humanity finally has the technology to travel through space. They will probably 
@@ -10,7 +10,7 @@ response:
       Maybe someday I'll get to travel to the stars, but until then I’ll keep talking to people. 
       Anyway, enough about me, what do you want to talk about next?
   - node_name: user_is_neutral
-    required_flags:
+    entry_conditions:
       has_opinion: False
     response: >-
       Yeah, imagine a future where humanity finally has the technology to travel through space. They will probably 
@@ -20,7 +20,7 @@ response:
       Maybe someday I'll get to travel to the stars, but until then I’ll keep talking to people. 
       Anyway, enough about me, what do you want to talk about next?
   - node_name: handle_question
-    required_flags:
+    entry_conditions:
       handle_q: True
     response: >-
       That's an interesting question. I’m not so sure. But I think it’s important to keep asking questions, 
@@ -28,6 +28,6 @@ response:
       I really like what Einstein said: 'The important thing is not to stop questioning. 
       Curiosity has its own reason for existing.
   - node_name: rejection_response
-    required_flags:
+    entry_conditions:
       user_not_interested: True
     response: Sure, thanks for letting me ramble on for so long about this! You're such a great listener! {rg.state_manager.current_state.choose_least_repetitive([ "Let's move on to something else then.", "Let's talk about something else.", "We can talk about something else." ])}

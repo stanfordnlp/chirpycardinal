@@ -15,7 +15,9 @@ from chirpy.core.response_generator.response_type import ResponseType
 logger = logging.getLogger('chirpylogger')
 
 def effify(non_f_str: str, global_context: dict):
-    return eval(f'f"""{non_f_str}"""', global_context)
+    logger.primary_info(f"Outside eval, global_context is {str(global_context.keys())}, non f str is {non_f_str}")
+    return eval(f'f"""{non_f_str}"""', global_context, global_context)
+    # return eval(f'print("Right inside, globals() are", globals().keys(), "locals() are", locals().keys()) or f"""{non_f_str}"""', global_context, global_context)
 
 class GodTreelet(Treelet):
     def __init__(self, rg, rg_folder_name):
@@ -25,7 +27,11 @@ class GodTreelet(Treelet):
 
         self.state_module = import_module(f'chirpy.response_generators.{rg_folder_name}.state')
 
-        supernodes = glob.glob(f'../**/response_generators/{rg_folder_name}/**/supernode.yaml', recursive=True)
+        #print("listdir", os.listdir())
+        supernodes_path = f'chirpy/response_generators/{rg_folder_name}/yaml_files/supernodes/*/supernode.yaml'
+        print("supernodes_path", supernodes_path)
+        supernodes = glob.glob(supernodes_path, recursive=True)
+        print("Supernodes", supernodes)
         self.supernode_content = {}
         self.supernode_files = []
         for s in supernodes:
@@ -58,7 +64,7 @@ class GodTreelet(Treelet):
         matching_supernodes = []
         for name in self.supernode_content:
             d = self.supernode_content[name]
-            entry_reqs = d['global_state_entry_requirements']
+            entry_reqs = d['requirements']
             for req_dict in entry_reqs:
                 matches_entry_criteria = True
                 for key in req_dict:
@@ -76,7 +82,7 @@ class GodTreelet(Treelet):
     def get_subnode(self, flags, supernode):
         subnode_nlgs = self.nlg_yamls[supernode]
         for nlg in subnode_nlgs['response']:
-            requirements = nlg['required_flags']
+            requirements = nlg['entry_conditions']
             matches_entry_criteria = True
             for key in requirements:
                 if flags[key] != requirements[key]:
@@ -89,7 +95,7 @@ class GodTreelet(Treelet):
 
     def get_unconditional_prompt_text(self, flags, supernode):
         for cases in self.nlg_yamls[supernode]['unconditional_prompt']:
-            requirements = cases['required_flags']
+            requirements = cases['entry_conditions']
             matches_entry_criteria = True
             for key in requirements:
                 if flags[key] != requirements[key]:
@@ -155,7 +161,20 @@ class GodTreelet(Treelet):
                 exposed_context[key] = eval(expose_vars[key], context)
 
         context.update(exposed_context)
-        subnode_state_updates = self.supernode_content[cur_supernode]['subnode_state_updates'][subnode_name]
+        # TODO fix
+        if 'subnode_state_updates' in self.supernode_content[cur_supernode]:
+            subnode_state_updates = self.supernode_content[cur_supernode]['subnode_state_updates'][subnode_name]
+        else:
+            subnode_nlgs = self.nlg_yamls[supernode]
+            for nlg in subnode_nlgs['response']:
+                if nlg['node_name'] == subnode_name:
+                    if 'set_state' in nlg:
+                        subnode_state_updates = nlg['set_state']
+                else:
+                    assert False
+            else:
+                assert False
+            
         if subnode_state_updates == 'None': subnode_state_updates = {}
         global_post_state_updates = self.supernode_content[cur_supernode]['global_post_supernode_state_updates']
         if global_post_state_updates == 'None': global_post_state_updates = {}
@@ -259,11 +278,11 @@ class GodTreelet(Treelet):
 
         function_cache = get_context_for_supernode(cur_supernode)
 
-        prompt_leading_questions = self.supernode_content[cur_supernode]['prompt_leading_questions']
-        if prompt_leading_questions == 'None':
-            prompt_leading_questions = []
-        elif 'call_method' in prompt_leading_questions:
-            method_name = prompt_leading_questions['call_method']
+        prompt = self.supernode_content[cur_supernode]['prompt']
+        if prompt == 'None':
+            prompt = []
+        elif 'call_method' in prompt:
+            method_name = prompt['call_method']
             if method_name not in function_cache:
                 logger.error(f"Function {method_name} declared in yaml file not defined in function cache")
                 raise KeyError(f'NLG helpers function cache error {method_name}')
@@ -272,11 +291,11 @@ class GodTreelet(Treelet):
             return func(self.rg, conditional_state)
 
         prompt_texts = []
-        for i in range(len(prompt_leading_questions)):
-            case = prompt_leading_questions[i]
+        for i in range(len(prompt)):
+            case = prompt[i]
             requirements = case['required']
             if requirements == 'None': requirements = {}
-            assert isinstance(requirements, dict), f"requirements in prompt_leading_questions (supernode {cur_supernode}) needs to define a dict or None"
+            assert isinstance(requirements, dict), f"requirements in prompt (supernode {cur_supernode}) needs to define a dict or None"
             matches_entry_criteria = True
             for key in requirements:
                 if conditional_state.__dict__[key] != requirements[key]:

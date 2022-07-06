@@ -1,5 +1,5 @@
 name: music_get_instrument
-global_state_entry_requirements:
+requirements:
   - start_discussing_music: True
     exit_music_rg: False
 
@@ -15,7 +15,7 @@ unconditional_prompt_updates:
     continue_after_instrument: True
     have_prompted: True
 
-prompt_leading_questions:
+prompt:
   - required: None
     prompt: 'There are so many instruments in the world. What is your favorite one?'
 

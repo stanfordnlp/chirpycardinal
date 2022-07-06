@@ -1,5 +1,5 @@
 name: categories_introductory
-global_state_entry_requirements:
+requirements:
   - trigger_categories: True
 
 prompt_ranking: 1 # ranking relative to other supernodes' unconditional prompt
@@ -16,7 +16,7 @@ unconditional_prompt_updates:
   no_question:
     prompt_type: PromptType.NO
 
-prompt_leading_questions: None
+prompt: None
 
 required_exposed_variables: None
 

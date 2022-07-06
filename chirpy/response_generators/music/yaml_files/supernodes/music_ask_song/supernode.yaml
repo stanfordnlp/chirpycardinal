@@ -1,9 +1,9 @@
 name: music_ask_song
-global_state_entry_requirements:
+requirements:
   - ask_user_about_specific_song: True
     exit_music_rg: False
 
-prompt_leading_questions:
+prompt:
   - required: None
     prompt: ''
 

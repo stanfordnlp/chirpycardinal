@@ -1,11 +1,13 @@
 from chirpy.response_generators.food.food_helpers import get_intro_acknowledgement, sample_food_containing_ingredient, get_attribute
-from chirpy.core.response_generator import nlg_helper
+from chirpy.core.response_generator import nlg_helper, nlg_helper_augmented
 
 import inflect
 engine = inflect.engine()
 
-@nlg_helper
-def intro_response(rg):
+@nlg_helper_augmented
+def intro_response():
+    print("Inside eval, globals are", globals().keys())
+    rg = globals()['rg']
     entity = rg.get_current_entity()
     cur_talkable_food = entity.talkable_name
 

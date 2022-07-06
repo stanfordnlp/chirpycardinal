@@ -63,7 +63,7 @@ class TreeletNode:
 			self.trigger_response = d['trigger_response']
 			self.all_possible_entry = []
 			self.all_possible_exit_states = []
-			global_entry_requirements = d['global_state_entry_requirements']
+			global_entry_requirements = d['requirements']
 			for e in global_entry_requirements:
 				have_added_e = False
 				for case in d['nlu']:

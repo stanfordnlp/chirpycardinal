@@ -1,6 +1,6 @@
 response:
   - node_name: intro
-    required_flags:
+    entry_conditions:
       'intro': True
     response: >-
       {choose_random(
@@ -8,12 +8,12 @@ response:
       "There's so much music here in the cloud and I'm curious to know what you think about it.")}
 unconditional_prompt:
   - case_name: contextual_prompt
-    required_flags:
+    entry_conditions:
       'have_prompted': False
       'user_mentioned_music': True
     prompt: "I love how you mentioned music! I've been listening to a lot of new songs lately, and I'd love to hear what you think."
   - case_name: generic_prompt
-    required_flags:
+    entry_conditions:
       'have_prompted': False 
       'generic_prompt': True
     prompt: "By the way, I've been listening to a lot of new songs lately, and I'd love to hear what you think."

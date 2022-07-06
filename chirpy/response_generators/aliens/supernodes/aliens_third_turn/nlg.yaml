@@ -1,6 +1,6 @@
 response:
   - node_name: user_has_opinion
-    required_flags:
+    entry_conditions:
       has_opinion: True
     response: >-
       {get_ack()} Some say that if there was intelligent life out there, 
@@ -10,7 +10,7 @@ response:
       which hypothesizes that there exists a barrier preventing civilizations developing further and traversing the galaxy. 
       For example, a civilization might run out of resources or encounter a planet-destroying asteroid. Isn't that intriguing?
   - node_name: user_is_neutral
-    required_flags:
+    entry_conditions:
       has_opinion: False
     response: >-
       Right, some say that if there was intelligent life out there, 
@@ -20,7 +20,7 @@ response:
       which hypothesizes that there exists a barrier preventing civilizations developing further and traversing the galaxy. 
       For example, a civilization might run out of resources or encounter a planet-destroying asteroid. Isn't that intriguing?
   - node_name: handle_question
-    required_flags:
+    entry_conditions:
       handle_q: True
     response: >-
       That's an interesting question. I’m not so sure. But I think it’s important to keep asking questions, 
@@ -28,7 +28,7 @@ response:
       I really like what Einstein said: 'The important thing is not to stop questioning. 
       Curiosity has its own reason for existing.
   - node_name: rejection_response
-    required_flags:
+    entry_conditions:
       user_not_interested: True
     response: Sure, thanks for letting me talk so much about this! You're such a great listener! {rg.state_manager.current_state.choose_least_repetitive([ "Let's move on to something else then.", "Let's talk about something else.", "We can talk about something else." ])}
       

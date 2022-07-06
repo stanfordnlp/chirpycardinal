@@ -40,7 +40,7 @@ class RemoteNonPersistentAgent(LocalAgent):
         self.last_state_creation_time = last_state_creation_time
 
 def lambda_handler():
-    test_script = [""]
+    test_script = ["", "em", "i like potatoes"]
     local_agent = RemoteNonPersistentAgent('a', 'b', False, 0)
     user_input = ""
     while user_input != "bye":

@@ -1,9 +1,9 @@
 name: music_response_to_song
-global_state_entry_requirements:
+requirements:
   - user_has_song_opinion: True
     exit_music_rg: False
 
-prompt_leading_questions:
+prompt:
   - required: None
     prompt: ''
 

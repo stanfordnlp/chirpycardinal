@@ -67,7 +67,7 @@ class GodTreelet(Treelet):
     	# DONT actually do it like this! Randomize next state selection!!
         for name in self.supernode_content:
             d = self.supernode_content[name]
-            entry_reqs = d['global_state_entry_requirements']
+            entry_reqs = d['requirements']
             for req_dict in entry_reqs:
                 matches_entry_criteria = True
                 for key in req_dict:
@@ -81,7 +81,7 @@ class GodTreelet(Treelet):
     def get_subnode(self, flags, supernode):
         subnode_nlgs = self.nlg_yamls[supernode]
         for nlg in subnode_nlgs:
-            requirements = nlg['required_flags']
+            requirements = nlg['entry_conditions']
             matches_entry_criteria = True
             for key in requirements:
                 if flags[key] != requirements[key]:
@@ -148,10 +148,10 @@ class GodTreelet(Treelet):
             return PromptResult(text=prompt_text, prompt_type=prompt_type, state=state, cur_entity=None,
                                 conditional_state=conditional_state)
 
-        prompt_leading_questions = self.supernode_content[cur_supernode]['prompt_leading_questions']
+        prompt = self.supernode_content[cur_supernode]['prompt']
         prompt_text = ''
-        for i in range(len(prompt_leading_questions)):
-            case = prompt_leading_questions[i]
+        for i in range(len(prompt)):
+            case = prompt[i]
             requirements = case['required']
             matches_entry_criteria = True
             for key in requirements:

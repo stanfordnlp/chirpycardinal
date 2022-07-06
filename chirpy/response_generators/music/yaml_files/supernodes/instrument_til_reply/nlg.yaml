@@ -1,18 +1,18 @@
 response:
   - node_name: 'thats_cool'
-    required_flags:
+    entry_conditions:
       thats: True
     response: >-
       {rg.state_manager.current_state.choose_least_repetitive(get_responses_to_thats())} 
       {wish_I_could_play_instr(rg)}
   - node_name: 'didnt_know'
-    required_flags:
+    entry_conditions:
       did_not_know: True
     response: >-
       {rg.state_manager.current_state.choose_least_repetitive(get_responses_to_didnt_know())} 
       {wish_I_could_play_instr(rg)}
   - node_name: 'catch_all'
-    required_flags:
+    entry_conditions:
       catch_all: True
     response: >-
       {wish_I_could_play_instr(rg)}

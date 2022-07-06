@@ -1,48 +1,48 @@
 response:
   - node_name: thats
-    required_flags:
+    entry_conditions:
       thats: True
     response: >-
       {thats_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: didnt_know
-    required_flags:
+    entry_conditions:
       didnt_know: True
     response: >-
       {didnt_know_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: answered_no
-    required_flags:
+    entry_conditions:
       answered_no: True
     response: >-
       {no_response(rg)}
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: answered_yes
-    required_flags:
+    entry_conditions:
       answered_yes: True
     response: >-
       {yes_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: questioned
-    required_flags:
+    entry_conditions:
       questioned: True
     response: >-
       {question_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: opinion
-    required_flags:
+    entry_conditions:
       opinion: True
     response: >-
       {opinion_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: just_used_til_only
-    required_flags:
+    entry_conditions:
       til_only: True
     response: >-
       {til_only_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
   - node_name: catch_all
-    required_flags:
+    entry_conditions:
       thats: False
       didnt_know: False
       answered_no: False

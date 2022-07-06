@@ -1,9 +1,9 @@
 name: aliens_fourth_turn
 
-global_state_entry_requirements:
+requirements:
   - fourth_turn: True
 
-prompt_leading_questions: None
+prompt: None
 
 subnode_state_updates:
   user_has_opinion:

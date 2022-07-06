@@ -83,30 +83,30 @@ def powerset(s):
 
 def check_correct_yaml_format(d, yaml_file):
 	assert 'name' in d, f'{yaml_file} needs to define a name field'
-	assert 'global_state_entry_requirements' in d, f'{yaml_file} needs to define a global_state_entry_requirements field'
+	assert 'requirements' in d, f'{yaml_file} needs to define a requirements field'
 	assert 'subnode_state_updates' in d, f'{yaml_file} needs to define a subnode_state_updates field'
-	assert 'prompt_leading_questions' in d, f'{yaml_file} needs to define a prompt_leading_questions field'
+	assert 'prompt' in d, f'{yaml_file} needs to define a prompt field'
 	# assert 'required_exposed_variables' in d, f'{yaml_file} needs to define a required_exposed_variables field'
 
 def check_global_entry_reqs_are_booleans(d):
-	global_reqs = d['global_state_entry_requirements']
+	global_reqs = d['requirements']
 	assert isinstance(global_reqs, list), f"global reqs in supernode {d['name']} must be a list of non-trivial conditions"
 	for entry_reqs in global_reqs:
 		for key in entry_reqs:
 			val = entry_reqs[key]
 			assert type(val) == type(True), f"key,val pair {key},{val} in {d['name']}'s global entry reqs needs to be boolean flags"
 
-def check_prompt_leading_questions_reqs_are_booleans(d):
-	prompt_leading_questions = d['prompt_leading_questions']
-	if prompt_leading_questions == 'None' or 'call_method' in prompt_leading_questions:
+def check_prompt_reqs_are_booleans(d):
+	prompt = d['prompt']
+	if prompt == 'None' or 'call_method' in prompt:
 		return
-	for case in prompt_leading_questions:
+	for case in prompt:
 		assert 'required' in case
 		assert 'prompt' in case
 		cases = {} if case['required'] == 'None' else case['required']
 		for key in cases:
 			val = cases[key]
-			assert type(val) == type(True), f"key,val pair {key},{val} in {d['name']}'s prompt_leading_questions reqs needs to be boolean flags"
+			assert type(val) == type(True), f"key,val pair {key},{val} in {d['name']}'s prompt reqs needs to be boolean flags"
 
 def check_unconditional_prompt(d):
 	assert ('prompt_ranking' in d and 'unconditional_prompt_updates' in d) \
@@ -135,7 +135,7 @@ class TreeletNode:
 			# --- Formatting checks -----
 			check_correct_yaml_format(d, yaml_file)
 			check_global_entry_reqs_are_booleans(d)
-			check_prompt_leading_questions_reqs_are_booleans(d)
+			check_prompt_reqs_are_booleans(d)
 			self.has_unconditional_prompt = check_unconditional_prompt(d)
 			# ----------------------
 
@@ -157,7 +157,7 @@ class TreeletNode:
 			else:
 				self.exposing_vars = False
 
-			global_entry_requirements = d['global_state_entry_requirements']
+			global_entry_requirements = d['requirements']
 			for e in global_entry_requirements:
 				self.all_possible_entry.append(e)
 				subnode_state_updates = d['subnode_state_updates']
@@ -405,7 +405,7 @@ for n in nodes:
 	for subnode in nlg_yaml['response']:
 		assert 'node_name' in subnode, f'all subnodes in {n.name} must define a node_name field'
 		sub_name = subnode['node_name']
-		assert 'required_flags' in subnode, f'{sub_name} subnode in {n.name} must define a required_flags field'
+		assert 'entry_conditions' in subnode, f'{sub_name} subnode in {n.name} must define a entry_conditions field'
 		assert 'response' in subnode, f'{sub_name} subnode in {n.name} must define a response field'
 		non_f_string = subnode['response']
 
@@ -448,7 +448,7 @@ for n in nodes:
 		assert 'unconditional_prompt' in nlg_yaml, f"{nlg_path} must define a unconditional_prompt field"
 		prompt_case_names = set()
 		for case in nlg_yaml['unconditional_prompt']:
-			assert 'case_name' in case and 'required_flags' in case and 'prompt' in case, f"make sure {nlg_path} has required categories defined in unconditional_prompt"
+			assert 'case_name' in case and 'entry_conditions' in case and 'prompt' in case, f"make sure {nlg_path} has required categories defined in unconditional_prompt"
 			prompt_case_names.add(case['case_name'])
 
 			prompt_text = case['prompt']

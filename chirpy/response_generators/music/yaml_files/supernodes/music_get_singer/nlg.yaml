@@ -1,57 +1,57 @@
 response:
   - node_name: musical_group_with_til
-    required_flags:
+    entry_conditions:
       singer_ent_exists: True
       is_musical_group: True
       tils_exist: True
     response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {pick_til(get_tils(get_singer_str(rg)))}"
   - node_name: musical_group_wo_til
-    required_flags:
+    entry_conditions:
       singer_ent_exists: True
       is_musical_group: True
       tils_exist: False
     response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {singer_comment(get_singer_str(rg))}"
   - node_name: single_musician_with_til
-    required_flags:
+    entry_conditions:
       singer_ent_exists: True
       is_musical_group: False
       tils_exist: True
     response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {pick_til(get_tils(get_singer_str(rg)))}"
   - node_name: single_musician_wo_til
-    required_flags:
+    entry_conditions:
       singer_ent_exists: True
       is_musical_group: False
       tils_exist: False
     response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {singer_comment(get_singer_str(rg))}"
   - node_name: only_know_singer_str_no_genre
-    required_flags:
+    entry_conditions:
       singer_ent_exists: False
       no_genre: True 
     response: "Oh I don't seem to recognize that artist, I definitely need to get out more."
   - node_name: only_know_singer_str_w_genre
-    required_flags:
+    entry_conditions:
       singer_ent_exists: False
       singer_str_exists: True
       no_genre: False 
     response: "{least_repetitive_compliment(rg)} I love {get_singer_str(rg)} too! {singer_comment(get_singer_str(rg))}"
   - node_name: no_fav_musician
-    required_flags:
+    entry_conditions:
       no_fav_musician: True
     response: "Yeah it can be hard to pick a particular musician when there are so many."
   - node_name: catch_all
-    required_flags:
+    entry_conditions:
       catch_all: True
     response: 'Yeah it can be hard to pick a particular musician when there are so many.'
 unconditional_prompt:
   - case_name: til_prompt
-    required_flags:
+    entry_conditions:
       singer_ent_exists: True
       tils_exist: True
     prompt: >-
       I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}. 
       {pick_til(get_tils(rg.get_singer_entity().name))}
   - case_name: singer_comment_prompt
-    required_flags:
+    entry_conditions:
       singer_ent_exists: True
       tils_exist: False
     prompt: >-

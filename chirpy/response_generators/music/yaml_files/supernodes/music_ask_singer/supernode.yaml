@@ -1,10 +1,10 @@
 name: music_ask_singer
 trigger_response: None
-global_state_entry_requirements:
+requirements:
   - ask_user_about_specific_singer: True
     exit_music_rg: False
 
-prompt_leading_questions:
+prompt:
   - required: None
     prompt: ''
 
