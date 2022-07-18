@@ -207,7 +207,8 @@ class DiscussSectionFurtherTreelet(Treelet):
         return ResponseGeneratorResult(text=response,
                                        priority=ResponsePriority.STRONG_CONTINUE,
                                        needs_prompt=False, state=state,
-                                       cur_entity=entity, conditional_state=conditional_state)
+                                       cur_entity=entity, conditional_state=conditional_state,
+                                       last_rg_willing_to_handover_control=True)
 
     def get_followup_acknowledgement(self):
         state, utterance, response_types = self.get_state_utterance_response_types()

@@ -262,10 +262,13 @@ def search_wiki_sections(doc_title: str, phrases: tuple, wiki_links:tuple) -> Li
             }
     }
     }
+    import json
+    logger.error(f"QUERY: {json.dumps(query, indent=2)}")
     sections = es.search(index='enwiki-20200920-sections', body=query)
-    logger.debug(f"For phrases {phrases}, in wikipedia article {doc_title}, found following sections (unfiltered) {sections}")
+    logger.error(f"For phrases {phrases}, in wikipedia article {doc_title}, found following sections (unfiltered) {sections}")
     filtered_sections = filter_highlight_sections(doc_title, sections)
     return filtered_sections
+
 
 
 def get_text_for_entity(entity):

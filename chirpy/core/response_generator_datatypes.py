@@ -33,7 +33,11 @@ class ResponseGeneratorResult:
                  smooth_handoff: Optional[SmoothHandoff] = None,
                  conditional_state=None,
                  tiebreak_priority=None,
-                 no_transition=False):
+                 no_transition=False,
+                 last_rg_willing_to_handover_control=False,  # EDIT
+                 rg_that_was_taken_over =None,  # EDIT
+                 takeover_rg_willing_to_handback_control=False  # EDIT
+                 ):
         """
         :param text: text of the response
         :param priority: priority of the response
@@ -98,6 +102,9 @@ class ResponseGeneratorResult:
         self.conditional_state = conditional_state
         self.tiebreak_priority = tiebreak_priority
         self.no_transition = no_transition
+        self.last_rg_willing_to_handover_control = last_rg_willing_to_handover_control  # EDIT
+        self.rg_that_was_taken_over  = rg_that_was_taken_over     # EDIT
+        self.takeover_rg_willing_to_handback_control = takeover_rg_willing_to_handback_control # EDIT
 
     def reduce_size(self, max_size:int = None):
         """Gracefully degrade by removing non essential attributes.
@@ -124,7 +131,12 @@ class PromptResult:
                  cur_entity: Optional[WikiEntity],
                  expected_type: Optional[EntityGroup] = None,
                  conditional_state=None,
-                 answer_type: AnswerType = AnswerType.QUESTION_SELFHANDLING):
+                 answer_type: AnswerType = AnswerType.QUESTION_SELFHANDLING,
+                 last_rg_willing_to_handover_control=False,  # EDIT
+                 rg_that_was_taken_over =None,  # EDIT
+                 takeover_rg_willing_to_handback_control=False,  # EDIT
+                 resuming_conversation_next_treelet=None   # EDIT
+                 ):
         """
         :param text: text of the response
         :param prompt_type: the type of response being given, typically CONTEXTUAL or GENERIC
@@ -163,6 +175,10 @@ class PromptResult:
         self.state = state
         self.conditional_state = conditional_state
         self.answer_type = answer_type
+        self.last_rg_willing_to_handover_control = last_rg_willing_to_handover_control  # EDIT
+        self.rg_that_was_taken_over  = rg_that_was_taken_over   # EDIT
+        self.takeover_rg_willing_to_handback_control = takeover_rg_willing_to_handback_control  # EDIT
+        self.resuming_conversation_next_treelet = resuming_conversation_next_treelet  # EDIT
 
     def __repr__(self):
         return 'PromptResult' + str(self.__dict__)

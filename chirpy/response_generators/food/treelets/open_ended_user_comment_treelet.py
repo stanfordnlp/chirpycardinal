@@ -33,7 +33,7 @@ class OpenEndedUserCommentTreelet(Treelet):
         pronoun = infl('them', entity.is_plural)
         if best_attribute: text = 'What do you think?'
         else: text = f'What do you like best about {pronoun}?'
-        return PromptResult(text, PromptType.CONTEXTUAL, state=state, cur_entity=entity, conditional_state=conditional_state)
+        return PromptResult(text=f'TODO: RESUMING_CONV_SECOND_TREELET (e.g. {text})', prompt_type=PromptType.CONTEXTUAL, state=state, cur_entity=entity, conditional_state=conditional_state)
 
     def get_response(self, priority=ResponsePriority.STRONG_CONTINUE, **kwargs):
         """ Returns the response. """
@@ -67,11 +67,12 @@ class OpenEndedUserCommentTreelet(Treelet):
             text = f"{neural_response} {concluding_statement}"
             cur_entity = None
 
-        return ResponseGeneratorResult(text=text, priority=ResponsePriority.STRONG_CONTINUE,
+        return ResponseGeneratorResult(text=f"TODO: PICKING UP RESPONSE (eg. {text})", priority=ResponsePriority.STRONG_CONTINUE,
                                        needs_prompt=needs_prompt, state=state,
                                        cur_entity=cur_entity,
                                        conditional_state=ConditionalState(
                                            prev_treelet_str=self.name,
                                            prompt_treelet=prompt_treelet,
-                                           cur_food=None)
+                                           cur_food=None),
+                                       last_rg_willing_to_handover_control=False  # EDIT
                                        )

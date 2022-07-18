@@ -24,6 +24,7 @@ from chirpy.core.entity_linker.entity_groups import ENTITY_GROUPS_FOR_CLASSIFICA
 from chirpy.response_generators.music.utils import WikiEntityInterface
 
 from concurrent import futures
+import copy
 
 logger = logging.getLogger('chirpylogger')
 
@@ -41,7 +42,7 @@ class ResponseGenerator(NamedCallable):
                  disallow_start_from=None,
                  can_give_prompts=False,
                  state_constructor=None,
-                 conditional_state_constructor=None
+                 conditional_state_constructor=None,
                  ):
         """Creates a new Response Generator.
 
@@ -93,7 +94,8 @@ class ResponseGenerator(NamedCallable):
         if response_types is not None:
             state.response_types = construct_response_types_tuple(response_types)
 
-        if conditional_state is None: return state
+        if conditional_state is None:
+            return state
 
         if conditional_state:
             for attr in dir(conditional_state):
@@ -101,15 +103,21 @@ class ResponseGenerator(NamedCallable):
                     val = getattr(conditional_state, attr)
                     if val != NO_UPDATE: setattr(state, attr, val)
         state.num_turns_in_rg += 1
+
         return state
 
-    def update_state_if_not_chosen(self, state, conditional_state):
+    def update_state_if_not_chosen(self, state, conditional_state, rg_was_taken_over=False):    # EDIT
         """
         By default, this sets the prev_treelet_str and next_treelet_str to '' and resets num_turns_in_rg to 0.
         Response types are also saved.
         No other attributes are updated.
         All other attributes in ConditionalState are set to NO-UPDATE
         """
+        if rg_was_taken_over:       # EDIT
+            state.archived_state = copy.deepcopy(state)
+            logging.error(f"ARCHIVED_STATE: {state.archived_state}")
+
+
         response_types = self.get_cache(f'{self.name}_response_types')
         if response_types is not None:
             state.response_types = construct_response_types_tuple(response_types)
@@ -284,6 +292,9 @@ class ResponseGenerator(NamedCallable):
                 return None
         else:
             return self.state_manager.current_state.entity_tracker.cur_entity
+
+    def get_most_recent_able_to_takeover_entity(self):      # EDIT
+        return self.state_manager.current_state.entity_tracker.able_to_takeover_entities[-1]
 
     def get_entity_tracker(self):
         return self.state_manager.current_state.entity_tracker
@@ -861,7 +872,7 @@ class ResponseGenerator(NamedCallable):
                 return self.state_manager.last_state.selected_response_rg
 
 
-    def get_response(self, state) -> ResponseGeneratorResult:
+    def get_response(self, state, rg_was_taken_over=False) -> ResponseGeneratorResult:  # EDIT : ????
         response_types = self.identify_response_types(self.utterance)
         logger.primary_info(f"{self.name} identified response_types: {response_types}")
         self.state = state
@@ -915,25 +926,151 @@ class ResponseGenerator(NamedCallable):
 
         if not is_continuing_conversation: # allow the first branch to divert here
             logger.primary_info(f"{self.name} is not currently active, so checking if it should activate")
-
+            if self.name == 'FOOD':
+                logger.error(f"Self.state is {self.state}")
             activation_check_fns = {
                 (lambda: self.get_last_active_rg() in self.disallow_start_from): self.get_fallback_result,
                 (lambda: True): self.handle_direct_navigational_intent,
+                (lambda: (self.last_rg_willing_to_handover_control() and self.exist_able_to_takeover_entities())): self.get_takeover_response,  # EDIT
+                # (lambda: (self.takeover_rg_willing_to_handback_control())): wrapped_partial(self.resume_response_generator, response_types),   # EDIT
                 (lambda: True): self.handle_current_entity,
                 (lambda: True): self.get_intro_treelet_response,
                 (lambda: True): self.handle_custom_activation_checks,
             }
 
+            logging.error(f"DEBUG HANDOVER {self.last_rg_willing_to_handover_control()}, {self.exist_able_to_takeover_entities()}")
+            logging.error(f"DEBUG HANDBACK {self.takeover_rg_willing_to_handback_control()}")
+
+
             for activation_condition, activation_check_fn in activation_check_fns.items():
                 if activation_condition():
                     response = activation_check_fn()
-                    if response: return self.possibly_augment_with_prompt(response)
+
+                    # if response and activation_check_fn == self.get_takeover_response:  # EDIT
+                    #     logger.primary_info(f"{self.name} is being taken over.")
+                    #     resumable_state = self.state_manager.last_state_response
+                    #     logger.error(f"STATE TAKEOVER: Change resumable state from {self.state.resumable_state} to {resumable_state})")
+                    #     updated_state = self.update_state_if_not_chosen(self.state, self.ConditionalState())
+                    #     self.state = updated_state
+                    #     self.state.resumable_state = resumable_state
+                    #     logger.error(f"CURRENT STATE AFTER TAKEOVER: {self.state}")
+
+                    if response:
+                        return self.possibly_augment_with_prompt(response)
+
 
         response = self.handle_default_post_checks()
         if response:
             return self.possibly_augment_with_prompt(response)
 
         return self.get_fallback_result()
+
+    def last_rg_willing_to_handover_control(self):  # EDIT
+        last_active_rg_prompt = self.state_manager.last_state_response
+        # logging.error(f"LAST ACTIVE: {last_active_rg_prompt}")
+        # logging.error(f"LAST WILL: {last_active_rg_prompt.last_rg_willing_to_handover_control}")
+        if last_active_rg_prompt:
+            return last_active_rg_prompt.last_rg_willing_to_handover_control
+        else:
+            return False
+
+    def exist_able_to_takeover_entities(self):  # EDIT
+        return len(self.state_manager.current_state.entity_tracker.able_to_takeover_entities) != 0
+
+    def get_takeover_response(self):  # EDIT
+        logging.error(f"TEST: {self.name} null get_takeover_response")
+        return None
+
+    def takeover_rg_willing_to_handback_control(self):  # EDIT
+        last_active_rg_prompt = self.state_manager.last_state_response
+        if last_active_rg_prompt:
+            return last_active_rg_prompt.takeover_rg_willing_to_handback_control
+        else:
+            return False
+
+    # def resume_response_generator(self, response_types):  # EDIT
+    #     # logging.error(f"TEST: {self.name} null resume_conversation")
+    #     # if self.name == 'FOOD':
+    #     #     logging.error(f"DEBUG: state is {self.state} ")
+    #     # logging.error(f"ARCHIVED_RESUME: {archived_state}")
+    #     archived_state = self.state.archived_state
+    #     if archived_state:
+    #         logging.error(f" HANDING OVER FROM: {self.name} // {self.state}")
+    #         self.state = archived_state
+    #         logging.error(f" HANDING OVER TO: {self.state}")
+    #         return self.continue_conversation(response_types)
+    #     else:
+    #         return None
+
+    def get_resuming_statement(self, state) -> ResponseGeneratorResult:
+        logging.error(f"TEST: {self.name} null get_resuming_statement")
+        return self.emptyPrompt()
+
+    def augment_resuming_statement(self, resuming_statement_first_treelet):
+        resuming_conversation_second_treelet_str = resuming_statement_first_treelet.resuming_conversation_next_treelet
+        logger.error(f"DEBUG RESUMING PROMPT TREELET: {resuming_conversation_second_treelet_str}")
+        resuming_conversation_second_treelet = self.treelets[resuming_conversation_second_treelet_str]
+        resuming_prompt_second_treelet = resuming_conversation_second_treelet.get_prompt()
+        logger.error(f"DEBUG RESUMING PROMPT: {resuming_prompt_second_treelet}")
+        if resuming_prompt_second_treelet:
+            # for attr_copy in ['state', 'cur_entity', 'expected_type']:
+            #     getattr(resuming_statement_first_treelet, attr_copy) =
+
+            resuming_statement_first_treelet.text = f"{resuming_statement_first_treelet.text} {resuming_prompt_second_treelet.text}"
+            resuming_statement_first_treelet.state = resuming_prompt_second_treelet.state
+            resuming_statement_first_treelet.conditional_state.next_treelet_str = resuming_conversation_second_treelet_str
+            resuming_statement_first_treelet.cur_entity = resuming_prompt_second_treelet.cur_entity
+            resuming_statement_first_treelet.expected_type = resuming_prompt_second_treelet.expected_type
+            resuming_statement_first_treelet.answer_type = resuming_prompt_second_treelet.answer_type
+            resuming_statement_first_treelet.last_rg_willing_to_handover_control = resuming_prompt_second_treelet.last_rg_willing_to_handover_control
+            resuming_statement_first_treelet.rg_that_was_taken_over = resuming_prompt_second_treelet.rg_that_was_taken_over
+            resuming_statement_first_treelet.takeover_rg_willing_to_handback_control = resuming_prompt_second_treelet.takeover_rg_willing_to_handback_control
+            resuming_statement_first_treelet.resuming_conversation_next_treelet = None
+        logger.error(f"DEBUG RESUMING_STATEMENT_FIRST_TREELET.STATE: {resuming_statement_first_treelet}")
+        return resuming_statement_first_treelet
+
+    def resume_conversation(self):
+        logger.error(f"DEBUG SELF WITH ARCHIVE: {self.name}")
+        logger.error(
+            f"DEBUG ARCHIVED_STATE_RESUMING_RG: {self.state_manager.current_state.response_generator_states[self.name].archived_state}")
+        archived_state = self.state_manager.current_state.response_generator_states[self.name].archived_state
+        self.state = archived_state
+        logger.error(f"DEBUG SELF AFTER RETREIVING ARCHIVE: {self}")
+        logger.error(f"DEBUG SELF.STATE AFTER RETREIVING ARCHIVE: {self.state}")
+
+        first_treelet_str = self.state.next_treelet_str
+        assert first_treelet_str in self.treelets
+        first_treelet = self.treelets[first_treelet_str]
+        resuming_statement_first_treelet = first_treelet.get_resuming_statement()
+        logger.error(f"DEBUG RESUMING STATEMENT AFTER RETREIVING ARCHIVE: {resuming_statement_first_treelet}")
+
+        resuming_conversation = self.augment_resuming_statement(resuming_statement_first_treelet)
+        logger.error(f"DEBUG WHOLE RESUMING RESPONSE: {resuming_conversation}")
+
+        return resuming_conversation
+
+    def get_prompt_wrapper(self, state, rg_to_resume=False):
+        if self.takeover_rg_willing_to_handback_control():
+            if rg_to_resume:
+                return self.resume_conversation()
+        else:
+            return self.get_prompt(state)
+
+    # def get_prompt_wrapper(self, state, rg_resuming_prompt=False):
+    #     if self.takeover_rg_willing_to_handback_control():
+    #         rg_with_archived_state = self.state_manager.last_state_response.state.rg_that_was_taken_over
+    #         logger.error(f"DEBUG RG_WITH_ARCHIVE {self.state_manager.last_state_response.state.rg_that_was_taken_over}")
+    #         if self.name == rg_with_archived_state:
+    #             logger.error(f"DEBUG SELF WITH ARCHIVE: {self.name} // {self.state_manager} // {self.state_manager.last_state_response}")
+    #             archived_state = self.State.archived_state
+    #             if archived_state:      # TODO: Set to None later ????
+    #                 self.state = archived_state
+    #                 archived_resuming_response = self.get_resuming_response(archived_state)
+    #                 logger.error("DEBUG ARCHIVE STATE PROMPT: {archived_resuming_response}")
+    #                 return archived_resuming_response
+    #         else:
+    #             return self.emptyPrompt()
+    #     return self.get_prompt(state)
 
 
     def possibly_augment_with_prompt(self, response):
@@ -971,7 +1108,7 @@ class ResponseGenerator(NamedCallable):
 
         next_treelet = None
         response_priority = ResponsePriority.STRONG_CONTINUE
-
+        logger.error(f"In continue_conversation, self.state is {self.state}, next_treelet_str is {next_treelet_str}")
         if next_treelet_str is None:
             return self.emptyResult() # continue from some other RG
         elif next_treelet_str == '':

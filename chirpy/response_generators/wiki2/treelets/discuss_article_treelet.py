@@ -352,7 +352,8 @@ class DiscussArticleTreelet(Treelet):
                                            conditional_state=ConditionalState(
                                                prev_treelet_str=self.name,
                                                next_treelet_str=None
-                                           ))
+                                           ),
+                                           last_rg_willing_to_handover_control=True)
         else:
             return ResponseGeneratorResult(
                 text=f"{ack} {text}",

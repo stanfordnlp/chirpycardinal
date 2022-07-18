@@ -22,12 +22,16 @@ class BaseState:
     next_treelet_str: Optional[str] = ''
     response_types: Tuple[str] = ()
     num_turns_in_rg: int = 0
+    archived_state: "BaseState" = None   # EDIT
+    rg_that_was_taken_over: str = None   # EDIT
 
 @dataclass
 class BaseConditionalState:
     prev_treelet_str: str = ''
     next_treelet_str: Optional[str] = ''
     response_types: Tuple[str] = NO_UPDATE
+    archived_state: "BaseState" = NO_UPDATE  # EDIT
+    rg_that_was_taken_over: str = None      # EDIT
 
 def construct_response_types_tuple(response_types):
     return tuple([str(x) for x in response_types])

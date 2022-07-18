@@ -1,5 +1,7 @@
 import os
 import logging
+from concurrent import futures
+
 from typing import Optional, Set, Tuple
 import random
 
@@ -23,6 +25,8 @@ from chirpy.response_generators.wiki2.response_templates.response_components imp
 from chirpy.annotators.corenlp import Sentiment
 from chirpy.response_generators.wiki2.state import State,ConditionalState, NO_UPDATE
 
+from chirpy.response_generators.wiki2.treelets.takeover_treelet import WikiTakeOverTreelet # EDIT
+from chirpy.response_generators.wiki2.treelets.handback_treelet import WikiHandBackTreelet # EDIT
 
 logger = logging.getLogger('chirpylogger')
 
@@ -30,10 +34,12 @@ try:
     from chirpy.annotators.responseranker import ResponseRanker
     use_responseranker = True
 except ModuleNotFoundError:
-    logger.warning('ResponseRanker module not found, defaulting to original DialoGPT and GPT2 Rankers')
+    logger.warning('ResponseRanker module not found, defaulting to original DialoGPT and GP T2 Rankers')
     from chirpy.annotators.dialogptranker import DialoGPTRanker
     from chirpy.annotators.gpt2ranker import GPT2Ranker
     use_responseranker = False
+
+import threading
 
 
 class WikiResponseGenerator(ResponseGenerator):
@@ -50,12 +56,15 @@ class WikiResponseGenerator(ResponseGenerator):
         self.discuss_section_treelet = DiscussSectionTreelet(self)
         self.discuss_section_further_treelet = DiscussSectionFurtherTreelet(self)
         self.get_opinion_treelet = GetOpinionTreelet(self)
+        self.takeover_treelet = WikiTakeOverTreelet(self)   # EDIT
+        self.handback_treelet = WikiHandBackTreelet(self)  # EDIT
 
         treelets = {t.name: t for t in [self.check_user_knowledge_treelet,
                                         self.acknowledge_user_knowledge_treelet, self.factoid_treelet,
                                         self.intro_entity_treelet, self.combined_til_treelet,
                                         self.discuss_article_treelet, self.discuss_section_treelet,
-                                        self.discuss_section_further_treelet, self.get_opinion_treelet]}
+                                        self.discuss_section_further_treelet, self.get_opinion_treelet,
+                                        self.takeover_treelet, self.handback_treelet]}
 
         super().__init__(state_manager, treelets=treelets, state_constructor=State, can_give_prompts=True,
                          conditional_state_constructor=ConditionalState,
@@ -641,7 +650,7 @@ class WikiResponseGenerator(ResponseGenerator):
 
         return state
 
-    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState]) -> State:
+    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState], rg_was_taken_over=False) -> State:    # EDIT
         state = super().update_state_if_not_chosen(state, conditional_state)
         state.cur_doc_title = None
         state.suggested_sections = []
@@ -658,3 +667,7 @@ class WikiResponseGenerator(ResponseGenerator):
         state.context_used = None
 
         return state
+
+    def get_takeover_response(self):  # EDIT
+        logger.info("WIKI TAKEOVER")
+        return self.takeover_treelet.get_response(ResponsePriority.FORCE_START)

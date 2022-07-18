@@ -30,3 +30,5 @@ class StateManager:
         if not self.last_state: return None
         if hasattr(self.last_state, 'prompt_results'): return self.last_state.prompt_results[self.last_state.active_rg]
         else: return self.last_state.response_results[self.last_state.active_rg]
+
+

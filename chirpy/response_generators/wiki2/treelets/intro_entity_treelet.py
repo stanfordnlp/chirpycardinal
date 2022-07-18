@@ -53,7 +53,8 @@ class IntroEntityTreelet(Treelet):
                 priority=priority,
                 state=state, needs_prompt=False, cur_entity=entity,
                 conditional_state=ConditionalState(prev_treelet_str=self.name,
-                                                   next_treelet_str=self.rg.discuss_article_treelet.name)
+                                                   next_treelet_str=self.rg.discuss_article_treelet.name),
+                last_rg_willing_to_handover_control=True
             )
         else: # no intro paragraph available
             neural_response = get_random_fallback_neural_response(self.get_current_state())

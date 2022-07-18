@@ -101,7 +101,7 @@ class ClosingConfirmationResponseGenerator(ResponseGenerator):
             # If neither matched, allow another RG to handle
             return self.emptyResult()
 
-    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState]) -> BaseState:
+    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState], rg_was_taken_over=False) -> BaseState:    # EDIT
         state = super().update_state_if_not_chosen(state, conditional_state)
         state.has_just_asked_to_exit = False
         return state
