@@ -1013,18 +1013,12 @@ class ResponseGenerator(NamedCallable):
         resuming_prompt_second_treelet = resuming_conversation_second_treelet.get_prompt()
         logger.error(f"DEBUG RESUMING PROMPT: {resuming_prompt_second_treelet}")
         if resuming_prompt_second_treelet:
-            # for attr_copy in ['state', 'cur_entity', 'expected_type']:
-            #     getattr(resuming_statement_first_treelet, attr_copy) =
-
             resuming_statement_first_treelet.text = f"{resuming_statement_first_treelet.text} {resuming_prompt_second_treelet.text}"
-            resuming_statement_first_treelet.state = resuming_prompt_second_treelet.state
             resuming_statement_first_treelet.conditional_state.next_treelet_str = resuming_conversation_second_treelet_str
-            resuming_statement_first_treelet.cur_entity = resuming_prompt_second_treelet.cur_entity
-            resuming_statement_first_treelet.expected_type = resuming_prompt_second_treelet.expected_type
-            resuming_statement_first_treelet.answer_type = resuming_prompt_second_treelet.answer_type
-            resuming_statement_first_treelet.last_rg_willing_to_handover_control = resuming_prompt_second_treelet.last_rg_willing_to_handover_control
-            resuming_statement_first_treelet.rg_that_was_taken_over = resuming_prompt_second_treelet.rg_that_was_taken_over
-            resuming_statement_first_treelet.takeover_rg_willing_to_handback_control = resuming_prompt_second_treelet.takeover_rg_willing_to_handback_control
+            for attr_to_copy in ['state', 'cur_entity', 'expected_type', 'answer_type',
+                              'last_rg_willing_to_handover_control', 'takeover_rg_willing_to_handback_control']:
+                attr_template = getattr(resuming_prompt_second_treelet, attr_to_copy)
+                setattr(resuming_statement_first_treelet, attr_to_copy, attr_template)
             resuming_statement_first_treelet.resuming_conversation_next_treelet = None
         logger.error(f"DEBUG RESUMING_STATEMENT_FIRST_TREELET.STATE: {resuming_statement_first_treelet}")
         return resuming_statement_first_treelet
