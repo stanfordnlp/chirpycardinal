@@ -50,7 +50,7 @@ class LaunchResponseGenerator(ResponseGenerator):
             # state.asked_name_counter = 1
         return state
 
-    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState], rg_was_taken_over=False) -> BaseState:    # EDIT
+    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState], rg_was_taken_over=False) -> BaseState:    # EDIT: TAKEOVER
         state = super().update_state_if_not_chosen(state, conditional_state)
         state.next_treelet_str = None
         return state

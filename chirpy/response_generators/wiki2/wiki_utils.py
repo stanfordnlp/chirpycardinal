@@ -23,6 +23,9 @@ import requests
 import random
 import math
 
+from chirpy.core.entity_linker.entity_linker_classes import WikiEntity  # EDIT: TAKEOVER
+from chirpy.annotators.convpara import ConvPara     # EDIT: TAKEOVER
+
 
 lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in', 'into', 'is', 'it',
  'no', 'not', 'of', 'on', 'or', 'such', 'that', 'the', 'their', 'then', 'there', 'these', 'they', 'this', 'to', 'was',
@@ -135,6 +138,8 @@ def filter_highlight_sections(title, es_sections):
         wiki_sections.append(wiki_section)
     filtered_sections = wiki_sections
 
+    logger.error(f"SECTIONS: {filtered_sections}")
+
     # Filter sections and log why the  were filtered
     filtered_sections = filter_and_log(lambda section: not contains_offensive(section.title), filtered_sections,
                                        'Wiki Highlights', reason_for_filtering='section title contains offensive phrases')
@@ -162,6 +167,7 @@ def filter_highlight_sections(title, es_sections):
     filtered_sections = filter_and_log(lambda section: not contains_offensive(section.highlight), filtered_sections,
                                        'Wiki Highlights', reason_for_filtering='section highlight contains offensive phrases')
 
+    logger.error(f"SECTIONS2: {filtered_sections}")
     return filtered_sections
 def filter_sections(title, es_sections):
     wiki_sections = []
@@ -270,6 +276,103 @@ def search_wiki_sections(doc_title: str, phrases: tuple, wiki_links:tuple) -> Li
     return filtered_sections
 
 
+def prune_section(section):
+    return section['text'][0] in {'†', '+', '*'}
+
+def clean_takeover_wiki_text(text: str) -> str:
+    modified_text = clean_wiki_text(text)
+    index_caption = modified_text.find(']]')
+    if index_caption != -1:
+        modified_text = modified_text[index_caption + 2:]
+    return modified_text
+
+def summarize_takeover_candidate(rg, text: str, span_to_keep: str, max_sents: int = 3) -> str:
+    logger.debug(f'Summarizing takeover text: {text}')
+
+    local_sentseg_fn = lambda text: re.split('[.\n]', text)
+    sentseg_fn = NLTKSentenceSegmenter(
+        rg.state_manager).execute if rg.state_manager else local_sentseg_fn
+    sentences = sentseg_fn(text)
+
+    summary = ''
+    num_sentences = 0
+    found = False
+    for sentence in sentences:
+        if sentence == '':
+            continue
+        if "|" in sentence or "[" in sentence or "]" in sentence or "{" in sentence or "}" in sentence:
+            continue
+        if span_to_keep in sentence:
+            found = True
+        summary += sentence + ('.' if sentence[-1] not in {'.', '!', '?'} else ' ')
+        num_sentences += 1
+        if num_sentences > max_sents and found:
+            break
+    return summary
+
+
+def search_wiki_intersect_sections(rg, doc_title: str, search_entity: WikiEntity) -> List[str]:
+    query = {'query': {'bool': {'filter': [
+        {'term': {'doc_title': doc_title}}]}}}
+    sections = es.search(index='enwiki-20200920-sections', body=query, size=100)
+    top_spans = list(search_entity.anchortext_counts.keys())[:3]
+    logger.error(f"SPAN: {search_entity.anchortext_counts}")
+    candidate_texts = []
+    # logger.error(f"TEXTS: {sections['hits']['hits']}")
+    for section in sections['hits']['hits']:
+        source = section['_source']
+        if not prune_section(source):
+            source_texts = list(filter(None, re.split('\n', source['text'])))
+            for text in source_texts:
+                cleaned_text = clean_takeover_wiki_text(text)
+                if not contains_offensive(cleaned_text) and not rg.has_overlap_with_history(cleaned_text, threshold=0.8):
+                    for s in top_spans:
+                        if s in cleaned_text:
+                            modified_text = re.sub(r"\([^()]*\)", "", text)
+                            summary_text = summarize_takeover_candidate(rg, modified_text, span_to_keep=s)
+                            candidate_texts.append(summary_text)
+                            break
+    logger.error(f"CANDIDATE_TEXTS (from doc_title {doc_title}): {candidate_texts}")
+    return candidate_texts
+
+def get_paraphrase(rg, text: str, entity: str) -> str:
+    conv_para = ConvPara(rg.state_manager)
+    paraphrases = conv_para.get_paraphrases(background=text, entity=entity)
+    logger.error(f"PARAPHRASES: {paraphrases}")
+    return paraphrases
+
+def get_takeover_text(rg, cur_entity: WikiEntity, takeover_entity: WikiEntity) -> Optional[str]:
+    related_wiki_texts_from_cur_entity_doc = search_wiki_intersect_sections(rg, cur_entity.talkable_name, takeover_entity)
+    related_wiki_texts_from_takeover_entity_doc = search_wiki_intersect_sections(rg, takeover_entity.talkable_name, cur_entity)
+
+    intersect_wiki_texts = related_wiki_texts_from_cur_entity_doc + related_wiki_texts_from_takeover_entity_doc
+
+    logger.error(f"INTERSECT_WIKI_TEXTS: {intersect_wiki_texts}")
+    if related_wiki_texts_from_cur_entity_doc:
+        takeover_text = random.choice(related_wiki_texts_from_cur_entity_doc)
+        return takeover_text
+
+    elif related_wiki_texts_from_takeover_entity_doc:
+        takeover_text = random.choice(related_wiki_texts_from_takeover_entity_doc)
+        return get_paraphrase(rg, takeover_text, cur_entity.name)
+    else:
+        return None
+
+INTRO_INTERSECT_TEXT = ["Speaking of {} and {}, ",
+                        "Relating to {} and {}, ",
+                        "Since you mentioned {} and {}, "]
+
+def get_random_intro_intersect_text(cur_entity: str, takeover_entity: str) -> str:
+    return random.choice(INTRO_INTERSECT_TEXT).format(cur_entity, takeover_entity)
+
+STARTER_TEXTS = ["did you know that ",
+     "I recently learned that ",
+     "I was reading recently and found out that ",
+     "did you know that ",
+     "I was interested to learn that "]
+
+def get_random_starter_text():
+    return random.choice(STARTER_TEXTS)
 
 def get_text_for_entity(entity):
     results = es.search(index='enwiki-20200920-sections', body={

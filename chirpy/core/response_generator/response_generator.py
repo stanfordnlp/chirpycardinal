@@ -106,17 +106,16 @@ class ResponseGenerator(NamedCallable):
 
         return state
 
-    def update_state_if_not_chosen(self, state, conditional_state, rg_was_taken_over=False):    # EDIT
+    def update_state_if_not_chosen(self, state, conditional_state, rg_was_taken_over=False):
         """
         By default, this sets the prev_treelet_str and next_treelet_str to '' and resets num_turns_in_rg to 0.
         Response types are also saved.
         No other attributes are updated.
         All other attributes in ConditionalState are set to NO-UPDATE
         """
-        if rg_was_taken_over:       # EDIT
+        if rg_was_taken_over:       # EDIT: TAKEOVER
             state.archived_state = copy.deepcopy(state)
             logging.error(f"ARCHIVED_STATE: {state.archived_state}")
-
 
         response_types = self.get_cache(f'{self.name}_response_types')
         if response_types is not None:
@@ -293,7 +292,7 @@ class ResponseGenerator(NamedCallable):
         else:
             return self.state_manager.current_state.entity_tracker.cur_entity
 
-    def get_most_recent_able_to_takeover_entity(self):      # EDIT
+    def get_most_recent_able_to_takeover_entity(self):      # EDIT: TAKEOVER
         return self.state_manager.current_state.entity_tracker.able_to_takeover_entities[-1]
 
     def get_entity_tracker(self):
@@ -872,7 +871,7 @@ class ResponseGenerator(NamedCallable):
                 return self.state_manager.last_state.selected_response_rg
 
 
-    def get_response(self, state, rg_was_taken_over=False) -> ResponseGeneratorResult:  # EDIT : ????
+    def get_response(self, state, rg_was_taken_over=False) -> ResponseGeneratorResult:
         response_types = self.identify_response_types(self.utterance)
         logger.primary_info(f"{self.name} identified response_types: {response_types}")
         self.state = state
@@ -931,8 +930,7 @@ class ResponseGenerator(NamedCallable):
             activation_check_fns = {
                 (lambda: self.get_last_active_rg() in self.disallow_start_from): self.get_fallback_result,
                 (lambda: True): self.handle_direct_navigational_intent,
-                (lambda: (self.last_rg_willing_to_handover_control() and self.exist_able_to_takeover_entities())): self.get_takeover_response,  # EDIT
-                # (lambda: (self.takeover_rg_willing_to_handback_control())): wrapped_partial(self.resume_response_generator, response_types),   # EDIT
+                (lambda: (self.last_rg_willing_to_handover_control() and self.exist_able_to_takeover_entities())): self.get_takeover_response,  # EDIT: TAKEOVER
                 (lambda: True): self.handle_current_entity,
                 (lambda: True): self.get_intro_treelet_response,
                 (lambda: True): self.handle_custom_activation_checks,
@@ -946,15 +944,6 @@ class ResponseGenerator(NamedCallable):
                 if activation_condition():
                     response = activation_check_fn()
 
-                    # if response and activation_check_fn == self.get_takeover_response:  # EDIT
-                    #     logger.primary_info(f"{self.name} is being taken over.")
-                    #     resumable_state = self.state_manager.last_state_response
-                    #     logger.error(f"STATE TAKEOVER: Change resumable state from {self.state.resumable_state} to {resumable_state})")
-                    #     updated_state = self.update_state_if_not_chosen(self.state, self.ConditionalState())
-                    #     self.state = updated_state
-                    #     self.state.resumable_state = resumable_state
-                    #     logger.error(f"CURRENT STATE AFTER TAKEOVER: {self.state}")
-
                     if response:
                         return self.possibly_augment_with_prompt(response)
 
@@ -965,42 +954,26 @@ class ResponseGenerator(NamedCallable):
 
         return self.get_fallback_result()
 
-    def last_rg_willing_to_handover_control(self):  # EDIT
+    def last_rg_willing_to_handover_control(self):  # EDIT: TAKEOVER
         last_active_rg_prompt = self.state_manager.last_state_response
-        # logging.error(f"LAST ACTIVE: {last_active_rg_prompt}")
-        # logging.error(f"LAST WILL: {last_active_rg_prompt.last_rg_willing_to_handover_control}")
         if last_active_rg_prompt:
             return last_active_rg_prompt.last_rg_willing_to_handover_control
         else:
             return False
 
-    def exist_able_to_takeover_entities(self):  # EDIT
+    def exist_able_to_takeover_entities(self):  # EDIT: TAKEOVER
         return len(self.state_manager.current_state.entity_tracker.able_to_takeover_entities) != 0
 
-    def get_takeover_response(self):  # EDIT
+    def get_takeover_response(self):  # EDIT: TAKEOVER
         logging.error(f"TEST: {self.name} null get_takeover_response")
         return None
 
-    def takeover_rg_willing_to_handback_control(self):  # EDIT
+    def takeover_rg_willing_to_handback_control(self):  # EDIT: TAKEOVER
         last_active_rg_prompt = self.state_manager.last_state_response
         if last_active_rg_prompt:
             return last_active_rg_prompt.takeover_rg_willing_to_handback_control
         else:
             return False
-
-    # def resume_response_generator(self, response_types):  # EDIT
-    #     # logging.error(f"TEST: {self.name} null resume_conversation")
-    #     # if self.name == 'FOOD':
-    #     #     logging.error(f"DEBUG: state is {self.state} ")
-    #     # logging.error(f"ARCHIVED_RESUME: {archived_state}")
-    #     archived_state = self.state.archived_state
-    #     if archived_state:
-    #         logging.error(f" HANDING OVER FROM: {self.name} // {self.state}")
-    #         self.state = archived_state
-    #         logging.error(f" HANDING OVER TO: {self.state}")
-    #         return self.continue_conversation(response_types)
-    #     else:
-    #         return None
 
     def get_resuming_statement(self, state) -> ResponseGeneratorResult:
         logging.error(f"TEST: {self.name} null get_resuming_statement")
@@ -1101,8 +1074,11 @@ class ResponseGenerator(NamedCallable):
         next_treelet_str = self.state.next_treelet_str
 
         next_treelet = None
-        response_priority = ResponsePriority.STRONG_CONTINUE
-        logger.error(f"In continue_conversation, self.state is {self.state}, next_treelet_str is {next_treelet_str}")
+        if self.last_rg_willing_to_handover_control(): # we talked last turn and decided to handover...
+            response_priority = ResponsePriority.WEAK_CONTINUE
+        else:
+            response_priority = ResponsePriority.STRONG_CONTINUE
+        logger.error(f"In continue_conversation, self.state is {self.state}, next_treelet_str is {next_treelet_str}, priority is {response_priority}")
         if next_treelet_str is None:
             return self.emptyResult() # continue from some other RG
         elif next_treelet_str == '':
@@ -1144,7 +1120,6 @@ class ResponseGenerator(NamedCallable):
             logger.info(f"Continuing conversation from {next_treelet_str} for {self.name}")
             assert next_treelet_str in self.treelets
             next_treelet = self.treelets[next_treelet_str]
-            response_priority = ResponsePriority.STRONG_CONTINUE
 
         if next_treelet is not None:
             response = next_treelet.get_response(response_priority, )

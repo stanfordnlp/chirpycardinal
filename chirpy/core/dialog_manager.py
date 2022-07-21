@@ -285,14 +285,14 @@ class DialogManager:
         other_rgs = [rg for rg in results.keys() if rg != selected_rg and not is_killed(results[rg])]
         logger.info(f"now, current states are {rg_states}")
 
-        def rg_was_taken_over(rg):     # EDIT
+        def rg_was_taken_over(rg):     # EDIT: TAKEOVER
             if self.state_manager.last_state:
                 logger.error(f"DEBUG RG_WAS_TAKEN_OVER: {selected_rg} // {rg}, {rg == self.state_manager.last_state.active_rg}")
                 return rg_states[selected_rg].rg_that_was_taken_over and rg == self.state_manager.last_state.active_rg
             else:
                 return None
 
-        args_list = [[rg_states[rg], results[rg].conditional_state, rg_was_taken_over(rg)] for rg in other_rgs]     # EDIT
+        args_list = [[rg_states[rg], results[rg].conditional_state, rg_was_taken_over(rg)] for rg in other_rgs]     # EDIT: TAKEOVER
 
         # Run update_state_if_not_chosen for other RGs
         logger.info(f'Starting to run update_state_if_not_chosen for {other_rgs}...')
@@ -339,7 +339,7 @@ class DialogManager:
 
         # Get the states for the RGs we'll run, which we'll use as input to the get_response/get_prompt fn
         logger.debug('Copying RG states to use as input...')
-        # input_rg_states = copy.copy([rg_states[rg] for rg in rgs_list])  # list of dicts          # EDIT: COMMENT OUT
+        # input_rg_states = copy.copy([rg_states[rg] for rg in rgs_list])  # list of dicts          # EDIT: TAKEOVER (COMMENT OUT)
 
         # import pdb; pdb.set_trace()
 
@@ -352,17 +352,17 @@ class DialogManager:
         else:
             priority_modules = []
 
-        rg_was_taken_over = None    # EDIT
-        if self.state_manager.last_state_response:  # EDIT
+        rg_was_taken_over = None    # EDIT: TAKEOVER
+        if self.state_manager.last_state_response:  # EDIT: TAKEOVER
             rg_was_taken_over = self.state_manager.last_state_response.state.rg_that_was_taken_over
 
-        def rg_to_resume(rg):     # EDIT : ????
+        def rg_to_resume(rg):     # EDIT: TAKEOVER
             logger.error(f"DEBUG RG_TO_RESUME: {rg_was_taken_over} // {rg},  {rg == rg_was_taken_over}")
             return rg == rg_was_taken_over
 
         function_name = 'get_prompt_wrapper' if phase == 'prompt' else 'get_response'
-        args_list = copy.copy([[rg_states[rg], rg_to_resume(rg)] for rg in rgs_list])      # EDIT : ????
-        results_dict = self.response_generators.run_multithreaded(rg_names=rgs_list,     # EDIT : ????
+        args_list = copy.copy([[rg_states[rg], rg_to_resume(rg)] for rg in rgs_list])      # EDIT: TAKEOVER
+        results_dict = self.response_generators.run_multithreaded(rg_names=rgs_list,     # EDIT: TAKEOVER
                                          function_name=function_name,
                                          timeout=timeout,
                                          args_list=args_list,        # [[state] for state in input_rg_states],

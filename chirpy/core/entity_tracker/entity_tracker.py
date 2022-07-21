@@ -8,8 +8,6 @@ from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, Pr
 from chirpy.core.entity_linker.thresholds import SCORE_THRESHOLD_NAV_ABOUT, SCORE_THRESHOLD_NAV_NOT_ABOUT, SCORE_THRESHOLD_EXPECTEDTYPE
 from chirpy.core.entity_linker.entity_groups import EntityGroup
 
-import random   # EDIT
-
 logger = logging.getLogger('chirpylogger')
 
 class TransitionType(Enum):
@@ -25,8 +23,8 @@ class EntityTrackerState(object):
 
     def __init__(self):
         self.cur_entity = None  # the current entity under discussion (can be None)
-        self.talked_unfinished = []  # EDIT
-        self.able_to_takeover_entities = []  # EDIT
+        self.talked_unfinished = []  # EDIT: TAKEOVER (for storing entities needed for resuming conversation)
+        self.able_to_takeover_entities = []  # EDIT: TAKEOVER (Will be rewritten every turn)
         self.talked_rejected = []  # entities we talked about in the past, and stopped talking about because the user indicated they didn't want to talk about it any more
         self.talked_finished = []  # entities we talked about in the past, that aren't in talked_rejected
         self.talked_transitionable = []
@@ -101,7 +99,7 @@ class EntityTrackerState(object):
             logger.error(f"This is an error. This should be a WikiEntity object but {entity} is of type {type(entity)}")
             entity = None
 
-        if entity is not None and entity not in self.talked_finished and entity not in self.talked_unfinished:      # EDIT (?)
+        if entity is not None and entity not in self.talked_finished and entity not in self.talked_unfinished:      # EDIT: TAKEOVER
             logger.info(f'Putting entity {entity} on the talked_finished list')
             self.talked_finished.append(entity)
 
@@ -281,13 +279,13 @@ class EntityTrackerState(object):
         if nav_intent_output.neg_intent or nav_intent_output.pos_intent or last_answer_type in [AnswerType.QUESTION_SELFHANDLING, AnswerType.QUESTION_HANDOFF]:
             self.cur_entity = self.entity_initiated_on_turn
 
-        self.able_to_takeover_entities = []     # EDIT
+        self.able_to_takeover_entities = []     # EDIT: TAKEOVER
 
         for linked_span in current_state.entity_linker.high_prec:
             if not self.talked(linked_span.top_ent):
                 logger.info(f'Adding {linked_span.top_ent} to user_mentioned_untalked')
                 self.user_mentioned_untalked.append(linked_span.top_ent)
-                self.able_to_takeover_entities.append(linked_span.top_ent)      # EDIT
+                self.able_to_takeover_entities.append(linked_span.top_ent)      # EDIT: TAKEOVER
 
         logger.primary_info(f'The EntityTrackerState is now: {self}')
         logger.error(f'ABLE_TO_TAKEOVER_ENTITIES: {self.able_to_takeover_entities}')
@@ -335,7 +333,7 @@ class EntityTrackerState(object):
 
         transition_is_possible = not getattr(result, 'no_transition', False)
 
-        if self.able_to_takeover_entities:      # EDIT
+        if self.able_to_takeover_entities:     # EDIT: TAKEOVER
             self.talked_unfinished.append(self.cur_entity)
             new_entity = self.able_to_takeover_entities.pop()
             logger.primary_info(f'Removing {new_entity} from {self.able_to_takeover_entities}')
@@ -363,7 +361,7 @@ class EntityTrackerState(object):
 
             logger.primary_info(f'Set cur_entity to new_entity={new_entity} from {rg} RG {phase}')
 
-            if new_entity in self.talked_unfinished:    # EDIT
+            if new_entity in self.talked_unfinished:    # EDIT: TAKEOVER
                 archived_entity = new_entity
                 logger.error(
                     f"Removing archived_entity [{archived_entity}] from talked_unfinished [{self.talked_unfinished}]")
@@ -385,8 +383,8 @@ class EntityTrackerState(object):
     def __repr__(self, show_history=False):
         output = f"<EntityTrackerState: "
         output += f"cur_entity={self.cur_entity.name if self.cur_entity else self.cur_entity}"
-        output += f", talked_unfinished={[ent.name for ent in self.talked_unfinished]}"     # EDIT
-        output += f", able_to_takeover_entities={[ent.name for ent in self.able_to_takeover_entities]}"  # EDIT
+        output += f", talked_unfinished={[ent.name for ent in self.talked_unfinished]}"     # EDIT: TAKEOVER
+        output += f", able_to_takeover_entities={[ent.name for ent in self.able_to_takeover_entities]}"  # EDIT: TAKEOVER
         output += f", talked_finished={[ent.name for ent in self.talked_finished]}"
         output += f", talked_rejected={[ent.name for ent in self.talked_rejected]}"
         output += f", talked_transitionable={[ent.name for ent in self.talked_transitionable]}"
@@ -408,7 +406,7 @@ class EntityTrackerState(object):
                 return True
             return ent in entities
 
-        self.able_to_takeover_entities = [ent for ent in self.able_to_takeover_entities if keep_entity(ent)]    # EDIT
+        self.able_to_takeover_entities = [ent for ent in self.able_to_takeover_entities if keep_entity(ent)]    # EDIT: TAKEOVER
         self.talked_finished = [ent for ent in self.talked_finished if keep_entity(ent)]
         self.talked_rejected = [ent for ent in self.talked_rejected if keep_entity(ent)]
         self.user_mentioned_untalked = [ent for ent in self.user_mentioned_untalked if keep_entity(ent)]
@@ -422,8 +420,8 @@ class EntityTrackerState(object):
         # Make a set (no duplicates) of all the WikiEntities stored in this EntityTrackerState
         entity_set = set()
         entity_set.add(self.cur_entity)
-        entity_set.update(self.talked_unfinished)   # EDIT
-        entity_set.update(self.able_to_takeover_entities)  # EDIT
+        entity_set.update(self.talked_unfinished)   # EDIT: TAKEOVER
+        entity_set.update(self.able_to_takeover_entities)  # EDIT: TAKEOVER
         entity_set.update(self.talked_finished)
         entity_set.update(self.talked_rejected)
         entity_set.update(self.user_mentioned_untalked)
@@ -439,8 +437,8 @@ class EntityTrackerState(object):
                 return None
             return entname2ent[ent.name]
         self.cur_entity = replace_ent(self.cur_entity)
-        self.talked_unfinished = [replace_ent(ent) for ent in self.talked_unfinished]   # EDIT
-        self.able_to_takeover_entities = [replace_ent(ent) for ent in self.able_to_takeover_entities]  # EDIT
+        self.talked_unfinished = [replace_ent(ent) for ent in self.talked_unfinished]   # EDIT: TAKEOVER
+        self.able_to_takeover_entities = [replace_ent(ent) for ent in self.able_to_takeover_entities]  # EDIT: TAKEOVER
         self.talked_finished = [replace_ent(ent) for ent in self.talked_finished]
         self.talked_rejected = [replace_ent(ent) for ent in self.talked_rejected]
         self.user_mentioned_untalked = [replace_ent(ent) for ent in self.user_mentioned_untalked]

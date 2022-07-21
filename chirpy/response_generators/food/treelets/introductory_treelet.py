@@ -74,7 +74,7 @@ class IntroductoryTreelet(Treelet):
                                        cur_entity=entity,
                                        conditional_state=ConditionalState(cur_food=entity,
                                                                           prompt_treelet=prompt_treelet),
-                                       last_rg_willing_to_handover_control=True)  # EDIT
+                                       last_rg_willing_to_handover_control=True)  # EDIT: TAKEOVER
 
     def get_prompt(self, **kwargs):
         return None

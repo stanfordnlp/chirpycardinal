@@ -76,7 +76,7 @@ class MusicResponseGenerator(ResponseGenerator):
             state.discussed_entities.append(state.cur_singer_str)
         return state
 
-    def update_state_if_not_chosen(self, state, conditional_state, rg_was_taken_over=False):    # EDIT
+    def update_state_if_not_chosen(self, state, conditional_state, rg_was_taken_over=False):    # EDIT: TAKEOVER
         state = super().update_state_if_not_chosen(state, conditional_state)
         return state
 

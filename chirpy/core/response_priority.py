@@ -69,7 +69,7 @@ class TiebreakPriority(Enum):
     ACKNOWLEDGMENT = 62
     EVI = 58
     NEWS = 65
-    WIKI = 69   # EDIT: Change from 64
+    WIKI = 64
     CATEGORIES = 60
     MUSIC = 66
     NEURAL_FALLBACK = 5  # fallback should always be lowest priority i.e. last resort

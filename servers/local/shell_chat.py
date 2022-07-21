@@ -47,7 +47,7 @@ callable_config={
 }
 # Logging settings
 LOGTOSCREEN_LEVEL = logging.INFO + 5
-LOGTOFILE_LEVEL = logging.INFO      # EDIT: logging.debug
+LOGTOFILE_LEVEL = logging.DEBUG
 
 def init_logger():
     logger_settings = LoggerSettings(logtoscreen_level=LOGTOSCREEN_LEVEL, logtoscreen_usecolor=True,
