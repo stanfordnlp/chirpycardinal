@@ -5,6 +5,7 @@ import yaml
 import os
 from importlib import import_module
 
+from chirpy.core.util import infl
 from chirpy.core.response_generator import Treelet, get_context_for_supernode
 from chirpy.core.response_priority import ResponsePriority
 from chirpy.core.response_generator.state import NO_UPDATE
@@ -13,6 +14,10 @@ from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, Pr
 from chirpy.core.response_generator.response_type import ResponseType
 
 logger = logging.getLogger('chirpylogger')
+
+
+import inflect
+engine = inflect.engine()
 
 def effify(non_f_str: str, global_context: dict):
     logger.primary_info(f"Outside eval, global_context is {str(global_context.keys())}, non f str is {non_f_str}")
@@ -27,11 +32,8 @@ class GodTreelet(Treelet):
 
         self.state_module = import_module(f'chirpy.response_generators.{rg_folder_name}.state')
 
-        #print("listdir", os.listdir())
         supernodes_path = f'chirpy/response_generators/{rg_folder_name}/yaml_files/supernodes/*/supernode.yaml'
-        print("supernodes_path", supernodes_path)
         supernodes = glob.glob(supernodes_path, recursive=True)
-        print("Supernodes", supernodes)
         self.supernode_content = {}
         self.supernode_files = []
         for s in supernodes:
@@ -78,20 +80,76 @@ class GodTreelet(Treelet):
 
         if len(matching_supernodes) == 0: return None
         return random.choice(matching_supernodes)
+        
+    def lookup_value(self, contexts):
+        if '.' in value_name:
+            assert len(value_name.split('.')) == 2, "Only one namespace allowed."
+            namespace_name, value_name = value_name.split('.')
+            value = contexts[namespace_value][value_name]
+        else:
+            assert False, f"Need a namespace for entry condition {value_name}."
 
-    def get_subnode(self, flags, supernode):
-        subnode_nlgs = self.nlg_yamls[supernode]
-        for nlg in subnode_nlgs['response']:
-            requirements = nlg['entry_conditions']
-            matches_entry_criteria = True
-            for key in requirements:
-                if flags[key] != requirements[key]:
-                    matches_entry_criteria = False
+    def select_subnode(self, subnodes, contexts):
+        for nlg in subnodes:
+            entry_conditions = nlg['entry_conditions']
+            for key in entry_conditions:
+                key_to_behavior = {
+                    'is_none': (lambda val: (val is None)),
+                    'is_true': (lambda val: (val is True)),
+                    'is_false': (lambda val: (val is False)),
+                    'is_value': (lambda val, target: (val == target)),
+                }
+                assert key in key_to_behavior, f'Key not found: {key}.'
+                if key == 'is_name':
+                    value_name = entry_conditions[key]['name']
+                    value_target = entry_conditions[key]['value']
+                else:
+                    value_name = entry_conditions[key]
+                
+                value = self.lookup_value(value_name, contexts)
+                if key == 'is_name':
+                    passes_condition = key_to_behavior[key](value, value_target)
+                else:
+                    passes_condition = key_to_behavior[key](value)
+                if not passes_condition:
                     break
-            if matches_entry_criteria:
-                return nlg['node_name'], nlg['response']
+            else:
+                logger.warning(f"Found NLG node: {nlg_node_name}.")
+                return nlg
 
         return None
+        
+    def evaluate_nlg_call(self, data, context, contexts):
+        if isinstance(data, 'str'): # plain text
+            return data
+        
+        assert isinstance(data, dict) and len(data) == 1    
+        type = next(iter(data))
+        nlg_params = data[type]
+        if type == 'eval':
+            assert isinstance(nlg_params, str)
+            return effify(nlg_params, global_context=context)
+        elif type == 'val':
+            assert isinstance(nlg_params, str)
+            return self.lookup_value(nlg_params, contexts)
+        elif type == 'nlg_helper':
+            assert isinstance(nlg_params, dict)
+            function_name = nlg_params['name']
+            assert function_name in context
+            args = [self.rg] + data.get('args', [])   # Add RG as first argument
+            return context[function_name](*args)
+        elif type == 'inflect':
+            assert isinstance(nlg_params, dict)
+            inflect_token = nlg_params['inflect_token']
+            return self.lookup_value(nlg_params, contexts)
+        elif type == 'inflect_helper':
+            assert isinstance(nlg_params, dict)
+            inflect_function = nlg_params['type']
+            inflect_input = self.evaluate_nlg_call(nlg_params['str'], context, contexts)
+            return getattr(engine, inflect_function)(inflect_input)
+        else:
+            assert False, f"Generation type {type} not found!"
+
 
     def get_unconditional_prompt_text(self, flags, supernode):
         for cases in self.nlg_yamls[supernode]['unconditional_prompt']:
@@ -112,46 +170,57 @@ class GodTreelet(Treelet):
                 if 'expose_vars' not in nlg or nlg['expose_vars'] == 'None': return None
                 return nlg['expose_vars']
         return None
-
+        
     def get_response(self, priority=ResponsePriority.STRONG_CONTINUE, **kwargs):
         logger.primary_info(f'{self.name} - Get response')
         state, utterance, response_types = self.get_state_utterance_response_types()
         needs_prompt = False
-        # supernode_path = 'yaml_files/supernodes/'
-        # cur_supernode = self.get_next_supernode(state)
+
         cur_supernode = state.cur_supernode
         if state.cur_supernode is None:
-            # RG is being entered (introductory response)
-            # Return empty string, but set state appropriately so prompt_treelet can take over
-            # entity = self.rg.state_manager.current_state.entity_tracker.cur_entity
             state = self.rg.check_and_set_entry_conditions(state)
             cur_supernode = self.get_next_supernode(state)
 
-        # NLU processing
-        
-        nlu = self.nlu_libraries[cur_supernode]
-        flags = nlu.nlu_processing(self.rg, state, utterance, response_types)
-
-        # NLG processing
-        result = self.get_subnode(flags, cur_supernode)
-        assert result is not None, f"There was no matching subnode in the supernode {cur_supernode} for the current state/utterance. Make sure the nlu covers all possible cases."
-        subnode_name, nlg_response = result
-
         context = get_context_for_supernode(cur_supernode)
-        cntxt = {
+        context.update({
             'rg': self.rg,
             'state': state
+        })
+
+        # Intent processing
+        nlu = self.nlu_libraries[cur_supernode]
+        flags = nlu.nlu_processing(self.rg, state, utterance, response_types)
+        
+        context = get_context_for_supernode(cur_supernode)
+
+        nlg_data = self.nlg_yamls[cur_supernode]
+        logger.warning(f"NLG data keys: {nlg_data}")
+
+        # Process locals        
+        locals = {}
+        for local_key, local_values in nlg_data['locals'].items():
+            locals[local_key] = self.evaluate_nlg_call(local_values, context)
+            
+        logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
+        # Select subnode
+        #def select_subnode(self, subnodes, flags, locals, state)
+        contexts = {
+            'flags': flags,
+            'locals': locals,
+            'state': state,
         }
-        context.update(cntxt)
-
-        try:
-            response = effify(nlg_response, global_context=context)
-        except Exception as e:
-            logger.error(e)
-            logger.error(f'We had an NLG error in the supernode {cur_supernode} and subnode {subnode_name}. The problematic string inside the yaml file is "{nlg_response}". Check whether you have decorated the right functions!')
-            raise
-
-        print('*sentinel* god treelet response', response, f'subnode: {subnode_name}')
+        subnode_data = self.select_subnode(subnodes=nlg_data['subnodes'], 
+                                           contexts=contexts)
+        assert subnode_data is not None, f"There was no matching subnode in the supernode {cur_supernode}."
+        
+        # Process subnode
+        structured_response = subnode_data['response']
+        output = []
+        for elem in structured_response:
+            output.append(self.evaluate_nlg_call(elem, context))
+        
+        response = ' '.join(output)
+        logger.warning(f'Received {response} from symbolic treelet.')
 
         # post-subnode state updates
         expose_vars = self.get_exposed_subnode_vars(cur_supernode, subnode_name)
@@ -221,7 +290,6 @@ class GodTreelet(Treelet):
         subnode_state_updates['prompt_treelet'] = self.name
         subnode_state_updates['prev_treelet_str'] = self.name
 
-        # YAML parse logic here
         return ResponseGeneratorResult(text=response, priority=priority, needs_prompt=needs_prompt, state=state,
                                        cur_entity=cur_entity, answer_type=answer_type,
                                        conditional_state=self.state_module.ConditionalState(**subnode_state_updates))

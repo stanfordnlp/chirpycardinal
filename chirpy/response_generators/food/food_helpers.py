@@ -216,20 +216,20 @@ def get_custom_response(cur_food, user_answer):
 
 
 # If we identify a restaurant, talk about our favorite item from the restaurant.
-RESTAURANTS = {
-    "mcdonald's": ["Big Mac", "Filet-o-Fish"],
-    "burger king": ["Whopper", "Double Whopper"],
-    "subway": ["Footlong"],
-    "popeye's": ["Popeye Chicken Sandwich"],
-    "olive garden": ["breadstick"]
-}
+# RESTAURANTS = {
+#     "mcdonald's": ["Big Mac", "Filet-o-Fish"],
+#     "burger king": ["Whopper", "Double Whopper"],
+#     "subway": ["Footlong"],
+#     "popeye's": ["Popeye Chicken Sandwich"],
+#     "olive garden": ["breadstick"]
+# }
 
 def get_custom_question(cur_food):
     cur_food = cur_food.lower()
     if cur_food in CUSTOM_QUESTIONS:
         return CUSTOM_QUESTIONS[cur_food][0]
-    elif cur_food in RESTAURANTS:
-        return f"It's honestly my favorite place to satisfy a late-night craving. What's your favorite thing to get from {cur_food}?"
+    # elif cur_food in RESTAURANTS:
+    #     return f"It's honestly my favorite place to satisfy a late-night craving. What's your favorite thing to get from {cur_food}?"
     return None
 
 def get_custom_question_answer(cur_food):
@@ -252,26 +252,6 @@ CUSTOM_COMMENTS = {
     # "Snack":
     # "Sandwich":
     # "Pie":
-}
-
-
-INTRO_STATEMENTS = [
-    "Ah yes, [FOOD] [copula] one of my favorite things to eat up here in the cloud.",
-    "Oh yeah, [FOOD] [copula] such an amazing choice. It's one of my favorite foods up here in the cloud."
-]
-
-def get_intro_acknowledgement(cur_food, is_plural):
-    if cur_food in RESTAURANTS:
-        return f"I really love the food from {cur_food}!"
-    cur_food = cur_food.lower()
-    if cur_food in CUSTOM_COMMENTS: return CUSTOM_COMMENTS[cur_food]
-
-    intro_statement = random.choice(INTRO_STATEMENTS)
-    copula = infl('is', is_plural)
-    return intro_statement.replace('[copula]', copula).replace('[FOOD]', cur_food)
-
-CUSTOM_STATEMENTS = {
-    'chocolate': "I especially love how rich and smooth it is."
 }
 
 def get_custom_comment(cur_food):

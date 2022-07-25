@@ -26,7 +26,7 @@ class LoggerSettings:
     integ_test: bool  # If True, we setup the logger in a special way to work with nosetests
     remove_root_handlers: bool  # If True, we remove all other handlers on the root logger
     allow_rich_formatting: bool = True
-    filter_by_rg: str = None
+    filter_by_rg: str = "food"
     disable_annotation: bool = False
 
 
