@@ -9,6 +9,7 @@ POSITIVE_ACKNOWLEDGEMENTS = [
     'cool',
     'super',
     'i didn\'t know',
+    'interesting',
 ]
 
 GENERAL_BOT_ACKNOWLEDGEMENTS = [

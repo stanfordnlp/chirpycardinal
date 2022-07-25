@@ -20,6 +20,7 @@ from chirpy.response_generators.food.state import State, ConditionalState
 from chirpy.core.offensive_classifier.offensive_classifier import OffensiveClassifier
 from chirpy.response_generators.food.food_helpers import *
 
+
 logger = logging.getLogger('chirpylogger')
 
 class FoodResponseGenerator(ResponseGenerator):
@@ -31,9 +32,11 @@ class FoodResponseGenerator(ResponseGenerator):
         self.comment_on_favorite_type_treelet = CommentOnFavoriteTypeTreelet(self)
         self.ask_favorite_food_treelet = AskFavoriteFoodTreelet(self)
         self.factoid_treelet = FactoidTreelet(self)
+
         treelets = {
             treelet.name: treelet for treelet in [self.introductory_treelet, self.open_ended_user_comment_treelet,
-                                                  self.comment_on_favorite_type_treelet, self.factoid_treelet, self.ask_favorite_food_treelet]
+                                                  self.comment_on_favorite_type_treelet, self.factoid_treelet, self.ask_favorite_food_treelet
+                                                  ]
         }
         super().__init__(state_manager, treelets=treelets, intent_templates=[], can_give_prompts=True,
                          state_constructor=State,

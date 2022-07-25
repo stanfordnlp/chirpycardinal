@@ -78,6 +78,7 @@ class State(object):
         self.entity_tracker.init_for_new_turn()
         self.experiments = last_state.experiments
         self.turn_num = last_state.turn_num + 1
+
         try:
             self.turns_since_last_active = last_state.turns_since_last_active
         except AttributeError:

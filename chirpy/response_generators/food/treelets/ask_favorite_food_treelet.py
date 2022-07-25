@@ -29,5 +29,6 @@ class AskFavoriteFoodTreelet(Treelet):
                                        conditional_state=ConditionalState(
                                            next_treelet_str="food_introductory_treelet",
                                            cur_food=None),
-                                       expected_type=ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related
+                                       expected_type=ENTITY_GROUPS_FOR_EXPECTED_TYPE.food_related,
+                                       last_rg_willing_to_handover_control=False
                                        )

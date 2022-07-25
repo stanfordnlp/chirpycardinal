@@ -20,7 +20,7 @@ MAX_ES_SEARCH_SIZE = 1000
 ANCHORTEXT_QUERY_TIMEOUT = 3.0  # seconds
 ENTITYNAME_QUERY_TIMEOUT = 1.0  # seconds
 
-ARTICLES_INDEX_NAME = 'enwiki-20220107-articles'
+ARTICLES_INDEX_NAME = 'enwiki-20200920-articles'
 
 # These are the fields we DO want to fetch from ES
 FIELDS_FILTER = ['doc_title', 'doc_id', 'categories', 'pageview', 'linkable_span_info', 'wikidata_categories_all', 'redirects', 'plural']

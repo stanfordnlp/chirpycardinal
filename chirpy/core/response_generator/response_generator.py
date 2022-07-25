@@ -24,6 +24,7 @@ from chirpy.core.entity_linker.entity_groups import ENTITY_GROUPS_FOR_CLASSIFICA
 from chirpy.response_generators.music.utils import WikiEntityInterface
 
 from concurrent import futures
+import copy
 
 logger = logging.getLogger('chirpylogger')
 
@@ -41,7 +42,7 @@ class ResponseGenerator(NamedCallable):
                  disallow_start_from=None,
                  can_give_prompts=False,
                  state_constructor=None,
-                 conditional_state_constructor=None
+                 conditional_state_constructor=None,
                  ):
         """Creates a new Response Generator.
 
@@ -93,7 +94,8 @@ class ResponseGenerator(NamedCallable):
         if response_types is not None:
             state.response_types = construct_response_types_tuple(response_types)
 
-        if conditional_state is None: return state
+        if conditional_state is None:
+            return state
 
         if conditional_state:
             for attr in dir(conditional_state):
@@ -101,15 +103,20 @@ class ResponseGenerator(NamedCallable):
                     val = getattr(conditional_state, attr)
                     if val != NO_UPDATE: setattr(state, attr, val)
         state.num_turns_in_rg += 1
+
         return state
 
-    def update_state_if_not_chosen(self, state, conditional_state):
+    def update_state_if_not_chosen(self, state, conditional_state, rg_was_taken_over=False):
         """
         By default, this sets the prev_treelet_str and next_treelet_str to '' and resets num_turns_in_rg to 0.
         Response types are also saved.
         No other attributes are updated.
         All other attributes in ConditionalState are set to NO-UPDATE
         """
+        if rg_was_taken_over:
+            state.archived_state = copy.deepcopy(state)
+            logging.info(f"Save current state as archived_state for conversation to be resumed: {state.archived_state}")
+
         response_types = self.get_cache(f'{self.name}_response_types')
         if response_types is not None:
             state.response_types = construct_response_types_tuple(response_types)
@@ -284,6 +291,9 @@ class ResponseGenerator(NamedCallable):
                 return None
         else:
             return self.state_manager.current_state.entity_tracker.cur_entity
+
+    def get_most_recent_able_to_takeover_entity(self):
+        return self.state_manager.current_state.entity_tracker.able_to_takeover_entities[-1]
 
     def get_entity_tracker(self):
         return self.state_manager.current_state.entity_tracker
@@ -861,7 +871,7 @@ class ResponseGenerator(NamedCallable):
                 return self.state_manager.last_state.selected_response_rg
 
 
-    def get_response(self, state) -> ResponseGeneratorResult:
+    def get_response(self, state, rg_was_taken_over=False) -> ResponseGeneratorResult:
         response_types = self.identify_response_types(self.utterance)
         logger.primary_info(f"{self.name} identified response_types: {response_types}")
         self.state = state
@@ -915,25 +925,97 @@ class ResponseGenerator(NamedCallable):
 
         if not is_continuing_conversation: # allow the first branch to divert here
             logger.primary_info(f"{self.name} is not currently active, so checking if it should activate")
-
             activation_check_fns = {
                 (lambda: self.get_last_active_rg() in self.disallow_start_from): self.get_fallback_result,
                 (lambda: True): self.handle_direct_navigational_intent,
+                (lambda: (self.last_rg_willing_to_handover_control() and self.exist_able_to_takeover_entities())): self.get_takeover_response,
                 (lambda: True): self.handle_current_entity,
                 (lambda: True): self.get_intro_treelet_response,
                 (lambda: True): self.handle_custom_activation_checks,
             }
 
+            logging.debug(f"DEBUG HANDOVER {self.last_rg_willing_to_handover_control()}, {self.exist_able_to_takeover_entities()}")
+
             for activation_condition, activation_check_fn in activation_check_fns.items():
                 if activation_condition():
                     response = activation_check_fn()
-                    if response: return self.possibly_augment_with_prompt(response)
+
+                    if response:
+                        return self.possibly_augment_with_prompt(response)
+
 
         response = self.handle_default_post_checks()
         if response:
             return self.possibly_augment_with_prompt(response)
 
         return self.get_fallback_result()
+
+    def last_rg_willing_to_handover_control(self):
+        last_active_rg_prompt = self.state_manager.last_state_response
+        if last_active_rg_prompt:
+            return last_active_rg_prompt.last_rg_willing_to_handover_control
+        else:
+            return False
+
+    def exist_able_to_takeover_entities(self):
+        return len(self.state_manager.current_state.entity_tracker.able_to_takeover_entities) != 0
+
+    def get_takeover_response(self):
+        logging.info(f"{self.name} null get_takeover_response")
+        return None
+
+    def takeover_rg_willing_to_handback_control(self):
+        last_active_rg_prompt = self.state_manager.last_state_response
+        if last_active_rg_prompt:
+            return last_active_rg_prompt.takeover_rg_willing_to_handback_control
+        else:
+            return False
+
+    def get_resuming_statement(self, state) -> ResponseGeneratorResult:
+        logging.info(f"{self.name} null get_resuming_statement")
+        return self.emptyPrompt()
+
+    def augment_resuming_statement(self, resuming_statement_first_treelet):
+        resuming_conversation_second_treelet_str = resuming_statement_first_treelet.resuming_conversation_next_treelet
+        logger.debug(f"The prompt treelet for resuming conversation is {resuming_conversation_second_treelet_str}")
+        resuming_conversation_second_treelet = self.treelets[resuming_conversation_second_treelet_str]
+        resuming_prompt_second_treelet = resuming_conversation_second_treelet.get_prompt()
+        logger.debug(f"The prompt for resuming conversation is {resuming_prompt_second_treelet}")
+        if resuming_prompt_second_treelet:
+            resuming_statement_first_treelet.text = f"{resuming_statement_first_treelet.text} {resuming_prompt_second_treelet.text}"
+            resuming_statement_first_treelet.conditional_state.next_treelet_str = resuming_conversation_second_treelet_str
+            for attr_to_copy in ['state', 'cur_entity', 'expected_type', 'answer_type',
+                              'last_rg_willing_to_handover_control', 'takeover_rg_willing_to_handback_control']:
+                attr_template = getattr(resuming_prompt_second_treelet, attr_to_copy)
+                setattr(resuming_statement_first_treelet, attr_to_copy, attr_template)
+            resuming_statement_first_treelet.resuming_conversation_next_treelet = None
+        return resuming_statement_first_treelet
+
+    def resume_conversation(self):
+        logger.debug(
+            f"The archived_state for resuming conversation is {self.state_manager.current_state.response_generator_states[self.name].archived_state} in {self.name}")
+        archived_state = self.state_manager.current_state.response_generator_states[self.name].archived_state
+        self.state = archived_state
+        logger.error(f"The state of {self.name} after retrieving archived_state is: {self.state}")
+
+        first_treelet_str = self.state.next_treelet_str
+        assert first_treelet_str in self.treelets
+        first_treelet = self.treelets[first_treelet_str]
+        resuming_statement_first_treelet = first_treelet.get_resuming_statement()
+        logger.info(f"The resuming statement generated from the current treelet is {resuming_statement_first_treelet}")
+
+        resuming_conversation = self.augment_resuming_statement(resuming_statement_first_treelet)
+        logger.info(f"The resuming statement after augmented with a prompt is {resuming_conversation}")
+
+        return resuming_conversation
+
+
+    def get_prompt_wrapper(self, state, rg_to_resume=False):
+        if self.takeover_rg_willing_to_handback_control():
+            if rg_to_resume:
+                return self.resume_conversation()
+        else:
+            return self.get_prompt(state)
 
 
     def possibly_augment_with_prompt(self, response):
@@ -970,8 +1052,11 @@ class ResponseGenerator(NamedCallable):
         next_treelet_str = self.state.next_treelet_str
 
         next_treelet = None
-        response_priority = ResponsePriority.STRONG_CONTINUE
-
+        if self.last_rg_willing_to_handover_control(): # we talked last turn and decided to handover...
+            response_priority = ResponsePriority.WEAK_CONTINUE
+        else:
+            response_priority = ResponsePriority.STRONG_CONTINUE
+        logger.error(f"In continue_conversation, self.state is {self.state}, next_treelet_str is {next_treelet_str}, priority is {response_priority}")
         if next_treelet_str is None:
             return self.emptyResult() # continue from some other RG
         elif next_treelet_str == '':
@@ -1013,7 +1098,6 @@ class ResponseGenerator(NamedCallable):
             logger.info(f"Continuing conversation from {next_treelet_str} for {self.name}")
             assert next_treelet_str in self.treelets
             next_treelet = self.treelets[next_treelet_str]
-            response_priority = ResponsePriority.STRONG_CONTINUE
 
         if next_treelet is not None:
             response = next_treelet.get_response(response_priority, )

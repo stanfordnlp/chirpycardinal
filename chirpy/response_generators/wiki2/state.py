@@ -60,6 +60,7 @@ class State(BaseState):
     context_used: Optional[str] = None
 
 
+
 @dataclass
 class ConditionalState(BaseConditionalState):
     # This is only used in conditional state to update the information for each entity

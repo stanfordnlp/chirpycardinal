@@ -3,6 +3,10 @@ from dataclasses import dataclass
 from typing import List, Optional, Set, Tuple
 from chirpy.core.response_generator.state import NO_UPDATE
 
+from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
+
+import copy
+
 logger = logging.getLogger('chirpylogger')
 
 @dataclass
@@ -32,7 +36,8 @@ class ConditionalState(object):
     def __init__(self, next_treelet: Optional[str] = None, most_recent_treelet: Optional[str] = None,
                  user_utterance: Optional[str] = None, user_labels: List[str] = [],
                  bot_utterance: Optional[str] = None, bot_labels: List[str] = [],
-                 neural_responses: Optional[List[str]] = None, num_topic_shifts: int = 0):
+                 neural_responses: Optional[List[str]] = None, num_topic_shifts: int = 0,
+                 archived_state: "State" = None, rg_that_was_taken_over: str = None, takeover_entity: WikiEntity = None):
         """
         @param next_treelet: the name of the treelet we should run on the next turn if our response/prompt is chosen. None means turn off next turn.
         @param most_recent_treelet: the name of the treelet that handled this turn, if applicable
@@ -59,6 +64,9 @@ class ConditionalState(object):
         self.bot_labels = bot_labels
         self.neural_responses = neural_responses
         self.num_topic_shifts = num_topic_shifts
+        self.archived_state = archived_state
+        self.rg_that_was_taken_over = rg_that_was_taken_over
+        self.takeover_entity = takeover_entity
 
     def __repr__(self):
         return f"<ConditionalState: next_treelet={self.next_treelet}, user_utterance={self.user_utterance}, " \
@@ -111,10 +119,15 @@ class ConvHistory(object):
 
 class State(object):
 
-    def __init__(self, next_treelet: Optional[str] = None, conv_histories: dict = {}):
+    def __init__(self, next_treelet: Optional[str] = None, conv_histories: dict = {},
+                 archived_state: "State" = None, rg_that_was_taken_over: str = None, takeover_entity: WikiEntity = None):
         self.next_treelet = next_treelet  # the name of the treelet we should run on the next turn. None means turn off next turn.
         self.conv_histories = conv_histories  # Maps from treelet name (str) to ConvHistory. If a treelet isn't in the dict, that means it has an empty ConvHistory (we don't store it to minimize size of this object)
         self.num_topic_shifts = 0
+        self.archived_state = archived_state
+        self.rg_that_was_taken_over = rg_that_was_taken_over
+        self.takeover_entity = takeover_entity
+
 
     def __repr__(self):
         return f"<State: next_treelet={self.next_treelet}, conv_histories={self.conv_histories}>"
@@ -161,7 +174,7 @@ class State(object):
         self.update_conv_history(conditional_state)
 
 
-    def update_if_not_chosen(self, conditional_state: ConditionalState):
+    def update_if_not_chosen(self, conditional_state: ConditionalState, rg_was_taken_over=False):
         """If our response/prompt has not been chosen, update state"""
 
         # Set the next_treelet for the next turn to be None (off)

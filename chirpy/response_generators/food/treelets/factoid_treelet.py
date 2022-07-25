@@ -27,7 +27,8 @@ class FactoidTreelet(Treelet):
             conditional_state = ConditionalState(cur_food=cur_food)
         entity = self.rg.state_manager.current_state.entity_tracker.cur_entity
         return PromptResult(text=get_factoid(cur_food), prompt_type=PromptType.CONTEXTUAL,
-                            state=state, cur_entity=entity, conditional_state=conditional_state, answer_type=AnswerType.QUESTION_SELFHANDLING)
+                            state=state, cur_entity=entity, conditional_state=conditional_state, answer_type=AnswerType.QUESTION_SELFHANDLING,
+                           )
 
     def get_response(self, priority=ResponsePriority.STRONG_CONTINUE, **kwargs):
         """ Returns the response. """
@@ -50,5 +51,6 @@ class FactoidTreelet(Treelet):
                                        cur_entity=None,
                                        conditional_state=ConditionalState(
                                            prev_treelet_str=self.name,
-                                           cur_food=cur_food
-                                       ))
+                                           cur_food=cur_food),
+                                       last_rg_willing_to_handover_control=True
+                                       )

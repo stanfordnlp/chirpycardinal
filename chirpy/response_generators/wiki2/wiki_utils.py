@@ -23,6 +23,8 @@ import requests
 import random
 import math
 
+from chirpy.core.entity_linker.entity_linker_classes import WikiEntity
+
 
 lucene_stopwords = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in', 'into', 'is', 'it',
  'no', 'not', 'of', 'on', 'or', 'such', 'that', 'the', 'their', 'then', 'there', 'these', 'they', 'this', 'to', 'was',
@@ -135,6 +137,8 @@ def filter_highlight_sections(title, es_sections):
         wiki_sections.append(wiki_section)
     filtered_sections = wiki_sections
 
+    logger.error(f"SECTIONS: {filtered_sections}")
+
     # Filter sections and log why the  were filtered
     filtered_sections = filter_and_log(lambda section: not contains_offensive(section.title), filtered_sections,
                                        'Wiki Highlights', reason_for_filtering='section title contains offensive phrases')
@@ -162,7 +166,10 @@ def filter_highlight_sections(title, es_sections):
     filtered_sections = filter_and_log(lambda section: not contains_offensive(section.highlight), filtered_sections,
                                        'Wiki Highlights', reason_for_filtering='section highlight contains offensive phrases')
 
+    logger.error(f"SECTIONS2: {filtered_sections}")
     return filtered_sections
+
+
 def filter_sections(title, es_sections):
     wiki_sections = []
     for section in es_sections['hits']['hits']:
@@ -262,10 +269,105 @@ def search_wiki_sections(doc_title: str, phrases: tuple, wiki_links:tuple) -> Li
             }
     }
     }
+    import json
+    logger.error(f"QUERY: {json.dumps(query, indent=2)}")
     sections = es.search(index='enwiki-20200920-sections', body=query)
-    logger.debug(f"For phrases {phrases}, in wikipedia article {doc_title}, found following sections (unfiltered) {sections}")
+    logger.error(f"For phrases {phrases}, in wikipedia article {doc_title}, found following sections (unfiltered) {sections}")
     filtered_sections = filter_highlight_sections(doc_title, sections)
     return filtered_sections
+
+
+def prune_section(section):
+    return section['text'][0] in {'†', '+', '*'}
+
+
+def clean_takeover_wiki_text(text: str) -> str:
+    modified_text = clean_wiki_text(text)
+    index_caption = modified_text.find(']]')
+    if index_caption != -1:
+        modified_text = modified_text[index_caption + 2:]
+    return modified_text
+
+
+def summarize_takeover_candidate_text(rg, text: str, span_to_keep: str, max_words: int = 50, max_sents: int = 3) -> str:
+    logger.info(f'Summarizing takeover text: {text}')
+
+    local_sentseg_fn = lambda text: re.split('[.\n]', text)
+    sentseg_fn = NLTKSentenceSegmenter(
+        rg.state_manager).execute if rg.state_manager else local_sentseg_fn
+    sentences = sentseg_fn(text)
+
+    summary = ''
+    num_sentences = 0
+    found = False
+    for sentence in sentences:
+        if sentence == '':
+            continue
+        if "|" in sentence or "[" in sentence or "]" in sentence or "{" in sentence or "}" in sentence:
+            continue
+        if span_to_keep in sentence:
+            found = True
+        summary += sentence + ('.' if sentence[-1] not in {'.', '!', '?'} else ' ')
+        num_sentences += 1
+        if found and (num_sentences > max_sents or len(summary.split(' ')) < max_words):
+            break
+    return summary
+
+
+def search_wiki_intersect_sections(rg, doc_title: str, search_entity: WikiEntity) -> List[str]:
+    query = {'query': {'bool': {'filter': [
+        {'term': {'doc_title': doc_title}}]}}}
+    sections = es.search(index='enwiki-20200920-sections', body=query, size=100)
+    top_spans = list(search_entity.anchortext_counts.keys())[:3]
+    logger.error(f"SPAN: {search_entity.anchortext_counts}")
+    candidate_texts = []
+    # logger.error(f"TEXTS: {sections['hits']['hits']}")
+    for section in sections['hits']['hits']:
+        source = section['_source']
+        if not prune_section(source):
+            source_texts = list(filter(None, re.split('\n', source['text'])))
+            for text in source_texts:
+                cleaned_text = clean_takeover_wiki_text(text)
+                if not contains_offensive(cleaned_text) and not rg.has_overlap_with_history(cleaned_text, threshold=0.8):
+                    for s in top_spans:
+                        if s in cleaned_text:
+                            summarized_text = summarize_takeover_candidate_text(rg, cleaned_text, span_to_keep=s)
+                            candidate_texts.append(summarized_text)
+                            break
+    logger.info(f"candidate_texts from doc_title {doc_title} is {candidate_texts}")
+    return candidate_texts
+
+
+def get_takeover_text(rg, cur_entity: WikiEntity, takeover_entity: WikiEntity) -> Optional[str]:
+    related_wiki_texts_from_cur_entity_doc = search_wiki_intersect_sections(rg, cur_entity.talkable_name, takeover_entity)
+    if related_wiki_texts_from_cur_entity_doc:
+        return random.choice(related_wiki_texts_from_cur_entity_doc)
+
+    related_wiki_texts_from_takeover_entity_doc = search_wiki_intersect_sections(rg, takeover_entity.talkable_name, cur_entity)
+    if related_wiki_texts_from_takeover_entity_doc:
+        return random.choice(related_wiki_texts_from_takeover_entity_doc)
+
+    return None
+
+
+INTRO_INTERSECT_TEXT = ["Speaking of {} and {}, ",
+                        "Relating to {} and {}, ",
+                        "Since you mentioned {} and {}, "]
+
+
+def get_random_intro_intersect_text(cur_entity: str, takeover_entity: str) -> str:
+    return random.choice(INTRO_INTERSECT_TEXT).format(cur_entity, takeover_entity)
+
+
+STARTER_TEXTS = ["did you know that ",
+     "I recently learned that ",
+     "I was reading recently and found out that ",
+     "did you know that ",
+     "I was interested to learn that "]
+
+
+def get_random_starter_text():
+    return random.choice(STARTER_TEXTS)
 
 
 def get_text_for_entity(entity):
@@ -290,6 +392,7 @@ def get_text_for_entity(entity):
     sections = [(title, re.sub(r'^.*]]', '', text)) for (title, text) in sections]
     sections = sorted(sections, key=(lambda x: -len(x[1])))
     return sections
+
 
 def check_section_summary(rg, section_summary, selected_section, allow_history_overlap=False):
     """

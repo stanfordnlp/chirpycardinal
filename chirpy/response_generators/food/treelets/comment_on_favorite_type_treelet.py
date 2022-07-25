@@ -38,7 +38,8 @@ class CommentOnFavoriteTypeTreelet(Treelet):
             return None
 
         return PromptResult(text, PromptType.CONTEXTUAL, state, conditional_state=conditional_state,
-                            cur_entity=entity, answer_type=AnswerType.QUESTION_SELFHANDLING)
+                            cur_entity=entity, answer_type=AnswerType.QUESTION_SELFHANDLING,
+                            )
 
     def get_best_candidate_user_entity(self, utterance, cur_food):
         def condition_fn(entity_linker_result, linked_span, entity):
@@ -93,5 +94,28 @@ class CommentOnFavoriteTypeTreelet(Treelet):
                                        cur_entity=entity,
                                        conditional_state=ConditionalState(
                                            prompt_treelet=self.rg.open_ended_user_comment_treelet.name,
-                                           cur_food=cur_food_entity)
+                                           cur_food=cur_food_entity),
+                                       last_rg_willing_to_handover_control=False
                                        )
+
+    def get_resuming_statement(self, prompt_type=PromptType.FORCE_START, **kwargs):
+        logger.error(f"GET_STATEMENT_RESPONSE got triggered.")
+        state, utterance, response_types = self.get_state_utterance_response_types()
+        entity = self.rg.get_current_entity(initiated_this_turn=False)
+        cur_food_entity = state.cur_food
+        cur_food = cur_food_entity.name
+        cur_talkable_food = cur_food_entity.talkable_name
+
+        if get_custom_question(cur_food) is not None:
+            custom_question_answer = get_custom_question_answer(cur_food)
+            text = f"Anyway, personally, when it comes to {cur_talkable_food}, I really like {custom_question_answer}."
+        else:
+            other_type = sample_from_type(cur_food)
+            text = f"Anyway, personally, I really like {other_type}"
+
+        return PromptResult(text=text, prompt_type=prompt_type, state=state,
+                            conditional_state=ConditionalState(
+                                           prompt_treelet=self.rg.open_ended_user_comment_treelet.name,
+                                           cur_food=cur_food_entity),
+                            cur_entity=entity,
+                            resuming_conversation_next_treelet=self.rg.open_ended_user_comment_treelet.name)

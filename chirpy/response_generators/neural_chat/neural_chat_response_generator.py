@@ -188,7 +188,7 @@ class NeuralChatResponseGenerator(ResponseGenerator):
         state.update_if_chosen(conditional_state)
         return state
 
-    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState]) -> State:
+    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState], rg_was_taken_over=False) -> State:
         logger.primary_info(f"Neural chat state is {state}")
         if conditional_state is not None:
             state.update_if_not_chosen(conditional_state)

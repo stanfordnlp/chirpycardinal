@@ -533,7 +533,7 @@ class OpinionResponseGenerator2(ResponseGenerator):
                 if val != NO_UPDATE: setattr(state, attr, val)
         return state
 
-    def update_state_if_not_chosen(self, state: State, conditional_state : Optional[State]) -> State:
+    def update_state_if_not_chosen(self, state: State, conditional_state : Optional[State], rg_was_taken_over=False) -> State:
         new_state = state.reset_state()
         new_state.num_turns_since_long_policy += 1
         return new_state

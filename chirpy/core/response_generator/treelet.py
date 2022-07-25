@@ -50,6 +50,9 @@ class Treelet(ABC):
     def get_current_entity(self, initiated_this_turn=False):
         return self.rg.get_current_entity(initiated_this_turn=initiated_this_turn)
 
+    def get_most_recent_able_to_takeover_entity(self):
+        return self.rg.get_most_recent_able_to_takeover_entity()
+
     def get_sentiment(self):
         return self.rg.get_sentiment()
 

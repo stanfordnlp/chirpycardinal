@@ -73,7 +73,8 @@ class IntroductoryTreelet(Treelet):
                                        needs_prompt=False, state=state,
                                        cur_entity=entity,
                                        conditional_state=ConditionalState(cur_food=entity,
-                                                                          prompt_treelet=prompt_treelet))
+                                                                          prompt_treelet=prompt_treelet),
+                                       last_rg_willing_to_handover_control=True)
 
     def get_prompt(self, **kwargs):
         return None
@@ -90,3 +91,4 @@ class IntroductoryTreelet(Treelet):
         #                             cur_treelet_str="get_other_type",
         #                             cur_food=entity.name,
         #                             response=prompt_text))
+
