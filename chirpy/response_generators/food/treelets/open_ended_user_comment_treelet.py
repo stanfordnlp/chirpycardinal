@@ -74,5 +74,5 @@ class OpenEndedUserCommentTreelet(Treelet):
                                            prev_treelet_str=self.name,
                                            prompt_treelet=prompt_treelet,
                                            cur_food=None),
-                                       last_rg_willing_to_handover_control=False  # EDIT: TAKEOVER
+                                       last_rg_willing_to_handover_control=False
                                        )

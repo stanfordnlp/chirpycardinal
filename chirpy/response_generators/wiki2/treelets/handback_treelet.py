@@ -48,7 +48,7 @@ class WikiHandBackTreelet(Treelet):
         state, utterance, response_types = self.get_state_utterance_response_types()
         takeover_entity = state.takeover_entity
 
-        logger.error(f'WIKI HANDBACK')
+        logger.debug(f'WIKI handback_treelet is triggered.')
 
         wrap_up_text = self.get_acknowledgement()
 

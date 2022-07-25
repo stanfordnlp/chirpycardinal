@@ -25,10 +25,10 @@ from chirpy.response_generators.wiki2.response_templates.response_components imp
 from chirpy.annotators.corenlp import Sentiment
 from chirpy.response_generators.wiki2.state import State,ConditionalState, NO_UPDATE
 
-from chirpy.response_generators.wiki2.treelets.takeover_treelet import WikiTakeOverTreelet  # EDIT: TAKEOVER
-from chirpy.response_generators.wiki2.treelets.handback_treelet import WikiHandBackTreelet  # EDIT: TAKEOVER
+from chirpy.response_generators.wiki2.treelets.takeover_treelet import WikiTakeOverTreelet
+from chirpy.response_generators.wiki2.treelets.handback_treelet import WikiHandBackTreelet
 
-from chirpy.core.offensive_classifier.offensive_classifier import OffensiveClassifier    # EDIT: TAKEOVER
+from chirpy.core.offensive_classifier.offensive_classifier import OffensiveClassifier
 
 logger = logging.getLogger('chirpylogger')
 
@@ -58,15 +58,15 @@ class WikiResponseGenerator(ResponseGenerator):
         self.discuss_section_treelet = DiscussSectionTreelet(self)
         self.discuss_section_further_treelet = DiscussSectionFurtherTreelet(self)
         self.get_opinion_treelet = GetOpinionTreelet(self)
-        self.takeover_treelet = WikiTakeOverTreelet(self)   # EDIT: TAKEOVER
-        self.handback_treelet = WikiHandBackTreelet(self)  # EDIT: TAKEOVER
+        self.takeover_treelet = WikiTakeOverTreelet(self)
+        self.handback_treelet = WikiHandBackTreelet(self)
 
         treelets = {t.name: t for t in [self.check_user_knowledge_treelet,
                                         self.acknowledge_user_knowledge_treelet, self.factoid_treelet,
                                         self.intro_entity_treelet, self.combined_til_treelet,
                                         self.discuss_article_treelet, self.discuss_section_treelet,
                                         self.discuss_section_further_treelet, self.get_opinion_treelet,
-                                        self.takeover_treelet, self.handback_treelet]}  # EDIT: TAKEOVER
+                                        self.takeover_treelet, self.handback_treelet]}
 
         super().__init__(state_manager, treelets=treelets, state_constructor=State, can_give_prompts=True,
                          conditional_state_constructor=ConditionalState,
@@ -652,7 +652,7 @@ class WikiResponseGenerator(ResponseGenerator):
 
         return state
 
-    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState], rg_was_taken_over=False) -> State:    # EDIT: TAKEOVER
+    def update_state_if_not_chosen(self, state: State, conditional_state: Optional[ConditionalState], rg_was_taken_over=False) -> State:
         state = super().update_state_if_not_chosen(state, conditional_state)
         state.cur_doc_title = None
         state.suggested_sections = []
@@ -670,7 +670,7 @@ class WikiResponseGenerator(ResponseGenerator):
 
         return state
 
-    def get_takeover_response(self):  # EDIT: TAKEOVER
+    def get_takeover_response(self):
         logger.error("WIKI TAKEOVER")
         return self.takeover_treelet.get_response(ResponsePriority.FORCE_START)
 

@@ -14,31 +14,21 @@ from chirpy.annotators.blenderbot import BlenderBot
 logger = logging.getLogger('chirpylogger')
 
 
-class WikiTakeOverTreelet(Treelet):     # EDIT: TAKEOVER
+class WikiTakeOverTreelet(Treelet):
     name = "wiki_takeover_treelet"
-
-    def get_summary_takeover(self, related_wiki_section, sentseg_fn, max_words, max_sents):
-        summary = wiki_utils.get_summary(related_wiki_section['text'], sentseg_fn, max_words, max_sents)
-        logger.primary_info(f"Takeover Summary is: {summary}")
-        summary = wiki_utils.clean_wiki_text(summary)
-        logger.primary_info(f"Takeover Summary after clean is: {summary}")
-        if wiki_utils.contains_offensive(summary):
-            logger.primary_info(f"Found takeover overview to be offensive, discarding it")
-            return None
-        return summary
 
     def get_response(self, priority=ResponsePriority.FORCE_START, **kwargs):
         state, utterance, response_types = self.get_state_utterance_response_types()
 
         rg_that_was_taken_over = self.rg.state_manager.last_state.active_rg
-        logger.error(f'RG_THAT_WAS_TAKEN_OVER: {rg_that_was_taken_over}')
+        logger.debug(f'rg that was taken over is {rg_that_was_taken_over}.')
 
         cur_entity = self.get_current_entity()
         takeover_entity = self.get_most_recent_able_to_takeover_entity()
 
         takeover_text = wiki_utils.get_takeover_text(self.rg, cur_entity, takeover_entity)
 
-        logger.error(f"TAKEOVER TEXT: {takeover_text}")
+        logger.info(f"takenover_text is {takeover_text}")
 
         if takeover_text:
             intro_intersect_text = wiki_utils.get_random_intro_intersect_text(cur_entity.talkable_name, takeover_entity.talkable_name)
@@ -59,10 +49,11 @@ class WikiTakeOverTreelet(Treelet):     # EDIT: TAKEOVER
             takeover_neural_response = self.rg.get_neural_response(prefix=neural_prefix)
             takeover_neural_response = takeover_neural_response.split('.')[0]
             generated_response = takeover_neural_response[len(neural_prefix):]
-            logger.error(f"TAKEOVER_NEURAL_RESPONSE: {takeover_neural_response}")
-            if takeover_entity.talkable_name in generated_response  and cur_entity.talkable_name in generated_response :
+            logger.info(f"takenover_neural_response is {takeover_neural_response}")
+            if takeover_entity.talkable_name in generated_response  and cur_entity.talkable_name in generated_response:
                 intro_intersect_text = wiki_utils.get_random_intro_intersect_text(cur_entity.talkable_name,
                                                                                   takeover_entity.talkable_name)
+                logger.info("takenover_neural_response is used.")
                 starter_text = wiki_utils.get_random_starter_text()
                 return ResponseGeneratorResult(
                     text=intro_intersect_text + starter_text + generated_response,
@@ -75,4 +66,7 @@ class WikiTakeOverTreelet(Treelet):     # EDIT: TAKEOVER
                     takeover_rg_willing_to_handback_control=True
                 )
             else:
+                logger.info("takenover_neural_response is not used because it does not contain takeover_entity and cur_entity in it.")
+                logger.info(
+                    "WIKI fails to takeover.")
                 return None

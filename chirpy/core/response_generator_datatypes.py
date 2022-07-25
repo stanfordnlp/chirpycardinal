@@ -34,10 +34,10 @@ class ResponseGeneratorResult:
                  conditional_state=None,
                  tiebreak_priority=None,
                  no_transition=False,
-                 last_rg_willing_to_handover_control=False,  # EDIT: TAKEOVER
-                 rg_that_was_taken_over =None,  # EDIT: TAKEOVER
-                 takeover_entity=None,  # EDIT: TAKEOVER
-                 takeover_rg_willing_to_handback_control=False  # EDIT: TAKEOVER
+                 last_rg_willing_to_handover_control=False,
+                 rg_that_was_taken_over =None,
+                 takeover_entity=None,
+                 takeover_rg_willing_to_handback_control=False
                  ):
         """
         :param text: text of the response
@@ -103,10 +103,10 @@ class ResponseGeneratorResult:
         self.conditional_state = conditional_state
         self.tiebreak_priority = tiebreak_priority
         self.no_transition = no_transition
-        self.last_rg_willing_to_handover_control = last_rg_willing_to_handover_control  # EDIT: TAKEOVER
-        self.rg_that_was_taken_over = rg_that_was_taken_over     # EDIT: TAKEOVER
-        self.takeover_entity = takeover_entity  # EDIT: TAKEOVER
-        self.takeover_rg_willing_to_handback_control = takeover_rg_willing_to_handback_control # EDIT: TAKEOVER
+        self.last_rg_willing_to_handover_control = last_rg_willing_to_handover_control
+        self.rg_that_was_taken_over = rg_that_was_taken_over
+        self.takeover_entity = takeover_entity
+        self.takeover_rg_willing_to_handback_control = takeover_rg_willing_to_handback_control
 
     def reduce_size(self, max_size:int = None):
         """Gracefully degrade by removing non essential attributes.
@@ -134,11 +134,11 @@ class PromptResult:
                  expected_type: Optional[EntityGroup] = None,
                  conditional_state=None,
                  answer_type: AnswerType = AnswerType.QUESTION_SELFHANDLING,
-                 last_rg_willing_to_handover_control=False,  # EDIT: TAKEOVER
-                 rg_that_was_taken_over =None,  # EDIT: TAKEOVER
-                 takeover_entity =None,  # EDIT: TAKEOVER
-                 takeover_rg_willing_to_handback_control=False,  # EDIT: TAKEOVER
-                 resuming_conversation_next_treelet=None   # EDIT: TAKEOVER
+                 last_rg_willing_to_handover_control=False,
+                 rg_that_was_taken_over =None,
+                 takeover_entity =None,
+                 takeover_rg_willing_to_handback_control=False,
+                 resuming_conversation_next_treelet=None
                  ):
         """
         :param text: text of the response
@@ -178,11 +178,11 @@ class PromptResult:
         self.state = state
         self.conditional_state = conditional_state
         self.answer_type = answer_type
-        self.last_rg_willing_to_handover_control = last_rg_willing_to_handover_control  # EDIT: TAKEOVER
-        self.rg_that_was_taken_over  = rg_that_was_taken_over   # EDIT: TAKEOVER
-        self.takeover_entity = takeover_entity  # EDIT: TAKEOVER
-        self.takeover_rg_willing_to_handback_control = takeover_rg_willing_to_handback_control  # EDIT: TAKEOVER
-        self.resuming_conversation_next_treelet = resuming_conversation_next_treelet  # EDIT: TAKEOVER
+        self.last_rg_willing_to_handover_control = last_rg_willing_to_handover_control
+        self.rg_that_was_taken_over = rg_that_was_taken_over
+        self.takeover_entity = takeover_entity
+        self.takeover_rg_willing_to_handback_control = takeover_rg_willing_to_handback_control
+        self.resuming_conversation_next_treelet = resuming_conversation_next_treelet
 
     def __repr__(self):
         return 'PromptResult' + str(self.__dict__)

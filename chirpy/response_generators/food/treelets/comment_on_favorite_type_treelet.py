@@ -89,13 +89,13 @@ class CommentOnFavoriteTypeTreelet(Treelet):
             other_type = sample_from_type(cur_food)
             text = f"That totally makes sense! I also really enjoy {user_answer}. Personally, I really like {other_type}."
 
-        return ResponseGeneratorResult(text=text, priority=priority,    # EDIT: TAKEOVER
+        return ResponseGeneratorResult(text=text, priority=priority,
                                        needs_prompt=False, state=state,
                                        cur_entity=entity,
                                        conditional_state=ConditionalState(
                                            prompt_treelet=self.rg.open_ended_user_comment_treelet.name,
                                            cur_food=cur_food_entity),
-                                       last_rg_willing_to_handover_control=False  # EDIT: TAKEOVER
+                                       last_rg_willing_to_handover_control=False
                                        )
 
     def get_resuming_statement(self, prompt_type=PromptType.FORCE_START, **kwargs):

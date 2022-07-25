@@ -52,5 +52,5 @@ class FactoidTreelet(Treelet):
                                        conditional_state=ConditionalState(
                                            prev_treelet_str=self.name,
                                            cur_food=cur_food),
-                                       last_rg_willing_to_handover_control=True  # EDIT: TAKEOVER
+                                       last_rg_willing_to_handover_control=True
                                        )
