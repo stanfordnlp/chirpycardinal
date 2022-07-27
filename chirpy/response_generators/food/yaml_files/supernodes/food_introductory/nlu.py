@@ -6,7 +6,7 @@ def get_best_attribute(food):
         return 'has_ingredient'
     elif 'texture' in food_data:
         return 'texture'
-    elif is_ingredient(cur_food):
+    elif food_helpers.is_ingredient(food):
         return 'is_ingredient'
     else:
         return None
@@ -20,12 +20,13 @@ def nlu_processing(rg, state, utterance, response_types):
     #     'is_ingredient': False,
     #     'catch_all': False
     # }
-
+    flags = {'cur_food': None, 'no_food_entity_found': False}
+    entity = rg.get_current_entity()
     cur_food = entity.name.lower()
     flags['cur_food'] = cur_food
     cur_talkable_food = entity.talkable_name
 
-    if not is_known_food(cur_food):
+    if not food_helpers.is_known_food(cur_food):
         flags['no_food_entity_found'] = True
         return flags 
         

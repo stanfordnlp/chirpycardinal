@@ -1,13 +1,8 @@
 locals:
-  intro:
-    type: nlg_helper
-    name: intro_response
   cur_entity:
-    type: eval
-    str: "rg.get_current_entity()"
+    eval: "rg.get_current_entity()"
   lowercased_entity:
-    type: eval
-    str: "(rg.get_current_entity() or '').name.lower()"
+    eval: "(rg.get_current_entity() or '').name.lower()"
     
   intro_statement: # Ah yes, potatoes are one of my favorite things to eat up here...
     - one of: 
@@ -16,9 +11,7 @@ locals:
     - locals.lowercased_entity
     - inflect:
         inflect_token: is
-        inflect_entity:
-          type: 
-          get_cur_entity
+        inflect_entity: locals.cur_entity
     - one of:
       - one of my favorite things to eat up here in the cloud.
       - such an amazing choice. It's one of my favorite foods up here in the cloud.
@@ -45,7 +38,7 @@ subnodes:
       - nlg_helper:
           name: get_best_attribute_value
           args: [locals.lowercased_entity]
-      - , I think it gives
+      - ", I think it gives"
       - inflect:
           inflect_token: them
           inflect_entity: locals.cur_entity
@@ -104,7 +97,7 @@ subnodes:
   - node_name: default
     response: 
     - locals.intro_statement
-    - type: neural_generation
+    - neural_generation:
       prefix: 
         - I especially love how 
         - inflect:

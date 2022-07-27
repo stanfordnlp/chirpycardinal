@@ -16,7 +16,7 @@ def intro_response(rg):
     # if cur_food in food_helpers.RESTAURANTS:
     #     return f"I really love the food from {cur_food}!"
     cur_food = cur_food.lower()
-    if cur_food in CUSTOM_COMMENTS: return CUSTOM_COMMENTS[cur_food]
+    #if cur_food in CUSTOM_COMMENTS: return CUSTOM_COMMENTS[cur_food]
 
     #intro_statement = random.choice(INTRO_STATEMENTS)
     #copula = infl('is', is_plural)
@@ -25,7 +25,7 @@ def intro_response(rg):
     #return intro
 
 @nlg_helper 
-def get_best_attribute_value(food):
+def get_best_attribute_value(rg, food):
     food_data = food_helpers.get_food_data(food)
     if 'ingredients' in food_data:
         return sample_ingredient(food)

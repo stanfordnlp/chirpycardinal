@@ -120,10 +120,10 @@ class GodTreelet(Treelet):
         return None
         
     def evaluate_nlg_call(self, data, context, contexts):
-        if isinstance(data, 'str'): # plain text
+        if isinstance(data, str): # plain text
             return data
         
-        assert isinstance(data, dict) and len(data) == 1    
+        assert isinstance(data, dict) and len(data) == 1, f"Failure: data is {data}"
         type = next(iter(data))
         nlg_params = data[type]
         if type == 'eval':
@@ -150,6 +150,12 @@ class GodTreelet(Treelet):
         else:
             assert False, f"Generation type {type} not found!"
 
+    def evaluate_nlg_calls(self, datas, context, contexts):
+        output = []
+        for elem in datas:
+            output.append(self.evaluate_nlg_call(elem, context, contexts))
+        
+        return ' '.join(output)
 
     def get_unconditional_prompt_text(self, flags, supernode):
         for cases in self.nlg_yamls[supernode]['unconditional_prompt']:
@@ -198,28 +204,26 @@ class GodTreelet(Treelet):
 
         # Process locals        
         locals = {}
-        for local_key, local_values in nlg_data['locals'].items():
-            locals[local_key] = self.evaluate_nlg_call(local_values, context)
-            
-        logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
-        # Select subnode
-        #def select_subnode(self, subnodes, flags, locals, state)
         contexts = {
             'flags': flags,
             'locals': locals,
             'state': state,
         }
+        for local_key, local_values in nlg_data['locals'].items():
+            locals[local_key] = self.evaluate_nlg_calls(local_values, context, contexts)
+            
+        logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
+        # Select subnode
+        #def select_subnode(self, subnodes, flags, locals, state)
+
         subnode_data = self.select_subnode(subnodes=nlg_data['subnodes'], 
                                            contexts=contexts)
         assert subnode_data is not None, f"There was no matching subnode in the supernode {cur_supernode}."
         
         # Process subnode
         structured_response = subnode_data['response']
-        output = []
-        for elem in structured_response:
-            output.append(self.evaluate_nlg_call(elem, context))
+        response = self.evaluate_nlg_calls(structured_response, context, contexts)
         
-        response = ' '.join(output)
         logger.warning(f'Received {response} from symbolic treelet.')
 
         # post-subnode state updates
