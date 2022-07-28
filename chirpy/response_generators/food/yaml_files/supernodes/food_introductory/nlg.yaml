@@ -8,7 +8,7 @@ locals:
     - one of: 
       - Ah yes,
       - Oh yeah,
-    - locals.lowercased_entity
+    - val: locals.lowercased_entity
     - inflect:
         inflect_token: is
         inflect_entity: locals.cur_entity
@@ -30,8 +30,8 @@ subnodes:
   - node_name: make_ingredient_attribute_comment
     entry_conditions:
       is_value:
-        - name: flags.best_comment_type
-        - value: has_ingredient
+        name: flags.best_comment_type
+        value: has_ingredient
     response:
       - val: locals.intro_statement
       - Personally, I especially like the
@@ -50,8 +50,8 @@ subnodes:
   - node_name: make_texture_attribute_comment
     entry_conditions:
       is_value:
-        - name: flags.best_comment_type
-        - value: texture
+        name: flags.best_comment_type
+        value: texture
     response:
       - val: locals.intro_statement
       - Personally, I especially like the
@@ -66,7 +66,7 @@ subnodes:
       - nlg_helper:
           name: get_best_attribute_value
           args: [locals.lowercased_entity]
-      - plain_text: . 
+      - .
     set_state:
       open_ended: True
       
@@ -74,8 +74,8 @@ subnodes:
   - node_name: make_food_is_an_ingredient_comment
     entry_conditions:
       is_value:
-        - name: flags.best_comment_type
-        - value: is_ingredient
+        name: flags.best_comment_type
+        value: is_ingredient
     response:
       - val: locals.intro_statement
       - In my opinion, I think
@@ -83,13 +83,13 @@ subnodes:
           inflect_token: it's
           inflect_entity: locals.cur_entity
       - especially good as part of
-      - inflect_engine:
+      - inflect_helper:
           type: a
           str:
-            - nlg_helper:
-                name: sample_food_containing_ingredient
-                args: [locals.lowercased_entity]
-      - plain_text: . 
+            nlg_helper:
+              name: sample_food_containing_ingredient
+              args: [locals.lowercased_entity]
+      - .   # plain_text: .
     set_state:
       open_ended: True
 

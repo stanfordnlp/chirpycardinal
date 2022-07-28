@@ -8,6 +8,7 @@ INTRO_STATEMENTS = [
     "Oh yeah, [FOOD] [copula] such an amazing choice. It's one of my favorite foods up here in the cloud."
 ]
 
+
 @nlg_helper
 def intro_response(rg):
     entity = rg.get_current_entity()
@@ -23,6 +24,19 @@ def intro_response(rg):
     #return intro_statement.replace('[copula]', copula).replace('[FOOD]', cur_food)
     #intro = get_intro_acknowledgement(cur_talkable_food, entity.is_plural)
     #return intro
+
+
+@nlg_helper
+def get_attribute(rg, food):
+    return "TODO: get_attribute"    # TODO: get_attribute (Ly-Ly)
+
+@nlg_helper
+def sample_ingredient(rg, food):
+    return "TODO: sample_ingredient"    # TODO: sample_ingredient (Ly-Ly)
+
+@nlg_helper
+def sample_food_containing_ingredient(rg, food):
+    return "TODO: sample_food_containing_ingredient"    # TODO: sample_food_containing_ingredient (Ly-Ly)
 
 @nlg_helper 
 def get_best_attribute_value(rg, food):

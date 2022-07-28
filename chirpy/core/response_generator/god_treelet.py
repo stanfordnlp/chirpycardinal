@@ -19,10 +19,10 @@ logger = logging.getLogger('chirpylogger')
 import inflect
 engine = inflect.engine()
 
+
 def effify(non_f_str: str, global_context: dict):
     logger.primary_info(f"Outside eval, global_context is {str(global_context.keys())}, non f str is {non_f_str}")
-    return eval(f'f"""{non_f_str}"""', global_context, global_context)
-    # return eval(f'print("Right inside, globals() are", globals().keys(), "locals() are", locals().keys()) or f"""{non_f_str}"""', global_context, global_context)
+    return eval(non_f_str, global_context)
 
 class GodTreelet(Treelet):
     def __init__(self, rg, rg_folder_name):
@@ -81,11 +81,12 @@ class GodTreelet(Treelet):
         if len(matching_supernodes) == 0: return None
         return random.choice(matching_supernodes)
         
-    def lookup_value(self, contexts):
+    def lookup_value(self, value_name, contexts):
         if '.' in value_name:
             assert len(value_name.split('.')) == 2, "Only one namespace allowed."
             namespace_name, value_name = value_name.split('.')
-            value = contexts[namespace_value][value_name]
+            value = contexts[namespace_name][value_name]
+            return value
         else:
             assert False, f"Need a namespace for entry condition {value_name}."
 
@@ -100,21 +101,22 @@ class GodTreelet(Treelet):
                     'is_value': (lambda val, target: (val == target)),
                 }
                 assert key in key_to_behavior, f'Key not found: {key}.'
-                if key == 'is_name':
+
+                if key == 'is_value':
                     value_name = entry_conditions[key]['name']
                     value_target = entry_conditions[key]['value']
                 else:
                     value_name = entry_conditions[key]
-                
+
                 value = self.lookup_value(value_name, contexts)
-                if key == 'is_name':
+                if key == 'is_value':
                     passes_condition = key_to_behavior[key](value, value_target)
                 else:
                     passes_condition = key_to_behavior[key](value)
                 if not passes_condition:
                     break
             else:
-                logger.warning(f"Found NLG node: {nlg_node_name}.")
+                logger.warning(f"Found NLG node: {nlg['node_name']}.")
                 return nlg
 
         return None
@@ -122,26 +124,33 @@ class GodTreelet(Treelet):
     def evaluate_nlg_call(self, data, context, contexts):
         if isinstance(data, str): # plain text
             return data
-        
+
         assert isinstance(data, dict) and len(data) == 1, f"Failure: data is {data}"
         type = next(iter(data))
         nlg_params = data[type]
-        if type == 'eval':
+        # logger.error(f"NLG_PARAM: {nlg_params} // TYPE: {type} // DATA: {data} // CONTEXT: {context}  ")
+        if type == 'one of':
+            assert isinstance(nlg_params, list)
+            return random.choice(nlg_params)
+        elif type == 'eval':
             assert isinstance(nlg_params, str)
             return effify(nlg_params, global_context=context)
         elif type == 'val':
             assert isinstance(nlg_params, str)
+            logger.error(f"TYPE_VAL: {nlg_params}")
             return self.lookup_value(nlg_params, contexts)
         elif type == 'nlg_helper':
             assert isinstance(nlg_params, dict)
             function_name = nlg_params['name']
             assert function_name in context
-            args = [self.rg] + data.get('args', [])   # Add RG as first argument
+            args = [self.rg] + nlg_params.get('args', [])   # Add RG as first argument
             return context[function_name](*args)
         elif type == 'inflect':
             assert isinstance(nlg_params, dict)
             inflect_token = nlg_params['inflect_token']
-            return self.lookup_value(nlg_params, contexts)
+            inflect_entity = self.lookup_value(nlg_params['inflect_entity'], contexts)
+            # inflect_plural = inflect_entity.is_plural
+            return "TODO: inflect"        # TODO: infl(inflect_token, inflect_plural) (Ly-Ly)
         elif type == 'inflect_helper':
             assert isinstance(nlg_params, dict)
             inflect_function = nlg_params['type']
@@ -153,8 +162,10 @@ class GodTreelet(Treelet):
     def evaluate_nlg_calls(self, datas, context, contexts):
         output = []
         for elem in datas:
-            output.append(self.evaluate_nlg_call(elem, context, contexts))
-        
+            # logger.error(f"ELEM {elem}  // {self.evaluate_nlg_call(elem, context, contexts)}")
+            output.append(str(self.evaluate_nlg_call(elem, context, contexts)))
+
+        logger.error(f"DATAS: {datas} // OUTPUT: {output}")
         return ' '.join(output)
 
     def get_unconditional_prompt_text(self, flags, supernode):
@@ -170,7 +181,11 @@ class GodTreelet(Treelet):
         return None
 
     def get_exposed_subnode_vars(self, supernode, subnode_name):
+        """
+        subnode_name = 'make_food_is_an_ingredient_comment'
+        """
         subnode_nlgs = self.nlg_yamls[supernode]
+        # logger.error(f"SBNDNGL: {subnode_nlgs}")
         for nlg in subnode_nlgs['response']:
             if nlg['node_name'] == subnode_name:
                 if 'expose_vars' not in nlg or nlg['expose_vars'] == 'None': return None
@@ -197,7 +212,9 @@ class GodTreelet(Treelet):
         nlu = self.nlu_libraries[cur_supernode]
         flags = nlu.nlu_processing(self.rg, state, utterance, response_types)
         
-        context = get_context_for_supernode(cur_supernode)
+        # context = get_context_for_supernode(cur_supernode)
+        #
+        # logger.error(f" line 225 {context}")
 
         nlg_data = self.nlg_yamls[cur_supernode]
         logger.warning(f"NLG data keys: {nlg_data}")
@@ -210,24 +227,32 @@ class GodTreelet(Treelet):
             'state': state,
         }
         for local_key, local_values in nlg_data['locals'].items():
-            locals[local_key] = self.evaluate_nlg_calls(local_values, context, contexts)
-            
+            logger.error(f"*** {local_key} // {local_values}")
+            if local_key == 'cur_entity' or local_key == 'lowercased_entity':
+                locals[local_key] = self.evaluate_nlg_calls([local_values], context, contexts)
+            else:
+                locals[local_key] = self.evaluate_nlg_calls(local_values, context, contexts)
+
+
         logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
         # Select subnode
         #def select_subnode(self, subnodes, flags, locals, state)
 
-        subnode_data = self.select_subnode(subnodes=nlg_data['subnodes'], 
+        subnode_data = self.select_subnode(subnodes=nlg_data['subnodes'],
                                            contexts=contexts)
         assert subnode_data is not None, f"There was no matching subnode in the supernode {cur_supernode}."
-        
+
         # Process subnode
         structured_response = subnode_data['response']
         response = self.evaluate_nlg_calls(structured_response, context, contexts)
         
         logger.warning(f'Received {response} from symbolic treelet.')
 
+        # logger.error(f"SND: {subnode_data}")
+
+        # TODO: Fix get_exposed_subnode_vars (Ly-Ly)
         # post-subnode state updates
-        expose_vars = self.get_exposed_subnode_vars(cur_supernode, subnode_name)
+        expose_vars = self.get_exposed_subnode_vars(cur_supernode, subnode_data['node_name'])
         exposed_context = {}
         if expose_vars is not None:
             for key in expose_vars:
