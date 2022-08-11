@@ -1,5 +1,5 @@
-response:
+subnodes:
   - node_name: ask_food
     entry_conditions:
-      unconditional: True
-    response: "Sure! What's your favorite food?"
+      flags.unconditional: True
+    response: Sure! What's your favorite food?

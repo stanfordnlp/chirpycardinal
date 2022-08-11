@@ -1,35 +1,55 @@
-response:
+subnodes:
   - node_name: custom_dont_know
     entry_conditions:
-      has_custom_food: True
-      dont_know: True
-    response: "No worries, it can be difficult to pick just one! Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
-    # expose_vars:
-    #   entity: rg.get_current_entity(initiated_this_turn=False)
-    #   cur_food_entity: state.cur_food # state.cur_food
+      flags.has_custom_food: True
+      flags.dont_know: True
+    response:
+      - No worries, it can be difficult to pick just one! Personally, when it comes to
+      - val: state.cur_food_entity.talkable_name
+      - ", I really like"
+      - nlg_helper:
+          name: get_custom_question_answer
+          args: [state.cur_food_entity.name]
+
   - node_name: custom_no
     entry_conditions:
-      has_custom_food: True
-      response_no: True
-    response: "Okay, no worries. Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
-    # expose_vars:
-    #   entity: rg.get_current_entity(initiated_this_turn=False)
-    #   cur_food_entity: state.cur_food # state.cur_food
+      flags.has_custom_food: True
+      flags.response_no: True
+    response:
+      - Okay, no worries. Personally, when it comes to
+      - val: state.cur_food_entity.talkable_name
+      - ", I really like"
+      - nlg_helper:
+          name: get_custom_question_answer
+          args: [state.cur_food_entity.name]
+
   - node_name: custom_neural
     entry_conditions:
-      has_custom_food: True
-      response_no: False
-      dont_know: False
-    response: "{get_neural_response_food_type(rg)} Personally, when it comes to {get_cur_talkable_food(rg)}, I really like {get_custom_q_answer(rg)}."
-    # expose_vars:
-    #   entity: rg.get_current_entity(initiated_this_turn=False)
-    #   cur_food_entity: state.cur_food # state.cur_food
+      flags.has_custom_food: True
+      flags.response_no: False
+      flags.dont_know: False
+    response:
+      - nlg_helper:
+          name: get_neural_response_food_type
+      - Personally, when it comes to
+      - val: state.cur_food_entity.talkable_name
+      - ", I really like"
+      - nlg_helper:
+          name: get_custom_question_answer
+          args: [state.cur_food_entity.name]
+
   - node_name: sample_of_same_type
     entry_conditions:
-      has_custom_food: False
-      response_no: False
-      dont_know: False
-    response: "That totally makes sense! I also really enjoy {get_user_answer(rg)}. Personally, I really like {comment_on_other_food_type(rg)}."
-    # expose_vars:
-    #   entity: rg.state_manager.current_state.entity_tracker.cur_entity
-    #   cur_food_entity: state.cur_food # state.cur_food
+      flags.has_custom_food: False
+      flags.response_no: False
+      flags.dont_know: False
+    response:
+      - That totally makes sense! I also really enjoy
+      - nlg_helper:
+          name: get_user_answer
+          args: [state.cur_food_entity.name]
+      - Personally, I really like
+      - nlg_helper:
+          name: sample_from_type
+          args: [state.cur_food_entity.name]
+

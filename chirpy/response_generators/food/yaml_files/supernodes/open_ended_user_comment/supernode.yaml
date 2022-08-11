@@ -1,30 +1,55 @@
-name: open_ended_user_comment
-# define global coarse-grained treelet entry requirements here
-# (for ALL convo entering this treelet)
+sname: open_ended_user_comment
+
 requirements:
-  - open_ended: True
-    exit_food: False
-# define the convo-path relevant state updates made by each subnode
-# each subnode MUST define a prompt_treelet
+  - state.open_ended: True
+    state.exit_food: False
+
 prompt:
   call_method: get_prompt_for_open_ended
 
-required_exposed_variables:
-  # variables that must be defined & exposed in nlg.yaml
-  - cur_entity
+global_post_supernode_updates:
+  state.open_ended: False
 
-subnode_state_updates:
-  no_prefix_yes_factoid:
-    need_factoid: True
-  no_prefix_no_factoid:
-    exit_food: True
-    needs_prompt: True
-  yes_prefix_yes_factoid:
-    need_factoid: True
-  yes_prefix_no_factoid:
-    exit_food: True
-    needs_prompt: True
 
-global_post_supernode_state_updates:
-  cur_food: None # this might be wrong?
-  open_ended: False
+
+#prompt:
+#- required: None
+#  prompt_text:
+#  - "What do you like best about"
+#  - val: state.cur_food_entity
+#  - "?"
+
+#prompt:
+#- prompt_name: no_cur_food_entity
+#  prompt_condition:
+#    flags.cur_food_entity: False
+#  prompt_text: None
+#- prompt_name: exists_best_attribute
+#  prompt_condition:
+#    flags.cur_food_entity: True
+#    flags.best_attribute: True
+#  prompt_text: 'What do you think?'
+#- prompt_name: no_best_attribute
+#  prompt_condition:
+#    flags.cur_food_entity: True
+#    flags.best_attribute: False
+#  prompt_text:
+#    - What do you like best about
+#    - inflect:
+#        inflect_token: it
+#        inflect_entity: states.cur_food_entity
+#  post_prompt_updates:
+#    state.cur_entity: state.cur_food_entity (?)
+#
+#entity = self.rg.state_manager.current_state.entity_tracker.cur_entity
+#
+#prompt = PromptGeneratorResult(text=text, prompt_type=prompt_type, state=state, cur_entity=entity,
+#  conditional_state=conditional_state)
+#
+#state_updates['prompt_treelet'] = state.prompt_treelet
+#
+#setattr(prompt, 'conditional_state', self.state_module.ConditionalState(**state_updates))
+
+
+
+

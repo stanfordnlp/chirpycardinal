@@ -72,9 +72,7 @@ class GodTreelet(Treelet):
             for req_dict in entry_reqs:
                 matches_entry_criteria = True
                 for key in req_dict:
-                    assert key.startswith("state."), "The requirement for supernode should be a state."
-                    state_name = key[len("state."):]
-                    if state.__dict__[state_name] != req_dict[key]:
+                    if state.__dict__[key] != req_dict[key]:
                         matches_entry_criteria = False
                         break
 
@@ -87,21 +85,18 @@ class GodTreelet(Treelet):
         
     def lookup_value(self, value_name, contexts):
         if '.' in value_name:
-            assert len(value_name.split('.')) == 2 or len(value_name.split('.')) == 3, "Only one namespace with 0 - 1 attributes allowed."
-            # namespace_name, value_name = value_name.split('.')
-            # value = contexts[namespace_name][value_name]
-            # return value
-            if len(value_name.split('.')) == 2:
-                namespace_name, value_name = value_name.split('.')
-                if isinstance(contexts[namespace_name], dict):
-                    value = contexts[namespace_name][value_name]
-                else:
-                    value = getattr(contexts[namespace_name], value_name)
-                return value
-            elif len(value_name.split('.')) == 3:
-                namespace_name, value_name, attr_name = value_name.split('.')
-                value = getattr(getattr(contexts[namespace_name], value_name), attr_name)
-                return value
+            assert len(value_name.split('.')) == 2, "Only one namespace allowed."
+            namespace_name, value_name = value_name.split('.')
+            value = contexts[namespace_name][value_name]
+            return value
+            # if len(value_name.split('.')) == 2:
+            #     namespace_name, value_name = value_name.split('.')
+            #     value = contexts[namespace_name][value_name]
+            #     return value
+            # elif len(value_name.split('.')) == 3:
+            #     namespace_name, value_name, attr_name = value_name.split('.')
+            #     value = contexts[namespace_name][value_name].attr_name
+            #     return value
         else:
             assert False, f"Need a namespace for entry condition {value_name}."
 
@@ -129,6 +124,37 @@ class GodTreelet(Treelet):
                 return nlg
 
         return None
+
+    # def select_subnode(self, subnodes, contexts):
+    #     for nlg in subnodes:
+    #         entry_conditions = nlg['entry_conditions'] if 'entry_conditions' in nlg else {}
+    #         for key in entry_conditions:
+    #             key_to_behavior = {
+    #                 'is_none': (lambda val: (val is None)),
+    #                 'is_true': (lambda val: (val is True)),
+    #                 'is_false': (lambda val: (val is False)),
+    #                 'is_value': (lambda val, target: (val == target)),
+    #             }
+    #             assert key in key_to_behavior, f'Key not found: {key}.'
+    #
+    #             if key == 'is_value':
+    #                 value_name = entry_conditions[key]['name']
+    #                 value_target = entry_conditions[key]['value']
+    #             else:
+    #                 value_name = entry_conditions[key]
+    #
+    #             value = self.lookup_value(value_name, contexts)
+    #             if key == 'is_value':
+    #                 passes_condition = key_to_behavior[key](value, value_target)
+    #             else:
+    #                 passes_condition = key_to_behavior[key](value)
+    #             if not passes_condition:
+    #                 break
+    #         else:
+    #             logger.warning(f"Found NLG node: {nlg['node_name']}.")
+    #             return nlg
+    #
+    #     return None
         
     def evaluate_nlg_call(self, data, context, contexts):
         if isinstance(data, str): # plain text
@@ -140,6 +166,7 @@ class GodTreelet(Treelet):
         assert isinstance(data, dict) and len(data) == 1, f"Failure: data is {data}"
         type = next(iter(data))
         nlg_params = data[type]
+        # logger.error(f"NLG_PARAM: {nlg_params} // TYPE: {type} // DATA: {data} // CONTEXT: {context}  ")
         if type == 'one of':
             assert isinstance(nlg_params, list)
             chosen = random.choice(nlg_params)['option']
@@ -151,14 +178,15 @@ class GodTreelet(Treelet):
             assert isinstance(nlg_params, str)
             if nlg_params == 'None':
                 return None
-            return effify(nlg_params, global_context=context)
+            elif nlg_params == 'True':
+                return True
+            elif nlg_params == 'False':
+                return False
+            else:
+                return effify(nlg_params, global_context=context)
         elif type == 'val':
             assert isinstance(nlg_params, str)
             return self.lookup_value(nlg_params, contexts)
-        elif type == 'int':
-            assert isinstance(nlg_params, str)
-            assert nlg_params.isdigit()
-            return int(nlg_params)
         elif type == 'nlg_helper':
             assert isinstance(nlg_params, dict)
             function_name = nlg_params['name']
@@ -189,7 +217,7 @@ class GodTreelet(Treelet):
         elif type == 'neural_generation':
             assert isinstance(nlg_params, dict)
             neural_prefix = self.evaluate_nlg_calls(nlg_params['prefix'], context, contexts) if 'prefix' in nlg_params else None
-            neural_condition = [self.evaluate_nlg_call(nlg_params['condition'], context, contexts)] if 'condition' in nlg_params else None
+            neural_condition = self.evaluate_nlg_calls(nlg_params['condition'], context, contexts) if 'condition' in nlg_params else None
             neural_fallback = self.evaluate_nlg_calls(nlg_params['fallback'], context, contexts) if 'fallback' in nlg_params else None
             neural_response = self.get_neural_response(prefix=neural_prefix, conditions=neural_condition)
             if neural_response:
@@ -204,15 +232,12 @@ class GodTreelet(Treelet):
 
     def evaluate_nlg_calls(self, datas, context, contexts):
         output = []
-        if isinstance(datas, str):
-            return self.evaluate_nlg_call(datas, context, contexts)
-        if isinstance(datas, dict):
-            datas = [datas]
         for elem in datas:
+            # logger.error(f"ELEM {elem}  // {self.evaluate_nlg_call(elem, context, contexts)}")
             output_str = str(self.evaluate_nlg_call(elem, context, contexts))
             output.append(output_str if output_str != 'None' else '')
 
-        logger.primary_info(f"evaluate_nlg_calls is called on {datas}. The output list generated is {output}.")
+        logger.error(f"DATAS: {datas} // OUTPUT: {output}")
         return ' '.join(output)
 
     def get_unconditional_prompt_text(self, flags, supernode):
@@ -227,29 +252,15 @@ class GodTreelet(Treelet):
                 return cases['case_name'], cases['prompt']
         return None
 
-    def get_local_post_subnode_updates(self, supernode, subnode_name, context, contexts):
-        subnode_updates = {}
+    def get_subnode_updates(self, supernode, subnode_name):
         subnode_nlgs = self.nlg_yamls[supernode]['subnodes']
+        for key in subnode_nlgs:
+            logger.error(f"SBNDNGL: {key} // {subnode_name}")
         for nlg in subnode_nlgs:
             if nlg['node_name'] == subnode_name:
-                if 'local_post_subnode_updates' not in nlg or nlg['local_post_subnode_updates'] == 'None': break
-                for key in nlg['local_post_subnode_updates']:
-                    if key == 'priority' or key == 'answer_type':
-                        subnode_updates[key] == nlg['local_post_subnode_updates'][key]
-                    elif isinstance(nlg['local_post_subnode_updates'][key], str):
-                        subnode_updates[key] = eval(nlg['local_post_subnode_updates'][key], context)
-                    else:
-                        subnode_updates[key] = self.evaluate_nlg_call(nlg['local_post_subnode_updates'][key], context, contexts)
-        return subnode_updates
-
-    def get_global_post_supernode_updates(self, supernode, context,contexts):
-        supernode_updates = self.supernode_content[supernode]['global_post_supernode_updates']
-        for key in supernode_updates.keys():
-            if isinstance(supernode_updates[key], str) and key != 'priority' and key != 'answer_type':
-                supernode_updates[key] = eval(supernode_updates[key], context)
-            elif isinstance(supernode_updates[key], dict):
-                supernode_updates[key] = self.evaluate_nlg_call(supernode_updates[key], context, contexts)
-        return supernode_updates
+                if 'updates' not in nlg or nlg['updates'] == 'None': return None
+                return nlg['updates']
+        return None
         
     def get_response(self, priority=ResponsePriority.STRONG_CONTINUE, **kwargs):
         logger.primary_info(f'{self.name} - Get response')
@@ -258,7 +269,9 @@ class GodTreelet(Treelet):
 
         cur_supernode = state.cur_supernode
         if state.cur_supernode is None:
+            logger.error(f"STATE BEFORE CHECK & SET: {state}")
             state = self.rg.check_and_set_entry_conditions(state)
+            logger.error(f"STATE AFTER CHECK & SET: {state}")
             cur_supernode = self.get_next_supernode(state)
 
         context = get_context_for_supernode(cur_supernode)
@@ -270,6 +283,10 @@ class GodTreelet(Treelet):
         # Intent processing
         nlu = self.nlu_libraries[cur_supernode]
         flags = nlu.nlu_processing(self.rg, state, utterance, response_types)
+        
+        # context = get_context_for_supernode(cur_supernode)
+        #
+        # logger.error(f" line 225 {context}")
 
         nlg_data = self.nlg_yamls[cur_supernode]
         logger.warning(f"NLG data keys: {nlg_data}")
@@ -283,6 +300,7 @@ class GodTreelet(Treelet):
         }
         if 'locals' in nlg_data:
             for local_key, local_values in nlg_data['locals'].items():
+                logger.error(f"*** {local_key} // {local_values}")
                 if isinstance(local_values, dict):
                     locals[local_key] = self.evaluate_nlg_calls([local_values], context, contexts)
                     if isinstance(local_values, dict) and next(iter(local_values)) == 'entity_name':
@@ -292,8 +310,10 @@ class GodTreelet(Treelet):
                     locals[local_key] = self.evaluate_nlg_calls(local_values, context, contexts)
 
         logger.primary_info(f"Finished evaluating locals: {'; '.join((k + ': ' + str(v)) for (k, v) in locals.items())}")
-
         # Select subnode
+        #def select_subnode(self, subnodes, flags, locals, state)
+
+        logger.error(f"SUBNODE NLG DATA: {nlg_data}")
         subnode_data = self.select_subnode(subnodes=nlg_data['subnodes'],
                                            contexts=contexts)
         assert subnode_data is not None, f"There was no matching subnode in the supernode {cur_supernode}."
@@ -305,81 +325,97 @@ class GodTreelet(Treelet):
         
         logger.warning(f'Received {response} from symbolic treelet.')
 
-        # post-subnode updates
-        post_subnode_updates = self.get_local_post_subnode_updates(cur_supernode, subnode_name, context, contexts)
-        context.update(post_subnode_updates)
+        # post-subnode state updates
+        updates = self.get_subnode_updates(cur_supernode, subnode_name)
 
-        global_post_supernode_updates = self.get_global_post_supernode_updates(cur_supernode, context, contexts)
-        if global_post_supernode_updates == 'None': global_post_supernode_updates = {}
 
-        assert isinstance(post_subnode_updates, dict), f"subnode_state_updates of {subnode_name} in {cur_supernode} needs to be a dict or None"
-        assert isinstance(global_post_supernode_updates, dict), f"global_post_state_updates of {subnode_name} in {cur_supernode} needs to be a dict or None"
+        # if 'subnode_state_updates' in self.supernode_content[cur_supernode]:
+        #     subnode_state_updates = self.supernode_content[cur_supernode]['subnode_state_updates'][subnode_name]
+        # else:
+        #     subnode_nlgs = self.nlg_yamls[cur_supernode]
+        #     for nlg in subnode_nlgs['response']:
+        #         if nlg['node_name'] == subnode_name:
+        #             if 'set_state' in nlg:
+        #                 self.subnode_state_updates = nlg['set_state']
+        #         else:
+        #             assert False
+        #     else:
+        #         assert False
+            
+        # if subnode_state_updates == 'None': subnode_state_updates = {}
+        global_post_state_updates = self.supernode_content[cur_supernode]['global_post_supernode_state_updates']
+        if global_post_state_updates == 'None': global_post_state_updates = {}
+        # assert isinstance(subnode_state_updates, dict), f"subnode_state_updates of {subnode_name} in {cur_supernode} needs to be a dict or None"
+        assert isinstance(global_post_state_updates, dict), f"global_post_state_updates of {subnode_name} in {cur_supernode} needs to be a dict or None"
 
-        post_subnode_updates.update(global_post_supernode_updates)
+        logger.error(f"GLOBAL_POST_STATE_UPDATE: {global_post_state_updates}")
 
-        result = ResponseGeneratorResult(text=response, priority=priority, needs_prompt=False,
-                                       state=state, cur_entity=None, answer_type=AnswerType.NONE,
-                                       conditional_state=None)
+        # logger.error(f"SUBNODE_STATE_UPDATE: {subnode_state_updates}")
+        # subnode_state_updates.update(global_post_state_updates)
+        updates.update(global_post_state_updates)
+        logger.error(f"UPDATES ALL: {updates}")
 
-        state_updates = {}
-        attr_context = context
-        attr_context.update(globals())
-        attr_context.update({'priority': priority})
-        for attr in post_subnode_updates:
-            if attr.startswith('state.'):
-                state_updates[attr[len('state.'):]] = post_subnode_updates[attr]
+        result = ResponseGeneratorResult(text=response, priority= ResponsePriority.NO, needs_prompt=None, state=None, cur_entity=None)
+        result_conditional_state = self.state_module.ConditionalState()
+        for update_attr in updates:
+            update_val = self.evaluate_nlg_call(updates[update_attr], context, contexts)
+            if update_attr.startswith("state."):
+                setattr(result_conditional_state, update_attr, update_val)
             else:
-                attr_val = eval(str(post_subnode_updates[attr]), attr_context)
-                assert attr in result.__dict__.keys()
-                setattr(result, attr, attr_val)
+                setattr(result, update_attr, update_val)
 
-        state_updates['prompt_treelet'] = self.name
-        state_updates['prev_treelet_str'] = self.name
+        setattr(result, 'conditional_state', result_conditional_state)
+        logger.error(f'RESULT: {result}')
 
-        setattr(result, 'conditional_state', self.state_module.ConditionalState(**state_updates))
-
-        return result
-
-        # if 'priority' in subnode_updates:
-        #     priority_context = context
+        # if 'priority' in subnode_state_updates:
+        #     priority_context = dict(context_updates)
         #     priority_context.update(globals())
-        #     priority = eval(subnode_updates['priority'], priority_context)
+        #     priority_context.update(context)
+        #     priority = eval(subnode_state_updates['priority'], priority_context)
         #     assert isinstance(priority, ResponsePriority)
-        #     del subnode_updates['priority']
-        #
-        # if 'needs_prompt' in subnode_updates:
-        #     needs_prompt = eval(str(subnode_updates['needs_prompt']), context)
-        #     assert type(needs_prompt) == type(True)  # make sure it is a boolean
-        #     del subnode_updates['needs_prompt']
+        #     del subnode_state_updates['priority']
+        # if 'needs_prompt' in subnode_state_updates:
+        #     needs_prompt = eval(str(subnode_state_updates['needs_prompt']), context)
+        #     assert type(needs_prompt) == type(True) # make sure it is a boolean
+        #     del subnode_state_updates['needs_prompt']
         # else:
         #     needs_prompt = False
         #
-        # if 'cur_entity' in subnode_updates:
-        #     cur_entity = eval(subnode_updates['cur_entity'], context)
-        #     assert cur_entity is None or isinstance(cur_entity,WikiEntity), f"error on {cur_entity}"
-        #     del subnode_updates['cur_entity']
+        # if 'cur_entity' in subnode_state_updates:
+        #     cur_entity = eval(subnode_state_updates['cur_entity'], context)
+        #     assert cur_entity is None or isinstance(cur_entity, WikiEntity), f"error on {cur_entity}, eval string {subnode_state_updates['cur_entity']}"
+        #     del subnode_state_updates['cur_entity']
         # else:
         #     cur_entity = None
         #
-        # if 'answer_type' in subnode_updates:
-        #     # answer_type = subnode_updates['answer_type']
-        #     answer_context = context
+        # if 'answer_type' in subnode_state_updates:
+        #     answer_context = dict(context_updates)
         #     answer_context.update(globals())
-        #     answer_type = eval(subnode_updates['answer_type'],  answer_context)
+        #     answer_context.update(context)
+        #     answer_type = eval(subnode_state_updates['answer_type'], answer_context)
         #     assert isinstance(answer_type, AnswerType)
-        #     del subnode_updates['answer_type']
+        #     del subnode_state_updates['answer_type']
         # else:
         #     answer_type = AnswerType.NONE
         #
-        # subnode_updates['prompt_treelet'] = self.name
-        # subnode_updates['prev_treelet_str'] = self.name
+        # for key in subnode_state_updates:
+        #     if type(subnode_state_updates[key]) != type(True):
+        #         # eval non boolean flags
+        #         subnode_state_updates[key] = eval(subnode_state_updates[key], context)
+        # subnode_state_updates['prompt_treelet'] = self.name
+        # subnode_state_updates['prev_treelet_str'] = self.name
         #
+        # logger.error(f"SUBNODE_STATE_UPDATES AFTER UPDATES: {subnode_state_updates}")
         # return ResponseGeneratorResult(text=response, priority=priority, needs_prompt=needs_prompt, state=state,
         #                                cur_entity=cur_entity, answer_type=answer_type,
-        #                                conditional_state=self.state_module.ConditionalState(**subnode_updates))
+        #                                conditional_state=self.state_module.ConditionalState(**subnode_state_updates))
+
+        return result
+
 
     def get_prompt(self, conditional_state=None):
         state, utterance, response_types = self.get_state_utterance_response_types()
+
         if getattr(conditional_state, 'prompt_treelet', NO_UPDATE) == NO_UPDATE:
             # no prompt_treelet given. Respond with unconditional prompt
             prompting_supernodes = []
@@ -405,8 +441,7 @@ class GodTreelet(Treelet):
                     context.update(cntxt)
                     context.update(globals())
                     
-                    # prompt_text = effify(prompt_text, context)
-                    prompt_text = self.evaluate_nlg_calls(prompt_text, context, context)
+                    prompt_text = effify(prompt_text, context)
                     prompt_state_updates = self.supernode_content[supernode_name]['unconditional_prompt_updates'][case_name]
                     if prompt_state_updates == 'None': prompt_state_updates = {}
                     if 'prompt_type' in prompt_state_updates:
@@ -415,13 +450,15 @@ class GodTreelet(Treelet):
                         del prompt_state_updates['prompt_type']
                     else:
                         prompt_type = PromptType.CONTEXTUAL
+
+                    logger.info(f'chungus {prompt_text}')
                     return PromptResult(text=prompt_text, prompt_type=prompt_type, state=state, cur_entity=None,
                             conditional_state=self.state_module.ConditionalState(**prompt_state_updates))
+
             return None
 
         cur_supernode = self.get_next_supernode(conditional_state)
         print('prompt treelet to {}'.format(cur_supernode))
-
         if cur_supernode is None or conditional_state is None or cur_supernode == 'exit':
             # next_treelet_str, question = self.get_next_treelet()
             return None
@@ -434,6 +471,7 @@ class GodTreelet(Treelet):
         elif 'call_method' in prompt:
             method_name = prompt['call_method']
             if method_name not in function_cache:
+                logger.error(f"Function {method_name} declared in yaml file not defined in function cache")
                 raise KeyError(f'NLG helpers function cache error {method_name}')
             func = function_cache[method_name]
             conditional_state.cur_supernode = cur_supernode
@@ -457,8 +495,7 @@ class GodTreelet(Treelet):
                     'state': conditional_state
                 }
                 context.update(cntxt)
-                # prompt_text = effify(case['prompt'], context)
-                prompt_text = self.evaluate_nlg_calls(case['prompt_text'], context, context)
+                prompt_text = effify(case['prompt'], context)
                 prompt_texts.append(prompt_text)
 
         entity = self.rg.state_manager.current_state.entity_tracker.cur_entity

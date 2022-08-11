@@ -77,8 +77,9 @@ class FoodResponseGenerator(ResponseGenerator):
         offensive_classifier = OffensiveClassifier()
         conditions = [lambda response: not offensive_classifier.contains_offensive(response),
                       lambda response: not any(bad in response for bad in BAD_WORDS)] + conditions
+        logger.error(f"CON: {conditions}")
         response = super().get_neural_response(prefix, allow_questions, conditions)
-        if response is None: return "That's great to hear."
+        # if response is None: return "That's great to hear."
         return response
 
     def get_prompt(self, state):

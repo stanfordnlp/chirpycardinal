@@ -216,6 +216,7 @@ class ResponseGenerator(NamedCallable):
                 logger.info("There are 0 suitable neural responses.")
                 return None
             responses, scores = zip(*responses_scores)
+        logger.error(f"GGG: {responses} // {conditions}")
         best_response = self.get_best_neural_response(responses, scores, history, conditions=conditions)
         return best_response
 
@@ -255,13 +256,14 @@ class ResponseGenerator(NamedCallable):
         is_majority_questions = num_questions >= len(responses) / 2
         responses, _ = neural_response_filtering(responses, scores)
         responses = [r for r in responses if 'thanks' not in responses]
-
+        logger.error(f"A {conditions}")
         for cond in conditions:
             responses = [r for r in responses if cond(r)]
-
+        logger.error("B")
         if len(responses) == 0:
             logger.warning('There are 0 suitable neural responses')
             return None
+        logger.error("C")
         responses = sorted(responses,
                            key=lambda response: (  # all these keys should be things where higher is good
                                ('?' in response) if is_majority_questions or len(history)==1 else ('?' not in response),
@@ -269,6 +271,7 @@ class ResponseGenerator(NamedCallable):
                                 len(response),
                            ),
                            reverse=True)
+        logger.error("D")
         return responses[0]
 
     def get_current_entity(self, initiated_this_turn=False):
@@ -944,15 +947,20 @@ class ResponseGenerator(NamedCallable):
         :return:
         """
         logger.primary_info(f"Possibly augmenting {response}")
+        logger.error("HERE")
         prompt_treelet_str = self.get_internal_prompt(response)
+        logger.error(f"HERE2 {prompt_treelet_str}")
         logger.info(f"{self.name} received an internal prompt treelet name: {prompt_treelet_str}")
         if prompt_treelet_str:
+            logger.error("HERE3")
             treelet = self.treelets[prompt_treelet_str]
+            logger.error(f"HERE4 {treelet} ")
             logger.info(f"Received an internal prompt treelet: {treelet}")
             try:
                 prompt = treelet.get_prompt(conditional_state=response.conditional_state)
             except TypeError: # wrong # of arguments
                 prompt = treelet.get_prompt()
+            logger.error(f"HERE5: {prompt}")
             logger.info(f"Received an internal prompt: {prompt}")
             if prompt:
                 response.text = f"{response.text} {prompt.text}"
@@ -962,6 +970,7 @@ class ResponseGenerator(NamedCallable):
                 response.expected_type = prompt.expected_type
                 response.conditional_state.next_treelet_str = prompt_treelet_str
                 logger.info(f"Now response.state = {response.state}")
+                logger.error(f"HERE6: {response.state}")
         return response
 
     def continue_conversation(self, response_types) -> Optional[ResponseGeneratorResult]:
@@ -1107,6 +1116,7 @@ class ResponseGenerator(NamedCallable):
         logger.info(f"{self.name} asked for an internal prompt. Current response is {proposed_response}")
         # if self.name == 'FOOD': import pdb; pdb.set_trace()
         if getattr(proposed_response.conditional_state, 'prompt_treelet', NO_UPDATE) != NO_UPDATE:
+            logger.error(f"DEBUGGG: {proposed_response.conditional_state.prompt_treelet}")
             return proposed_response.conditional_state.prompt_treelet
         return None
 

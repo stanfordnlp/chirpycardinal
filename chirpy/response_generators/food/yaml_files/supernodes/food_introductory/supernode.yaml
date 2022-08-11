@@ -1,40 +1,16 @@
-name: food_introductory
+sname: food_introductory
 
-# Requirements to enter this supernode.
 requirements:
-  - entry_entity_is_food: False
-    cur_entity_known_food: True
-    exit_food: False
-  - acknowledge_fav_food: True
-    exit_food: False
+  - state.entry_entity_is_food: False
+    state.cur_entity_known_food: True
+    state.exit_food: False
+  - state.acknowledge_fav_food: True
+    state.exit_food: False
 
 prompt: None
 
-subnode_state_updates:
-  no_entity:
-    exit_food: True
-    needs_prompt: True
-  food_type_comment:
-    food_type_exists: True
-  custom_comment_exists:
-    open_ended: True
-  best_attribute_ingredient:
-    open_ended: True
-  best_attribute_texture:
-    open_ended: True
-  is_ingredient:
-    open_ended: True
-  catch_all:
-    open_ended: True
-
-global_post_supernode_state_updates:
-  cur_food: rg.get_current_entity()
-  cur_entity_known_food: False
-  acknowledge_fav_food: False
+global_post_supernode_updates:
+  state.cur_entity_known_food: False
+  state.acknowledge_fav_food: False
+  state.entry_entity_is_food: False
   priority: ResponsePriority.FORCE_START if getattr(rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', {}), 'next_treelet', None) else priority
-
-# these are just for typechecking...
-  # required_exposed_variables:
-  #   # variables that must be defined & exposed in nlg.yaml
-  #   - entity
-  #   - neural_chat_state

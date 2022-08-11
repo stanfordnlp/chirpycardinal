@@ -1,16 +1,11 @@
-name: ask_favorite_food
-# define global coarse-grained treelet entry requirements here
-# (for ALL convo entering this treelet)
+sname: ask_favorite_food
+
 requirements:
-  - entry_entity_is_food: True
-# define the convo-path relevant state updates made by each subnode
-# each subnode MUST define a prompt_treelet
+  - state.entry_entity_is_food: True
+
 prompt: None
 
-subnode_state_updates:
-  ask_food:
-    acknowledge_fav_food: True
-    entry_entity_is_food: False
-    priority: ResponsePriority.CAN_START
-
-global_post_supernode_state_updates: None
+global_post_supernode_updates:
+  state.acknowledge_fav_food: True
+  state.entry_entity_is_food: False
+  priority: ResponsePriority.CAN_START

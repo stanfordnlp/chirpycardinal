@@ -1,24 +1,14 @@
-name: food_factoid
-# define global coarse-grained treelet entry requirements here
-# (for ALL convo entering this treelet)
+sname: food_factoid
+
 requirements:
-  - need_factoid: True
-    exit_food: False
-# define the convo-path relevant state updates made by each subnode
-# each subnode MUST define a prompt_treelet
+  - state.need_factoid: True
+    state.exit_food: False
+
 prompt:
   call_method: get_prompt_for_factoid
 
-required_exposed_variables:
-  # variables that must be defined & exposed in nlg.yaml
-  - cur_food
-
-subnode_state_updates:
-  thats: None
-  didnt_know: None
-  catch_all: None
-
-global_post_supernode_state_updates:
-  cur_food: cur_food
-  exit_food: True
+global_post_supernode_updates:
+  state.cur_food_entity:
+    val: state.cur_food_entity
+  state.exit_food: True
   needs_prompt: True

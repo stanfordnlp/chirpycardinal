@@ -1,29 +1,78 @@
-response:
+subnodes:
   - node_name: no_prefix_yes_factoid
     entry_conditions:
-      user_asked_q: True
-      factoid_exists: True
-    response: "{rg.get_neural_response(prefix='')}"
-    expose_vars:
-      cur_entity: state.cur_food
+      flags.user_asked_q: True
+      flags.factoid_exists: True
+    response:
+      - neural_generation:
+          prefix: ''
+          fallback:
+            - eval: None
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        val: state.cur_food_entity
+      state.need_factoid: True
+
   - node_name: no_prefix_no_factoid
     entry_conditions:
-      user_asked_q: True
-      factoid_exists: False
-    response: "{rg.get_neural_response(prefix='')} {get_concluding_statement(state.cur_food.talkable_name)}"
-    expose_vars:
-      cur_entity: None
+      flags.user_asked_q: True
+      flags.factoid_exists: False
+    response:
+      - neural_generation:
+          prefix: ''
+          fallback:
+            - eval: None
+      - one of:
+          - option:
+              - Anyway, I'm feeling hungry now! Thanks for recommending
+              - val: state.cur_food_entity.talkable_name
+              - "!"
+          - option:
+              - Anyway, thanks for talking to me about
+              - val: state.cur_food_entity.talkable_name
+              - . I'll have to get some soon!
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        eval: None
+      state.exit_food: True
+      needs_prompt: True
+
   - node_name: yes_prefix_yes_factoid
     entry_conditions:
-      user_made_statement: True
-      factoid_exists: True
-    response: "{rg.get_neural_response(prefix=f'yeah, i think {state.cur_food.talkable_name}')}"
-    expose_vars:
-      cur_entity: state.cur_food
+      flags.user_made_statement: True
+      flags.factoid_exists: True
+    response:
+      - neural_generation:
+          prefix:
+          - yeah, i think
+          - val: state.cur_food_entity.talkable_name
+          fallback: That's great to hear.
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        val: state.cur_food_entity
+      state.need_factoid: True
+
   - node_name: yes_prefix_no_factoid
     entry_conditions:
-      user_made_statement: True
-      factoid_exists: False
-    response: "{rg.get_neural_response(prefix=f'yeah, i think {state.cur_food.talkable_name}')} {get_concluding_statement(state.cur_food.talkable_name)}"
-    expose_vars:
-      cur_entity: None
+      flags.user_made_statement: True
+      flags.factoid_exists: False
+    response:
+      - neural_generation:
+          prefix:
+            - yeah, i think
+            - val: state.cur_food_entity.talkable_name
+          fallback: That's great to hear.
+      - one of:
+          - option:
+              - Anyway, I'm feeling hungry now! Thanks for recommending
+              - val: state.cur_food_entity.talkable_name
+              - "!"
+          - option:
+              - Anyway, thanks for talking to me about
+              - val: state.cur_food_entity.talkable_name
+              - . I'll have to get some soon!
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        eval: None
+      state.exit_food: True
+      needs_prompt: True

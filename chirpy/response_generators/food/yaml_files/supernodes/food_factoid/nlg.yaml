@@ -1,20 +1,55 @@
-response:
+subnodes:
   - node_name: thats
     entry_conditions:
-      thats: True
-    response: "{get_thats_response()} {get_factoid_concluding_statement(state.cur_food.talkable_name)}"
-    expose_vars:
-      cur_food: state.cur_food.name
+      flags.thats: True
+    response:
+      - one of:
+        - option: Yeah it is, isn't it?
+        - option: Yeah, it really is.
+      - one of:
+        - option:
+          - Anyway, I'm feeling hungry now! Thanks for recommending
+          - val: state.cur_food_entity.talkable_name
+          - "!"
+        - option:
+          - Anyway, thanks for talking to me about
+          - val: state.cur_food_entity.talkable_name
+          - . I'll have to get some soon!
+
   - node_name: didnt_know
     entry_conditions:
-      didnt_know: True
-    response: "{get_didnt_know_response()} {get_factoid_concluding_statement(state.cur_food.talkable_name)}"
-    expose_vars:
-      cur_food: state.cur_food.name
+      flags.didnt_know: True
+    response:
+      - one of:
+        - option: No worries, not many people do!
+        - option: Yeah, it's a little known fact!
+      - one of:
+        - option:
+          - Anyway, I'm feeling hungry now! Thanks for recommending
+          - val: state.cur_food_entity.talkable_name
+          - "!"
+        - option:
+          - Anyway, thanks for talking to me about
+          - val: state.cur_food_entity.talkable_name
+          - . I'll have to get some soon!
+
   - node_name: catch_all
     entry_conditions:
-      agree_with_user: True
-    response: "{get_neural_agreement(rg)} {get_factoid_concluding_statement(state.cur_food.talkable_name)}"
-    expose_vars:
-      cur_food: state.cur_food.name
+      flags.thats: False
+      flags.didnt_know: False
+    response:
+      - neural_generation:
+          prefix: ''
+          condition:
+            eval: "lambda response: 'agree' in response"
+          fallback: That's great to hear.
+      - one of:
+        - option:
+          - Anyway, I'm feeling hungry now! Thanks for recommending
+          - val: state.cur_food_entity.talkable_name
+          - "!"
+        - option:
+          - Anyway, thanks for talking to me about
+          - val: state.cur_food_entity.talkable_name
+          - . I'll have to get some soon!
 
