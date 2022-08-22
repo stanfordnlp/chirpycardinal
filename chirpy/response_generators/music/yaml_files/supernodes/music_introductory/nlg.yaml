@@ -1,11 +1,23 @@
-response:
-  - node_name: intro
-    entry_conditions:
-      'intro': True
-    response: >-
-      {choose_random(
-      "Music is one of my favorite things and I was wondering if we could talk about it.",
-      "There's so much music here in the cloud and I'm curious to know what you think about it.")}
+sname: music_introductory
+
+requirements:
+  - state.entering_music_rg: False
+    state.trigger_music: True
+
+# TODO: Work on prompt
+prompt_ranking: 1 # ranking relative to other supernodes' unconditional prompt
+unconditional_prompt_updates:
+  contextual_prompt:
+    prompt_type: PromptType.CONTEXTUAL
+    entering_music_rg: True
+    have_prompted: True
+  generic_prompt:
+    prompt_type: PromptType.GENERIC
+    entering_music_rg: True
+    have_prompted: True
+
+prompt: None
+
 unconditional_prompt:
   - case_name: contextual_prompt
     entry_conditions:
@@ -14,6 +26,45 @@ unconditional_prompt:
     prompt: "I love how you mentioned music! I've been listening to a lot of new songs lately, and I'd love to hear what you think."
   - case_name: generic_prompt
     entry_conditions:
-      'have_prompted': False 
+      'have_prompted': False
       'generic_prompt': True
     prompt: "By the way, I've been listening to a lot of new songs lately, and I'd love to hear what you think."
+
+# TODO: Until here
+
+global_post_supernode_updates:
+  state.trigger_music: False
+  priority:
+    eval: rg._get_priority_from_answer_type()   # TODO: Work on this
+
+response_subnodes:
+  - response_node_name: intro
+    response_entry_conditions:
+      response_flags.intro: True
+    response:
+      - one of:
+        - option: Music is one of my favorite things and I was wondering if we could talk about it.
+        - option: There's so much music here in the cloud and I'm curious to know what you think about it.
+    local_post_subnode_updates:
+      state.entering_music_rg: True
+
+
+#response:
+#  - node_name: intro
+#    entry_conditions:
+#      'intro': True
+#    response: >-
+#      {choose_random(
+#      "Music is one of my favorite things and I was wondering if we could talk about it.",
+#      "There's so much music here in the cloud and I'm curious to know what you think about it.")}
+#unconditional_prompt:
+#  - case_name: contextual_prompt
+#    entry_conditions:
+#      'have_prompted': False
+#      'user_mentioned_music': True
+#    prompt: "I love how you mentioned music! I've been listening to a lot of new songs lately, and I'd love to hear what you think."
+#  - case_name: generic_prompt
+#    entry_conditions:
+#      'have_prompted': False
+#      'generic_prompt': True
+#    prompt: "By the way, I've been listening to a lot of new songs lately, and I'd love to hear what you think."

@@ -1,27 +1,59 @@
-subnodes:
-  - node_name: no_prefix_yes_factoid
-    entry_conditions:
-      flags.user_asked_q: True
-      flags.factoid_exists: True
+sname: open_ended_user_comment
+
+requirements:
+  - state.food__needs_open_ended: True
+    state.food__needs_exit: False
+
+prompt_subnodes:
+  - prompt_node_name: no_cur_food_entity
+    prompt_entry_conditions:
+      prompt_flags.exists_cur_food_entity: False
+    prompt:
+      const: None
+  - prompt_node_name: ask_about_best_attribute
+    prompt_entry_conditions:
+      prompt_flags.exists_cur_food_entity: True
+      prompt_flags.has_best_attribute: True
+    prompt:
+      - What do you think?
+  - prompt_node_name: ask_general_question
+    prompt_entry_conditions:
+      prompt_flags.exists_cur_food_entity: True
+      prompt_flags.has_best_attribute: False
+    prompt:
+      - What do you like best about
+      - inflect:
+          inflect_token: them
+          inflect_entity: state.cur_food_entity
+      - "?"
+
+global_post_supernode_updates:
+  state.food__needs_open_ended: False
+
+response_subnodes:
+  - response_node_name: no_prefix_yes_factoid
+    response_entry_conditions:
+      response_flags.user_asked_q: True
+      response_flags.factoid_exists: True
     response:
       - neural_generation:
           prefix: ''
           fallback:
-            - eval: None
+            - const: None
     local_post_subnode_updates:
       state.cur_food_entity:
         val: state.cur_food_entity
-      state.need_factoid: True
+      state.food__needs_factoid: True
 
-  - node_name: no_prefix_no_factoid
-    entry_conditions:
-      flags.user_asked_q: True
-      flags.factoid_exists: False
+  - response_node_name: no_prefix_no_factoid
+    response_entry_conditions:
+      response_flags.user_asked_q: True
+      response_flags.factoid_exists: False
     response:
       - neural_generation:
           prefix: ''
           fallback:
-            - eval: None
+            - const: None
       - one of:
           - option:
               - Anyway, I'm feeling hungry now! Thanks for recommending
@@ -33,14 +65,14 @@ subnodes:
               - . I'll have to get some soon!
     local_post_subnode_updates:
       state.cur_food_entity:
-        eval: None
-      state.exit_food: True
+        const: None
+      state.food__needs_exit: True
       needs_prompt: True
 
-  - node_name: yes_prefix_yes_factoid
-    entry_conditions:
-      flags.user_made_statement: True
-      flags.factoid_exists: True
+  - response_node_name: yes_prefix_yes_factoid
+    response_entry_conditions:
+      response_flags.user_made_statement: True
+      response_flags.factoid_exists: True
     response:
       - neural_generation:
           prefix:
@@ -50,12 +82,12 @@ subnodes:
     local_post_subnode_updates:
       state.cur_food_entity:
         val: state.cur_food_entity
-      state.need_factoid: True
+      state.food__needs_factoid: True
 
-  - node_name: yes_prefix_no_factoid
-    entry_conditions:
-      flags.user_made_statement: True
-      flags.factoid_exists: False
+  - response_node_name: yes_prefix_no_factoid
+    response_entry_conditions:
+      response_flags.user_made_statement: True
+      response_flags.factoid_exists: False
     response:
       - neural_generation:
           prefix:
@@ -73,6 +105,6 @@ subnodes:
               - . I'll have to get some soon!
     local_post_subnode_updates:
       state.cur_food_entity:
-        eval: None
-      state.exit_food: True
+        const: None
+      state.food__needs_exit: True
       needs_prompt: True

@@ -1,122 +1,133 @@
-locals: # TODO: (???) Remove cur_entity or do state.cur_food_entity in nlu processing
-  cur_entity:
-    entity_name: rg.get_current_entity()
+sname: food_introductory
 
-  lowercased_entity:
-    eval: (rg.get_current_entity() or '').talkable_name.lower()
+requirements:
+  - state.food__exists_word_food: False
+    state.food__exists_known_food: True
+    state.food__needs_exit: False
+  - state.food__user_fav_food_not_yet_ack: True
+    state.food__needs_exit: False
 
+prompt_subnodes: None
+
+global_post_supernode_updates:
+  state.food__exists_known_food: False
+  state.food__user_fav_food_not_yet_ack: False
+  state.food__exists_word_food: False
+  priority: ResponsePriority.FORCE_START if getattr(rg.state_manager.current_state.response_generator_states.get('NEURAL_CHAT', {}), 'next_treelet', None) else priority
+
+response_locals: # TODO: (???) Remove cur_entity or do state.cur_food_entity in nlu processing
   intro_statement:
     - one of: 
       - option: Ah yes,
       - option: Oh yeah,
-    - val: locals.lowercased_entity
+    - val: response_entities.lowercased_cur_entity
     - inflect:
         inflect_token: is
-        inflect_entity: locals.cur_entity
+        inflect_entity: response_entities.cur_entity
     - one of:
       - option: one of my favorite things to eat up here in the cloud.
       - option: such an amazing choice. It's one of my favorite foods up here in the cloud.
 
-subnodes:
-  - node_name: entity_not_found
-    entry_conditions:
-      flags.no_food_entity_found: True
+response_subnodes:
+  - response_node_name: entity_not_found
+    response_entry_conditions:
+      response_flags.no_food_entity_found: True
     response: ''
     local_post_subnode_updates:
-      state.exit_food: True
+      state.food__needs_exit: True
       needs_prompt: True
 
-  - node_name: make_food_type_comment
-    entry_conditions:
-      flags.food_type_found: True
+  - response_node_name: make_food_type_comment
+    response_entry_conditions:
+      response_flags.food_type_found: True
     response:
-      - val: locals.intro_statement
+      - val: response_locals.intro_statement
     local_post_subnode_updates:
       state.cur_food_entity:
-        val: locals.cur_entity
-      state.food_type_exists: True
+        val: response_entities.cur_entity
+      state.food__needs_comment_on_food_type: True
 
-  - node_name: make_ingredient_attribute_comment
-    entry_conditions:
-      flags.best_comment_type: has_ingredient
+  - response_node_name: make_ingredient_attribute_comment
+    response_entry_conditions:
+      response_flags.best_comment_type: has_ingredient
     response:
-      - val: locals.intro_statement
+      - val: response_locals.intro_statement
       - Personally, I especially like the
       - nlg_helper:
           name: get_best_attribute_value
-          args: [locals.lowercased_entity]
+          args: [response_entities.lowercased_cur_entity]
       - in
       - inflect:
-            inflect_token: it
-            inflect_entity: locals.cur_entity
+            inflect_token: them
+            inflect_entity: response_entities.cur_entity
       - ", I think it gives"
       - inflect:
           inflect_token: them
-          inflect_entity: locals.cur_entity
+          inflect_entity: response_entities.cur_entity
       - a really nice flavor. 
     local_post_subnode_updates:
       state.cur_food_entity:
-        val: locals.cur_entity
-      state.open_ended: True
+        val: response_entities.cur_entity
+      state.food__needs_open_ended: True
 
-  - node_name: make_texture_attribute_comment
-    entry_conditions:
-      flags.best_comment_type: texture
+  - response_node_name: make_texture_attribute_comment
+    response_entry_conditions:
+      response_flags.best_comment_type: texture
     response:
-      - val: locals.intro_statement
+      - val: response_locals.intro_statement
       - Personally, I especially love
       - inflect:
           inflect_token: its
-          inflect_entity: locals.cur_entity
+          inflect_entity: response_entities.cur_entity
       - texture, especially how
       - inflect:
           inflect_token: it's
-          inflect_entity: locals.cur_entity
+          inflect_entity: response_entities.cur_entity
       - so
       - nlg_helper:
           name: get_best_attribute_value
-          args: [locals.lowercased_entity]
+          args: [response_entities.lowercased_cur_entity]
       - .
     local_post_subnode_updates:
       state.cur_food_entity:
-        val: locals.cur_entity
-      state.open_ended: True
+        val: response_entities.cur_entity
+      state.food__needs_open_ended: True
 
-  - node_name: make_food_is_an_ingredient_comment
-    entry_conditions:
-      flags.best_comment_type: is_ingredient
+  - response_node_name: make_food_is_an_ingredient_comment
+    response_entry_conditions:
+      response_flags.best_comment_type: is_ingredient
     response:
-      - val: locals.intro_statement
+      - val: response_locals.intro_statement
       - In my opinion, I think
       - inflect:
           inflect_token: it's
-          inflect_entity: locals.cur_entity
+          inflect_entity: response_entities.cur_entity
       - especially good as part of
       - inflect_helper:
           type: a
           str:
             nlg_helper:
               name: sample_food_containing_ingredient
-              args: [locals.lowercased_entity]
+              args: [response_entities.lowercased_cur_entity]
       - .
     local_post_subnode_updates:
       state.cur_food_entity:
-        val: locals.cur_entity
-      state.open_ended: True
+        val: response_entities.cur_entity
+      state.food__needs_open_ended: True
 
-  - node_name: default
+  - response_node_name: default
     response: 
-      - val: locals.intro_statement
+      - val: response_locals.intro_statement
       - neural_generation:
           prefix:
             - I especially love how
             - inflect:
                 inflect_token: it
-                inflect_entity: locals.cur_entity
+                inflect_entity: response_entities.cur_entity
           fallback: That's great to hear.
     local_post_subnode_updates:
       state.cur_food_entity:
-        val: locals.cur_entity
-      state.open_ended: True
+        val: response_entities.cur_entity
+      state.food__needs_open_ended: True
 
 

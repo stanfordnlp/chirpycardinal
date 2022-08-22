@@ -1,62 +1,49 @@
-response:
-  - node_name: song_ent_w_til
-    entry_conditions:
-      song_ent_exists: True
-      tils_exist: True
-    response: "{least_repetitive_compliment(rg)} {pick_til(state.cur_song_ent)}"
-  - node_name: song_ent_no_til_no_meta
-    entry_conditions:
-      song_ent_exists: True
-      tils_exist: False
-      metadata_exists: False
-    response: "Oh I don't seem to recognize that song."
-  - node_name: song_ent_no_til_yes_meta
-    entry_conditions:
-      song_ent_exists: True
-      tils_exist: False
-      metadata_exists: True
-    response: "{rg.comment_song(state.cur_song_str, state.cur_singer_ent.talkable_name if state.cur_singer_ent else None)[0]}"
-  - node_name: dont_know
-    entry_conditions:
-      song_ent_exists: False
-      dont_know: True
-    response: "I understand. I like different songs depending on how I'm feeling and I don't really have a favorite either."
-  - node_name: no_fav_song
-    entry_conditions:
-      song_ent_exists: False
-      dont_know: False
-      no_fav_song: True
-    response: "Oh it's okay, maybe you will find a song that touches your heart one day!"
-  - node_name: parse_utterance_til
-    entry_conditions:
-      song_ent_exists: False
-      dont_know: False
-      no_fav_song: False
-      tils_exist: True
-    response: "{least_repetitive_compliment(rg)} {pick_til(state.cur_song_ent)}"
-  - node_name: parse_utterance_no_til_yes_meta
-    entry_conditions:
-      song_ent_exists: False
-      dont_know: False
-      no_fav_song: False
-      tils_exist: False
-      metadata_exists: True
-    response: "{rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg))[0]}"
-  - node_name: catch_all
-    entry_conditions:
-      song_ent_exists: False
-      dont_know: False
-      no_fav_song: False
-      tils_exist: False
-      metadata_exists: False
-    response: "Oh I don't seem to recognize that song."
+sname: music_get_song
+
+trigger_response: None    # TODO: Work on this
+requirements:
+  - state.start_discussing_music: True
+    state.exit_music_rg: False
+  - state.continue_after_instrument: True
+    state.exit_music_rg: False
+  - state.get_user_fav_song: True
+    state.exit_music_rg: False
+
+# TODO: This
+prompt_ranking: 3 # ranking relative to other supernodes' unconditional prompt
+unconditional_prompt_updates:
+  til_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    just_used_til: True
+    have_prompted: True
+    get_user_fav_song: True
+    cur_song_str: state.cur_song_str
+    cur_song_ent: state.cur_song_ent
+    cur_singer_str: state.cur_singer_str
+  metadata_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    just_used_til: True
+    have_prompted: True
+    get_user_fav_song: True
+    cur_song_str: state.cur_song_str
+    cur_song_ent: state.cur_song_ent
+    cur_singer_str: state.cur_singer_str
+
+prompt:
+  - required:
+      start_discussing_music: True
+    prompt: 'What is a song you love listening to?'
+  - required:
+      get_user_fav_song: True
+    prompt: 'How about a favorite song? Do you have a song you really like?'
+
 unconditional_prompt:
   - case_name: til_prompt
     entry_conditions:
       tils_exist: True
       cur_song_ent_exists: True
     prompt: >-
-      It's interesting that you mentioned {state.cur_song_str}. {least_repetitive_compliment(rg)} 
+      It's interesting that you mentioned {state.cur_song_str}. {least_repetitive_compliment(rg)}
       {pick_til(state.cur_song_ent)}
   - case_name: metadata_prompt
     entry_conditions:
@@ -64,8 +51,97 @@ unconditional_prompt:
       tils_exist: False
       metadata_exists: True
     prompt: >-
-      It's interesting that you mentioned {state.cur_song_str}. {least_repetitive_compliment(rg)} 
+      It's interesting that you mentioned {state.cur_song_str}. {least_repetitive_compliment(rg)}
       {rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg))[0]}
 
+# TODO: Til this
+
+global_post_supernode_updates:
+  state.start_discussing_music: False
+  state.continue_after_instrument: False
+  state.get_user_fav_song: False
+  state.cur_song_str:
+    val: state.cur_song_str
+  state.cur_song_ent:
+    val: state.cur_song_ent
+  state.cur_singer_str:
+    val: state.cur_singer_str
 
 
+response_subnodes:
+  - response_node_name: song_ent_w_til
+    response_entry_conditions:
+      response_flags.song_ent_exists: True
+      response_flags.tils_exist: True
+    response: "{least_repetitive_compliment(rg)} {pick_til(state.cur_song_ent)}"
+    local_post_subnode_updates:
+      state.just_used_til: True
+      state.user_has_song_opinion: True
+
+  - response_node_name: song_ent_no_til_no_meta
+    response_entry_conditions:
+      response_flags.song_ent_exists: True
+      response_flags.tils_exist: False
+      response_flags.metadata_exists: False
+    response: Oh I don't seem to recognize that song.
+    local_post_subnode_updates:
+      state.exit_music_rg: True
+
+  - response_node_name: song_ent_no_til_yes_meta
+    response_entry_conditions:
+      response_flags.song_ent_exists: True
+      response_flags.tils_exist: False
+      response_flags.metadata_exists: True
+    response: "{rg.comment_song(state.cur_song_str, state.cur_singer_ent.talkable_name if state.cur_singer_ent else None)[0]}"
+    local_post_subnode_updates:
+      state.user_has_song_opinion: True
+
+  - response_node_name: dont_know
+    response_entry_conditions:
+      response_flags.song_ent_exists: False
+      response_flags.dont_know: True
+    response: I understand. I like different songs depending on how I'm feeling and I don't really have a favorite either.
+    local_post_subnode_updates:
+      state.exit_music_rg: True
+
+  - response_node_name: no_fav_song
+    response_entry_conditions:
+      response_flags.song_ent_exists: False
+      response_flags.dont_know: False
+      response_flags.no_fav_song: True
+    response: Oh it's okay, maybe you will find a song that touches your heart one day!
+    local_post_subnode_updates:
+      state.exit_music_rg: True
+
+  - response_node_name: parse_utterance_til
+    response_entry_conditions:
+      response_flags.song_ent_exists: False
+      response_flags.dont_know: False
+      response_flags.no_fav_song: False
+      response_flags.tils_exist: True
+    response: "{least_repetitive_compliment(rg)} {pick_til(state.cur_song_ent)}"
+    local_post_subnode_updates:
+      state.just_used_til: True
+      state.user_has_song_opinion: True
+
+  - response_node_name: parse_utterance_no_til_yes_meta
+    response_entry_conditions:
+      response_flags.song_ent_exists: False
+      response_flags.dont_know: False
+      response_flags.no_fav_song: False
+      response_flags.tils_exist: False
+      response_flags.metadata_exists: True
+    response: "{rg.comment_song(state.cur_song_str, response=least_repetitive_compliment(rg))[0]}"
+    local_post_subnode_updates:
+      state.user_has_song_opinion: True
+
+  - response_node_name: catch_all
+    response_entry_conditions:
+      response_flags.song_ent_exists: False
+      response_flags.dont_know: False
+      response_flags.no_fav_song: False
+      response_flags.tils_exist: False
+      response_flags.metadata_exists: False
+    response: Oh I don't seem to recognize that song.
+    local_post_subnode_updates:
+      state.exit_music_rg: True

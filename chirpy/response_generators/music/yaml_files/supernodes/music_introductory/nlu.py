@@ -1,22 +1,20 @@
 from chirpy.response_generators.music.music_helpers import ResponseType
 
-def nlu_processing(rg, state, utterance, response_types):
-	flags = {
-		'intro': True
-	}
+def response_nlu_processing(rg, state, utterance, response_types):
+	response_flags = {'intro': True}
 
-	return flags
+	return response_flags
 
-def prompt_nlu_processing(rg, state, utterance, response_types):
-	flags = {
+def prompt_nlu_processing(rg, state, utterance, response_types):		# TODO: Check this
+	prompt_flags = {
 		'have_prompted': False,
 		'user_mentioned_music': False,
 		'generic_prompt': False
 	}
 
-	flags['have_prompted'] = state.have_prompted
+	prompt_flags['have_prompted'] = state.have_prompted
 	if ResponseType.MUSIC_KEYWORD in response_types and not ResponseType.POSITIVE in response_types:
-		flags['user_mentioned_music'] = True
+		prompt_flags['user_mentioned_music'] = True
 	else:
-		flags['generic_prompt'] = True
-	return flags
+		prompt_flags['generic_prompt'] = True
+	return prompt_flags

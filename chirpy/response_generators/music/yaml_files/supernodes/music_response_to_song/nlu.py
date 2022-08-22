@@ -11,22 +11,22 @@ from chirpy.response_generators.wiki2.wiki_utils import get_til_title
 from chirpy.response_generators.music.state import ConditionalState
 from chirpy.response_generators.music.music_helpers import ResponseType
 
-def nlu_processing(rg, state, utterance, response_types):
-	flags = {
+def response_nlu_processing(rg, state, utterance, response_types):
+	response_flags = {
 		'thats': False,
 		'no_response': False,
 		'did_not_know': False
 	}
 
 	if ResponseType.NO in response_types or ResponseType.NEGATIVE in response_types:
-		flags['no_response'] = True
+		response_flags['no_response'] = True
 	else:
 		if (ResponseType.THATS in response_types or ResponseType.YES in response_types) and state.just_used_til:
-			flags['thats'] = True
+			response_flags['thats'] = True
 		elif ResponseType.DIDNT_KNOW in response_types and state.just_used_til:
-			flags['did_not_know'] = True
+			response_flags['did_not_know'] = True
 
 		# flags['metadata'] = rg.get_song_meta(state.cur_song_str, state.cur_singer_str)
 		# flags['cur_song_str'] = state.cur_song_str
 		# flags['cur_singer_str'] = state.cur_singer_str
-	return flags
+	return response_flags

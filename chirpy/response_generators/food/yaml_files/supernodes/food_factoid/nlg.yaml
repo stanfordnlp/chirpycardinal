@@ -1,7 +1,85 @@
-subnodes:
-  - node_name: thats
-    entry_conditions:
-      flags.thats: True
+sname: food_factoid
+
+requirements:
+  - state.food__needs_factoid: True
+    state.food__needs_exit: False
+
+prompt_subnodes:
+  - prompt_node_name: not_known_food
+    prompt_entry_conditions:
+      prompt_flags.is_known_food: False
+    prompt:
+      const: None
+  - prompt_node_name: comment_on_time_and_place_origin
+    prompt_entry_conditions:
+      prompt_flags.is_known_food: True
+      prompt_flags.has_known_time_origin: True
+      prompt_flags.has_known_place_origin: True
+    prompt:
+      - Did you know that
+      - val: state.cur_food_entity.talkable_name
+      - inflect:
+          inflect_token: was
+          inflect_entity: state.cur_food_entity
+      - first made in
+      - nlg_helper:
+          name: get_place_origin_for_food
+          args: [state.cur_food_entity.name]
+      - around
+      - nlg_helper:
+          name: get_time_origin_for_food
+          args: [state.cur_food_entity]
+      - "?"
+      - nlg_helper:
+          name: get_time_comment_for_food
+          args: [state.cur_food_entity]
+  - prompt_node_name: comment_on_time_origin
+    prompt_entry_conditions:
+      prompt_flags.is_known_food: True
+      prompt_flags.has_known_time_origin: True
+      prompt_flags.has_known_place_origin: False
+    prompt:
+      - Did you know that
+      - val: state.cur_food_entity.talkable_name
+      - inflect:
+          inflect_token: have
+          inflect_entity: state.cur_food_entity
+      - been made since
+      - nlg_helper:
+          name: get_time_origin_for_food
+          args: [state.cur_food_entity]
+      - "?"
+      - nlg_helper:
+          name: get_time_comment_for_food
+          args: [state.cur_food_entity]
+  - prompt_node_name: comment_on_place_origin
+    prompt_entry_conditions:
+      prompt_flags.is_known_food: True
+      prompt_flags.has_known_time_origin: False
+      prompt_flags.has_known_place_origin: True
+    prompt:
+      - Did you know that
+      - val: state.cur_food_entity.talkable_name
+      - inflect:
+          inflect_token: was
+          inflect_entity: state.cur_food_entity
+      - originally from
+      - nlg_helper:
+          name: get_place_origin_for_food
+          args: [state.cur_food_entity.name]
+      - "?"
+
+
+global_post_supernode_updates:
+  state.cur_food_entity:
+    val: state.cur_food_entity
+  state.food__needs_exit: True
+  needs_prompt: True
+
+response_subnodes:
+  - response_node_name: thats
+    response_entry_conditions:
+      response_flags.thats: True
     response:
       - one of:
         - option: Yeah it is, isn't it?
@@ -16,9 +94,9 @@ subnodes:
           - val: state.cur_food_entity.talkable_name
           - . I'll have to get some soon!
 
-  - node_name: didnt_know
-    entry_conditions:
-      flags.didnt_know: True
+  - response_node_name: didnt_know
+    response_entry_conditions:
+      response_flags.didnt_know: True
     response:
       - one of:
         - option: No worries, not many people do!
@@ -33,10 +111,10 @@ subnodes:
           - val: state.cur_food_entity.talkable_name
           - . I'll have to get some soon!
 
-  - node_name: catch_all
-    entry_conditions:
-      flags.thats: False
-      flags.didnt_know: False
+  - response_node_name: catch_all
+    response_entry_conditions:
+      response_flags.thats: False
+      response_flags.didnt_know: False
     response:
       - neural_generation:
           prefix: ''

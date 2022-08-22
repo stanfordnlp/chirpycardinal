@@ -224,7 +224,7 @@ class LocalAgent():
 
     def process_utterance(self, user_utterance):
 
-        # create handler (pass in RGs + annotators)
+        # create handlers (pass in RGs + annotators)
         handler = self.create_handler()
 
         current_state = self.get_state_attributes(user_utterance)

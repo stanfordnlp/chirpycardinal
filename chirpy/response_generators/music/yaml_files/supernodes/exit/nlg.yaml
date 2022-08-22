@@ -1,0 +1,20 @@
+sname: exit
+requirements:
+  - state.exit_music_rg: True
+
+prompt_subnodes: None
+
+global_post_supernode_updates:
+  state.exit_music_rg: True    # TODO: Reconsider this update when developing inter-rg
+
+
+#name: exit
+#requirements:
+#  - exit_music_rg: True
+#
+#prompt: None
+#
+#subnode_state_updates:
+#  exit: None
+#
+#global_post_supernode_state_updates: None

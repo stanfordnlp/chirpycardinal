@@ -1,23 +1,60 @@
-response:
-  - node_name: no_response
-    entry_conditions:
-      no_response: True
-    response: "I'm sorry I must have heard you wrongly. How about we discuss something else."
-  - node_name: thats
-    entry_conditions:
-      thats: True
-    response: >-
-      {thats_response(rg)} 
-      {comment_genre(rg, state.cur_song_str, state.cur_singer_str)}
-  - node_name: did_not_know
-    entry_conditions:
-      did_not_know: True
-    response: >-
-      {didnt_know_response(rg)} 
-      {comment_genre(rg, state.cur_song_str, state.cur_singer_str)}
-  - node_name: catch_all
-    entry_conditions:
-      no_response: False
-      thats: False
-      did_not_know: False
-    response: "{comment_genre(rg, state.cur_song_str, state.cur_singer_str)}"
+sname: music_response_to_song
+
+requirements:
+  - state.user_has_song_opinion: True
+    state.exit_music_rg: False
+
+prompt_subnodes: None # TODO: Check this
+
+global_post_supernode_updates:
+  state.user_has_song_opinion: False
+
+response_subnodes:
+  - response_node_name: no_response
+    response_entry_conditions:
+      response_flags.no_response: True
+    response: I'm sorry I must have heard you wrongly. How about we discuss something else.
+    local_post_subnode_updates:
+      state.exit_music_rg: True
+
+  - response_node_name: thats
+    response_entry_conditions:
+      response_flags.thats: True
+    response: # {thats_response(rg)} {comment_genre(rg, state.cur_song_str, state.cur_singer_str)}
+      - nlg_helper:
+          name: thats_response
+      - nlg_helper:
+          name: comment_genre
+          args: [state.cur_song_str, state.cur_singer_str]
+    local_post_subnode_updates:
+      state.cur_singer_str:
+        eval: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']
+      state.ask_user_about_specific_singer: True
+
+  - response_node_name: did_not_know
+    response_entry_conditions:
+      response_flags.did_not_know: True
+    response: # {didnt_know_response(rg)} {comment_genre(rg, state.cur_song_str, state.cur_singer_str)}
+      - nlg_helper:
+          name: didnt_know_response
+      - nlg_helper:
+          name: comment_genre
+          args: [state.cur_song_str, state.cur_singer_str]
+    local_post_subnode_updates:
+      state.cur_singer_str:
+        eval: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']
+      state.ask_user_about_specific_singer: True
+
+  - response_node_name: catch_all
+    response_entry_conditions:
+      response_flags.no_response: False
+      response_flags.thats: False
+      response_flags.did_not_know: False
+    response: # "{comment_genre(rg, state.cur_song_str, state.cur_singer_str)}"
+      - nlg_helper:
+          name: comment_genre
+          args: [state.cur_song_str, state.cur_singer_str]
+    local_post_subnode_updates:
+      state.cur_singer_str:
+        eval: rg.get_song_meta(state.cur_song_str, state.cur_singer_str)['artist']
+      state.ask_user_about_specific_singer: True

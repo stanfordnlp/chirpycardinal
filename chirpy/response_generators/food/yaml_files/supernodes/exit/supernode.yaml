@@ -1,8 +1,0 @@
-name: exit
-requirements:
-  - state.exit_food: True
-
-prompt: None
-
-global_post_supernode_updates:
-  state.exit_food: True    # TODO: Reconsider this update when developing inter-rg

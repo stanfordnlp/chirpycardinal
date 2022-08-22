@@ -1,8 +1,42 @@
-subnodes:
-  - node_name: custom_dont_know
-    entry_conditions:
-      flags.has_custom_food: True
-      flags.dont_know: True
+sname: comment_on_favorite_type
+
+requirements:
+  - state.food__needs_comment_on_food_type: True
+    state.food__needs_exit: False
+
+prompt_subnodes:
+  - prompt_node_name: custom_question
+    prompt_entry_conditions:
+      prompt_flags.has_custom_food: True
+    prompt:
+      - nlg_helper:
+          name: get_custom_question
+          args: [state.cur_food_entity.name]
+  - prompt_node_name: type_question
+    prompt_entry_conditions:
+      prompt_flags.is_subclassable: True
+    prompt:
+      - What type of
+      - val: state.cur_food_entity.talkable_name
+      - do you like the most?
+  - prompt_node_name: failed_all
+    prompt_entry_conditions:
+      prompt_flags.has_custom_food: False
+      prompt_flags.is_subclassable: False
+    prompt:
+      const: None
+
+global_post_supernode_updates:
+  state.cur_food_entity:
+    val: state.cur_food_entity
+  state.food__needs_open_ended: True
+  state.food__needs_comment_on_food_type: False
+
+response_subnodes:
+  - response_node_name: custom_dont_know
+    response_entry_conditions:
+      response_flags.has_custom_food: True
+      response_flags.dont_know: True
     response:
       - No worries, it can be difficult to pick just one! Personally, when it comes to
       - val: state.cur_food_entity.talkable_name
@@ -10,11 +44,12 @@ subnodes:
       - nlg_helper:
           name: get_custom_question_answer
           args: [state.cur_food_entity.name]
+      - .
 
-  - node_name: custom_no
-    entry_conditions:
-      flags.has_custom_food: True
-      flags.response_no: True
+  - response_node_name: custom_no
+    response_entry_conditions:
+      response_flags.has_custom_food: True
+      response_flags.response_no: True
     response:
       - Okay, no worries. Personally, when it comes to
       - val: state.cur_food_entity.talkable_name
@@ -22,12 +57,13 @@ subnodes:
       - nlg_helper:
           name: get_custom_question_answer
           args: [state.cur_food_entity.name]
+      - .
 
-  - node_name: custom_neural
-    entry_conditions:
-      flags.has_custom_food: True
-      flags.response_no: False
-      flags.dont_know: False
+  - response_node_name: custom_neural
+    response_entry_conditions:
+      response_flags.has_custom_food: True
+      response_flags.response_no: False
+      response_flags.dont_know: False
     response:
       - nlg_helper:
           name: get_neural_response_food_type
@@ -37,12 +73,13 @@ subnodes:
       - nlg_helper:
           name: get_custom_question_answer
           args: [state.cur_food_entity.name]
+      - .
 
-  - node_name: sample_of_same_type
-    entry_conditions:
-      flags.has_custom_food: False
-      flags.response_no: False
-      flags.dont_know: False
+  - response_node_name: sample_of_same_type
+    response_entry_conditions:
+      response_flags.has_custom_food: False
+      response_flags.response_no: False
+      response_flags.dont_know: False
     response:
       - That totally makes sense! I also really enjoy
       - nlg_helper:
@@ -52,4 +89,5 @@ subnodes:
       - nlg_helper:
           name: sample_from_type
           args: [state.cur_food_entity.name]
+      - .
 

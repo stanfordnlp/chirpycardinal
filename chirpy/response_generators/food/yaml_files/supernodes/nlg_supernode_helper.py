@@ -49,7 +49,7 @@ CUSTOM_QUESTIONS = {
                   "adding a fried egg, it makes it so rich and delicious"),
     "sandwich":  ("It's just so cool to me that you can take anything you want and put it in your sandwich. What's your favorite sandwich filling?",
                   "a simple bacon, lettuce, and tomato sandwich, it's my favorite thing for lunch"),
-    "fried rice": ("Fried rice is one of my favorites! I just love all the different things you can put in it. What's your favorite thing to put in fried rice?",
+    "fried rice": ("I just love all the different things you can put in it. What's your favorite thing to put in fried rice?",
                    "mine with cabbage and teriyaki chicken, it really hits the spot for me"),
     "pizza":      ("I love eating pizza, especially when it's late at night! What's your favorite pizza topping?",
                    "a nice mushroom pizza"),

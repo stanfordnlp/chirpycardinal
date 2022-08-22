@@ -9,8 +9,8 @@ from chirpy.response_generators.music.state import ConditionalState
 from chirpy.response_generators.music.regex_templates.name_favorite_song_template import NameFavoriteSongTemplate
 import chirpy.response_generators.music.response_templates.general_templates as templates
 
-def nlu_processing(rg, state, utterance, response_types):
-    flags = {
+def response_nlu_processing(rg, state, utterance, response_types):
+    response_flags = {
         'cur_song_ent_exists': False,
         'song_slots_exists': False,
         'thats': False,
@@ -27,28 +27,28 @@ def nlu_processing(rg, state, utterance, response_types):
     song_slots = NameFavoriteSongTemplate().execute(utterance)
     # First, if user mentions a song we try to compliment it
     if cur_song_ent:
-        flags['cur_song_ent_exists'] = True
+        response_flags['cur_song_ent_exists'] = True
     elif song_slots is not None and 'favorite' in song_slots:
-        flags['song_slots_exists'] = True
+        response_flags['song_slots_exists'] = True
     elif ResponseType.THATS in response_types and state.just_used_til:
-        flags['thats'] = True
+        response_flags['thats'] = True
     elif ResponseType.DIDNT_KNOW in response_types and state.just_used_til:
-        flags['didnt_know'] = True
+        response_flags['didnt_know'] = True
     elif ResponseType.NEGATIVE in response_types or \
          ResponseType.NO in response_types or \
          ResponseType.DONT_KNOW in response_types:
-        flags['answered_no'] = True
+        response_flags['answered_no'] = True
     elif ResponseType.POSITIVE in response_types or \
          ResponseType.YES in response_types:
-        flags['answered_yes'] = True
+        response_flags['answered_yes'] = True
     elif ResponseType.QUESTION in response_types:
-        flags['question'] = True
+        response_flags['question'] = True
     elif ResponseType.OPINION in response_types:
-        flags['opinion'] = True
+        response_flags['opinion'] = True
     elif state.just_used_til:
-        flags['til_only'] = True
+        response_flags['til_only'] = True
     else:
-        flags['catch_all'] = True
+        response_flags['catch_all'] = True
 
-    return flags
+    return response_flags
 

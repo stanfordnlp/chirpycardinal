@@ -30,7 +30,7 @@ class LoggerSettings:
     disable_annotation: bool = False
 
 
-# AWS adds a LambdaLoggerHandler to the root handler, which causes duplicate logging because we have our customized
+# AWS adds a LambdaLoggerHandler to the root handlers, which causes duplicate logging because we have our customized
 # StreamHandler on the root logger too. So we set remove_root_handlers=True to remove the LambdaLoggerHandler.
 # See here: https://stackoverflow.com/questions/50909824/getting-logs-twice-in-aws-lambda-function
 PROD_LOGGER_SETTINGS = LoggerSettings(logtoscreen_level=PRIMARY_INFO_NUM,
@@ -71,7 +71,7 @@ def setup_logger(logger_settings, session_id=None):
     # Get root logger
     root_logger = logging.getLogger()
 
-    # If the root logger already has our handler(s) set up, no need to do anything else
+    # If the root logger already has our handlers(s) set up, no need to do anything else
     if hasattr(root_logger, 'chirpy_handlers'):
         return chirpy_logger
 
@@ -93,7 +93,7 @@ def setup_logger(logger_settings, session_id=None):
         # This means chirpylogger passes on all messages, and the handlers filter by level.
         chirpy_logger.setLevel(logging.DEBUG)
 
-    # Create the stream handler and attach it to the root logger
+    # Create the stream handlers and attach it to the root logger
     print("allow_multiline = ", logger_settings.logtoscreen_allow_multiline )
     print("rich formatting = ", logger_settings.allow_rich_formatting)
     if logger_settings.logtoscreen_allow_multiline and logger_settings.allow_rich_formatting:
@@ -104,7 +104,7 @@ def setup_logger(logger_settings, session_id=None):
                                              filter_by_rg=logger_settings.filter_by_rg,
                                              disable_annotation=logger_settings.disable_annotation))
     else:
-        # Use the stream handler if no multi-line to not mess up production logs
+        # Use the stream handlers if no multi-line to not mess up production logs
         stream_handler = logging.StreamHandler(sys.stdout)
         stream_handler.setLevel(logger_settings.logtoscreen_level)
         stream_formatter = ChirpyFormatter(allow_multiline=logger_settings.logtoscreen_allow_multiline, use_color=logger_settings.logtoscreen_usecolor, session_id=session_id)
@@ -112,7 +112,7 @@ def setup_logger(logger_settings, session_id=None):
         root_logger.addHandler(stream_handler)
     #root_logger.addHandler(RichHandler(log_time_format="[%H:%M:%S]", level=logger_settings.logtoscreen_level, markup=True))
 
-    # Create the file handler and attach it to the root logger
+    # Create the file handlers and attach it to the root logger
     if logger_settings.logtofile_path:
         file_handler = logging.FileHandler(logger_settings.logtofile_path, mode='w')
         file_handler.setLevel(logger_settings.logtofile_level)

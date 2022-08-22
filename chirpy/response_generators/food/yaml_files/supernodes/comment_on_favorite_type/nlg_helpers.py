@@ -7,30 +7,12 @@ from chirpy.core.response_priority import PromptType
 from chirpy.core.response_generator_datatypes import AnswerType, PromptResult
 from chirpy.response_generators.food.state import State, ConditionalState
 
-
 @nlg_helper
-def get_prompt_for_fav_food_type(rg, conditional_state=None):
-    state, utterance, response_types = rg.get_state_utterance_response_types()
-    entity = rg.get_current_entity()
-    if conditional_state and conditional_state.cur_food_entity:
-        cur_food_entity = conditional_state.cur_food_entity
-    else:
-        if conditional_state:
-            conditional_state = ConditionalState(cur_supernode=conditional_state.cur_supernode)
-        else:
-            conditional_state = ConditionalState()
-        cur_food_entity = state.cur_food_entity
-
-    custom_question = get_custom_question(cur_food_entity.name.lower())
-    if custom_question is not None:
-        text = custom_question
-    elif is_subclassable(cur_food_entity.name.lower()):
-        text = f"What type of {cur_food_entity.talkable_name} do you like the most?"
-    else:
-        return None
-
-    return PromptResult(text, PromptType.CONTEXTUAL, state, conditional_state=conditional_state,
-                            cur_entity=entity, answer_type=AnswerType.QUESTION_SELFHANDLING)
+def get_custom_question(rg, cur_food):
+    cur_food = cur_food.lower()
+    if cur_food in CUSTOM_QUESTIONS:
+        return CUSTOM_QUESTIONS[cur_food][0]
+    return None
 
 @nlg_helper
 def get_neural_response_food_type(rg):

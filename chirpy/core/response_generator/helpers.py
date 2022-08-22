@@ -140,6 +140,8 @@ def get_context_for_supernode(supernode):
     context.update(global_nlg_helpers_cache[supernode])
     return context
 
+
+
 def wrapped_partial(func, *args, **kwargs):
     partial_func = partial(func, *args, **kwargs)
     update_wrapper(partial_func, func)
@@ -177,7 +179,7 @@ def user_said_chatty_phrase(state_manager):
 
     # if didn't match chatty_slots, but still should respond w/ a default chatty-phrase response:
     # TODO: this is hacky AF.
-    # this should be handled by the chatty abrupt handler alreayd, enabling this can cause issues like:
+    # this should be handled by the chatty abrupt handlers alreayd, enabling this can cause issues like:
     # the bot suggests something to talk about, the user says "sure let's talk about it", and the bot says "ok! what would you like to talk about?"
     # nontrivial_pos_intent = nav_intent_output.pos_intent and nav_intent_output.pos_topic is None
     # wants_more_info_on_topic = state_manager.last_state_active_rg in ['WIKI', 'NEWS'] and contains_phrase(utterance, {'tell'})

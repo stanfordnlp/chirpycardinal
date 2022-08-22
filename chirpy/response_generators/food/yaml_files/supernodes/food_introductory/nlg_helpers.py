@@ -16,7 +16,8 @@ def get_best_attribute_value(rg, food):
     elif 'texture' in food_data:
         return food_data['texture']
 
-# CUSTOM_STATEMENTS = {     # TODO: Possible Future Work
+# TODO: Future Work
+# CUSTOM_STATEMENTS = {
 #     'chocolate': "I especially love how rich and smooth it is."
 # }
 #
