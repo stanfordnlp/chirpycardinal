@@ -6,12 +6,13 @@ import time
 import boto3
 import tweepy
 import psycopg2
-from chirpy.core.util import get_es_host
+#from chirpy.core.util import get_es_host
 
-host = get_es_host("postgres")
+#host = get_es_host("postgres")
+host = os.environ.get('POSTGRES_HOST')
 port = os.environ.get('POSTGRES_PORT')
 database = 'twitter_opinions'
-user = 'postgres'
+user = 'postgres@chirpy-postgres'
 password = os.environ.get('POSTGRES_PW')
 
 CONSUMER_KEY = os.environ.get('TWITTER_CONSUMER_KEY')
@@ -46,6 +47,7 @@ def insert(entity, reason, attitude, sentiment, status=None):
 class OpinionStreamListener(tweepy.StreamListener):
 
     def on_status(self, status):
+        print("start on status")
         text = status.text.lower()
         if status.truncated:
             text = status.extended_tweet['full_text'].lower()

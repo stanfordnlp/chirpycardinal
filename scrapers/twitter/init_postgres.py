@@ -2,8 +2,8 @@ import psycopg2
 import os
 from chirpy.core.util import get_es_host
 
-host = 'localhost'
-host_stream = 'localhost'
+host = 'chirpy-postgres.postgres.database.azure.com'
+host_stream = 'chirpy-postgres.postgres.database.azure.com'
 port = 5432
 database = 'twitter_opinions'
 user = os.environ.get('POSTGRES_USER')
@@ -26,24 +26,29 @@ def execute_sql(sql_statement):
     conn.commit()
     cur.close()
     return
+#     
+# CREATE_DATABASE = """
+# create database 
+# """
+# execute_sql(CREATE_TABLE)
 
-CREATE_TABLE = """
-create table opinions (
-    id serial primary key,
-    entity varchar(64),
-    reason varchar(256),
-    attitude varchar(16),
-    sentiment varchar(16),
-    creation_date_time timestamp,
-    status jsonb
-);
-"""
-execute_sql(CREATE_TABLE)
+# CREATE_TABLE = """
+# create table opinions (
+#     id serial primary key,
+#     entity varchar(64),
+#     reason varchar(256),
+#     attitude varchar(16),
+#     sentiment varchar(16),
+#     creation_date_time timestamp,
+#     status jsonb
+# );
+# """
+# execute_sql(CREATE_TABLE)
 
-DROP_TABLE = """
-drop table labeled_opinions;
-"""
-execute_sql(DROP_TABLE)
+# DROP_TABLE = """
+# drop table labeled_opinions;
+# """
+# execute_sql(DROP_TABLE)
 
 CREATE_TABLE = """
 create table labeled_opinions (
@@ -60,10 +65,10 @@ create table labeled_opinions (
 """
 execute_sql(CREATE_TABLE)
 
-DROP_TABLE = """
-drop table annotator_opinions;
-"""
-execute_sql(DROP_TABLE)
+# DROP_TABLE = """
+# drop table annotator_opinions;
+# """
+# execute_sql(DROP_TABLE)
 
 
 CREATE_TABLE = """
@@ -78,10 +83,10 @@ create table annotator_opinions (
 """
 execute_sql(CREATE_TABLE)
 
-DROP_TABLE = """
-drop table labeled_phrases;
-"""
-execute_sql(DROP_TABLE)
+# DROP_TABLE = """
+# drop table labeled_phrases;
+# """
+# execute_sql(DROP_TABLE)
 
 CREATE_TABLE = """
 create table labeled_phrases (
