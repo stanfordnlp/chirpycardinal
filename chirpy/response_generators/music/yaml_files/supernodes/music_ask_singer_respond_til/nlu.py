@@ -2,8 +2,8 @@ from chirpy.core.regex.response_lists import RESPONSE_TO_THATS, RESPONSE_TO_DIDN
 from chirpy.response_generators.music.music_helpers import ResponseType
 
 
-def nlu_processing(rg, state, utterance, response_types):
-    flags = {
+def response_nlu_processing(rg, state, utterance, response_types):
+    response_flags = {
         'cur_song_is_top_song': False,
         'comment_on_singer_only': False
     }
@@ -16,11 +16,11 @@ def nlu_processing(rg, state, utterance, response_types):
         if next_song != cur_song_str:
             break
     if next_song:
-        flags['cur_song_is_top_song'] = True
+        response_flags['cur_song_is_top_song'] = True
     else:
-        flags['comment_on_singer_only'] = True
+        response_flags['comment_on_singer_only'] = True
 
-    return flags
+    return response_flags
 
 
 

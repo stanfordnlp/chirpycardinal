@@ -1,9 +1,29 @@
-response:
-  - node_name: cur_song_is_top_song
-    entry_conditions:
-      cur_song_is_top_song: True
-    response: "Oh I really love {state.cur_song_str} by {state.cur_singer_str} too! Do you like it as well?"
-  - node_name: comment_on_singer_only
-    entry_conditions:
-      comment_on_singer_only: True
-    response: "{state.cur_singer_str} seems to be really talented! Do you like any other songs by {state.cur_singer_str}?"
+sname: music_ask_singer_respond_til
+
+requirements:
+  - state.music_ask_singer_respond_til: True
+    state.exit_music_rg: False
+
+prompt_subnodes: None
+
+global_post_supernode_updates:
+  state.go_to_handoff: True
+  state.music_ask_singer_respond_til: False
+
+response_subnodes:
+  - response_node_name: cur_song_is_top_song
+    response_entry_conditions:
+      response_flags.cur_song_is_top_song: True
+    response: # "Oh I really love {state.cur_song_str} by {state.cur_singer_str} too! Do you like it as well?"
+      - Oh I really love
+      - val: state.cur_song_str
+      - by
+      - val: state.cur_singer_str
+      - too! Do you like it as well?
+  - response_node_name: comment_on_singer_only
+    response_entry_conditions:
+      response_flags.comment_on_singer_only: True
+    response: # "{state.cur_singer_str} seems to be really talented! Do you like any other songs by {state.cur_singer_str}?"
+      - val: state.cur_singer_str
+      - seems to be really talented! Do you like any other songs by
+      - val: state.cur_singer_str

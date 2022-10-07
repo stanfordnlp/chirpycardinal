@@ -1,16 +1,16 @@
-name: music_ask_singer_respond_til
-requirements:
-  - music_ask_singer_respond_til: True
-    exit_music_rg: False
-
-prompt:
-  - required: None
-    prompt: ''
-
-subnode_state_updates:
-  cur_song_is_top_song: None
-  comment_on_singer_only: None
-
-global_post_supernode_state_updates:
-  go_to_handoff: True
-  music_ask_singer_respond_til: False
+#name: music_ask_singer_respond_til
+#requirements:
+#  - music_ask_singer_respond_til: True
+#    exit_music_rg: False
+#
+#prompt:
+#  - required: None
+#    prompt: ''
+#
+#subnode_state_updates:
+#  cur_song_is_top_song: None
+#  comment_on_singer_only: None
+#
+#global_post_supernode_state_updates:
+#  go_to_handoff: True
+#  music_ask_singer_respond_til: False

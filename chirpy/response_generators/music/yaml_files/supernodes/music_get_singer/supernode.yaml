@@ -1,55 +1,55 @@
-name: music_get_singer
-requirements:
-  - start_discussing_music: True
-    exit_music_rg: False
-  - continue_after_instrument: True
-    exit_music_rg: False
-
-prompt_ranking: 4
-unconditional_prompt_updates:
-  til_prompt:
-    prompt_type: PromptType.CURRENT_TOPIC
-    just_used_til: True
-    have_prompted: True
-    ask_user_about_specific_song: True
-    cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
-    cur_singer_ent: rg.get_singer_entity()
-  singer_comment_prompt:
-    prompt_type: PromptType.CURRENT_TOPIC
-    ask_user_about_specific_song: True
-    have_prompted: True
-    cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
-    cur_singer_ent: rg.get_singer_entity()
-
-prompt:
-  - required: None
-    prompt: 'Do you have a favorite singer? Who is it?'
-
-required_exposed_variables: None
-
-subnode_state_updates:
-  musical_group_with_til:
-    just_used_til: True
-    ask_user_about_specific_song: True # goes to ask_song supernode
-  musical_group_wo_til:
-    ask_user_about_specific_song: True
-  single_musician_with_til:
-    just_used_til: True
-    ask_user_about_specific_song: True
-  single_musician_wo_til:
-    ask_user_about_specific_song: True
-  only_know_singer_str_no_genre:
-    get_user_fav_song: True # goes to music_get_song supernode
-  only_know_singer_str_w_genre:
-    ask_user_about_specific_song: True
-  no_fav_musician:
-    get_user_fav_song: True
-  catch_all:
-    get_user_fav_song: True
-
-global_post_supernode_state_updates:
-  start_discussing_music: False
-  continue_after_instrument: False
-  cur_singer_str: get_singer_str(rg)
-  cur_singer_ent: singer_parsed_ent(rg)
-  cur_entity: singer_parsed_ent(rg)
+#name: music_get_singer
+#requirements:
+#  - start_discussing_music: True
+#    exit_music_rg: False
+#  - continue_after_instrument: True
+#    exit_music_rg: False
+#
+#prompt_ranking: 4
+#unconditional_prompt_updates:
+#  til_prompt:
+#    prompt_type: PromptType.CURRENT_TOPIC
+#    just_used_til: True
+#    have_prompted: True
+#    ask_user_about_specific_song: True
+#    cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
+#    cur_singer_ent: rg.get_singer_entity()
+#  singer_comment_prompt:
+#    prompt_type: PromptType.CURRENT_TOPIC
+#    ask_user_about_specific_song: True
+#    have_prompted: True
+#    cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
+#    cur_singer_ent: rg.get_singer_entity()
+#
+#prompt:
+#  - required: None
+#    prompt: 'Do you have a favorite singer? Who is it?'
+#
+#required_exposed_variables: None
+#
+#subnode_state_updates:
+#  musical_group_with_til:
+#    just_used_til: True
+#    ask_user_about_specific_song: True # goes to ask_song supernode
+#  musical_group_wo_til:
+#    ask_user_about_specific_song: True
+#  single_musician_with_til:
+#    just_used_til: True
+#    ask_user_about_specific_song: True
+#  single_musician_wo_til:
+#    ask_user_about_specific_song: True
+#  only_know_singer_str_no_genre:
+#    get_user_fav_song: True # goes to music_get_song supernode
+#  only_know_singer_str_w_genre:
+#    ask_user_about_specific_song: True
+#  no_fav_musician:
+#    get_user_fav_song: True
+#  catch_all:
+#    get_user_fav_song: True
+#
+#global_post_supernode_state_updates:
+#  start_discussing_music: False
+#  continue_after_instrument: False
+#  cur_singer_str: get_singer_str(rg)
+#  cur_singer_ent: singer_parsed_ent(rg)
+#  cur_entity: singer_parsed_ent(rg)

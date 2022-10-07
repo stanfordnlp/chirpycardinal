@@ -12,8 +12,8 @@ from chirpy.response_generators.wiki2.wiki_utils import get_til_title
 from chirpy.response_generators.music.state import ConditionalState
 from chirpy.response_generators.music.music_helpers import ResponseType
 
-def nlu_processing(rg, state, utterance, response_types):
-	flags = {
+def response_nlu_processing(rg, state, utterance, response_types):
+	response_flags = {
 		'thats': False,
 		'did_not_know': False,
 		'catch_all': False,
@@ -21,9 +21,9 @@ def nlu_processing(rg, state, utterance, response_types):
 	}
 
 	if ResponseType.THATS in response_types and state.just_used_til:
-		flags['thats'] = True
+		response_flags['thats'] = True
 	elif ResponseType.DIDNT_KNOW in response_types and state.just_used_til:
-		flags['did_not_know'] = True
+		response_flags['did_not_know'] = True
 	else:
-		flags['catch_all'] = True
-	return flags
+		response_flags['catch_all'] = True
+	return response_flags

@@ -1,15 +1,53 @@
-response:
-  - node_name: til_exists
-    entry_conditions:
-      til_exists: True
-    response: "{process_til(state.cur_singer_str)}"
-  - node_name: no_til_cur_song_is_top_song
-    entry_conditions:
-      til_exists: False
-      cur_song_is_top_song: True
-    response: "Oh I really love {state.cur_song_str} by {state.cur_singer_str} too! Do you like it as well?"
-  - node_name: no_til_comment_on_singer_only
-    entry_conditions:
-      til_exists: False
-      comment_on_singer_only: True
-    response: "{state.cur_singer_str} seems to be really talented! Do you like any other songs by {state.cur_singer_str}?"
+sname: music_ask_singer
+
+trigger_response: None
+
+requirements:
+  - state.ask_user_about_specific_singer: True
+    state.exit_music_rg: False
+
+prompt_subnodes: None
+
+global_post_supernode_updates:
+  state.ask_user_about_specific_singer: False
+  state.cur_singer_str:
+    val: state.cur_singer_str
+  state.cur_singer_ent:
+    val: state.cur_singer_ent
+
+response_subnodes:
+  - response_node_name: til_exists
+    response_entry_conditions:
+      response_flags.til_exists: True
+    response: # "{process_til(state.cur_singer_str)}"
+      - nlg_helper:
+          name: process_til
+          args: [state.cur_singer_str]
+    local_post_subnode_updates:
+      state.just_used_til: True
+      state.music_ask_singer_respond_til: True
+
+  - response_node_name: no_til_cur_song_is_top_song
+    response_entry_conditions:
+      response_flags.til_exists: False
+      response_flags.cur_song_is_top_song: True
+    response: # "Oh I really love {state.cur_song_str} by {state.cur_singer_str} too! Do you like it as well?"
+      - Oh I really love
+      - val: state.cur_song_str
+      - by
+      - val: state.cur_singer_str
+      - too! Do you like it as well?
+    local_post_subnode_updates:
+      state.go_to_handoff: True
+
+  - response_node_name: no_til_comment_on_singer_only
+    response_entry_conditions:
+      response_flags.til_exists: False
+      response_flags.comment_on_singer_only: True
+    response: # "{state.cur_singer_str} seems to be really talented! Do you like any other songs by {state.cur_singer_str}?"
+      - val: state.cur_singer_str
+      - seems to be really talented! Do you like any other songs by
+      - val: state.cur_singer_str
+      - "?"
+    local_post_subnode_updates:
+      state.go_to_handoff: True

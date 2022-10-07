@@ -1,20 +1,27 @@
-response:
-  - node_name: instr_exists_with_til
-    entry_conditions:
-      instr_exists_with_til: True
-    response: "The {rg.get_instrument_entity().name} is a really fascinating instrument! {get_til_response(get_til_title_helper(rg.get_instrument_entity().name))}"
-  - node_name: instr_exists_wo_til
-    entry_conditions:
-      instr_exists_wo_til: True
-    response: "The {rg.get_instrument_entity().name} is a really fascinating instrument! I wish I can learn to play it one day."
-  - node_name: no_fav_instrument
-    entry_conditions:
-      no_fav_instrument: True
-    response: "It's alright, I think most people don't have a favorite instrument either. Maybe we can discuss another topic."
-  - node_name: catch_all
-    entry_conditions:
-      catch_all: True
-    response: "I don't seem to recognize that instrument, maybe I need to go back to music class. Let's talk about something else then."
+sname: music_get_instrument
+
+requirements:
+  - state.start_discussing_music: True
+    state.exit_music_rg: False
+
+# TODO: Edit this
+prompt_ranking: 7 # ranking relative to other supernodes' unconditional prompt
+unconditional_prompt_updates:
+  til_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    just_used_til: True
+    have_prompted: True
+    instrument_til_followup: True
+  generic_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    continue_after_instrument: True
+    have_prompted: True
+
+prompt:
+  - required: None
+    prompt: 'There are so many instruments in the world. What is your favorite one?'
+
+
 unconditional_prompt:
   - case_name: til_prompt
     entry_conditions:
@@ -24,3 +31,47 @@ unconditional_prompt:
     entry_conditions:
       'generic': True
     prompt: "It's interesting that you mentioned the {rg.get_instrument_entity().name}. I wish I can learn to play it one day."
+
+# TODO: Til this
+
+global_post_supernode_updates:
+  state.start_discussing_music: False
+  state.cur_entity:
+    eval: rg.get_instrument_entity()  # TODO: Look at this
+
+response_subnodes:
+  - response_node_name: instr_exists_with_til
+    response_entry_conditions:
+      response_flags.instr_exists_with_til: True
+    response: # "The {rg.get_instrument_entity().name} is a really fascinating instrument! {get_til_response(get_til_title_helper(rg.get_instrument_entity().name))}"
+      - The
+      - eval: "rg.get_instrument_entity().name"   # TODO: Decompose this
+      - is a really fascinating instrument!
+      - eval: "get_til_response(get_til_title_helper(rg.get_instrument_entity().name))"    # TODO: Decompose this
+    local_post_subnode_updates:
+      state.just_used_til: True
+      state.instrument_til_followup: True
+
+  - response_node_name: instr_exists_wo_til
+    response_entry_conditions:
+      response_flags.instr_exists_wo_til: True
+    response: "The {rg.get_instrument_entity().name} is a really fascinating instrument! I wish I can learn to play it one day."
+      - The
+      - eval: "rg.get_instrument_entity().name"
+      - is a really fascinating instrument! I wish I can learn to play it one day.
+    local_post_subnode_updates:
+      state.continue_after_instrument: True
+
+  - response_node_name: no_fav_instrument
+    response_entry_conditions:
+      response_flags.no_fav_instrument: True
+    response: It's alright, I think most people don't have a favorite instrument either. Maybe we can discuss another topic.
+    local_post_subnode_updates:
+      state.continue_after_instrument: True
+
+  - response_node_name: catch_all
+    response_entry_conditions:
+      response_flags.catch_all: True
+    response: I don't seem to recognize that instrument, maybe I need to go back to music class. Let's talk about something else then.
+    local_post_subnode_updates:
+      state.continue_after_instrument: True

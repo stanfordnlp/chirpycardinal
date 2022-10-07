@@ -13,8 +13,8 @@ import chirpy.response_generators.music.response_templates.general_templates as 
 from chirpy.response_generators.music.state import ConditionalState
 from chirpy.response_generators.music.music_helpers import ResponseType
 
-def nlu_processing(rg, state, utterance, response_types):
-	flags = {
+def response_nlu_processing(rg, state, utterance, response_types):
+	response_flags = {
 		'singer_ent_exists': False,
 		'is_musical_group': False,
 		'no_genre': False,
@@ -35,39 +35,39 @@ def nlu_processing(rg, state, utterance, response_types):
 		if slots is not None and 'favorite' in slots:
 			singer_str = slots['favorite']
 			cur_singer_ent = rg.get_song_entity(singer_str)
-			flags['singer_str_exists'] = True
+			response_flags['singer_str_exists'] = True
 			if rg.get_singer_genre(singer_str) is None:
-				flags['no_genre'] = True
+				response_flags['no_genre'] = True
 	# else:
 	# 	singer_str = re.sub(r'\(.*?\)', '', cur_singer_ent.talkable_name)
 
 	if cur_singer_ent:
-		flags['singer_ent_exists'] = True
+		response_flags['singer_ent_exists'] = True
 		if WikiEntityInterface.is_in_entity_group(cur_singer_ent, ENTITY_GROUPS_FOR_EXPECTED_TYPE.musical_group):
-			flags['is_musical_group'] = True
+			response_flags['is_musical_group'] = True
 		tils = get_til_title(cur_singer_ent.name)
 		if len(tils):
-			flags['tils_exist'] = True
+			response_flags['tils_exist'] = True
 	elif any(i in response_types for i in [ ResponseType.NO, ResponseType.DONT_KNOW, ResponseType.NOTHING, ResponseType.NEGATIVE]):
-		flags['no_fav_musician'] = True
+		response_flags['no_fav_musician'] = True
 	else:
-		flags['catch_all'] = True
+		response_flags['catch_all'] = True
 
-	return flags
+	return response_flags
 
 def prompt_nlu_processing(rg, state, utterance, response_types):
-	flags = {
+	prompt_flags = {
 		'singer_ent_exists': False,
 		'tils_exist': False
 	}
 
 	cur_singer_ent = rg.get_singer_entity()
 	if cur_singer_ent:
-		flags['singer_ent_exists'] = True
+		prompt_flags['singer_ent_exists'] = True
 		tils = get_til_title(cur_singer_ent.name)
-		if len(tils): flags['tils_exist'] = True
+		if len(tils): prompt_fflags['tils_exist'] = True
 
-	return flags
+	return prompt_fflags
 
 
 

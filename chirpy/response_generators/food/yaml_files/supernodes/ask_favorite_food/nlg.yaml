@@ -1,5 +1,17 @@
-response:
-  - node_name: ask_food
-    entry_conditions:
-      unconditional: True
-    response: "Sure! What's your favorite food?"
+sname: ask_favorite_food
+
+requirements:
+  - state.food__exists_word_food: True
+
+prompt_subnodes: None
+
+global_post_supernode_updates:
+  state.food__user_fav_food_not_yet_ack: True
+  state.food__exists_word_food: False
+  priority: ResponsePriority.CAN_START
+
+response_subnodes:
+  - response_node_name: ask_food
+    response_entry_conditions:
+      flags.unconditional: True
+    response: Sure! What's your favorite food?

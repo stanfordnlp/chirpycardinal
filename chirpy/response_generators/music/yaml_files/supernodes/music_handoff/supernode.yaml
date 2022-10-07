@@ -1,23 +1,23 @@
-name: music_handoff
-requirements:
-  - go_to_handoff: True
-    exit_music_rg: False
-
-prompt:
-  - required: None
-    prompt: ''
-
-subnode_state_updates:
-  cur_song_ent_exists: None
-  song_slots_exists: None
-  thats: None
-  didnt_know: None
-  answered_no: None
-  answered_yes: None
-  question: None
-  opinion: None
-  til_only: None
-  catch_all: None
-
-global_post_supernode_state_updates:
-  exit_music_rg: True
+#name: music_handoff
+#requirements:
+#  - go_to_handoff: True
+#    exit_music_rg: False
+#
+#prompt:
+#  - required: None
+#    prompt: ''
+#
+#subnode_state_updates:
+#  cur_song_ent_exists: None
+#  song_slots_exists: None
+#  thats: None
+#  didnt_know: None
+#  answered_no: None
+#  answered_yes: None
+#  question: None
+#  opinion: None
+#  til_only: None
+#  catch_all: None
+#
+#global_post_supernode_state_updates:
+#  exit_music_rg: True

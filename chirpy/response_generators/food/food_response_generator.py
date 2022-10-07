@@ -78,7 +78,7 @@ class FoodResponseGenerator(ResponseGenerator):
         conditions = [lambda response: not offensive_classifier.contains_offensive(response),
                       lambda response: not any(bad in response for bad in BAD_WORDS)] + conditions
         response = super().get_neural_response(prefix, allow_questions, conditions)
-        if response is None: return "That's great to hear."
+        # if response is None: return "That's great to hear."
         return response
 
     def get_prompt(self, state):
@@ -90,7 +90,7 @@ class FoodResponseGenerator(ResponseGenerator):
         cur_state = copy.copy(state)
         entity = self.get_current_entity(initiated_this_turn=True)
         if entity.name == 'Food':
-            cur_state.entry_entity_is_food = True
+            cur_state.food__exists_word_food = True
         elif is_known_food(entity.name.lower()):
-            cur_state.cur_entity_known_food = True
+            cur_state.food__exists_known_food = True
         return cur_state

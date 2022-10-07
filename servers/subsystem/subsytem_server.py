@@ -76,7 +76,7 @@ def init_user_attributes(request):
     return user_attributes
 
 """
-Extract desired values from handler result
+Extract desired values from handlers result
 (actually, we want all of these)
 """
 """
@@ -113,7 +113,7 @@ json dict with the fields
 @app.route('/process_utterance', methods=['POST'])
 def process_utterance():
 
-    # create handler (pass in RGs + annotators)
+    # create handlers (pass in RGs + annotators)
     handler = Handler(
         response_generator_classes = [LaunchResponseGenerator, ComplaintResponseGenerator, ClosingConfirmationResponseGenerator,
                                       OneTurnHackResponseGenerator, FallbackResponseGenerator, WikiResponseGenerator,
@@ -130,7 +130,7 @@ def process_utterance():
     user_attributes = init_user_attributes(request)
     last_state = request.json['last_state']
 
-    # execute handler
+    # execute handlers
     turn_result = handler.execute(state_attributes, user_attributes, last_state)
     deserialized_current_state = {k: jsonpickle.decode(v) for k, v in turn_result.current_state.items()}
 

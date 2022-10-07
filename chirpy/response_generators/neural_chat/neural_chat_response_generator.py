@@ -82,7 +82,7 @@ class NeuralChatResponseGenerator(ResponseGenerator):
             return None
         else:
             name2initializedtreelet = {treelet_name: treelet_class(self) for treelet_name, treelet_class in NAME2TREELET.items()}
-            logger.primary_info("Personal issue handler invoked")
+            logger.primary_info("Personal issue handlers invoked")
             next_treelet = name2initializedtreelet['CurrentAndRecentActivitiesTreelet']
             response = next_treelet.get_response(self.state, force=True)
             logger.primary_info(f"Response is: {response}")

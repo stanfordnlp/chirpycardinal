@@ -14,8 +14,8 @@ import chirpy.response_generators.music.response_templates.general_templates as 
 from chirpy.response_generators.music.state import ConditionalState
 from chirpy.response_generators.music.music_helpers import ResponseType
 
-def nlu_processing(rg, state, utterance, response_types):
-    flags = {
+def response_nlu_processing(rg, state, utterance, response_types):
+    response_flags = {
         'song_ent_exists': False,
         'dont_know': False,
         'no_fav_song': False,
@@ -34,21 +34,21 @@ def nlu_processing(rg, state, utterance, response_types):
 
     cur_song_ent, cur_singer_ent = rg.get_song_and_singer_entity()
     if cur_song_ent:
-        flags['song_ent_exists'] = True
+        response_flags['song_ent_exists'] = True
         cur_song_str = cur_song_ent.talkable_name
         cur_song_str = re.sub(r'\(.*?\)', '', cur_song_str)
         tils = get_til_title(cur_song_ent.name)
         if len(tils):
-            flags['tils_exist'] = True
+            response_flags['tils_exist'] = True
         else:
             metadata = rg.get_song_meta(cur_song_str, cur_singer_ent.talkable_name if cur_singer_ent else None)
             if metadata:
-                flags['metadata_exists'] = True
+                response_flags['metadata_exists'] = True
                 cur_singer_str = metadata['artist']
     elif ResponseType.DONT_KNOW in response_types:
-        flags['dont_know'] = True
+        response_flags['dont_know'] = True
     elif ResponseType.NO in response_types or ResponseType.NOTHING in response_types:
-        flags['no_fav_song'] = True
+        response_flags['no_fav_song'] = True
     elif cur_singer_ent is None:
         song_slots = NameFavoriteSongTemplate().execute(utterance)
         if song_slots is not None and 'favorite' in song_slots:
@@ -58,11 +58,11 @@ def nlu_processing(rg, state, utterance, response_types):
             if cur_song_ent:
                 tils = get_til_title(cur_song_ent.name)
                 if len(tils):
-                    flags['tils_exist'] = True
+                    response_flags['tils_exist'] = True
 
             metadata = rg.get_song_meta(cur_song_str, None)
             if metadata:
-                flags['metadata_exists'] = True
+                response_flags['metadata_exists'] = True
                 cur_singer_str = metadata['artist']
 
     if cur_song_str is not None:
@@ -72,10 +72,10 @@ def nlu_processing(rg, state, utterance, response_types):
     if cur_singer_str is not None:
         state.cur_singer_str = cur_singer_str
 
-    return flags
+    return response_flags
 
 def prompt_nlu_processing(rg, state, utterance, response_types):
-    flags = {
+    prompt_flags = {
         'tils_exist': False,
         'cur_song_ent_exists': False,
         'metadata_exists': False
@@ -85,7 +85,7 @@ def prompt_nlu_processing(rg, state, utterance, response_types):
     if cur_song_ent:
         cur_song_str = cur_song_ent.talkable_name
         cur_song_str = re.sub(r'\(.*?\)', '', cur_song_str)
-        flags['cur_song_ent_exists'] = True
+        prompt_lags['cur_song_ent_exists'] = True
         cur_singer_str = None
         if cur_singer_ent:
             cur_singer_str = cur_singer_ent.talkable_name
@@ -93,11 +93,11 @@ def prompt_nlu_processing(rg, state, utterance, response_types):
 
         tils = get_til_title(cur_song_ent.name)
         if len(tils):
-            flags['tils_exist'] = True
+            prompt_flags['tils_exist'] = True
         else:
             metadata = rg.get_song_meta(cur_song_str, cur_singer_str)
             if metadata:
-                flags['metadata_exists'] = True
+                prompt_flags['metadata_exists'] = True
                 cur_singer_str = metadata['artist'] 
 
         if cur_song_str is not None:
@@ -107,7 +107,7 @@ def prompt_nlu_processing(rg, state, utterance, response_types):
         if cur_singer_str is not None:
             state.cur_singer_str = cur_singer_str
 
-    return flags
+    return prompt_flags
 
 
 

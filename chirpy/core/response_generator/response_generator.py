@@ -255,10 +255,8 @@ class ResponseGenerator(NamedCallable):
         is_majority_questions = num_questions >= len(responses) / 2
         responses, _ = neural_response_filtering(responses, scores)
         responses = [r for r in responses if 'thanks' not in responses]
-
         for cond in conditions:
             responses = [r for r in responses if cond(r)]
-
         if len(responses) == 0:
             logger.warning('There are 0 suitable neural responses')
             return None
@@ -418,7 +416,7 @@ class ResponseGenerator(NamedCallable):
 
     def handle_change_topic(self):
         """
-        Special handler that returns either None (do nothing), a ResponseGeneratorResult (return that result),
+        Special handlers that returns either None (do nothing), a ResponseGeneratorResult (return that result),
         or False (explicitly discontinue the conversation so that non-active RG activation checks can run).
 
         This hack is necessary for same-RG topic-switches to take place (aka this is the return False case)
@@ -732,7 +730,7 @@ class ResponseGenerator(NamedCallable):
         return None
 
     def handle_anything(self, slots):
-        """slots is just boolean for this handler"""
+        """slots is just boolean for this handlers"""
         return ResponseGeneratorResult(
             text=self.choose(['Okay!', 'Alright!', 'Hmm let me think.']),
             priority=ResponsePriority.CAN_START,
@@ -897,7 +895,7 @@ class ResponseGenerator(NamedCallable):
 
             current_rg_response_handlers = {
                 (lambda: True): self.handle_user_complaint,
-                (lambda: True): self.handle_abrupt_user_initiative,
+                # (lambda: True): self.handle_abrupt_user_initiative,       # TODO: For experimenting
                 (lambda: ResponseType.REQUEST_REPEAT in response_types): self.handle_repeat_request,
                 (lambda: ResponseType.COMPLAINT in response_types): self.handle_complaint,
                 (lambda: ResponseType.DISINTERESTED in response_types): self.handle_rejection_response,

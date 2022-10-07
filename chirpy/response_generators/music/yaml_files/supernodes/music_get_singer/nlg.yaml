@@ -1,60 +1,128 @@
-response:
-  - node_name: musical_group_with_til
-    entry_conditions:
-      singer_ent_exists: True
-      is_musical_group: True
-      tils_exist: True
-    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {pick_til(get_tils(get_singer_str(rg)))}"
-  - node_name: musical_group_wo_til
-    entry_conditions:
-      singer_ent_exists: True
-      is_musical_group: True
-      tils_exist: False
-    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {singer_comment(get_singer_str(rg))}"
-  - node_name: single_musician_with_til
-    entry_conditions:
-      singer_ent_exists: True
-      is_musical_group: False
-      tils_exist: True
-    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {pick_til(get_tils(get_singer_str(rg)))}"
-  - node_name: single_musician_wo_til
-    entry_conditions:
-      singer_ent_exists: True
-      is_musical_group: False
-      tils_exist: False
-    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {singer_comment(get_singer_str(rg))}"
-  - node_name: only_know_singer_str_no_genre
-    entry_conditions:
-      singer_ent_exists: False
-      no_genre: True 
-    response: "Oh I don't seem to recognize that artist, I definitely need to get out more."
-  - node_name: only_know_singer_str_w_genre
-    entry_conditions:
-      singer_ent_exists: False
-      singer_str_exists: True
-      no_genre: False 
-    response: "{least_repetitive_compliment(rg)} I love {get_singer_str(rg)} too! {singer_comment(get_singer_str(rg))}"
-  - node_name: no_fav_musician
-    entry_conditions:
-      no_fav_musician: True
-    response: "Yeah it can be hard to pick a particular musician when there are so many."
-  - node_name: catch_all
-    entry_conditions:
-      catch_all: True
-    response: 'Yeah it can be hard to pick a particular musician when there are so many.'
+sname: music_get_singer
+requirements:
+  - state.start_discussing_music: True
+    state.exit_music_rg: False
+  - state.continue_after_instrument: True
+    state.exit_music_rg: False
+
+# TODO: Work on this
+prompt_ranking: 4
+unconditional_prompt_updates:
+  til_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    just_used_til: True
+    have_prompted: True
+    ask_user_about_specific_song: True
+    cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
+    cur_singer_ent: rg.get_singer_entity()
+  singer_comment_prompt:
+    prompt_type: PromptType.CURRENT_TOPIC
+    ask_user_about_specific_song: True
+    have_prompted: True
+    cur_singer_str: get_talkable_singer_name(rg.get_singer_entity())
+    cur_singer_ent: rg.get_singer_entity()
+
+prompt:
+  - required: None
+    prompt: 'Do you have a favorite singer? Who is it?'
+
 unconditional_prompt:
   - case_name: til_prompt
     entry_conditions:
       singer_ent_exists: True
       tils_exist: True
     prompt: >-
-      I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}. 
+      I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}.
       {pick_til(get_tils(rg.get_singer_entity().name))}
   - case_name: singer_comment_prompt
     entry_conditions:
       singer_ent_exists: True
       tils_exist: False
     prompt: >-
-      I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}. 
+      I love that you brought up {get_talkable_singer_name(rg.get_singer_entity())}.
       {comment_singer(rg, get_talkable_singer_name(rg.get_singer_entity()))[0]}
 
+# TODO: Til here
+
+global_post_supernode_updates:
+  state.start_discussing_music: False
+  state.continue_after_instrument: False
+  state.cur_singer_str:
+    nlg_helper:
+      name: get_singer_str()
+  state.cur_singer_ent:
+    nlg_helper:
+      name: singer_parsed_ent()
+  state.cur_entity:
+    nlg_helper:
+      name: singer_parsed_ent(rg)
+
+response_response:
+  - response_node_name: musical_group_with_til
+    response_entry_conditions:
+      response_flags.singer_ent_exists: True
+      response_flags.is_musical_group: True
+      response_flags.tils_exist: True
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {pick_til(get_tils(get_singer_str(rg)))}"
+    local_post_subnode_updates:
+      state.just_used_til: True
+      state.ask_user_about_specific_song: True
+
+  - response_node_name: musical_group_wo_til
+    response_entry_conditions:
+      response_flags.singer_ent_exists: True
+      response_flags.is_musical_group: True
+      response_flags.tils_exist: False
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great band! {singer_comment(get_singer_str(rg))}"
+    local_post_subnode_updates:
+      state.ask_user_about_specific_song: True
+
+  - response_node_name: single_musician_with_til
+    response_entry_conditions:
+      response_flags.singer_ent_exists: True
+      response_flags.is_musical_group: False
+      response_flags.tils_exist: True
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {pick_til(get_tils(get_singer_str(rg)))}"
+    local_post_subnode_updates:
+      state.just_used_til: True
+      state.ask_user_about_specific_song: True
+
+  - response_node_name: single_musician_wo_til
+    response_entry_conditions:
+      response_flags.singer_ent_exists: True
+      response_flags.is_musical_group: False
+      response_flags.tils_exist: False
+    response: "{least_repetitive_compliment(rg)} {get_singer_str(rg)} is definitely a great musician! {singer_comment(get_singer_str(rg))}"
+    local_post_subnode_updates:
+      state.ask_user_about_specific_song: True
+
+  - response_node_name: only_know_singer_str_no_genre
+    response_entry_conditions:
+      response_flags.singer_ent_exists: False
+      response_flags.no_genre: True
+    response: Oh I don't seem to recognize that artist, I definitely need to get out more.
+    local_post_subnode_updates:
+      state.get_user_fav_song: True
+
+  - response_node_name: only_know_singer_str_w_genre
+    response_entry_conditions:
+      response_flags.singer_ent_exists: False
+      response_flags.singer_str_exists: True
+      response_flags.no_genre: False
+    response: "{least_repetitive_compliment(rg)} I love {get_singer_str(rg)} too! {singer_comment(get_singer_str(rg))}"
+    local_post_subnode_updates:
+      state.ask_user_about_specific_song: True
+
+  - response_node_name: no_fav_musician
+    response_entry_conditions:
+      response_flags.no_fav_musician: True
+    response: Yeah it can be hard to pick a particular musician when there are so many.
+    local_post_subnode_updates:
+      state.get_user_fav_song: True
+
+  - response_node_name: catch_all
+    response_entry_conditions:
+      response_flags.catch_all: True
+    response: Yeah it can be hard to pick a particular musician when there are so many.
+    local_post_subnode_updates:
+      state.get_user_fav_song: True

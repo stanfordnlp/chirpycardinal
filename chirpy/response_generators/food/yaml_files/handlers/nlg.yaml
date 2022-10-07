@@ -1,0 +1,92 @@
+handler_subnodes:
+  - handler_node_name: handle_weather
+    handler_entry_conditions:
+      handler_flags.user_asked_about_weather: True
+    response_generator_result:
+      call_method: handle_weather
+
+  - handler_node_name: handle_what_time
+    handler_entry_conditions:
+      handler_flags.user_asked_about_time: True
+    response_generator_result:
+      call_method: handle_what_time
+
+  - handler_node_name: handle_repetition_request
+    handler_entry_conditions:
+      handler_flags.user_requested_repetition: True
+    response_generator_result:
+      call_method: handle_repetition_request
+
+  - handler_node_name: handle_user_name_correction
+    handler_entry_conditions:
+      handler_flags.user_wants_name_correction: True
+    response_generator_result:
+      call_method: handle_user_name_correction
+
+  - handler_node_name: handle_name_request
+    handler_entry_conditions:
+      handler_flags.user_requested_name: True
+    response_generator_result:
+      call_method: handle_name_request
+
+  - handler_node_name: handle_cutoff_user
+    handler_entry_conditions:
+      handler_flags.user_got_cutoff: True
+    response_generator_result:
+      call_method: handle_cutoff_user
+
+  - handler_node_name: handle_age_request
+    handler_entry_conditions:
+      handler_flags.user_asked_for_our_age: True
+    response_generator_result:
+      call_method: handle_age_request
+
+  - handler_node_name: handle_user_clarification
+    handler_entry_conditions:
+      handler_flags.user_requested_clarification: True
+    response_generator_result:
+      call_method: handle_user_clarification
+
+  - handler_node_name: handle_abilities_question
+    handler_entry_conditions:
+      handler_flags.user_asked_ablities_question: True
+    response_generator_result:
+      call_method: handle_abilities_question
+
+  - handler_node_name: handle_personal_question
+    handler_entry_conditions:
+      handler_flags.user_asked_personal_question: True
+    response_generator_result:
+      call_method: handle_personal_question
+
+  - handler_node_name: handle_interruption_question
+    handler_entry_conditions:
+      handler_flags.user_interrupted: True
+    response_generator_result:
+      call_method: handle_interruption_question
+
+  - handler_node_name: handle_chatty_phrase
+    handler_entry_conditions:
+      handler_flags.user_said_chatty_phrase: True
+    response_generator_result:
+      call_method: handle_chatty_phrase
+
+  - handler_node_name: handle_story_request
+    handler_entry_conditions:
+      handler_flags.user_asked_for_story: True
+    response_generator_result:
+      call_method: handle_story_request
+
+  - handler_node_name: handle_personal_issue
+    handler_entry_conditions:
+      handler_flags.user_shared_personal_problem: True
+    response_generator_result:
+      call_method: handle_personal_issue
+
+  - handler_node_name: handle_anything
+    handler_entry_conditions:
+      handler_flags.user_said_anything: True
+    response_generator_result:
+      call_method: handle_anything
+
+

@@ -2,7 +2,7 @@ from typing import Optional
 
 class TestArgs:
     """
-    These arguments are provided to the lambda handler and help in overriding certain probabilitistic parts
+    These arguments are provided to the lambda handlers and help in overriding certain probabilitistic parts
     """
     def __init__(self, selected_prompt_rg: Optional[str] = None, experiment_values: dict = {},
                  neural_chat_args: dict = {}):

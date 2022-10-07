@@ -72,11 +72,11 @@ name: food_introductory
 We also need to specify the entry requirements for this supernode; in other words, what state must the current conversation have to enter this supernode? This should be specified as a list of valid entry conditions, which **must be static boolean flags**; for example:
 ```yaml
 requirements:
-  - entry_entity_is_food: False
-    cur_entity_known_food: True
-    exit_food: False
-  - acknowledge_fav_food: True
-    exit_food: False
+  - food__exists_word_food: False
+    food__exists_known_food: True
+    food__needs_open_ended: False
+  - food__user_fav_food_not_yet_ack: True
+    food__needs_open_ended: False
 ```
 The above defines two sets of entry conditions to the food introductory supernode: informally speaking, 1) either the current entity is a known food, or 2) we have just acknowledged the user's favorite food. If any entry condition of a supernode is satisfied at a particular turn of the conversation, it will be considered as a candidate for the next supernode. Multiple matching supernodes will be **chosen at random as the next supernode of the conversation**.
 
@@ -110,25 +110,25 @@ We need to define the state updates that will occur depending on which subnode i
 ```yaml
 subnode_state_updates:
   no_entity: # subnode name
-    exit_food: True # State updates to be made following response
+    food__needs_exit: True # State updates to be made following response
     needs_prompt: True
   food_type_comment:
-    food_type_exists: True
+    food__needs_comment_on_food_type: True
   is_ingredient:
-    open_ended: True
+    food__needs_open_ended: True
   best_attribute_texture:
-    open_ended: True
+    food__needs_open_ended: True
   catch_all: None
 ```
-The above YAML conveys the following logic: exit the food RG if no entity is detected, turn on the `food_type_exists` flag once we have given the response in `food_type_comment` subnode, etc. If we're in the `catch_all` subnode, don't perform any state updates. Note these state updates are crucial for navigational flow, as they will determine the next supernode the conversation will shift to (remember [this](#Supernode-Entry-Requirements)?).
+The above YAML conveys the following logic: exit the food RG if no entity is detected, turn on the `food__needs_comment_on_food_type` flag once we have given the response in `food_type_comment` subnode, etc. If we're in the `catch_all` subnode, don't perform any state updates. Note these state updates are crucial for navigational flow, as they will determine the next supernode the conversation will shift to (remember [this](#Supernode-Entry-Requirements)?).
 
 ##### Global Post-Supernode State Updates
 In the previous section, we saw examples were there are subnode-specific state updates that need to be done. In many cases, however, there are state updates that must be done unconditionally by all subnodes in a particular supernode. For example, a particular supernode might define the following if it will always lead to the open ended supernode (among other conditions):
 ```yaml
 global_post_supernode_state_updates:
   cur_food: cur_food_entity
-  open_ended: True
-  food_type_exists: False
+  food__needs_open_ended: True
+  food__needs_comment_on_food_type: False
 ```
 And again, these updates will be performed no matter what subnode is active. **Observe that state updates can be dynamic expressions, i.e not always boolean flags.**
 

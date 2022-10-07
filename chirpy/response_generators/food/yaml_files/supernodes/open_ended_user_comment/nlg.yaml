@@ -1,29 +1,110 @@
-response:
-  - node_name: no_prefix_yes_factoid
-    entry_conditions:
-      user_asked_q: True
-      factoid_exists: True
-    response: "{rg.get_neural_response(prefix='')}"
-    expose_vars:
-      cur_entity: state.cur_food
-  - node_name: no_prefix_no_factoid
-    entry_conditions:
-      user_asked_q: True
-      factoid_exists: False
-    response: "{rg.get_neural_response(prefix='')} {get_concluding_statement(state.cur_food.talkable_name)}"
-    expose_vars:
-      cur_entity: None
-  - node_name: yes_prefix_yes_factoid
-    entry_conditions:
-      user_made_statement: True
-      factoid_exists: True
-    response: "{rg.get_neural_response(prefix=f'yeah, i think {state.cur_food.talkable_name}')}"
-    expose_vars:
-      cur_entity: state.cur_food
-  - node_name: yes_prefix_no_factoid
-    entry_conditions:
-      user_made_statement: True
-      factoid_exists: False
-    response: "{rg.get_neural_response(prefix=f'yeah, i think {state.cur_food.talkable_name}')} {get_concluding_statement(state.cur_food.talkable_name)}"
-    expose_vars:
-      cur_entity: None
+sname: open_ended_user_comment
+
+requirements:
+  - state.food__needs_open_ended: True
+    state.food__needs_exit: False
+
+prompt_subnodes:
+  - prompt_node_name: no_cur_food_entity
+    prompt_entry_conditions:
+      prompt_flags.exists_cur_food_entity: False
+    prompt:
+      const: None
+  - prompt_node_name: ask_about_best_attribute
+    prompt_entry_conditions:
+      prompt_flags.exists_cur_food_entity: True
+      prompt_flags.has_best_attribute: True
+    prompt:
+      - What do you think?
+  - prompt_node_name: ask_general_question
+    prompt_entry_conditions:
+      prompt_flags.exists_cur_food_entity: True
+      prompt_flags.has_best_attribute: False
+    prompt:
+      - What do you like best about
+      - inflect:
+          inflect_token: them
+          inflect_entity: state.cur_food_entity
+      - "?"
+
+global_post_supernode_updates:
+  state.food__needs_open_ended: False
+
+response_subnodes:
+  - response_node_name: no_prefix_yes_factoid
+    response_entry_conditions:
+      response_flags.user_asked_q: True
+      response_flags.factoid_exists: True
+    response:
+      - neural_generation:
+          prefix: ''
+          fallback:
+            - const: None
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        val: state.cur_food_entity
+      state.food__needs_factoid: True
+
+  - response_node_name: no_prefix_no_factoid
+    response_entry_conditions:
+      response_flags.user_asked_q: True
+      response_flags.factoid_exists: False
+    response:
+      - neural_generation:
+          prefix: ''
+          fallback:
+            - const: None
+      - one of:
+          - option:
+              - Anyway, I'm feeling hungry now! Thanks for recommending
+              - val: state.cur_food_entity.talkable_name
+              - "!"
+          - option:
+              - Anyway, thanks for talking to me about
+              - val: state.cur_food_entity.talkable_name
+              - . I'll have to get some soon!
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        const: None
+      state.food__needs_exit: True
+      needs_prompt: True
+
+  - response_node_name: yes_prefix_yes_factoid
+    response_entry_conditions:
+      response_flags.user_made_statement: True
+      response_flags.factoid_exists: True
+    response:
+      - neural_generation:
+          prefix:
+          - yeah, i think
+          - val: state.cur_food_entity.talkable_name
+          fallback: That's great to hear.
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        val: state.cur_food_entity
+      state.food__needs_factoid: True
+
+  - response_node_name: yes_prefix_no_factoid
+    response_entry_conditions:
+      response_flags.user_made_statement: True
+      response_flags.factoid_exists: False
+    response:
+      - neural_generation:
+          prefix:
+            - yeah, i think
+            - val: state.cur_food_entity.talkable_name
+          fallback: That's great to hear.
+      - one of:
+          - option:
+              - Anyway, I'm feeling hungry now! Thanks for recommending
+              - val: state.cur_food_entity.talkable_name
+              - "!"
+          - option:
+              - Anyway, thanks for talking to me about
+              - val: state.cur_food_entity.talkable_name
+              - . I'll have to get some soon!
+    local_post_subnode_updates:
+      state.cur_food_entity:
+        const: None
+      state.food__needs_exit: True
+      needs_prompt: True

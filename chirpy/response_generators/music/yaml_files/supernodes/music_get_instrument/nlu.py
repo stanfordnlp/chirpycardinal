@@ -1,8 +1,8 @@
 from chirpy.response_generators.wiki2.wiki_utils import get_til_title
 from chirpy.response_generators.music.music_helpers import ResponseType
 
-def nlu_processing(rg, state, utterance, response_types):
-	flags = {
+def response_nlu_processing(rg, state, utterance, response_types):
+	response_flags = {
 		'instr_exists_with_til': False,
 		'instr_exists_wo_til': False,
 		'no_fav_instrument': False,
@@ -14,15 +14,15 @@ def nlu_processing(rg, state, utterance, response_types):
 	if entity:
 		tils = get_til_title(entity.name)
 		if len(tils):
-			flags['instr_exists_with_til'] = True
+			response_flags['instr_exists_with_til'] = True
 		else:
-			flags['instr_exists_wo_til'] = True
+			response_flags['instr_exists_wo_til'] = True
 	elif any(i in response_types for i in [ ResponseType.NO, ResponseType.DONT_KNOW, ResponseType.NOTHING]):
-		flags['no_fav_instrument'] = True
+		response_flags['no_fav_instrument'] = True
 	else:
-		flags['catch_all'] = True
+		response_flags['catch_all'] = True
 
-	return flags
+	return response_flags
 
 def prompt_nlu_processing(rg, state, utterance, response_types):
 	flags = {

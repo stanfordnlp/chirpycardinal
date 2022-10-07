@@ -245,7 +245,7 @@ class OpinionResponseGenerator2(ResponseGenerator):
         state, utterance, _ = self.get_state_utterance_response_types()
         ok_negnavs = ['don\'t like', 'hate', 'do not like', 'dislike']
         if state.action_history[-1].solicit_opinion and any(o in utterance for o in ok_negnavs):
-            logger.primary_info("OPINION disabling rejection_response handler because we solicited an opinion on the last turn.")
+            logger.primary_info("OPINION disabling rejection_response handlers because we solicited an opinion on the last turn.")
             return None
         return super().handle_rejection_response(*args, **kwargs)
 

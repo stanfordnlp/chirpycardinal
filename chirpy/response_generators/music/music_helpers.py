@@ -103,7 +103,6 @@ def is_music_response(rg, utterance):
     # Mainly detects if the user mentions a genre for now
     return any(found_phrase(i, utterance) for i in tags.keys())
 
-
 def is_opinion(rg, utterance):
     return len(utterance.split()) >= 10 or is_wiki_opinion(rg, utterance)
 

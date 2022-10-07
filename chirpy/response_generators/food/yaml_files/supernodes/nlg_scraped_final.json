@@ -1,0 +1,6835 @@
+{
+    "categories": [
+        "hamburger",
+        "raw fish dish",
+        "condiment",
+        "dessert",
+        "dairy product",
+        "sweet pudding",
+        "leaf vegetable",
+        "cheese",
+        "sausage",
+        "seafood dish",
+        "coconut dish",
+        "soup",
+        "cassava dish",
+        "twice-baked food",
+        "apple dish",
+        "bread",
+        "salad",
+        "hot sauce",
+        "hors d'oeuvre",
+        "cookie",
+        "stuffed dish",
+        "sauce",
+        "stew",
+        "beverage",
+        "tofu dish",
+        "deep fried food",
+        "cheese soup",
+        "bread dish",
+        "bread roll",
+        "kebab",
+        "potato dish",
+        "fermented food",
+        "peanut dish",
+        "citrus fruit",
+        "vegetable dish",
+        "fried dough food",
+        "chicken dish",
+        "bacon dish",
+        "pie",
+        "smoked food",
+        "pancake",
+        "pasta dish",
+        "candy",
+        "instant food",
+        "pastry",
+        "dishes using coconut milk",
+        "street food",
+        "shrimp dish",
+        "rolled food",
+        "egg dish",
+        "legume dish",
+        "fermented soy product",
+        "breakfast beverage",
+        "cake",
+        "tomato dish",
+        "rice dish",
+        "snack",
+        "choux pastry dish",
+        "custard dessert",
+        "poppy seed pastries and dish",
+        "beef dish",
+        "savoury pudding",
+        "pork dish",
+        "soul foods and dish",
+        "sandwich"
+    ],
+    "foods": {
+        "a.1. sauce": {
+            "origin": "United Kingdom",
+            "type": "sauce",
+            "views": 53822,
+            "year": "1970s"
+        },
+        "adobo": {
+            "ingredients": [
+                "paprika",
+                "salt",
+                "garlic",
+                "vinegar"
+            ],
+            "origin": "Spain, Portugal",
+            "type": "chicken dish",
+            "views": 10212,
+            "year": "16th century"
+        },
+        "affogato": {
+            "ingredients": [
+                "gelato",
+                "ice cream",
+                "espresso"
+            ],
+            "type": "dessert",
+            "views": 14858
+        },
+        "alexandra of denmark": {
+            "type": "sandwich",
+            "views": 69027,
+            "year": "1844"
+        },
+        "amatriciana sauce": {
+            "ingredients": [
+                "tomatoes",
+                "guanciale",
+                "cheese",
+                "olive oil"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 15594,
+            "year": "18th century"
+        },
+        "ambrosia": {
+            "ingredients": [
+                "pineapple",
+                "mandarin oranges",
+                "marshmallows",
+                "coconut"
+            ],
+            "origin": "United States",
+            "type": "salad",
+            "views": 10590,
+            "year": "19th century"
+        },
+        "american cheese": {
+            "type": "snack",
+            "views": 21250,
+            "year": "1910s"
+        },
+        "amuse-bouche": {
+            "origin": "France",
+            "type": "hors d'oeuvre",
+            "views": 22778,
+            "year": "1980s"
+        },
+        "apple": {
+            "type": "snack",
+            "views": 113843,
+            "year": "17th century"
+        },
+        "apple cider vinegar": {
+            "type": "apple dish",
+            "views": 63993,
+            "year": "1141"
+        },
+        "apple pie": {
+            "ingredients": [
+                "apples",
+                "flour",
+                "sugar",
+                "milk",
+                "cinnamon",
+                "butter",
+                "salt"
+            ],
+            "origin": "England",
+            "type": "pie",
+            "views": 16365,
+            "year": "18th century"
+        },
+        "arancini": {
+            "ingredients": [
+                "rice",
+                "rag\u00f9"
+            ],
+            "origin": "Italy",
+            "type": "rice dish",
+            "views": 14259,
+            "year": "1646"
+        },
+        "arepa": {
+            "ingredients": [
+                "corn flour"
+            ],
+            "origin": "Pre-Columbian northern region of South America",
+            "type": "bread",
+            "views": 27362
+        },
+        "arrabbiata sauce": {
+            "ingredients": [
+                "tomatoes",
+                "red chili",
+                "garlic",
+                "olive oil"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 18659
+        },
+        "arrowroot": {
+            "type": "snack",
+            "views": 20487,
+            "year": "1930s"
+        },
+        "bacon": {
+            "type": "pork dish",
+            "views": 43286,
+            "year": "1708"
+        },
+        "bagel": {
+            "ingredients": [
+                "wheat dough"
+            ],
+            "origin": "Poland",
+            "type": "poppy seed pastries and dish",
+            "views": 37177,
+            "year": "13th century"
+        },
+        "baguette": {
+            "ingredients": [
+                "flour",
+                "water",
+                "yeast",
+                "salt"
+            ],
+            "origin": "France",
+            "type": "bread",
+            "views": 23270,
+            "year": "18th century"
+        },
+        "baked alaska": {
+            "ingredients": [
+                "ice cream",
+                "sponge cake",
+                "christmas pudding",
+                "meringue"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 25840,
+            "year": "1867"
+        },
+        "baked potato": {
+            "ingredients": [
+                "potato"
+            ],
+            "type": "potato dish",
+            "views": 23751
+        },
+        "baked ziti": {
+            "ingredients": [
+                "ziti pasta",
+                "sauce"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 14432
+        },
+        "baklava": {
+            "ingredients": [
+                "filo pastry",
+                "nuts",
+                "syrup"
+            ],
+            "origin": "Ottoman Empire",
+            "type": "pastry",
+            "views": 50150,
+            "year": "2nd century"
+        },
+        "banana": {
+            "type": "snack",
+            "views": 171664
+        },
+        "banana bread": {
+            "ingredients": [
+                "bananas",
+                "wheat",
+                "water",
+                "sugar"
+            ],
+            "origin": "United States",
+            "type": "cake",
+            "views": 23150,
+            "year": "1930s"
+        },
+        "banchan": {
+            "type": "hors d'oeuvre",
+            "views": 11657,
+            "year": "18th century"
+        },
+        "bangers and mash": {
+            "ingredients": [
+                "mashed potatoes",
+                "sausages"
+            ],
+            "origin": "United Kingdom",
+            "type": "potato dish",
+            "views": 16122,
+            "year": "1390"
+        },
+        "bannock": {
+            "origin": "British Isles",
+            "type": "fried dough food",
+            "views": 12033,
+            "year": "8th century"
+        },
+        "banoffee pie": {
+            "ingredients": [
+                "pastry base",
+                "crumbled biscuits",
+                "butter",
+                "bananas",
+                "cream",
+                "toffee"
+            ],
+            "origin": "United Kingdom",
+            "type": "pie",
+            "views": 11216
+        },
+        "barbecue": {
+            "type": "smoked food",
+            "views": 38124,
+            "year": "19th century"
+        },
+        "barbecue sauce": {
+            "ingredients": [
+                "vinegar",
+                "tomato paste",
+                "ketchup"
+            ],
+            "origin": "United States",
+            "type": "sauce",
+            "views": 13459,
+            "year": "17th century"
+        },
+        "barley": {
+            "type": "soup",
+            "views": 63002,
+            "year": "19th century"
+        },
+        "beef bourguignon": {
+            "ingredients": [
+                "beef",
+                "red wine",
+                "beef stock",
+                "lardons",
+                "onions",
+                "bouquet garni",
+                "pearl onions",
+                "mushrooms"
+            ],
+            "origin": "France",
+            "type": "stew",
+            "views": 26311,
+            "year": "19th century"
+        },
+        "beef stroganoff": {
+            "ingredients": [
+                "beef",
+                "smetana"
+            ],
+            "origin": "Russian Empire",
+            "type": "stew",
+            "views": 46148,
+            "year": "1950s"
+        },
+        "beef wellington": {
+            "type": "beef dish",
+            "views": 34076,
+            "year": "19th century"
+        },
+        "beer": {
+            "type": "fermented food",
+            "views": 75664,
+            "year": "7th century"
+        },
+        "beer in australia": {
+            "type": "beverage",
+            "views": 16775,
+            "year": "18th century"
+        },
+        "beer in belgium": {
+            "type": "beverage",
+            "views": 12178,
+            "year": "12th century"
+        },
+        "beer in germany": {
+            "type": "beverage",
+            "views": 11639,
+            "year": "1950s"
+        },
+        "beer in india": {
+            "type": "beverage",
+            "views": 11217,
+            "year": "18th century"
+        },
+        "beer in mexico": {
+            "type": "beverage",
+            "views": 10381,
+            "year": "19th century"
+        },
+        "beignet": {
+            "ingredients": [
+                "dough",
+                "powdered sugar"
+            ],
+            "origin": "Ancient Rome",
+            "type": "choux pastry dish",
+            "views": 21828,
+            "year": "5th century"
+        },
+        "bergamot orange": {
+            "type": "citrus fruit",
+            "views": 34063
+        },
+        "bibimbap": {
+            "origin": "Korea",
+            "type": "rice dish",
+            "views": 40212,
+            "year": "16th century"
+        },
+        "birria": {
+            "ingredients": [
+                "meat",
+                "dried chili peppers"
+            ],
+            "origin": "Mexico",
+            "type": "stew",
+            "views": 12666
+        },
+        "biryani": {
+            "ingredients": [
+                "rice\nindian spices\nvegetables"
+            ],
+            "type": "chicken dish",
+            "views": 61879,
+            "year": "18th century"
+        },
+        "biscuit": {
+            "type": "cookie",
+            "views": 22320,
+            "year": "14th century"
+        },
+        "bisque": {
+            "ingredients": [
+                "crustaceans",
+                "rice"
+            ],
+            "origin": "France",
+            "type": "soup",
+            "views": 12867
+        },
+        "bitter orange": {
+            "type": "citrus fruit",
+            "views": 22688
+        },
+        "black pudding": {
+            "ingredients": [
+                "pork blood",
+                "fat",
+                "oats",
+                "barley"
+            ],
+            "origin": "British Isles",
+            "type": "savoury pudding",
+            "views": 49939,
+            "year": "19th century"
+        },
+        "black-eyed pea": {
+            "type": "soul foods and dish",
+            "views": 67405,
+            "year": "17th century"
+        },
+        "blancmange": {
+            "ingredients": [
+                "milk",
+                "cream",
+                "sugar",
+                "gelatin",
+                "cornstarch",
+                "irish moss",
+                "almonds"
+            ],
+            "type": "sweet pudding",
+            "views": 10892,
+            "year": "13th century"
+        },
+        "blini": {
+            "ingredients": [
+                "wheat",
+                "eggs",
+                "milk"
+            ],
+            "origin": "Russia, Ukraine, Belarus",
+            "type": "dessert",
+            "views": 11817
+        },
+        "blood orange": {
+            "type": "citrus fruit",
+            "views": 49022
+        },
+        "boiled egg": {
+            "ingredients": [
+                "eggs"
+            ],
+            "type": "egg dish",
+            "views": 30015
+        },
+        "bologna sausage": {
+            "type": "sausage",
+            "views": 26174,
+            "year": "17th century"
+        },
+        "bolognese sauce": {
+            "ingredients": [
+                "ground meat",
+                "milk"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 55994,
+            "year": "18th century"
+        },
+        "borscht": {
+            "ingredients": [
+                "beetroot"
+            ],
+            "origin": "Ukraine",
+            "type": "soup",
+            "views": 45195,
+            "year": "17th century"
+        },
+        "boudin": {
+            "type": "rice dish",
+            "views": 20950
+        },
+        "bouillabaisse": {
+            "ingredients": [
+                "fish herbs spices"
+            ],
+            "origin": "France",
+            "type": "stew",
+            "views": 18332,
+            "year": "17th century"
+        },
+        "bounty": {
+            "type": "coconut dish",
+            "views": 13087
+        },
+        "bratwurst": {
+            "ingredients": [
+                "meat"
+            ],
+            "origin": "Germany",
+            "type": "sausage",
+            "views": 16806,
+            "year": "1920s"
+        },
+        "bread": {
+            "ingredients": [
+                "flour",
+                "water"
+            ],
+            "type": "fermented food",
+            "views": 48367,
+            "year": "Neolithic era"
+        },
+        "bread crumbs": {
+            "ingredients": [
+                "dried bread"
+            ],
+            "type": "bread dish",
+            "views": 12011
+        },
+        "bread pudding": {
+            "ingredients": [
+                "usually stale bread",
+                "combination of milk",
+                "eggs",
+                "suet",
+                "sugar",
+                "syrup",
+                "dried fruit",
+                "spices"
+            ],
+            "origin": "England",
+            "type": "dessert",
+            "views": 10487
+        },
+        "breakfast cereal": {
+            "type": "snack",
+            "views": 20185,
+            "year": "19th century"
+        },
+        "brie": {
+            "texture": "Soft-ripened",
+            "type": "cheese",
+            "views": 20748,
+            "year": "8th century"
+        },
+        "brioche": {
+            "ingredients": [
+                "flour",
+                "eggs",
+                "butter",
+                "milk",
+                "water",
+                "cream"
+            ],
+            "origin": "France",
+            "type": "bread",
+            "views": 21940,
+            "year": "17th century"
+        },
+        "broth": {
+            "type": "soup",
+            "views": 20966
+        },
+        "bruschetta": {
+            "ingredients": [
+                "bread",
+                "garlic",
+                "olive oil"
+            ],
+            "origin": "Italy",
+            "type": "tomato dish",
+            "views": 14519,
+            "year": "15th century"
+        },
+        "bubble and squeak": {
+            "ingredients": [
+                "potato",
+                "cabbage"
+            ],
+            "origin": "United Kingdom",
+            "type": "potato dish",
+            "views": 23311,
+            "year": "18th century"
+        },
+        "bubble tea": {
+            "ingredients": [
+                "tapioca",
+                "milk",
+                "creamer",
+                "brewed tea",
+                "sugar",
+                "flavorings"
+            ],
+            "origin": "Taiwan",
+            "type": "dessert",
+            "views": 72583,
+            "year": "1986"
+        },
+        "buddha's hand": {
+            "type": "citrus fruit",
+            "views": 16094
+        },
+        "buffalo wing": {
+            "ingredients": [
+                "chicken wing  cayenne pepper hot sauce  butter"
+            ],
+            "origin": "United States",
+            "type": "chicken dish",
+            "views": 25662,
+            "year": "19th century"
+        },
+        "bulgogi": {
+            "ingredients": [
+                "beef"
+            ],
+            "origin": "Korea",
+            "type": "beef dish",
+            "views": 26945
+        },
+        "burrito": {
+            "ingredients": [
+                "flour tortillas",
+                "meat",
+                "beans",
+                "refried beans"
+            ],
+            "origin": "Mexico",
+            "type": "rolled food",
+            "views": 34723,
+            "year": "19th century"
+        },
+        "butter": {
+            "type": "dairy product",
+            "views": 41049,
+            "year": "19th century"
+        },
+        "butter chicken": {
+            "ingredients": [
+                "butter",
+                "tomatoes",
+                "chicken"
+            ],
+            "origin": "India",
+            "type": "chicken dish",
+            "views": 41968
+        },
+        "buttermilk": {
+            "ingredients": [
+                "milk"
+            ],
+            "type": "dairy product",
+            "views": 30231,
+            "year": "1920s"
+        },
+        "butterscotch": {
+            "ingredients": [
+                "brown sugar",
+                "butter"
+            ],
+            "origin": "United Kingdom",
+            "type": "dessert",
+            "views": 15321,
+            "year": "1851"
+        },
+        "b\u00e1nh ch\u01b0ng": {
+            "ingredients": [
+                "glutinous rice",
+                "mung bean",
+                "pork"
+            ],
+            "origin": "Vietnam",
+            "type": "rice dish",
+            "views": 16928,
+            "year": "1695"
+        },
+        "b\u00e1nh t\u00e9t": {
+            "ingredients": [
+                "glutinous rice",
+                "banana leaf",
+                "meat",
+                "vegetarian filling"
+            ],
+            "origin": "Vietnam",
+            "type": "dessert",
+            "views": 10213,
+            "year": "17th century"
+        },
+        "b\u00f6rek": {
+            "ingredients": [
+                "yufka",
+                "phyllo",
+                "meat"
+            ],
+            "type": "pastry",
+            "views": 18242,
+            "year": "1990s"
+        },
+        "cabbage roll": {
+            "type": "rolled food",
+            "views": 13950,
+            "year": "1920s"
+        },
+        "cacio e pepe": {
+            "ingredients": [
+                "pecorino romano",
+                "black pepper"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 17671
+        },
+        "cadbury": {
+            "type": "candy",
+            "views": 69481,
+            "year": "1868"
+        },
+        "caesar salad": {
+            "ingredients": [
+                "romaine lettuce",
+                "croutons",
+                "parmesan cheese",
+                "lemon juice",
+                "olive oil",
+                "egg",
+                "worcestershire sauce",
+                "anchovies",
+                "dijon mustard",
+                "black pepper"
+            ],
+            "origin": "Mexico",
+            "type": "salad",
+            "views": 43537,
+            "year": "1924"
+        },
+        "cake": {
+            "ingredients": [
+                "flour",
+                "salt",
+                "sugar",
+                "egg",
+                "oil",
+                "butter"
+            ],
+            "type": "dessert",
+            "views": 34691
+        },
+        "california roll": {
+            "ingredients": [
+                "rice",
+                "cucumber",
+                "crab meat",
+                "imitation crab",
+                "avocado"
+            ],
+            "origin": "Canada, United States",
+            "type": "rolled food",
+            "views": 15383,
+            "year": "1970s"
+        },
+        "callaloo": {
+            "ingredients": [
+                "leaf vegetable"
+            ],
+            "origin": "Caribbean",
+            "type": "stew",
+            "views": 11813
+        },
+        "calpis": {
+            "type": "fermented food",
+            "views": 11506
+        },
+        "camembert": {
+            "texture": "Soft-ripened",
+            "type": "cheese",
+            "views": 19931,
+            "year": "18th century"
+        },
+        "candy": {
+            "ingredients": [
+                "sugar",
+                "honey"
+            ],
+            "type": "dessert",
+            "views": 24204,
+            "origin": "India",
+            "year": "4th century BC"
+        },
+        "candy cane": {
+            "ingredients": [
+                "sugar",
+                "flavoring"
+            ],
+            "origin": "Germany",
+            "type": "dessert",
+            "views": 10667,
+            "year": "1900s"
+        },
+        "canning": {
+            "type": "instant food",
+            "views": 19444,
+            "year": "19th century"
+        },
+        "cannoli": {
+            "ingredients": [
+                "fried pastry dough",
+                "ricotta filling"
+            ],
+            "origin": "Italy",
+            "type": "pastry",
+            "views": 18331
+        },
+        "caprese salad": {
+            "ingredients": [
+                "mozzarella",
+                "tomatoes",
+                "basil",
+                "salt",
+                "black pepper",
+                "olive oil"
+            ],
+            "origin": "Italy",
+            "type": "tomato dish",
+            "views": 17999
+        },
+        "caramel": {
+            "ingredients": [
+                "sugar"
+            ],
+            "origin": "Middle East",
+            "type": "dessert",
+            "views": 20957,
+            "year": "10th century"
+        },
+        "carbonara": {
+            "ingredients": [
+                "guanciale",
+                "black pepper"
+            ],
+            "origin": "Italy",
+            "type": "egg dish",
+            "views": 67362,
+            "year": "19th century"
+        },
+        "carne asada": {
+            "ingredients": [
+                "beef"
+            ],
+            "origin": "Latin America",
+            "type": "beef dish",
+            "views": 10999
+        },
+        "carpaccio": {
+            "ingredients": [
+                "raw meat",
+                "fish",
+                "lemon juice",
+                "vinegar",
+                "olive oil",
+                "parmesan cheese",
+                "salt",
+                "ground pepper"
+            ],
+            "origin": "Italy",
+            "type": "beef dish",
+            "views": 16099,
+            "year": "1950"
+        },
+        "carrot": {
+            "type": "snack",
+            "views": 54279,
+            "year": "1st century"
+        },
+        "carrot cake": {
+            "ingredients": [
+                "flour",
+                "eggs",
+                "sugar",
+                "carrots",
+                "baking powder"
+            ],
+            "origin": "Disputed; either England, France, or Switzerland",
+            "type": "dessert",
+            "views": 10930,
+            "year": "1591"
+        },
+        "casein": {
+            "type": "dairy product",
+            "views": 33771,
+            "year": "1960s"
+        },
+        "cassava": {
+            "type": "cassava dish",
+            "views": 79584,
+            "year": "16th century"
+        },
+        "cassoulet": {
+            "ingredients": [
+                "meat",
+                "pork skin",
+                "white haricot beans"
+            ],
+            "origin": "France",
+            "type": "stew",
+            "views": 13551,
+            "year": "1500"
+        },
+        "castella": {
+            "ingredients": [
+                "flour",
+                "sugar",
+                "eggs",
+                "mizuame"
+            ],
+            "origin": "Japan",
+            "type": "dessert",
+            "views": 14285,
+            "year": "16th century"
+        },
+        "celery": {
+            "type": "soup",
+            "views": 35194,
+            "year": "19th century"
+        },
+        "cendol": {
+            "ingredients": [
+                "coconut milk",
+                "rice flour jelly",
+                "pandan leaves juice",
+                "shaved ice",
+                "palm sugar"
+            ],
+            "origin": "Southeast Asia",
+            "type": "dessert",
+            "views": 12612,
+            "year": "19th century"
+        },
+        "century egg": {
+            "ingredients": [
+                "egg preserved in clay",
+                "ash",
+                "salt",
+                "quicklime",
+                "rice hulls"
+            ],
+            "origin": "China",
+            "type": "egg dish",
+            "views": 68006
+        },
+        "cereal": {
+            "origin": "United States",
+            "type": "instant food",
+            "views": 13035,
+            "year": "1863"
+        },
+        "ceviche": {
+            "ingredients": [
+                "fish",
+                "lime",
+                "lemon",
+                "onion",
+                "chili pepper",
+                "coriander"
+            ],
+            "origin": "\u00a0Peru",
+            "type": "raw fish dish",
+            "views": 31706,
+            "year": "1970s"
+        },
+        "challah": {
+            "ingredients": [
+                "eggs",
+                "fine white flour",
+                "water",
+                "yeast",
+                "sugar",
+                "salt"
+            ],
+            "type": "bread",
+            "views": 19360,
+            "year": "1800s"
+        },
+        "chapati": {
+            "ingredients": [
+                "wheat flour",
+                "water"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "bread",
+            "views": 19812,
+            "year": "15th century"
+        },
+        "cheddar cheese": {
+            "texture": "hard",
+            "type": "cheese",
+            "views": 32072,
+            "year": "12th century"
+        },
+        "cheese": {
+            "type": "dairy product",
+            "views": 76905,
+            "year": "19th century"
+        },
+        "cheeseburger": {
+            "ingredients": [
+                "ground beef patty",
+                "cheese",
+                "bun"
+            ],
+            "origin": "United States",
+            "type": "hamburger",
+            "views": 12560,
+            "year": "19th century"
+        },
+        "cheesecake": {
+            "ingredients": [
+                "cheese",
+                "pie crust",
+                "sugar"
+            ],
+            "origin": "Ancient Greece",
+            "type": "pie",
+            "views": 29093,
+            "year": "15th century"
+        },
+        "cheesesteak": {
+            "ingredients": [
+                "sliced steak",
+                "cheese",
+                "bread"
+            ],
+            "origin": "United States",
+            "type": "sandwich",
+            "views": 22156,
+            "year": "1930s"
+        },
+        "chef boyardee": {
+            "type": "pasta dish",
+            "views": 16185,
+            "year": "123s"
+        },
+        "cherry": {
+            "type": "snack",
+            "views": 34885,
+            "year": "1920s"
+        },
+        "chewing gum": {
+            "ingredients": [
+                "gum base",
+                "sweeteners",
+                "plasticizers",
+                "flavors",
+                "colors",
+                "polyols"
+            ],
+            "type": "dessert",
+            "views": 28726,
+            "year": "1860s"
+        },
+        "chicha": {
+            "type": "fermented food",
+            "views": 10228,
+            "year": "1970s"
+        },
+        "chicharr\u00f3n": {
+            "ingredients": [
+                "pork"
+            ],
+            "origin": "Spain",
+            "type": "deep fried food",
+            "views": 16799,
+            "year": "1980s"
+        },
+        "chicken 65": {
+            "ingredients": [
+                "chicken",
+                "ginger",
+                "garlic",
+                "red chilles"
+            ],
+            "origin": "India",
+            "type": "chicken dish",
+            "views": 11616
+        },
+        "chicken and dumplings": {
+            "ingredients": [
+                "flour",
+                "shortening",
+                "water",
+                "milk",
+                "stock",
+                "chicken"
+            ],
+            "origin": "United States,  Quebec",
+            "type": "chicken dish",
+            "views": 11561
+        },
+        "chicken and waffles": {
+            "ingredients": [
+                "chicken",
+                "waffles"
+            ],
+            "origin": "United States",
+            "type": "chicken dish",
+            "views": 10035,
+            "year": "19th century"
+        },
+        "chicken kiev": {
+            "ingredients": [
+                "chicken breast",
+                "butter",
+                "herbs",
+                "eggs",
+                "bread crumbs"
+            ],
+            "origin": "Russian Empire",
+            "type": "chicken dish",
+            "views": 13996,
+            "year": "18th century"
+        },
+        "chicken marsala": {
+            "type": "chicken dish",
+            "views": 38795,
+            "year": "19th century"
+        },
+        "chicken nugget": {
+            "origin": "United States",
+            "type": "chicken dish",
+            "views": 13008,
+            "year": "1950s"
+        },
+        "chicken paprikash": {
+            "type": "chicken dish",
+            "views": 12425
+        },
+        "chicken parmigiana": {
+            "ingredients": [
+                "chicken breast",
+                "tomato sauce",
+                "mozzarella",
+                "parmesan"
+            ],
+            "type": "chicken dish",
+            "views": 23973,
+            "year": "1950s"
+        },
+        "chicken soup": {
+            "ingredients": [
+                "chicken",
+                "noodles"
+            ],
+            "type": "soup",
+            "views": 13354,
+            "year": "1930s"
+        },
+        "chicken tikka masala": {
+            "ingredients": [
+                "chicken",
+                "yogurt",
+                "cream",
+                "tomato",
+                "onion",
+                "garlic",
+                "ginger",
+                "chili pepper"
+            ],
+            "origin": "United Kingdom ",
+            "type": "chicken dish",
+            "views": 56344,
+            "year": "1950s"
+        },
+        "chile relleno": {
+            "ingredients": [
+                "poblano pepper",
+                "egg",
+                "cheese"
+            ],
+            "origin": "Mexico",
+            "type": "vegetable dish",
+            "views": 17419,
+            "year": "1858"
+        },
+        "chili con carne": {
+            "ingredients": [
+                "chili peppers",
+                "meat",
+                "often tomatoes",
+                "beans"
+            ],
+            "type": "stew",
+            "views": 46795,
+            "year": "19th century"
+        },
+        "chimichanga": {
+            "ingredients": [
+                "tortillas",
+                "rice",
+                "cheese",
+                "beans",
+                "machaca",
+                "jalape\u00f1o",
+                "carne adobada",
+                "shredded chicken"
+            ],
+            "origin": "\nNorthwestern Mexico\nSouthwestern United States\n",
+            "type": "rolled food",
+            "views": 28292,
+            "year": "1946"
+        },
+        "chocolate": {
+            "type": "dessert",
+            "views": 80397,
+            "year": "19th century"
+        },
+        "chocolate brownie": {
+            "ingredients": [
+                "flour",
+                "butter",
+                "eggs",
+                "chocolate",
+                "cocoa powder",
+                "sugar"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 15381,
+            "year": "19th century"
+        },
+        "chocolate chip cookie": {
+            "ingredients": [
+                "flour",
+                "sugar",
+                "brown sugar",
+                "butter",
+                "margarine",
+                "chocolate chips",
+                "eggs",
+                "vanilla",
+                "baking soda",
+                "salt"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 18202,
+            "year": "1938"
+        },
+        "chocolate truffle": {
+            "ingredients": [
+                "chocolate ganache",
+                "chocolate",
+                "cocoa powder"
+            ],
+            "origin": "Chamb\u00e9ry, France",
+            "type": "dessert",
+            "views": 12273
+        },
+        "chocolate-coated marshmallow treats": {
+            "ingredients": [
+                "egg whites",
+                "chocolate"
+            ],
+            "origin": "Denmark",
+            "type": "cookie",
+            "views": 11035,
+            "year": "1956"
+        },
+        "choux pastry": {
+            "ingredients": [
+                "butter",
+                "flour",
+                "eggs",
+                "water"
+            ],
+            "origin": "France",
+            "type": "dessert",
+            "views": 17961,
+            "year": "1540"
+        },
+        "chowder": {
+            "ingredients": [
+                "seafood",
+                "vegetables",
+                "milk",
+                "cream"
+            ],
+            "type": "soup",
+            "views": 14552,
+            "year": "1800s"
+        },
+        "christmas pudding": {
+            "ingredients": [
+                "sugar",
+                "treacle",
+                "suet",
+                "spices"
+            ],
+            "origin": "England",
+            "type": "sweet pudding",
+            "views": 18132,
+            "year": "19th century"
+        },
+        "chupa chups": {
+            "type": "candy",
+            "views": 15939,
+            "year": "1950s"
+        },
+        "churro": {
+            "ingredients": [
+                "flour"
+            ],
+            "origin": "Spain or Portugal",
+            "type": "dessert",
+            "views": 22513
+        },
+        "chutney": {
+            "ingredients": [
+                "vegetables",
+                "fruits",
+                "salt",
+                "spices",
+                "herbs",
+                "the nearest bowl is a dahi chutney",
+                "based on yoghurt"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "sauce",
+            "views": 25702,
+            "year": "17th century"
+        },
+        "cincinnati chili": {
+            "ingredients": [
+                "ground beef",
+                "tomato paste",
+                "spices"
+            ],
+            "origin": "United States",
+            "type": "stew",
+            "views": 19283,
+            "year": "1913"
+        },
+        "cinnamon roll": {
+            "ingredients": [
+                "flour",
+                "cinnamon",
+                "sugar",
+                "butter"
+            ],
+            "origin": "Sweden and Denmark",
+            "type": "dessert",
+            "views": 10487,
+            "year": "18th century"
+        },
+        "cioppino": {
+            "ingredients": [
+                "seafood",
+                "tomatoes",
+                "wine"
+            ],
+            "origin": "United States",
+            "type": "stew",
+            "views": 12175,
+            "year": "1800s"
+        },
+        "citron": {
+            "type": "citrus fruit",
+            "views": 25943
+        },
+        "citrus unshiu": {
+            "type": "citrus fruit",
+            "views": 11145
+        },
+        "clementine": {
+            "type": "citrus fruit",
+            "views": 28123
+        },
+        "clotted cream": {
+            "origin": "England",
+            "type": "dairy product",
+            "views": 20410,
+            "year": "14th century"
+        },
+        "club sandwich": {
+            "ingredients": [
+                "toasted bread",
+                "turkey",
+                "chicken",
+                "bacon",
+                "lettuce",
+                "tomato",
+                "mayonnaise"
+            ],
+            "origin": "United States",
+            "type": "bacon dish",
+            "views": 27642,
+            "year": "19th century"
+        },
+        "cobb salad": {
+            "ingredients": [
+                "salad greens",
+                "tomatoes",
+                "bacon",
+                "chicken breast",
+                "hard-boiled eggs",
+                "avocado",
+                "chives",
+                "roquefort cheese",
+                "red-wine vinaigrette"
+            ],
+            "origin": "United States",
+            "type": "bacon dish",
+            "views": 27872,
+            "year": "1929"
+        },
+        "cocktail": {
+            "type": "egg dish",
+            "views": 33521,
+            "year": "19th century"
+        },
+        "coconut": {
+            "type": "snack",
+            "views": 77252,
+            "year": "1st century"
+        },
+        "coconut milk": {
+            "ingredients": [
+                "coconut"
+            ],
+            "type": "dishes using coconut milk",
+            "views": 19058,
+            "year": "1146"
+        },
+        "coconut oil": {
+            "type": "coconut dish",
+            "views": 37911,
+            "year": "1540"
+        },
+        "coconut sugar": {
+            "type": "coconut dish",
+            "views": 10849
+        },
+        "coconut water": {
+            "type": "coconut dish",
+            "views": 17208
+        },
+        "cod liver oil": {
+            "type": "fermented food",
+            "views": 26422,
+            "year": "1850"
+        },
+        "coffee": {
+            "type": "breakfast beverage",
+            "views": 116963,
+            "year": "15th century"
+        },
+        "coleslaw": {
+            "ingredients": [
+                "fine shredded raw cabbage",
+                "vinaigrette",
+                "mayonnaise",
+                "salad cream"
+            ],
+            "origin": "Netherlands",
+            "type": "salad",
+            "views": 20661,
+            "year": "18th century"
+        },
+        "condensed milk": {
+            "type": "dairy product",
+            "views": 23020,
+            "year": "1860s"
+        },
+        "condiment": {
+            "type": "sauce",
+            "views": 14998
+        },
+        "confectionery": {
+            "type": "candy",
+            "views": 25579,
+            "year": "16th century"
+        },
+        "congee": {
+            "ingredients": [
+                "rice"
+            ],
+            "origin": "India",
+            "type": "rice dish",
+            "views": 31390
+        },
+        "consomm\u00e9": {
+            "ingredients": [
+                "stock",
+                "bouillon",
+                "ground meat",
+                "mirepoix",
+                "tomatoes",
+                "egg whites"
+            ],
+            "origin": "France",
+            "type": "soup",
+            "views": 14709
+        },
+        "convenience food": {
+            "type": "instant food",
+            "views": 11302,
+            "year": "19th century"
+        },
+        "cookie": {
+            "origin": "Persia, 7th century AD",
+            "type": "snack",
+            "views": 34912,
+            "year": "7th century"
+        },
+        "cool whip": {
+            "type": "dessert",
+            "views": 10189,
+            "year": "1966"
+        },
+        "coq au vin": {
+            "ingredients": [
+                "chicken",
+                "wine",
+                "lardons",
+                "mushrooms",
+                "optionally garlic"
+            ],
+            "origin": "France",
+            "type": "stew",
+            "views": 23512,
+            "year": "1864"
+        },
+        "cordon bleu": {
+            "ingredients": [
+                "veal",
+                "chicken breast",
+                "cheese",
+                "ham",
+                "bread crumbs"
+            ],
+            "origin": "Switzerland",
+            "type": "chicken dish",
+            "views": 15795,
+            "year": "1940s"
+        },
+        "corn dog": {
+            "ingredients": [
+                "hot dog",
+                "cornmeal batter"
+            ],
+            "origin": "United States",
+            "type": "deep fried food",
+            "views": 16485,
+            "year": "1941"
+        },
+        "cornbread": {
+            "ingredients": [
+                "cornmeal",
+                "baking powder"
+            ],
+            "origin": "United States",
+            "type": "cake",
+            "views": 14724
+        },
+        "cotija cheese": {
+            "texture": "Semi-hard",
+            "type": "cheese",
+            "views": 12263,
+            "year": "1700"
+        },
+        "cottage cheese": {
+            "type": "cheese",
+            "views": 32851,
+            "year": "19th century"
+        },
+        "cotton candy": {
+            "ingredients": [
+                "sugar",
+                "food coloring"
+            ],
+            "type": "dessert",
+            "views": 14427,
+            "year": "19th century"
+        },
+        "crab": {
+            "type": "soup",
+            "views": 45023,
+            "year": "1848"
+        },
+        "cream": {
+            "type": "dairy product",
+            "views": 32651,
+            "year": "1920s"
+        },
+        "cream cheese": {
+            "texture": "Soft",
+            "type": "cheese",
+            "views": 25772,
+            "year": "1820s"
+        },
+        "croissant": {
+            "ingredients": [
+                "yeast-leavened dough",
+                "butter"
+            ],
+            "origin": "Austria",
+            "type": "pastry",
+            "views": 46230,
+            "year": "13th century"
+        },
+        "cronut": {
+            "type": "pastry",
+            "views": 12754
+        },
+        "croquembouche": {
+            "ingredients": [
+                "profiteroles",
+                "chocolate",
+                "caramel"
+            ],
+            "origin": "France",
+            "type": "choux pastry dish",
+            "views": 11294,
+            "year": "1815"
+        },
+        "croquette": {
+            "ingredients": [
+                "ground meat",
+                "shellfish",
+                "fish",
+                "ham",
+                "cheese",
+                "mashed potatoes",
+                "vegetables",
+                "b\u00e9chamel",
+                "brown sauce"
+            ],
+            "type": "potato dish",
+            "views": 20765,
+            "year": "18th century"
+        },
+        "crumpet": {
+            "ingredients": [
+                "flour",
+                "yeast"
+            ],
+            "origin": "England & Wales",
+            "type": "bread",
+            "views": 19325,
+            "year": "19th century"
+        },
+        "cr\u00e8me br\u00fbl\u00e9e": {
+            "ingredients": [
+                "cream",
+                "sugar",
+                "egg",
+                "egg yolks",
+                "vanilla"
+            ],
+            "origin": "France",
+            "type": "custard dessert",
+            "views": 32223,
+            "year": "1980s"
+        },
+        "cr\u00e8me caramel": {
+            "ingredients": [
+                "eggs",
+                "milk",
+                "sugar"
+            ],
+            "origin": "Spain, France, Italy and Portugal",
+            "type": "sweet pudding",
+            "views": 20361,
+            "year": "16th century"
+        },
+        "cr\u00e8me fra\u00eeche": {
+            "type": "dairy product",
+            "views": 26532
+        },
+        "cr\u00eape": {
+            "ingredients": [
+                "wheat flour",
+                "buckwheat flour",
+                "milk",
+                "eggs"
+            ],
+            "origin": "Brittany, France",
+            "type": "bread",
+            "views": 18586,
+            "year": "19th century"
+        },
+        "cuban sandwich": {
+            "ingredients": [
+                "cuban bread",
+                "ham",
+                "roasted pork",
+                "swiss cheese",
+                "pickles",
+                "mustard"
+            ],
+            "origin": "US / Florida",
+            "type": "sandwich",
+            "views": 19396,
+            "year": "1800s"
+        },
+        "cuisine": {
+            "type": "pastry",
+            "views": 17104,
+            "year": "16th century"
+        },
+        "cupcake": {
+            "ingredients": [
+                "butter",
+                "sugar",
+                "eggs",
+                "flour",
+                "optionally frosting",
+                "other cake decorations"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 12861,
+            "year": "19th century"
+        },
+        "curd": {
+            "type": "cheese",
+            "views": 20399
+        },
+        "curing": {
+            "type": "smoked food",
+            "views": 23912,
+            "year": "12th century"
+        },
+        "custard": {
+            "ingredients": [
+                "milk",
+                "cream",
+                "egg yolks",
+                "sugar",
+                "vanilla"
+            ],
+            "type": "dessert",
+            "views": 33946,
+            "year": "14th century"
+        },
+        "cut of beef": {
+            "type": "beef dish",
+            "views": 49682
+        },
+        "dairy product": {
+            "type": "cheese",
+            "views": 37275
+        },
+        "danish language": {
+            "type": "pastry",
+            "views": 36962,
+            "year": "16th century"
+        },
+        "danish pastry": {
+            "ingredients": [
+                "wheat flour",
+                "butter",
+                "milk",
+                "eggs",
+                "yeast"
+            ],
+            "origin": "Denmark",
+            "type": "pastry",
+            "views": 12867,
+            "year": "1920s"
+        },
+        "dark chocolate": {
+            "type": "candy",
+            "views": 15128,
+            "year": "1500s"
+        },
+        "dashi": {
+            "origin": "Japan",
+            "type": "soup",
+            "views": 24120
+        },
+        "delicatessen": {
+            "type": "sandwich",
+            "views": 21283,
+            "year": "18th century"
+        },
+        "detroit-style pizza": {
+            "ingredients": [
+                "pizza dough",
+                "tomato sauce",
+                "brick cheese"
+            ],
+            "origin": "United States",
+            "type": "twice-baked food",
+            "views": 17552,
+            "year": "1930s"
+        },
+        "deviled egg": {
+            "ingredients": [
+                "eggs",
+                "mayonnaise",
+                "mustard"
+            ],
+            "origin": "Italy",
+            "type": "egg dish",
+            "views": 14266,
+            "year": "18th century"
+        },
+        "digestive biscuit": {
+            "ingredients": [
+                "wheat flour",
+                "sugar",
+                "malt extract",
+                "butter",
+                "salt"
+            ],
+            "origin": "Scotland",
+            "type": "cookie",
+            "views": 19388,
+            "year": "1839"
+        },
+        "dim sum": {
+            "type": "hors d'oeuvre",
+            "views": 55915,
+            "year": "1920s"
+        },
+        "dippin' dots": {
+            "type": "dessert",
+            "views": 40588,
+            "year": "1988"
+        },
+        "dolma": {
+            "ingredients": [
+                "stuffed peppers",
+                "vine leaves",
+                "rice",
+                "gourd",
+                "eggplant"
+            ],
+            "type": "rice dish",
+            "views": 17214,
+            "year": "17th century"
+        },
+        "doner kebab": {
+            "ingredients": [
+                "lamb",
+                "beef",
+                "chicken",
+                "pork"
+            ],
+            "origin": "Ottoman Empire",
+            "type": "kebab",
+            "views": 44684,
+            "year": "17th century"
+        },
+        "dosa": {
+            "ingredients": [
+                "rice",
+                "black gram"
+            ],
+            "origin": "South India",
+            "type": "rice dish",
+            "views": 25581,
+            "year": "1st century"
+        },
+        "doughnut": {
+            "type": "deep fried food",
+            "views": 43711,
+            "year": "18th century"
+        },
+        "dr. oetker": {
+            "type": "dessert",
+            "views": 10636,
+            "year": "1930s"
+        },
+        "dried fruit": {
+            "type": "snack",
+            "views": 16908,
+            "year": "4th century"
+        },
+        "dulce de leche": {
+            "ingredients": [
+                "milk",
+                "sugar"
+            ],
+            "type": "dessert",
+            "views": 46627
+        },
+        "dutch baby pancake": {
+            "ingredients": [
+                "eggs",
+                "wheat flour",
+                "milk",
+                "vanilla",
+                "cinnamon"
+            ],
+            "origin": "United States",
+            "type": "sweet pudding",
+            "views": 12908,
+            "year": "1900s"
+        },
+        "edible seaweed": {
+            "type": "seafood dish",
+            "views": 13601,
+            "year": "19th century"
+        },
+        "egg drop soup": {
+            "ingredients": [
+                "eggs",
+                "chicken broth",
+                "condiments",
+                "scallions",
+                "tofu"
+            ],
+            "origin": "China",
+            "type": "soup",
+            "views": 12498
+        },
+        "egg roll": {
+            "ingredients": [
+                "wheat pastry skin",
+                "cabbage",
+                "pork"
+            ],
+            "origin": "United States",
+            "type": "rolled food",
+            "views": 13049,
+            "year": "1930s"
+        },
+        "eggnog": {
+            "type": "egg dish",
+            "views": 34393,
+            "year": "19th century"
+        },
+        "eggs benedict": {
+            "ingredients": [
+                "english muffin",
+                "canadian bacon",
+                "eggs",
+                "hollandaise sauce"
+            ],
+            "origin": "New York City, United States",
+            "type": "egg dish",
+            "views": 32671,
+            "year": "1860"
+        },
+        "empanada": {
+            "ingredients": [
+                "meat",
+                "cheese",
+                "corn",
+                "other ingredients"
+            ],
+            "origin": "Galicia, Spain",
+            "type": "pie",
+            "views": 22793,
+            "year": "1520"
+        },
+        "enchilada": {
+            "ingredients": [
+                "tortillas",
+                "chili pepper sauce",
+                "meat"
+            ],
+            "origin": "Mexico",
+            "type": "rolled food",
+            "views": 18195,
+            "year": "19th century"
+        },
+        "energy drink": {
+            "type": "breakfast beverage",
+            "views": 25976,
+            "year": "1980s"
+        },
+        "english muffin": {
+            "ingredients": [
+                "wheat flour",
+                "butter",
+                "milk",
+                "sugar",
+                "salt",
+                "egg",
+                "yeast"
+            ],
+            "origin": "Great Britain",
+            "type": "bread",
+            "views": 12036,
+            "year": "1940s"
+        },
+        "evaporated milk": {
+            "type": "dairy product",
+            "views": 20073,
+            "year": "1891"
+        },
+        "fairy bread": {
+            "ingredients": [
+                "white bread",
+                "butter",
+                "hundreds",
+                "thousands"
+            ],
+            "origin": "Australia",
+            "type": "dessert",
+            "views": 10322,
+            "year": "1920s"
+        },
+        "falafel": {
+            "ingredients": [
+                "fava beans",
+                "chickpeas"
+            ],
+            "type": "fried dough food",
+            "views": 60951,
+            "year": "1970s"
+        },
+        "fast food": {
+            "type": "instant food",
+            "views": 45270,
+            "year": "12th century"
+        },
+        "feijoada": {
+            "ingredients": [
+                "beans",
+                "beef",
+                "pork"
+            ],
+            "origin": "Portugal, Brazil",
+            "type": "stew",
+            "views": 12666
+        },
+        "ferrero rocher": {
+            "ingredients": [
+                "milk chocolate",
+                "hazelnut",
+                "sugar",
+                "palm oil",
+                "wheat flour"
+            ],
+            "origin": "Italy",
+            "type": "candy",
+            "views": 49982,
+            "year": "1990s"
+        },
+        "feta": {
+            "texture": "Depends on variety",
+            "type": "cheese",
+            "views": 20796,
+            "year": "2nd century"
+        },
+        "fettuccine alfredo": {
+            "ingredients": [
+                "fettuccine",
+                "butter",
+                "parmigiano-reggiano cheese"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 31198,
+            "year": "1908"
+        },
+        "filet mignon": {
+            "type": "beef dish",
+            "views": 37328
+        },
+        "filo": {
+            "ingredients": [
+                "flour dough"
+            ],
+            "type": "pastry",
+            "views": 13011,
+            "year": "11th century"
+        },
+        "finger food": {
+            "type": "hors d'oeuvre",
+            "views": 10306,
+            "year": "1700s"
+        },
+        "fish": {
+            "type": "snack",
+            "views": 108748,
+            "year": "1960s"
+        },
+        "fish and chips": {
+            "ingredients": [
+                "battered",
+                "fried fish",
+                "deep-fried chips"
+            ],
+            "origin": "England",
+            "type": "deep fried food",
+            "views": 41896,
+            "year": "16th century"
+        },
+        "fish sauce": {
+            "ingredients": [
+                "fish"
+            ],
+            "type": "fermented food",
+            "views": 19369,
+            "year": "16th century"
+        },
+        "flatbread": {
+            "ingredients": [
+                "flour",
+                "water",
+                "salt"
+            ],
+            "type": "bread",
+            "views": 13255,
+            "year": "1717"
+        },
+        "flattened rice": {
+            "ingredients": [
+                "dehusked rice"
+            ],
+            "origin": "india",
+            "type": "rice dish",
+            "views": 13443,
+            "year": "1121"
+        },
+        "focaccia": {
+            "ingredients": [
+                "high-gluten flour",
+                "oil",
+                "water",
+                "salt",
+                "yeast"
+            ],
+            "origin": "Italy",
+            "type": "bread",
+            "views": 14935,
+            "year": "1300"
+        },
+        "fondant icing": {
+            "ingredients": [
+                "poured fondant: sugar",
+                "water",
+                "gelatin",
+                "glycerinerolled fondant: sugar",
+                "water",
+                "gelatin",
+                "agar",
+                "food-grade glycerine"
+            ],
+            "type": "dessert",
+            "views": 15390
+        },
+        "fondue": {
+            "ingredients": [
+                "cheeses",
+                "white wine",
+                "seasoning",
+                "garlic",
+                "kirsch"
+            ],
+            "origin": "Switzerland",
+            "type": "cheese soup",
+            "views": 21773,
+            "year": "1930s"
+        },
+        "fool's gold loaf": {
+            "ingredients": [
+                "bread",
+                "creamy peanut butter",
+                "grape jelly",
+                "bacon"
+            ],
+            "origin": "United States",
+            "type": "bacon dish",
+            "views": 11903
+        },
+        "fortune cookie": {
+            "ingredients": [
+                "flour",
+                "sugar",
+                "vanilla",
+                "oil"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 22763,
+            "year": "19th century"
+        },
+        "frangipane": {
+            "ingredients": [
+                "almonds",
+                "almond flavouring",
+                "butter",
+                "sugar",
+                "eggs"
+            ],
+            "type": "custard dessert",
+            "views": 13345,
+            "year": "1674"
+        },
+        "frank's redhot": {
+            "type": "hot sauce",
+            "views": 10043,
+            "year": "1896"
+        },
+        "french fries": {
+            "ingredients": [
+                "potatoes\noil"
+            ],
+            "origin": "Belgium or France ",
+            "type": "potato dish",
+            "views": 57922,
+            "year": "18th century"
+        },
+        "french onion soup": {
+            "ingredients": [
+                "onions",
+                "beef",
+                "chicken stock",
+                "croutons",
+                "grated cheese"
+            ],
+            "origin": "France",
+            "type": "cheese soup",
+            "views": 22328,
+            "year": "18th century"
+        },
+        "french toast": {
+            "ingredients": [
+                "bread",
+                "eggs"
+            ],
+            "origin": "Roman Empire",
+            "type": "dessert",
+            "views": 23575,
+            "year": "5th century"
+        },
+        "fried chicken": {
+            "ingredients": [
+                "chicken",
+                "batter",
+                "seasoned flour"
+            ],
+            "origin": "United States",
+            "type": "chicken dish",
+            "views": 21196,
+            "year": "19th century"
+        },
+        "fried egg": {
+            "ingredients": [
+                "eggs"
+            ],
+            "type": "egg dish",
+            "views": 11480,
+            "year": "1618"
+        },
+        "fried rice": {
+            "ingredients": [
+                "cooked rice",
+                "cooking oil"
+            ],
+            "origin": "China",
+            "type": "rice dish",
+            "views": 22196
+        },
+        "frittata": {
+            "ingredients": [
+                "fried beaten eggs"
+            ],
+            "origin": "Italy",
+            "type": "egg dish",
+            "views": 13687
+        },
+        "frozen food": {
+            "type": "instant food",
+            "views": 10993,
+            "year": "1934"
+        },
+        "fruitcake": {
+            "ingredients": [
+                "candied fruit and",
+                "or dried fruit",
+                "nuts",
+                "spices",
+                "sugars",
+                "flour"
+            ],
+            "origin": "Global",
+            "type": "dessert",
+            "views": 10939,
+            "year": "16th century"
+        },
+        "fudge": {
+            "ingredients": [
+                "sugar",
+                "butter",
+                "milk"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 13284,
+            "year": "19th century"
+        },
+        "fufu": {
+            "ingredients": [
+                "usually cassava"
+            ],
+            "type": "soup",
+            "views": 24712,
+            "year": "16th century"
+        },
+        "garum": {
+            "type": "fermented food",
+            "views": 17796,
+            "year": "1806"
+        },
+        "gatorade": {
+            "type": "snack",
+            "views": 41694,
+            "year": "1965"
+        },
+        "gazpacho": {
+            "ingredients": [
+                "bread",
+                "olive oil",
+                "vinegar",
+                "garlic",
+                "tomato",
+                "cucumber"
+            ],
+            "type": "soup",
+            "views": 16231,
+            "year": "19th century"
+        },
+        "gelato": {
+            "ingredients": [
+                "3",
+                "25% milk",
+                "sugar",
+                "flavouring ingredient"
+            ],
+            "origin": "Italy",
+            "type": "dessert",
+            "views": 28556,
+            "year": "1600s"
+        },
+        "general tso's chicken": {
+            "ingredients": [
+                "chicken",
+                "ginger",
+                "garlic",
+                "soy sauce",
+                "rice vinegar  shaoxing wine",
+                "sherry",
+                "sugar",
+                "sesame oil",
+                "scallions",
+                "hot chili peppers",
+                "batter"
+            ],
+            "type": "chicken dish",
+            "views": 30343,
+            "year": "1990s"
+        },
+        "german chocolate cake": {
+            "ingredients": [
+                "chocolate cake",
+                "icing"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 14097,
+            "year": "1852"
+        },
+        "ghee": {
+            "type": "dairy product",
+            "views": 75484
+        },
+        "gimbap": {
+            "ingredients": [
+                "gim",
+                "bap"
+            ],
+            "origin": "\u00a0South Korea",
+            "type": "rice dish",
+            "views": 12962,
+            "year": "15th century"
+        },
+        "gingerbread": {
+            "ingredients": [
+                "ginger root",
+                "honey",
+                "molasses"
+            ],
+            "type": "dessert",
+            "views": 10890,
+            "year": "11th century"
+        },
+        "glutinous rice": {
+            "type": "rice dish",
+            "views": 22928,
+            "year": "1121"
+        },
+        "gnocchi": {
+            "ingredients": [
+                "potatoes",
+                "eggs",
+                "cheese"
+            ],
+            "origin": "Italy",
+            "type": "potato dish",
+            "views": 31730,
+            "year": "16th century"
+        },
+        "gochujang": {
+            "ingredients": [
+                "chili powder",
+                "glutinous rice",
+                "meju powder"
+            ],
+            "origin": "Korea",
+            "type": "fermented soy product",
+            "views": 27268,
+            "year": "16th century"
+        },
+        "goulash": {
+            "ingredients": [
+                "meat",
+                "stock",
+                "noodles",
+                "vegetables",
+                "paprika",
+                "spices"
+            ],
+            "origin": "Hungary",
+            "type": "stew",
+            "views": 43787,
+            "year": "9th century"
+        },
+        "graham cracker": {
+            "ingredients": [
+                "graham flour"
+            ],
+            "origin": "United States",
+            "type": "snack",
+            "views": 16182,
+            "year": "1880s"
+        },
+        "grain": {
+            "type": "snack",
+            "views": 31803
+        },
+        "granola": {
+            "type": "snack",
+            "views": 17081,
+            "year": "19th century"
+        },
+        "grapefruit": {
+            "type": "citrus fruit",
+            "views": 49388
+        },
+        "grass jelly": {
+            "ingredients": [
+                "platostoma palustre  stalks",
+                "leaves",
+                "potassium carbonate",
+                "starch"
+            ],
+            "type": "dessert",
+            "views": 10642
+        },
+        "gratin": {
+            "type": "potato dish",
+            "views": 15929,
+            "year": "1846"
+        },
+        "gravlax": {
+            "ingredients": [
+                "salmon",
+                "salt",
+                "sugar",
+                "dill"
+            ],
+            "origin": "Nordic countries",
+            "type": "raw fish dish",
+            "views": 10021
+        },
+        "greek salad": {
+            "ingredients": [
+                "tomatoes",
+                "cucumbers",
+                "onions",
+                "feta cheese",
+                "olives",
+                "salt",
+                "oregano",
+                "olive oil"
+            ],
+            "origin": "Greece",
+            "type": "salad",
+            "views": 10809
+        },
+        "green curry": {
+            "ingredients": [
+                "coconut milk",
+                "green curry paste",
+                "palm sugar",
+                "fish sauce",
+                "kaffir lime leaves",
+                "thai basil"
+            ],
+            "origin": "Thailand",
+            "type": "dishes using coconut milk",
+            "views": 11187
+        },
+        "grits": {
+            "ingredients": [
+                "ground corn"
+            ],
+            "origin": "United States",
+            "type": "soul foods and dish",
+            "views": 52552,
+            "year": "16th century"
+        },
+        "guacamole": {
+            "ingredients": [
+                "avocados",
+                "sea salt",
+                "lime juice"
+            ],
+            "origin": "Mexico",
+            "type": "vegetable dish",
+            "views": 24870,
+            "year": "1980s"
+        },
+        "guanciale": {
+            "ingredients": [
+                "pork jowl",
+                "cheeks"
+            ],
+            "origin": "Italy",
+            "type": "bacon dish",
+            "views": 22688
+        },
+        "gulab jamun": {
+            "ingredients": [
+                "khoa",
+                "saffron"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "pastry",
+            "views": 25401,
+            "year": "1856"
+        },
+        "gumbo": {
+            "ingredients": [
+                "stock",
+                "roux",
+                "okra",
+                "fil\u00e9 powder",
+                "meat",
+                "shellfish",
+                "celery",
+                "onions",
+                "bell peppers"
+            ],
+            "origin": "United States",
+            "type": "stew",
+            "views": 41675,
+            "year": "19th century"
+        },
+        "gyro": {
+            "ingredients": [
+                "meat: beef",
+                "veal",
+                "mutton",
+                "pork",
+                "chicken"
+            ],
+            "origin": "Greece",
+            "type": "sandwich",
+            "views": 33697,
+            "year": "19th century"
+        },
+        "haggis": {
+            "ingredients": [
+                "sheep's heart",
+                "liver",
+                "lungs",
+                "stomach",
+                "onion",
+                "oatmeal",
+                "suet",
+                "spices"
+            ],
+            "type": "savoury pudding",
+            "views": 79740,
+            "year": "1430"
+        },
+        "hainanese chicken rice": {
+            "ingredients": [
+                "chicken",
+                "chicken stock",
+                "chicken fat",
+                "rice"
+            ],
+            "origin": "Maritime Southeast Asia",
+            "type": "chicken dish",
+            "views": 12840,
+            "year": "1940s"
+        },
+        "halloumi": {
+            "texture": "Semi-soft",
+            "type": "cheese",
+            "views": 44377,
+            "year": "2nd century"
+        },
+        "halo-halo": {
+            "ingredients": [
+                "shaved ice",
+                "milk",
+                "various fruits"
+            ],
+            "origin": "Philippines",
+            "type": "dessert",
+            "views": 14445,
+            "year": "1920s"
+        },
+        "halva": {
+            "ingredients": [
+                "flour base: grain flournut base: nut butter",
+                "sugar"
+            ],
+            "type": "dessert",
+            "views": 44435,
+            "year": "7th century"
+        },
+        "ham hock": {
+            "type": "soul foods and dish",
+            "views": 15407
+        },
+        "hamburger": {
+            "ingredients": [
+                "ground meat",
+                "bread"
+            ],
+            "origin": "Germany or United States ",
+            "type": "egg dish",
+            "views": 67573,
+            "year": "17th century"
+        },
+        "hamburger helper": {
+            "type": "pasta dish",
+            "views": 11893
+        },
+        "hamdog": {
+            "ingredients": [
+                "hot dog",
+                "beef patty"
+            ],
+            "origin": "Australia",
+            "type": "hamburger",
+            "views": 14336
+        },
+        "hardtack": {
+            "ingredients": [
+                "flour",
+                "water"
+            ],
+            "type": "bread",
+            "views": 21415,
+            "year": "1700s"
+        },
+        "hash browns": {
+            "ingredients": [
+                "potato"
+            ],
+            "origin": "United States",
+            "type": "potato dish",
+            "views": 22748,
+            "year": "1890s"
+        },
+        "havarti": {
+            "texture": "Semi-soft",
+            "type": "cheese",
+            "views": 10866,
+            "year": "1800s"
+        },
+        "hershey's kisses": {
+            "type": "candy",
+            "views": 13650
+        },
+        "honeydew": {
+            "type": "snack",
+            "views": 12752,
+            "year": "1940s"
+        },
+        "hoppin' john": {
+            "ingredients": [
+                "black-eyed peas",
+                "rice",
+                "chopped onion",
+                "sliced bacon"
+            ],
+            "origin": "Southern United States",
+            "type": "bacon dish",
+            "views": 25600,
+            "year": "19th century"
+        },
+        "horchata": {
+            "type": "rice dish",
+            "views": 45168
+        },
+        "hot and sour soup": {
+            "type": "soup",
+            "views": 18491
+        },
+        "hot brown": {
+            "ingredients": [
+                "turkey",
+                "bacon",
+                "mornay sauce"
+            ],
+            "origin": "United States",
+            "type": "bacon dish",
+            "views": 12164,
+            "year": "1923"
+        },
+        "hot chicken": {
+            "ingredients": [
+                "chicken",
+                "cayenne pepper"
+            ],
+            "origin": "United States",
+            "type": "chicken dish",
+            "views": 11440,
+            "year": "1930s"
+        },
+        "hot chocolate": {
+            "type": "breakfast beverage",
+            "views": 13415,
+            "year": "19th century"
+        },
+        "hot pot": {
+            "ingredients": [
+                "meat",
+                "leaf vegetables",
+                "mushrooms",
+                "dumplings",
+                "seafood"
+            ],
+            "origin": "Mongolia",
+            "type": "stew",
+            "views": 50005
+        },
+        "hp sauce": {
+            "ingredients": [
+                "tomatoes"
+            ],
+            "origin": "Originally in the United Kingdom now Netherlands",
+            "type": "sauce",
+            "views": 20727,
+            "year": "19th century"
+        },
+        "huevos rancheros": {
+            "ingredients": [
+                "tortillas",
+                "eggs",
+                "tomato-chili sauce",
+                "refried beans",
+                "rice",
+                "avocado",
+                "guacamole"
+            ],
+            "origin": "Mexico",
+            "type": "egg dish",
+            "views": 16573
+        },
+        "hummus": {
+            "ingredients": [
+                "chickpeas",
+                "tahini"
+            ],
+            "origin": "Middle East",
+            "type": "snack",
+            "views": 42333,
+            "year": "13th century"
+        },
+        "hushpuppy": {
+            "ingredients": [
+                "cornmeal"
+            ],
+            "origin": "North America",
+            "type": "deep fried food",
+            "views": 16448,
+            "year": "1899"
+        },
+        "h\u00e1karl": {
+            "type": "fermented food",
+            "views": 22617
+        },
+        "ice cream": {
+            "ingredients": [
+                "milk",
+                "cream",
+                "sweetener"
+            ],
+            "type": "dairy product",
+            "views": 60978,
+            "year": "2nd century"
+        },
+        "idli": {
+            "ingredients": [
+                "black lentils",
+                "rice"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "rice dish",
+            "views": 15727,
+            "year": "17th century"
+        },
+        "injera": {
+            "ingredients": [
+                "teff flour"
+            ],
+            "origin": "Eritrea, Ethiopia ",
+            "type": "bread",
+            "views": 15584,
+            "year": "1980s"
+        },
+        "jaffa cakes": {
+            "ingredients": [
+                "sponge cake",
+                "orange-flavoured jam",
+                "chocolate"
+            ],
+            "origin": "United Kingdom",
+            "type": "dessert",
+            "views": 15303
+        },
+        "jajangmyeon": {
+            "ingredients": [
+                "cumian",
+                "chunjang",
+                "meat",
+                "vegetables",
+                "seafood"
+            ],
+            "origin": "Incheon, South Korea",
+            "type": "fermented soy product",
+            "views": 16582
+        },
+        "jalebi": {
+            "ingredients": [
+                "maida flour",
+                "saffron",
+                "ghee",
+                "sugar"
+            ],
+            "origin": "India \nEgypt ",
+            "type": "pastry",
+            "views": 17625,
+            "year": "13th century"
+        },
+        "jambalaya": {
+            "ingredients": [
+                "meats",
+                "vegetables",
+                "stock",
+                "rice",
+                "seasoning"
+            ],
+            "origin": "United States",
+            "type": "rice dish",
+            "views": 42260,
+            "year": "1920s"
+        },
+        "japanese curry": {
+            "ingredients": [
+                "vegetables"
+            ],
+            "origin": "Japan",
+            "type": "rice dish",
+            "views": 18168,
+            "year": "1960s"
+        },
+        "jell-o": {
+            "ingredients": [
+                "powdered gelatin",
+                "sugar",
+                "artificial sweetener",
+                "artificial flavors",
+                "food coloring"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 18972,
+            "year": "15th century"
+        },
+        "jollof rice": {
+            "ingredients": [
+                "rice",
+                "tomatoes",
+                "tomato paste",
+                "onions",
+                "cooking oil",
+                "goat meat",
+                "chicken",
+                "beef"
+            ],
+            "type": "rice dish",
+            "views": 18364
+        },
+        "jolly rancher": {
+            "type": "candy",
+            "views": 13971
+        },
+        "juice": {
+            "type": "snack",
+            "views": 18156,
+            "year": "14th century"
+        },
+        "junk food": {
+            "type": "snack",
+            "views": 35495,
+            "year": "1950s"
+        },
+        "kaffir lime": {
+            "type": "citrus fruit",
+            "views": 18025
+        },
+        "kaiserschmarrn": {
+            "ingredients": [
+                "flour",
+                "eggs",
+                "sugar",
+                "milk",
+                "butter"
+            ],
+            "origin": "Austria-Hungary",
+            "type": "egg dish",
+            "views": 16028
+        },
+        "kanafeh": {
+            "ingredients": [
+                "dough",
+                "sugar",
+                "cheese",
+                "almonds",
+                "pistachios",
+                "rose water",
+                "kaymak",
+                "etc"
+            ],
+            "origin": "Middle East",
+            "type": "pastry",
+            "views": 27430,
+            "year": "1501"
+        },
+        "karaage": {
+            "type": "chicken dish",
+            "views": 10706,
+            "year": "1920s"
+        },
+        "katsuobushi": {
+            "type": "fermented food",
+            "views": 18390
+        },
+        "kedgeree": {
+            "ingredients": [
+                "rice",
+                "smoked haddock",
+                "eggs",
+                "parsley",
+                "butter",
+                "cream"
+            ],
+            "origin": "India/United Kingdom",
+            "type": "egg dish",
+            "views": 11697,
+            "year": "19th century"
+        },
+        "kefir": {
+            "ingredients": [
+                "milk",
+                "kefir grains"
+            ],
+            "origin": "Karachay and Balkaria",
+            "type": "dairy product",
+            "views": 56078,
+            "year": "19th century"
+        },
+        "ketchup": {
+            "ingredients": [
+                "tomatoes",
+                "vinegar",
+                "salt",
+                "spices",
+                "seasonings"
+            ],
+            "origin": "United StatesChina",
+            "type": "tomato dish",
+            "views": 45324,
+            "year": "18th century"
+        },
+        "key lime": {
+            "type": "citrus fruit",
+            "views": 13277
+        },
+        "khachapuri": {
+            "ingredients": [
+                "cheese",
+                "eggs",
+                "flour"
+            ],
+            "origin": "Georgia",
+            "type": "pie",
+            "views": 10681
+        },
+        "khichdi": {
+            "ingredients": [
+                "rice",
+                "lentils",
+                "spices"
+            ],
+            "type": "rice dish",
+            "views": 10576,
+            "year": "15th century"
+        },
+        "kifli": {
+            "ingredients": [
+                "wheat flour"
+            ],
+            "origin": "Austria-Hungary",
+            "type": "dessert",
+            "views": 11910,
+            "year": "13th century"
+        },
+        "kimchi": {
+            "ingredients": [
+                "various vegetables including napa cabbage",
+                "korean radish"
+            ],
+            "origin": "Korea",
+            "type": "vegetable dish",
+            "views": 78706,
+            "year": "16th century"
+        },
+        "king cake": {
+            "type": "dessert",
+            "views": 120491,
+            "year": "18th century"
+        },
+        "kinnow": {
+            "type": "citrus fruit",
+            "views": 12392
+        },
+        "kit kat": {
+            "type": "candy",
+            "views": 35382,
+            "year": "18th century"
+        },
+        "kiwifruit": {
+            "type": "snack",
+            "views": 64670,
+            "year": "12th century"
+        },
+        "kolach": {
+            "origin": "Czech lands and Slovakia",
+            "type": "dessert",
+            "views": 12993,
+            "year": "1870s"
+        },
+        "kombucha": {
+            "type": "fermented food",
+            "views": 167322,
+            "year": "1990s"
+        },
+        "korma": {
+            "ingredients": [
+                "meat",
+                "yogurt",
+                "cream"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "beef dish",
+            "views": 14345,
+            "year": "16th century"
+        },
+        "kouign-amann": {
+            "ingredients": [
+                "yeast-leavened dough",
+                "butter",
+                "sugar"
+            ],
+            "origin": "Brittany",
+            "type": "pastry",
+            "views": 21260,
+            "year": "1990s"
+        },
+        "kraft dinner": {
+            "ingredients": [
+                "dried pasta",
+                "cheese powder"
+            ],
+            "origin": "United States and Canada",
+            "type": "pasta dish",
+            "views": 12019
+        },
+        "kulfi": {
+            "ingredients": [
+                "milk"
+            ],
+            "origin": "Mughal Empire",
+            "type": "dessert",
+            "views": 10362,
+            "year": "16th century"
+        },
+        "kumis": {
+            "ingredients": [
+                "mare's milk"
+            ],
+            "type": "dairy product",
+            "views": 13992,
+            "year": "1332"
+        },
+        "kumquat": {
+            "type": "citrus fruit",
+            "views": 61456
+        },
+        "kung pao chicken": {
+            "ingredients": [
+                "cubed boneless chicken",
+                "chili peppers",
+                "peanuts"
+            ],
+            "origin": "China",
+            "type": "chicken dish",
+            "views": 33441,
+            "year": "19th century"
+        },
+        "kurdish languages": {
+            "type": "kebab",
+            "views": 20288,
+            "year": "14th century"
+        },
+        "kvass": {
+            "ingredients": [
+                "rye bread",
+                "water",
+                "yeast",
+                "sometimes flavoured",
+                "fruit",
+                "raisins",
+                "honey"
+            ],
+            "type": "fermented food",
+            "views": 24573,
+            "year": "19th century"
+        },
+        "laddu": {
+            "ingredients": [
+                "flour",
+                "sugar",
+                "ghee",
+                "oil"
+            ],
+            "type": "dessert",
+            "views": 10513,
+            "year": "1360"
+        },
+        "ladyfinger": {
+            "ingredients": [
+                "flour",
+                "egg whites",
+                "egg yolks",
+                "sugar",
+                "powdered sugar"
+            ],
+            "origin": "Savoy",
+            "type": "dessert",
+            "views": 12056,
+            "year": "15th century"
+        },
+        "laksa": {
+            "ingredients": [
+                "laksa noodles",
+                "rice vermicelli",
+                "coconut milk",
+                "curry soup base"
+            ],
+            "origin": "Maritime Southeast Asia",
+            "type": "soup",
+            "views": 17072,
+            "year": "15th century"
+        },
+        "lamington": {
+            "ingredients": [
+                "cake",
+                "chocolate sauce",
+                "desiccated coconut"
+            ],
+            "origin": "Brisbane, Australia",
+            "type": "dessert",
+            "views": 33584,
+            "year": "1896"
+        },
+        "larb": {
+            "ingredients": [
+                "meat"
+            ],
+            "origin": "Laos",
+            "type": "raw fish dish",
+            "views": 13685
+        },
+        "lasagne": {
+            "ingredients": [
+                "durum wheat",
+                "ground meat",
+                "cheese"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 41587,
+            "year": "1492"
+        },
+        "lassi": {
+            "ingredients": [
+                "dahi",
+                "cream",
+                "water",
+                "spices"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "dairy product",
+            "views": 14835
+        },
+        "lavash": {
+            "type": "bread",
+            "views": 12329
+        },
+        "lefse": {
+            "ingredients": [
+                "traditional: potato flour\nvariations: milk",
+                "cream",
+                "flour"
+            ],
+            "origin": "Norway",
+            "type": "potato dish",
+            "views": 10483,
+            "year": "1930s"
+        },
+        "lemon": {
+            "type": "citrus fruit",
+            "views": 58575
+        },
+        "lentil soup": {
+            "ingredients": [
+                "lentils"
+            ],
+            "type": "soup",
+            "views": 17593
+        },
+        "life savers": {
+            "type": "candy",
+            "views": 12353,
+            "year": "1912"
+        },
+        "lime": {
+            "type": "citrus fruit",
+            "views": 22899
+        },
+        "licorice": {
+            "ingredients": [
+                "extract of the roots of the liquorice plant",
+                "sugar",
+                "binding agent"
+            ],
+            "type": "dessert",
+            "views": 17267,
+            "year": "1845"
+        },
+        "lobster": {
+            "type": "soup",
+            "views": 48358,
+            "year": "17th century"
+        },
+        "loco moco": {
+            "ingredients": [
+                "white rice",
+                "topped",
+                "a hamburger patty",
+                "a fried egg",
+                "brown gravy"
+            ],
+            "origin": "United States",
+            "type": "egg dish",
+            "views": 13135
+        },
+        "lox": {
+            "ingredients": [
+                "lox",
+                "cream cheese",
+                "bagel"
+            ],
+            "type": "sandwich",
+            "views": 18970
+        },
+        "lumpia": {
+            "ingredients": [
+                "wrapper",
+                "meat",
+                "vegetables"
+            ],
+            "origin": "Indonesia, Philippines",
+            "type": "rice dish",
+            "views": 15178,
+            "year": "17th century"
+        },
+        "m&m's": {
+            "type": "candy",
+            "views": 51765,
+            "year": "1954"
+        },
+        "macaron": {
+            "ingredients": [
+                "cookie: egg white",
+                "icing sugar",
+                "granulated sugar",
+                "almond powder",
+                "food colouringfilling: buttercream",
+                "clotted cream",
+                "ganache",
+                "jam"
+            ],
+            "type": "pastry",
+            "views": 29016,
+            "year": "19th century"
+        },
+        "macaroni and cheese": {
+            "ingredients": [
+                "macaroni",
+                "cheddar sauce",
+                "milk",
+                "butter",
+                "flour"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 28270,
+            "year": "14th century"
+        },
+        "macaroon": {
+            "ingredients": [
+                "almonds",
+                "egg whites"
+            ],
+            "origin": "Italy",
+            "type": "dessert",
+            "views": 14373,
+            "year": "9th century"
+        },
+        "madeleine": {
+            "ingredients": [
+                "flour",
+                "sugar",
+                "eggs",
+                "almonds",
+                "other nuts"
+            ],
+            "origin": "France",
+            "type": "dessert",
+            "views": 11779,
+            "year": "18th century"
+        },
+        "maggi": {
+            "type": "sauce",
+            "views": 34369,
+            "year": "19th century"
+        },
+        "malted milk": {
+            "type": "snack",
+            "views": 14242,
+            "year": "1873"
+        },
+        "maltesers": {
+            "type": "candy",
+            "views": 17708,
+            "year": "1930s"
+        },
+        "mandarin orange": {
+            "type": "citrus fruit",
+            "views": 53223
+        },
+        "marmalade": {
+            "ingredients": [
+                "juice",
+                "peel of citrus fruits",
+                "sugar",
+                "water"
+            ],
+            "origin": "Portugal/Scotland",
+            "type": "sandwich",
+            "views": 20619,
+            "year": "16th century"
+        },
+        "marmite": {
+            "type": "sandwich",
+            "views": 58690,
+            "year": "19th century"
+        },
+        "mars": {
+            "ingredients": [
+                "chocolate",
+                "caramel",
+                "nougat"
+            ],
+            "origin": "Slough, Berkshire, England",
+            "type": "candy",
+            "views": 32023,
+            "year": "1990s"
+        },
+        "marshmallow": {
+            "ingredients": [
+                "sugar",
+                "gelatin",
+                "water",
+                "air"
+            ],
+            "origin": "France",
+            "type": "dessert",
+            "views": 38457,
+            "year": "19th century"
+        },
+        "marzipan": {
+            "ingredients": [
+                "almond meal",
+                "sugar"
+            ],
+            "type": "dessert",
+            "views": 30727,
+            "year": "1512"
+        },
+        "massaman curry": {
+            "ingredients": [
+                "meat",
+                "tofu",
+                "coconut milk",
+                "onion",
+                "peanuts",
+                "cashews",
+                "potatoes",
+                "bay leaves",
+                "cardamom pods",
+                "cinnamon",
+                "star anise",
+                "palm sugar",
+                "fish sauce",
+                "chili",
+                "tamarind sauce"
+            ],
+            "origin": "Thailand",
+            "type": "potato dish",
+            "views": 20316,
+            "year": "17th century"
+        },
+        "matzo": {
+            "origin": "Ancient Israel",
+            "type": "bread",
+            "views": 13901,
+            "year": "1840"
+        },
+        "meatball": {
+            "type": "beef dish",
+            "views": 17429
+        },
+        "meatloaf": {
+            "type": "beef dish",
+            "views": 20387,
+            "year": "5th century"
+        },
+        "mentos": {
+            "type": "candy",
+            "views": 11641
+        },
+        "menudo": {
+            "ingredients": [
+                "beef tripe",
+                "broth",
+                "hominy",
+                "lime",
+                "onions",
+                "cilantro",
+                "oregano",
+                "red chili peppers"
+            ],
+            "origin": "Mexico",
+            "type": "beef dish",
+            "views": 14520,
+            "year": "1930s"
+        },
+        "meringue": {
+            "ingredients": [
+                "egg whites",
+                "sugar"
+            ],
+            "origin": "Possibly Switzerland",
+            "type": "egg dish",
+            "views": 19490,
+            "year": "17th century"
+        },
+        "meyer lemon": {
+            "type": "citrus fruit",
+            "views": 17573
+        },
+        "meze": {
+            "type": "salad",
+            "views": 14678
+        },
+        "mie goreng": {
+            "ingredients": [
+                "fried noodles",
+                "chicken",
+                "meat",
+                "prawn"
+            ],
+            "origin": "Indonesia",
+            "type": "shrimp dish",
+            "views": 10542
+        },
+        "milk": {
+            "type": "dairy product",
+            "views": 82001,
+            "year": "19th century"
+        },
+        "milka": {
+            "type": "candy",
+            "views": 20944,
+            "year": "1890s"
+        },
+        "milkshake": {
+            "ingredients": [
+                "milk",
+                "ice cream",
+                "flavorings",
+                "sweeteners"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 16593,
+            "year": "1897"
+        },
+        "mille-feuille": {
+            "ingredients": [
+                "puff pastry",
+                "custard",
+                "powdered sugar"
+            ],
+            "type": "pastry",
+            "views": 22565,
+            "year": "16th century"
+        },
+        "mince pie": {
+            "ingredients": [
+                "mincemeat"
+            ],
+            "origin": "England",
+            "type": "pie",
+            "views": 17798,
+            "year": "13th century"
+        },
+        "minestrone": {
+            "ingredients": [
+                "vegetables",
+                "stock",
+                "water",
+                "pasta",
+                "rice"
+            ],
+            "origin": "Italy",
+            "type": "soup",
+            "views": 24573,
+            "year": "2nd century"
+        },
+        "miso": {
+            "ingredients": [
+                "fermented soybean",
+                "salt",
+                "koji"
+            ],
+            "origin": "Japanese",
+            "type": "fermented soy product",
+            "views": 38362,
+            "year": "1573"
+        },
+        "miso soup": {
+            "ingredients": [
+                "dashi stock",
+                "miso paste"
+            ],
+            "origin": "Japan",
+            "type": "soup",
+            "views": 39600
+        },
+        "mochi": {
+            "type": "rice dish",
+            "views": 49493,
+            "year": "1411"
+        },
+        "mochi ice cream": {
+            "ingredients": [
+                "mochi",
+                "ice cream",
+                "powdered sugar"
+            ],
+            "origin": "Japan",
+            "type": "dessert",
+            "views": 16613
+        },
+        "momo": {
+            "ingredients": [
+                "white-flour-and-water dough",
+                "meat",
+                "vegetable",
+                "cheese filling served",
+                "tomato",
+                "sesame chutney dip",
+                "tomato soup",
+                "soybean",
+                "sesame soup"
+            ],
+            "origin": "East Asia and South Asia",
+            "type": "chicken dish",
+            "views": 18712
+        },
+        "monster energy": {
+            "type": "snack",
+            "views": 42850,
+            "year": "1842"
+        },
+        "monte cristo sandwich": {
+            "ingredients": [
+                "bread",
+                "ham",
+                "cheese",
+                "egg batter"
+            ],
+            "origin": "United States",
+            "type": "sandwich",
+            "views": 18794,
+            "year": "1930s"
+        },
+        "monterey jack": {
+            "texture": "Semihard, creamy",
+            "type": "cheese",
+            "views": 12617,
+            "year": "1915"
+        },
+        "moo goo gai pan": {
+            "type": "chicken dish",
+            "views": 16507
+        },
+        "mooncake": {
+            "ingredients": [
+                "crust: lard",
+                "vegetable oilfilling: red bean",
+                "lotus seed paste",
+                "may",
+                "may not have additional ingredients"
+            ],
+            "origin": "China",
+            "type": "pastry",
+            "views": 25026,
+            "year": "1980s"
+        },
+        "moroccan cuisine": {
+            "type": "snack",
+            "views": 13453,
+            "year": "1980s"
+        },
+        "mozzarella": {
+            "texture": "Semi-soft",
+            "type": "dairy product",
+            "views": 25920,
+            "year": "12th century"
+        },
+        "muenster cheese": {
+            "texture": "Soft",
+            "type": "cheese",
+            "views": 11457
+        },
+        "muffin": {
+            "ingredients": [
+                "flour",
+                "leavening",
+                "vegetable oil",
+                "sugar"
+            ],
+            "origin": "United States",
+            "type": "poppy seed pastries and dish",
+            "views": 10891,
+            "year": "18th century"
+        },
+        "muffuletta": {
+            "ingredients": [
+                "bread: wheat flour",
+                "water",
+                "eggs",
+                "olive oil",
+                "yeast",
+                "salt",
+                "layers of mortadella",
+                "salami",
+                "swiss cheese",
+                "ham",
+                "provolone"
+            ],
+            "origin": "Italy ",
+            "type": "sandwich",
+            "views": 23658,
+            "year": "1906"
+        },
+        "mulligatawny": {
+            "origin": "India",
+            "type": "soup",
+            "views": 16712,
+            "year": "18th century"
+        },
+        "mustard": {
+            "ingredients": [
+                "white mustard",
+                "egg yolks",
+                "garlic",
+                "wheat flour",
+                "wine vinegar",
+                "honey",
+                "treacle of date syrup",
+                "salt"
+            ],
+            "type": "sauce",
+            "views": 32383,
+            "year": "13th century"
+        },
+        "naan": {
+            "ingredients": [
+                "flour",
+                "yeast",
+                "salt",
+                "water"
+            ],
+            "type": "bread",
+            "views": 21334,
+            "year": "1803"
+        },
+        "nachos": {
+            "ingredients": [
+                "tortilla chips",
+                "cheese"
+            ],
+            "origin": "Northern Mexico",
+            "type": "hors d'oeuvre",
+            "views": 18063,
+            "year": "1940"
+        },
+        "nanaimo bar": {
+            "ingredients": [
+                "crumb",
+                "icing",
+                "chocolate"
+            ],
+            "origin": "Canada",
+            "type": "custard dessert",
+            "views": 11111,
+            "year": "1930s"
+        },
+        "nasi goreng": {
+            "ingredients": [
+                "fried rice",
+                "meats",
+                "vegetables",
+                "spices",
+                "seasoned",
+                "sweet soy sauce"
+            ],
+            "origin": "Indonesia",
+            "type": "shrimp dish",
+            "views": 17742,
+            "year": "15th century"
+        },
+        "nasi lemak": {
+            "ingredients": [
+                "rice cooked in coconut milk",
+                "leaves of pandan screwpine",
+                "served",
+                "sambal",
+                "anchovies",
+                "cucumber",
+                "various side dishes"
+            ],
+            "origin": "Malaysia",
+            "type": "rice dish",
+            "views": 16124
+        },
+        "natt\u014d": {
+            "ingredients": [
+                "fermented soybeans"
+            ],
+            "origin": "Japan",
+            "type": "fermented soy product",
+            "views": 26085,
+            "year": "8th century"
+        },
+        "nian gao": {
+            "origin": "China",
+            "type": "snack",
+            "views": 31756
+        },
+        "nougat": {
+            "ingredients": [
+                "white nougat: sugar",
+                "honey",
+                "nuts viennese",
+                "german nougat: sugar",
+                "nuts",
+                "chocolate"
+            ],
+            "type": "dessert",
+            "views": 19811,
+            "year": "15th century"
+        },
+        "nut": {
+            "type": "snack",
+            "views": 31503
+        },
+        "offal": {
+            "type": "soul foods and dish",
+            "views": 33439,
+            "year": "19th century"
+        },
+        "okonomiyaki": {
+            "ingredients": [
+                "cabbage"
+            ],
+            "origin": "Japan",
+            "type": "egg dish",
+            "views": 33808,
+            "year": "16th century"
+        },
+        "okra": {
+            "type": "deep fried food",
+            "views": 55789,
+            "year": "18th century"
+        },
+        "olivier salad": {
+            "ingredients": [
+                "potatoes",
+                "vegetables",
+                "eggs",
+                "meat",
+                "mayonnaise"
+            ],
+            "origin": "Russia",
+            "type": "chicken dish",
+            "views": 23588,
+            "year": "1860s"
+        },
+        "omelette": {
+            "ingredients": [
+                "eggs",
+                "butter",
+                "oil"
+            ],
+            "origin": "Ancient Iran",
+            "type": "egg dish",
+            "views": 25929,
+            "year": "1393"
+        },
+        "onigiri": {
+            "type": "rice dish",
+            "views": 18541,
+            "year": "1980s"
+        },
+        "opera cake": {
+            "ingredients": [
+                "sponge cake",
+                "coffee syrup",
+                "ganache",
+                "coffee buttercream",
+                "chocolate glaze"
+            ],
+            "origin": "France",
+            "type": "dessert",
+            "views": 11726,
+            "year": "1955"
+        },
+        "orange": {
+            "type": "snack",
+            "views": 79208,
+            "year": "9th century"
+        },
+        "orange chicken": {
+            "ingredients": [
+                "chicken",
+                "orange sauce",
+                "orange peels"
+            ],
+            "origin": "China ",
+            "type": "chicken dish",
+            "views": 10131
+        },
+        "orange juice": {
+            "type": "breakfast beverage",
+            "views": 16511,
+            "year": "1940s"
+        },
+        "oreo": {
+            "type": "cookie",
+            "views": 54501,
+            "year": "1990s"
+        },
+        "ossobuco": {
+            "ingredients": [
+                "cross-cut veal shanks braised",
+                "vegetables",
+                "white wine",
+                "broth"
+            ],
+            "origin": "Italy",
+            "type": "beef dish",
+            "views": 20625
+        },
+        "oxtail": {
+            "type": "soul foods and dish",
+            "views": 23641,
+            "year": "1791"
+        },
+        "oyster": {
+            "type": "snack",
+            "views": 52380,
+            "year": "14th century"
+        },
+        "paella": {
+            "ingredients": [
+                "short grain rice",
+                "chicken",
+                "rabbit",
+                "vegetables",
+                "saffron"
+            ],
+            "origin": "Spain",
+            "type": "rice dish",
+            "views": 47043,
+            "year": "15th century"
+        },
+        "pakora": {
+            "ingredients": [
+                "vegetablesgram flourspices"
+            ],
+            "origin": "South Asia",
+            "type": "fried dough food",
+            "views": 11321
+        },
+        "pancake": {
+            "type": "cake",
+            "views": 32922,
+            "year": "15th century"
+        },
+        "pancetta": {
+            "ingredients": [
+                "pork belly"
+            ],
+            "origin": "Italy",
+            "type": "rolled food",
+            "views": 29971
+        },
+        "pancit": {
+            "origin": "Philippines",
+            "type": "rice dish",
+            "views": 11529
+        },
+        "paneer": {
+            "ingredients": [
+                "strained curdled milk"
+            ],
+            "origin": "Indian Subcontinent",
+            "type": "cheese",
+            "views": 37842,
+            "year": "12th century"
+        },
+        "panettone": {
+            "ingredients": [
+                "flour",
+                "candied fruits",
+                "raisins"
+            ],
+            "origin": "Italy",
+            "type": "dessert",
+            "views": 33770,
+            "year": "18th century"
+        },
+        "panini": {
+            "ingredients": [
+                "bread"
+            ],
+            "origin": "Italy",
+            "type": "sandwich",
+            "views": 16394,
+            "year": "1970s"
+        },
+        "panipuri": {
+            "ingredients": [
+                "flour",
+                "spiced water",
+                "onions",
+                "potatoes",
+                "chickpeas"
+            ],
+            "origin": "India",
+            "type": "deep fried food",
+            "views": 16149
+        },
+        "panna cotta": {
+            "ingredients": [
+                "cream",
+                "sugar",
+                "gelatin"
+            ],
+            "origin": "Italy",
+            "type": "sweet pudding",
+            "views": 18415,
+            "year": "1900s"
+        },
+        "papadum": {
+            "ingredients": [
+                "flour from lentils",
+                "black gram",
+                "chickpeas",
+                "potato",
+                "rice"
+            ],
+            "origin": "Indian Subcontinent",
+            "type": "fried dough food",
+            "views": 19775,
+            "year": "1950s"
+        },
+        "paratha": {
+            "ingredients": [
+                "atta",
+                "maida",
+                "ghee",
+                "butter",
+                "cooking oil",
+                "various stuffings"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "fried dough food",
+            "views": 13955
+        },
+        "pasta": {
+            "ingredients": [
+                "durum wheat flour"
+            ],
+            "origin": "Italy",
+            "type": "snack",
+            "views": 64943,
+            "year": "15th century"
+        },
+        "pasta e fagioli": {
+            "ingredients": [
+                "small pasta",
+                "cannellini beans",
+                "borlotti beans",
+                "olive oil",
+                "garlic",
+                "onions",
+                "spices",
+                "stewed tomato",
+                "tomato paste"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 19300
+        },
+        "pastel de nata": {
+            "ingredients": [
+                "egg yolks"
+            ],
+            "origin": "Portugal",
+            "type": "pie",
+            "views": 17036,
+            "year": "18th century"
+        },
+        "pastitsio": {
+            "ingredients": [
+                "ground beef",
+                "b\u00e9chamel sauce"
+            ],
+            "origin": "Greece",
+            "type": "pasta dish",
+            "views": 10193,
+            "year": "16th century"
+        },
+        "pastry": {
+            "ingredients": [
+                "often flour",
+                "sugar",
+                "milk",
+                "butter",
+                "shortening",
+                "baking powder",
+                "eggs"
+            ],
+            "origin": "Worldwide",
+            "type": "snack",
+            "views": 23536,
+            "year": "5th century"
+        },
+        "pasty": {
+            "ingredients": [
+                "a pastry case traditionally filled",
+                "beef skirt",
+                "potato",
+                "swede",
+                "onion"
+            ],
+            "origin": "United Kingdom",
+            "type": "pie",
+            "views": 21499,
+            "year": "19th century"
+        },
+        "patatas bravas": {
+            "ingredients": [
+                "potato"
+            ],
+            "origin": "Madrid",
+            "type": "potato dish",
+            "views": 11315
+        },
+        "pea soup": {
+            "ingredients": [
+                "dried peas"
+            ],
+            "origin": "Ancient Greece or Ancient Rome",
+            "type": "soup",
+            "views": 12685,
+            "year": "13th century"
+        },
+        "peach": {
+            "type": "snack",
+            "views": 29575,
+            "year": "9th century"
+        },
+        "peanut": {
+            "type": "snack",
+            "views": 78531,
+            "year": "1930s"
+        },
+        "peanut butter and jelly sandwich": {
+            "origin": "United States",
+            "type": "sandwich",
+            "views": 15826,
+            "year": "1900s"
+        },
+        "peanut butter, banana and bacon sandwich": {
+            "ingredients": [
+                "sliced bread",
+                "peanut butter",
+                "banana",
+                "bacon"
+            ],
+            "origin": "United States",
+            "type": "bacon dish",
+            "views": 10375
+        },
+        "petit four": {
+            "ingredients": [
+                "varies by type"
+            ],
+            "origin": "France",
+            "type": "dessert",
+            "views": 16054,
+            "year": "19th century"
+        },
+        "pez": {
+            "ingredients": [
+                "sugar"
+            ],
+            "origin": "Austria",
+            "type": "candy",
+            "views": 10061,
+            "year": "1970s"
+        },
+        "phaseolus vulgaris": {
+            "type": "legume dish",
+            "views": 19196,
+            "year": "16th century"
+        },
+        "philippine adobo": {
+            "ingredients": [
+                "meat",
+                "seafood",
+                "vegetables",
+                "soy sauce",
+                "vinegar",
+                "cooking oil",
+                "garlic",
+                "black peppercorn",
+                "bay leaf"
+            ],
+            "origin": "Philippines",
+            "type": "chicken dish",
+            "views": 13147,
+            "year": "16th century"
+        },
+        "philippines": {
+            "type": "rice dish",
+            "views": 433188,
+            "year": "17th century"
+        },
+        "pho": {
+            "ingredients": [
+                "rice noodles",
+                "beef",
+                "chicken"
+            ],
+            "origin": "Vietnam",
+            "type": "beef dish",
+            "views": 56263,
+            "year": "1920s"
+        },
+        "picadillo": {
+            "type": "beef dish",
+            "views": 11808,
+            "year": "19th century"
+        },
+        "piccata": {
+            "type": "chicken dish",
+            "views": 21653
+        },
+        "pickled cucumber": {
+            "ingredients": [
+                "cucumber",
+                "brine",
+                "vinegar",
+                "other solution"
+            ],
+            "type": "vegetable dish",
+            "views": 32759,
+            "year": "15th century"
+        },
+        "pickling": {
+            "type": "fermented food",
+            "views": 23413,
+            "year": "1641"
+        },
+        "pico de gallo": {
+            "type": "tomato dish",
+            "views": 28664
+        },
+        "pie": {
+            "ingredients": [
+                "pie shell"
+            ],
+            "type": "pastry",
+            "views": 19701,
+            "year": "12th century"
+        },
+        "pigs in a blanket": {
+            "ingredients": [
+                "chipolata",
+                "hot dog",
+                "other sausage"
+            ],
+            "type": "hors d'oeuvre",
+            "views": 17063
+        },
+        "pilaf": {
+            "ingredients": [
+                "rice",
+                "stock",
+                "broth",
+                "spices",
+                "meat",
+                "vegetables",
+                "dried fruits"
+            ],
+            "type": "rice dish",
+            "views": 31459,
+            "year": "16th century"
+        },
+        "pimento cheese": {
+            "ingredients": [
+                "cheddar cheese",
+                "processed cheese",
+                "mayonnaise",
+                "pimentos"
+            ],
+            "origin": "United States",
+            "type": "sandwich",
+            "views": 10244
+        },
+        "pirozhki": {
+            "ingredients": [
+                "yeast dough",
+                "various fillings"
+            ],
+            "origin": "Russia",
+            "type": "pie",
+            "views": 10546
+        },
+        "pistachio": {
+            "type": "snack",
+            "views": 62945,
+            "year": "16th century"
+        },
+        "pita": {
+            "ingredients": [
+                "flour",
+                "water",
+                "yeast",
+                "salt"
+            ],
+            "origin": "Fertile Crescent, Middle East",
+            "type": "bread",
+            "views": 19791,
+            "year": "1108"
+        },
+        "pizza": {
+            "ingredients": [
+                "dough",
+                "sauce",
+                "cheese"
+            ],
+            "origin": "Italy",
+            "type": "bread",
+            "views": 115171,
+            "year": "6th century"
+        },
+        "pi\u00f1ata": {
+            "type": "candy",
+            "views": 18696,
+            "year": "14th century"
+        },
+        "po' boy": {
+            "ingredients": [
+                "multiple"
+            ],
+            "origin": "New Orleans, Louisiana",
+            "type": "sandwich",
+            "views": 21664,
+            "year": "1960s"
+        },
+        "poached egg": {
+            "ingredients": [
+                "eggs"
+            ],
+            "type": "egg dish",
+            "views": 31998
+        },
+        "pocky": {
+            "ingredients": [
+                "biscuit stick",
+                "chocolate"
+            ],
+            "origin": "Japan",
+            "type": "candy",
+            "views": 11620
+        },
+        "poi": {
+            "type": "fermented food",
+            "views": 16431,
+            "year": "1890"
+        },
+        "pomelo": {
+            "type": "citrus fruit",
+            "views": 108592
+        },
+        "pongal": {
+            "ingredients": [
+                "sweet: rice",
+                "milk",
+                "jaggery",
+                "coconut pieces",
+                "mung beanspicy: rice",
+                "pepper",
+                "tamarind rice"
+            ],
+            "origin": "India",
+            "type": "rice dish",
+            "views": 13472
+        },
+        "popcorn": {
+            "type": "snack",
+            "views": 43173,
+            "year": "7th century",
+            "origin": "Mesoamerica"
+        },
+        "pork": {
+            "type": "soul foods and dish",
+            "views": 32244,
+            "year": "1800"
+        },
+        "pork ribs": {
+            "type": "soul foods and dish",
+            "views": 11131
+        },
+        "pork rind": {
+            "ingredients": [
+                "pig skin"
+            ],
+            "type": "snack",
+            "views": 24929
+        },
+        "pork roll": {
+            "type": "rolled food",
+            "views": 14218,
+            "year": "1870"
+        },
+        "portulaca oleracea": {
+            "type": "leaf vegetable",
+            "views": 11848,
+            "year": "1350"
+        },
+        "potato": {
+            "type": "soup",
+            "views": 120930,
+            "year": "16th century"
+        },
+        "potato chip": {
+            "origin": "United Kingdom, 1817",
+            "type": "potato dish",
+            "views": 28236,
+            "year": "1950s"
+        },
+        "potato pancake": {
+            "ingredients": [
+                "potatoes",
+                "flour",
+                "egg",
+                "cooking oil"
+            ],
+            "type": "potato dish",
+            "views": 18156,
+            "year": "19th century"
+        },
+        "potato salad": {
+            "ingredients": [
+                "potatoes",
+                "mayonnaise"
+            ],
+            "type": "salad",
+            "views": 11159
+        },
+        "poultry": {
+            "type": "soul foods and dish",
+            "views": 32071,
+            "year": "1240s"
+        },
+        "pound cake": {
+            "ingredients": [
+                "flour",
+                "butter",
+                "sugar",
+                "eggs"
+            ],
+            "type": "dessert",
+            "views": 10343,
+            "year": "1700s"
+        },
+        "poutine": {
+            "ingredients": [
+                "french fries",
+                "gravy",
+                "cheese curds"
+            ],
+            "origin": "Canada",
+            "type": "potato dish",
+            "views": 45573,
+            "year": "1950s"
+        },
+        "powdered milk": {
+            "type": "dairy product",
+            "views": 17046,
+            "year": "1802"
+        },
+        "powerade": {
+            "type": "snack",
+            "views": 13214
+        },
+        "pozole": {
+            "ingredients": [
+                "hominy",
+                "meat",
+                "chile peppers",
+                "seasonings"
+            ],
+            "origin": "Mexico",
+            "type": "stew",
+            "views": 23690,
+            "year": "16th century"
+        },
+        "prawn cracker": {
+            "ingredients": [
+                "deep fried dried starch",
+                "other ingredients",
+                "the most popular is prawn"
+            ],
+            "origin": "Indonesia",
+            "type": "shrimp dish",
+            "views": 12373,
+            "year": "16th century"
+        },
+        "pretzel": {
+            "type": "pastry",
+            "views": 29017,
+            "year": "12th century"
+        },
+        "processed cheese": {
+            "type": "dairy product",
+            "views": 12055
+        },
+        "profiterole": {
+            "ingredients": [
+                "choux pastryfilling: whipped cream",
+                "custard",
+                "ice cream"
+            ],
+            "origin": "Europe",
+            "type": "choux pastry dish",
+            "views": 12066,
+            "year": "1540"
+        },
+        "pu pu platter": {
+            "ingredients": [
+                "meat",
+                "seafood"
+            ],
+            "type": "hors d'oeuvre",
+            "views": 11304,
+            "year": "1970s"
+        },
+        "pudding": {
+            "type": "dessert",
+            "views": 23267,
+            "year": "14th century"
+        },
+        "puff pastry": {
+            "ingredients": [
+                "butter",
+                "flour",
+                "water"
+            ],
+            "type": "pastry",
+            "views": 12755,
+            "year": "17th century"
+        },
+        "pulque": {
+            "type": "fermented food",
+            "views": 14648,
+            "year": "19th century"
+        },
+        "pumpernickel": {
+            "ingredients": [
+                "rye flour",
+                "rye berries"
+            ],
+            "origin": "Germany",
+            "type": "bread",
+            "views": 14168,
+            "year": "1756"
+        },
+        "pumpkin": {
+            "type": "soup",
+            "views": 31001,
+            "year": "1837"
+        },
+        "p\u0105czki": {
+            "ingredients": [
+                "yeast-based dough",
+                "grain alcohol",
+                "confiture",
+                "other sweet filling",
+                "powdered sugar",
+                "icing",
+                "glaze",
+                "bits of dried orange zest"
+            ],
+            "origin": "Poland",
+            "type": "custard dessert",
+            "views": 25698
+        },
+        "quark": {
+            "type": "cheese",
+            "views": 27823,
+            "year": "14th century"
+        },
+        "quiche": {
+            "ingredients": [
+                "pastry case filled",
+                "egg",
+                "cheese",
+                "meat",
+                "seafood",
+                "vegetables"
+            ],
+            "origin": "France",
+            "type": "pie",
+            "views": 18058,
+            "year": "14th century"
+        },
+        "raclette": {
+            "type": "potato dish",
+            "views": 42928,
+            "year": "1950s"
+        },
+        "raisin": {
+            "type": "snack",
+            "views": 28746
+        },
+        "ramen": {
+            "ingredients": [
+                "chinese wheat noodles",
+                "fish-based broth",
+                "vegetables",
+                "meat"
+            ],
+            "origin": "Yokohama Chinatown, Japan",
+            "type": "soup",
+            "views": 73964,
+            "year": "1660s"
+        },
+        "ranch dressing": {
+            "ingredients": [
+                "mayonnaise",
+                "sour cream",
+                "buttermilk",
+                "salt",
+                "black pepper",
+                "garlic",
+                "onion",
+                "chives",
+                "parsley",
+                "dill"
+            ],
+            "origin": "United States",
+            "type": "salad",
+            "views": 29382,
+            "year": "1950s"
+        },
+        "rapini": {
+            "type": "leaf vegetable",
+            "views": 19867,
+            "year": "1123"
+        },
+        "ratatouille": {
+            "ingredients": [
+                "vegetables",
+                "garlic",
+                "marjoram",
+                "fennel",
+                "basil",
+                "bay leaves",
+                "thyme"
+            ],
+            "origin": "France",
+            "type": "stew",
+            "views": 43991,
+            "year": "18th century"
+        },
+        "red bull": {
+            "type": "snack",
+            "views": 87362,
+            "year": "1987"
+        },
+        "red velvet cake": {
+            "ingredients": [
+                "flour",
+                "buttermilk",
+                "butter",
+                "sugar",
+                "cocoa powder",
+                "and",
+                "or cream cheese icing",
+                "beetroot",
+                "red food coloring",
+                "natural coloring"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 35891,
+            "year": "19th century"
+        },
+        "religious restrictions on the consumption of pork": {
+            "type": "pork dish",
+            "views": 65569,
+            "year": "12th century"
+        },
+        "relish": {
+            "type": "sauce",
+            "views": 10254,
+            "year": "1828"
+        },
+        "rendang": {
+            "ingredients": [
+                "meat",
+                "coconut milk",
+                "chilli",
+                "ginger",
+                "galangal",
+                "turmeric",
+                "lemongrass",
+                "garlic",
+                "shallot"
+            ],
+            "origin": "Indonesia",
+            "type": "beef dish",
+            "views": 12709,
+            "year": "15th century"
+        },
+        "reuben sandwich": {
+            "ingredients": [
+                "corned beef",
+                "sauerkraut",
+                "swiss cheese",
+                "rye bread",
+                "russian dressing"
+            ],
+            "origin": "Nebraska",
+            "type": "sandwich",
+            "views": 32084,
+            "year": "1914"
+        },
+        "rice cake": {
+            "type": "cake",
+            "views": 10381
+        },
+        "rice krispies": {
+            "type": "rice dish",
+            "views": 11837,
+            "year": "1930s"
+        },
+        "rice pudding": {
+            "ingredients": [
+                "rice",
+                "water",
+                "milk"
+            ],
+            "origin": "Worldwide",
+            "type": "poppy seed pastries and dish",
+            "views": 20047,
+            "year": "1615"
+        },
+        "ricotta": {
+            "texture": "Dependent on variety, fresh soft to aged semisoft",
+            "type": "dairy product",
+            "views": 22442,
+            "year": "19th century"
+        },
+        "risotto": {
+            "ingredients": [
+                "rice",
+                "broth",
+                "butter",
+                "onion",
+                "white wine",
+                "parmesan cheese"
+            ],
+            "origin": "Italy",
+            "type": "rice dish",
+            "views": 26724,
+            "year": "14th century"
+        },
+        "rocky mountain oysters": {
+            "ingredients": [
+                "testicles",
+                "flour",
+                "pepper and",
+                "salt"
+            ],
+            "type": "beef dish",
+            "views": 16184
+        },
+        "rolled oats": {
+            "type": "rolled food",
+            "views": 20549,
+            "year": "1413"
+        },
+        "root beer": {
+            "type": "snack",
+            "views": 43365,
+            "year": "16th century"
+        },
+        "ropa vieja": {
+            "type": "beef dish",
+            "views": 11104
+        },
+        "rosca de reyes": {
+            "type": "dessert",
+            "views": 119276,
+            "year": "18th century"
+        },
+        "roti": {
+            "ingredients": [
+                "atta flour"
+            ],
+            "origin": "Indian subcontinent",
+            "type": "bread",
+            "views": 21760,
+            "year": "19th century"
+        },
+        "rusk": {
+            "type": "bread dish",
+            "views": 12374,
+            "year": "1690s"
+        },
+        "russian dressing": {
+            "ingredients": [
+                "mayonnaise",
+                "ketchup",
+                "horseradish",
+                "pimentos",
+                "chives",
+                "spices"
+            ],
+            "origin": "United States",
+            "type": "salad",
+            "views": 13328,
+            "year": "1910s"
+        },
+        "rye bread": {
+            "ingredients": [
+                "rye flour"
+            ],
+            "type": "bread",
+            "views": 22904
+        },
+        "s'more": {
+            "ingredients": [
+                "graham crackers",
+                "chocolate",
+                "marshmallows"
+            ],
+            "origin": "United StatesCanada",
+            "type": "dessert",
+            "views": 13049,
+            "year": "1920s"
+        },
+        "sachertorte": {
+            "ingredients": [
+                "chocolate sponge cake",
+                "apricot jam",
+                "dark chocolate icing"
+            ],
+            "origin": "Austria",
+            "type": "dessert",
+            "views": 18317,
+            "year": "1832"
+        },
+        "sacramental bread": {
+            "type": "bread",
+            "views": 13255
+        },
+        "salad cream": {
+            "ingredients": [
+                "oil",
+                "water",
+                "egg yolks",
+                "spirit vinegar"
+            ],
+            "origin": "United Kingdom",
+            "type": "salad",
+            "views": 10261,
+            "year": "1914"
+        },
+        "salami": {
+            "type": "fermented food",
+            "views": 42796,
+            "year": "1142"
+        },
+        "salep": {
+            "type": "breakfast beverage",
+            "views": 16320,
+            "year": "18th century"
+        },
+        "salsa": {
+            "ingredients": [
+                "varies"
+            ],
+            "type": "sauce",
+            "views": 11794,
+            "year": "1980s"
+        },
+        "salty liquorice": {
+            "ingredients": [
+                "liquorice-root extract",
+                "salmiak salt",
+                "sugar",
+                "glucose syrup",
+                "modified starch",
+                "brown sugar syrup",
+                "anise oil"
+            ],
+            "origin": "Northern Europe",
+            "type": "dessert",
+            "views": 13139,
+            "year": "1930s"
+        },
+        "sambar": {
+            "ingredients": [
+                "tamarind broth",
+                "lentils",
+                "vegetables"
+            ],
+            "origin": "India",
+            "type": "soup",
+            "views": 11894,
+            "year": "17th century"
+        },
+        "samosa": {
+            "ingredients": [
+                "flour",
+                "vegetables"
+            ],
+            "type": "pie",
+            "views": 28738,
+            "year": "16th century"
+        },
+        "sandwich": {
+            "ingredients": [
+                "bread",
+                "meat",
+                "cheese",
+                "salad vegetables",
+                "sauce",
+                "savoury spread"
+            ],
+            "type": "snack",
+            "views": 47238,
+            "year": "1920s"
+        },
+        "sashimi": {
+            "type": "raw fish dish",
+            "views": 38256,
+            "year": "1297"
+        },
+        "satay": {
+            "ingredients": [
+                "skewered",
+                "grilled meats",
+                "various sauces",
+                "mainly peanut sauce"
+            ],
+            "origin": "Indonesia",
+            "type": "kebab",
+            "views": 16541,
+            "year": "18th century"
+        },
+        "sauerkraut": {
+            "type": "vegetable dish",
+            "views": 57580,
+            "year": "1765"
+        },
+        "schnitzel": {
+            "ingredients": [
+                "meat"
+            ],
+            "type": "chicken dish",
+            "views": 35580,
+            "year": "1899"
+        },
+        "scotch egg": {
+            "ingredients": [
+                "boiled egg",
+                "sausage",
+                "bread crumbs"
+            ],
+            "origin": "England",
+            "type": "egg dish",
+            "views": 15034,
+            "year": "19th century"
+        },
+        "scrambled eggs": {
+            "ingredients": [
+                "eggs"
+            ],
+            "type": "egg dish",
+            "views": 19459,
+            "year": "1822"
+        },
+        "scrapple": {
+            "ingredients": [
+                "mush of pork",
+                "cornmeal",
+                "flour",
+                "buckwheat flour",
+                "spices"
+            ],
+            "origin": "United States",
+            "type": "savoury pudding",
+            "views": 25066
+        },
+        "semla": {
+            "ingredients": [
+                "wheat bread",
+                "whipped cream",
+                "almond paste"
+            ],
+            "type": "pastry",
+            "views": 11849,
+            "year": "1771"
+        },
+        "shabu-shabu": {
+            "ingredients": [
+                "meat",
+                "vegetables",
+                "tofu"
+            ],
+            "origin": "Japan",
+            "type": "beef dish",
+            "views": 15541
+        },
+        "shakshouka": {
+            "origin": "Disputed; Maghreb, Ottoman Empire or Yemen",
+            "type": "egg dish",
+            "views": 63685,
+            "year": "1950s"
+        },
+        "shark fin soup": {
+            "ingredients": [
+                "shark fins",
+                "broth"
+            ],
+            "origin": "China",
+            "type": "soup",
+            "views": 14106,
+            "year": "1970s"
+        },
+        "shawarma": {
+            "ingredients": [
+                "meat: lamb",
+                "chicken",
+                "turkey",
+                "beefsandwich: shawarma meat",
+                "pita",
+                "wrap bread",
+                "chopped",
+                "shredded vegetables",
+                "pickles",
+                "assorted condiments"
+            ],
+            "origin": "Ottoman Empire",
+            "type": "kebab",
+            "views": 53225,
+            "year": "19th century"
+        },
+        "shortbread": {
+            "ingredients": [
+                "flour",
+                "butter",
+                "white sugar"
+            ],
+            "origin": "Scotland",
+            "type": "cookie",
+            "views": 14302,
+            "year": "12th century"
+        },
+        "shortcrust pastry": {
+            "ingredients": [
+                "fat",
+                "flour",
+                "water"
+            ],
+            "type": "pastry",
+            "views": 10346
+        },
+        "skittles": {
+            "type": "candy",
+            "views": 20555
+        },
+        "skyr": {
+            "type": "dairy product",
+            "views": 17144
+        },
+        "sloppy joe": {
+            "ingredients": [
+                "ground beef",
+                "onions",
+                "sweetened tomato sauce",
+                "ketchup",
+                "worcestershire sauce",
+                "seasoning",
+                "hamburger bun"
+            ],
+            "origin": "United States",
+            "type": "beef dish",
+            "views": 16257,
+            "year": "1930s"
+        },
+        "smarties": {
+            "type": "candy",
+            "views": 14175,
+            "year": "1980s"
+        },
+        "smetana": {
+            "ingredients": [
+                "heavy cream"
+            ],
+            "type": "dairy product",
+            "views": 10478,
+            "year": "1677"
+        },
+        "smoothie": {
+            "type": "snack",
+            "views": 15979,
+            "year": "1930s"
+        },
+        "snack": {
+            "type": "snack",
+            "views": 17052,
+            "year": "17th century"
+        },
+        "snickerdoodle": {
+            "ingredients": [
+                "flour",
+                "butter",
+                "oil",
+                "sugar",
+                "cinnamon sugar",
+                "salt"
+            ],
+            "type": "dessert",
+            "views": 14664,
+            "year": "17th century"
+        },
+        "snickers": {
+            "type": "candy",
+            "views": 33152,
+            "year": "1970s"
+        },
+        "sofrito": {
+            "ingredients": [
+                "garlic",
+                "onion",
+                "peppers",
+                "tomatoes"
+            ],
+            "type": "sauce",
+            "views": 24150,
+            "year": "14th century"
+        },
+        "soft drink": {
+            "type": "snack",
+            "views": 40748,
+            "year": "18th century"
+        },
+        "sorbet": {
+            "ingredients": [
+                "water",
+                "sugar",
+                "flavoring"
+            ],
+            "type": "dessert",
+            "views": 14544,
+            "year": "1662"
+        },
+        "souffl\u00e9": {
+            "ingredients": [
+                "egg yolks",
+                "egg whites"
+            ],
+            "origin": "France",
+            "type": "custard dessert",
+            "views": 16721,
+            "year": "1899"
+        },
+        "soup": {
+            "ingredients": [
+                "liquid",
+                "meat",
+                "vegetables",
+                "other ingredients"
+            ],
+            "type": "sauce",
+            "views": 35268,
+            "year": "16th century"
+        },
+        "sour cream": {
+            "type": "dairy product",
+            "views": 18169,
+            "year": "1367"
+        },
+        "sour patch kids": {
+            "type": "candy",
+            "views": 14550,
+            "year": "1970s"
+        },
+        "soy milk": {
+            "origin": "China",
+            "type": "breakfast beverage",
+            "views": 28658,
+            "year": "11th century"
+        },
+        "soy sauce": {
+            "ingredients": [
+                "soybeans"
+            ],
+            "type": "fermented soy product",
+            "views": 36726,
+            "year": "19th century"
+        },
+        "soybean": {
+            "type": "tofu dish",
+            "views": 66008,
+            "year": "13th century"
+        },
+        "spaghetti": {
+            "ingredients": [
+                "tomatoes",
+                "olives",
+                "capers",
+                "garlic"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 23797,
+            "year": "12th century"
+        },
+        "spanish omelette": {
+            "ingredients": [
+                "egg",
+                "potatoes"
+            ],
+            "type": "egg dish",
+            "views": 13182,
+            "year": "1817"
+        },
+        "speculaas": {
+            "ingredients": [
+                "flour",
+                "sugar",
+                "butter",
+                "pepper",
+                "cinnamon",
+                "ginger",
+                "cloves",
+                "cardamom",
+                "nutmeg"
+            ],
+            "origin": "Belgium/The Netherlands/Rhineland",
+            "type": "cookie",
+            "views": 13297,
+            "year": "1600"
+        },
+        "spice": {
+            "type": "condiment",
+            "views": 36997,
+            "year": "1st century"
+        },
+        "split pea": {
+            "type": "soup",
+            "views": 15511
+        },
+        "sponge cake": {
+            "ingredients": [
+                "wheat flour",
+                "sugar",
+                "egg whites",
+                "baking powder"
+            ],
+            "type": "dessert",
+            "views": 23339,
+            "year": "19th century"
+        },
+        "spotted dick": {
+            "ingredients": [
+                "suet",
+                "dried fruit",
+                "flour",
+                "sugar",
+                "milk",
+                "baking powder"
+            ],
+            "origin": "United Kingdom",
+            "type": "sweet pudding",
+            "views": 21655,
+            "year": "19th century"
+        },
+        "spring roll": {
+            "type": "rolled food",
+            "views": 14255,
+            "year": "7th century"
+        },
+        "sprouted bread": {
+            "ingredients": [
+                "whole grains"
+            ],
+            "type": "bread",
+            "views": 13742,
+            "year": "2nd century"
+        },
+        "sp\u00e4tzle": {
+            "ingredients": [
+                "egg noodles"
+            ],
+            "origin": "Germany, Central Europe",
+            "type": "pasta dish",
+            "views": 20114,
+            "year": "18th century"
+        },
+        "sriracha sauce": {
+            "type": "hot sauce",
+            "views": 21636,
+            "year": "1980"
+        },
+        "starburst": {
+            "type": "candy",
+            "views": 13986,
+            "year": "1960s"
+        },
+        "steak": {
+            "type": "beef dish",
+            "views": 42964,
+            "year": "19th century"
+        },
+        "steak tartare": {
+            "ingredients": [
+                "raw beef"
+            ],
+            "type": "beef dish",
+            "views": 40915,
+            "year": "13th century"
+        },
+        "stew": {
+            "ingredients": [
+                "vegetables",
+                "a liquid such as water",
+                "stock"
+            ],
+            "type": "soup",
+            "views": 23581,
+            "year": "4th century"
+        },
+        "sticky toffee pudding": {
+            "ingredients": [
+                "sponge cake",
+                "dates",
+                "toffee"
+            ],
+            "origin": "England",
+            "type": "sweet pudding",
+            "views": 11451,
+            "year": "1970s"
+        },
+        "stilton cheese": {
+            "texture": "semi-soft, crumbly, creamier with increasing age",
+            "type": "cheese",
+            "views": 17139,
+            "year": "18th century"
+        },
+        "stinky tofu": {
+            "ingredients": [
+                "fermented tofu"
+            ],
+            "origin": "China",
+            "type": "fermented soy product",
+            "views": 11428
+        },
+        "stock": {
+            "type": "soup",
+            "views": 14862,
+            "year": "1877"
+        },
+        "stollen": {
+            "ingredients": [
+                "candied fruit",
+                "dried fruit",
+                "nuts",
+                "spices",
+                "sugar",
+                "powdered sugar",
+                "icing sugar"
+            ],
+            "origin": "Germany",
+            "type": "dessert",
+            "views": 12759,
+            "year": "15th century"
+        },
+        "stracciatella": {
+            "ingredients": [
+                "milk",
+                "cream",
+                "milk chocolate"
+            ],
+            "origin": "Italy",
+            "type": "dessert",
+            "views": 11012,
+            "year": "1961"
+        },
+        "strained yogurt": {
+            "ingredients": [
+                "yogurt"
+            ],
+            "type": "cheese",
+            "views": 16304,
+            "year": "1980s"
+        },
+        "street food": {
+            "type": "street food",
+            "views": 13363,
+            "year": "14th century"
+        },
+        "stroopwafel": {
+            "ingredients": [
+                "batter: flour",
+                "butter",
+                "brown sugar",
+                "yeast",
+                "milk",
+                "eggsfilling: syrup",
+                "brown sugar",
+                "butter",
+                "cinnamon"
+            ],
+            "origin": "Netherlands",
+            "type": "dessert",
+            "views": 22163,
+            "year": "18th century"
+        },
+        "stuffed peppers": {
+            "ingredients": [
+                "peppers"
+            ],
+            "type": "vegetable dish",
+            "views": 25988
+        },
+        "submarine sandwich": {
+            "ingredients": [
+                "multiple"
+            ],
+            "origin": "United States",
+            "type": "sandwich",
+            "views": 18932,
+            "year": "19th century"
+        },
+        "succotash": {
+            "ingredients": [
+                "sweet corn",
+                "lima beans",
+                "butter",
+                "salt"
+            ],
+            "origin": "United States and Canada",
+            "type": "vegetable dish",
+            "views": 18088,
+            "year": "17th century"
+        },
+        "sukiyaki": {
+            "ingredients": [
+                "meat",
+                "vegetables",
+                "soy sauce",
+                "sugar",
+                "mirin"
+            ],
+            "origin": "Japan",
+            "type": "beef dish",
+            "views": 15380,
+            "year": "1860s"
+        },
+        "sundae": {
+            "ingredients": [
+                "ice cream",
+                "sauce",
+                "syrup",
+                "various toppings"
+            ],
+            "origin": "United States",
+            "type": "dessert",
+            "views": 10927,
+            "year": "19th century"
+        },
+        "surstr\u00f6mming": {
+            "ingredients": [
+                "baltic herring"
+            ],
+            "origin": "Sweden",
+            "type": "fermented food",
+            "views": 46185,
+            "year": "16th century"
+        },
+        "sushi": {
+            "ingredients": [
+                "vinegared rice"
+            ],
+            "origin": "Japan",
+            "type": "rice dish",
+            "views": 75749,
+            "year": "1824"
+        },
+        "swedish fish": {
+            "ingredients": [
+                "sugar",
+                "invert sugar",
+                "corn syrup",
+                "corn starch",
+                "citric acid"
+            ],
+            "origin": "Sweden",
+            "type": "candy",
+            "views": 12747,
+            "year": "1950s"
+        },
+        "sweet potato": {
+            "type": "soul foods and dish",
+            "views": 61098,
+            "year": "19th century"
+        },
+        "sweethearts": {
+            "type": "candy",
+            "views": 15214,
+            "year": "1847"
+        },
+        "syrup": {
+            "type": "pancake",
+            "views": 15401
+        },
+        "tabasco sauce": {
+            "type": "hot sauce",
+            "views": 28151,
+            "year": "1980s"
+        },
+        "tabbouleh": {
+            "ingredients": [
+                "parsley",
+                "tomato",
+                "bulgur",
+                "onion",
+                "olive oil",
+                "lemon juice",
+                "salt"
+            ],
+            "origin": "Lebanon and Syria",
+            "type": "salad",
+            "views": 17532,
+            "year": "1950s"
+        },
+        "tagliatelle": {
+            "ingredients": [
+                "flour",
+                "egg"
+            ],
+            "origin": "Italy",
+            "type": "pasta dish",
+            "views": 11853,
+            "year": "1931"
+        },
+        "tahini": {
+            "ingredients": [
+                "sesame seeds"
+            ],
+            "type": "salad",
+            "views": 32959,
+            "year": "1930s"
+        },
+        "taiyaki": {
+            "ingredients": [
+                "batter",
+                "sweetened azuki beans"
+            ],
+            "origin": "\u00a0Japan",
+            "type": "pastry",
+            "views": 10245,
+            "year": "1909"
+        },
+        "tajine": {
+            "origin": "Morocco, Algeria, Tunisia, Libya",
+            "type": "stew",
+            "views": 19785,
+            "year": "1453"
+        },
+        "takoyaki": {
+            "ingredients": [
+                "batter",
+                "octopus",
+                "tempura scraps"
+            ],
+            "origin": "Japan",
+            "type": "egg dish",
+            "views": 21663,
+            "year": "1930s"
+        },
+        "tamagoyaki": {
+            "ingredients": [
+                "egg"
+            ],
+            "origin": "Japan",
+            "type": "egg dish",
+            "views": 11994
+        },
+        "tandoori chicken": {
+            "ingredients": [
+                "chicken",
+                "dahi",
+                "honey",
+                "tandoori masala"
+            ],
+            "origin": "British-India",
+            "type": "chicken dish",
+            "views": 18602,
+            "year": "1940s"
+        },
+        "tangelo": {
+            "type": "citrus fruit",
+            "views": 15305
+        },
+        "tangerine": {
+            "type": "citrus fruit",
+            "views": 28879
+        },
+        "tangyuan": {
+            "ingredients": [
+                "glutinous rice flour"
+            ],
+            "origin": "Greater China",
+            "type": "rice dish",
+            "views": 12966
+        },
+        "tapas": {
+            "ingredients": [
+                "various"
+            ],
+            "origin": "Spain",
+            "type": "snack",
+            "views": 33664,
+            "year": "1877"
+        },
+        "tapioca": {
+            "type": "cassava dish",
+            "views": 63854,
+            "year": "1500"
+        },
+        "tarte tatin": {
+            "ingredients": [
+                "apples"
+            ],
+            "origin": "France",
+            "type": "dessert",
+            "views": 10145,
+            "year": "1880s"
+        },
+        "tartiflette": {
+            "ingredients": [
+                "potatoes",
+                "reblochon",
+                "lardons",
+                "onions"
+            ],
+            "origin": "France",
+            "type": "potato dish",
+            "views": 10131,
+            "year": "1980s"
+        },
+        "tea": {
+            "type": "breakfast beverage",
+            "views": 82145,
+            "year": "3rd century"
+        },
+        "tempeh": {
+            "ingredients": [
+                "soybeans"
+            ],
+            "origin": "Indonesia",
+            "type": "fermented soy product",
+            "views": 50868,
+            "year": "13th century"
+        },
+        "tempura": {
+            "type": "shrimp dish",
+            "views": 25229,
+            "year": "16th century"
+        },
+        "tetrazzini": {
+            "type": "pasta dish",
+            "views": 10355,
+            "year": "1908"
+        },
+        "thai cuisine": {
+            "type": "rice dish",
+            "views": 26318,
+            "year": "17th century"
+        },
+        "thousand island dressing": {
+            "ingredients": [
+                "mayonnaise",
+                "olive oil",
+                "lemon juice",
+                "paprika",
+                "worcestershire sauce",
+                "mustard",
+                "vinegar",
+                "eggs",
+                "cream",
+                "chili sauce",
+                "tomato pur\u00e9e",
+                "ketchup"
+            ],
+            "origin": "United States",
+            "type": "salad",
+            "views": 18114,
+            "year": "19th century"
+        },
+        "throat lozenge": {
+            "type": "dessert",
+            "views": 15373,
+            "year": "19th century"
+        },
+        "tiramisu": {
+            "ingredients": [
+                "savoiardi",
+                "egg yolks",
+                "mascarpone",
+                "cocoa",
+                "coffee"
+            ],
+            "origin": "Italy",
+            "type": "custard dessert",
+            "views": 35513,
+            "year": "17th century"
+        },
+        "toast sandwich": {
+            "ingredients": [
+                "bread",
+                "toast",
+                "butter",
+                "salt",
+                "pepper",
+                "cumin"
+            ],
+            "origin": "United Kingdom",
+            "type": "sandwich",
+            "views": 40023,
+            "year": "150"
+        },
+        "toblerone": {
+            "type": "candy",
+            "views": 36596,
+            "year": "1960s"
+        },
+        "toffee": {
+            "ingredients": [
+                "sugar",
+                "molasses",
+                "butter"
+            ],
+            "type": "candy",
+            "views": 15332,
+            "year": "1825"
+        },
+        "tofu": {
+            "ingredients": [
+                "soy milk"
+            ],
+            "origin": "China",
+            "type": "sandwich",
+            "views": 83147,
+            "year": "8th century"
+        },
+        "tom yum": {
+            "ingredients": [
+                "broth",
+                "lemongrass",
+                "kaffir lime leaves",
+                "galangal",
+                "lime juice",
+                "fish sauce",
+                "chili peppers"
+            ],
+            "origin": "Central Thailand",
+            "type": "shrimp dish",
+            "views": 23916,
+            "year": "1980s"
+        },
+        "tomato": {
+            "type": "soup",
+            "views": 86298,
+            "year": "16th century"
+        },
+        "tomato sauce": {
+            "ingredients": [
+                "tomatoes"
+            ],
+            "origin": "Mexico",
+            "type": "tomato dish",
+            "views": 17220,
+            "year": "16th century"
+        },
+        "tonkatsu": {
+            "ingredients": [
+                "cutlet",
+                "cabbage",
+                "miso soup"
+            ],
+            "origin": "Japan",
+            "type": "sandwich",
+            "views": 12959,
+            "year": "19th century"
+        },
+        "tootsie roll": {
+            "type": "candy",
+            "views": 11362,
+            "year": "1943"
+        },
+        "tortilla": {
+            "ingredients": [
+                "masa harina",
+                "hominy"
+            ],
+            "origin": "Mesoamerica",
+            "type": "bread",
+            "views": 13265,
+            "year": "19th century"
+        },
+        "tostones": {
+            "ingredients": [
+                "unripe plantains",
+                "oil"
+            ],
+            "type": "deep fried food",
+            "views": 10041
+        },
+        "tres leches cake": {
+            "ingredients": [
+                "cake base",
+                "evaporated milk",
+                "condensed milk",
+                "heavy cream"
+            ],
+            "type": "dessert",
+            "views": 25449,
+            "year": "19th century"
+        },
+        "trifle": {
+            "ingredients": [
+                "variable: sponge biscuit",
+                "sherry",
+                "custard",
+                "fruit",
+                "whipped cream"
+            ],
+            "origin": "England",
+            "type": "custard dessert",
+            "views": 12207,
+            "year": "1861"
+        },
+        "turkey": {
+            "type": "soul foods and dish",
+            "views": 32454,
+            "year": "1550"
+        },
+        "turkish delight": {
+            "ingredients": [
+                "starch",
+                "sugar"
+            ],
+            "origin": "Ottoman Empire ,",
+            "type": "dessert",
+            "views": 29554,
+            "year": "18th century"
+        },
+        "turr\u00f3n": {
+            "ingredients": [
+                "honey",
+                "sugar",
+                "egg whites",
+                "almonds",
+                "other nuts"
+            ],
+            "type": "dessert",
+            "views": 11401,
+            "year": "15th century"
+        },
+        "twix": {
+            "type": "candy",
+            "views": 15510,
+            "year": "1990s"
+        },
+        "vasilopita": {
+            "origin": "Greece or Cyprus",
+            "type": "dessert",
+            "views": 15415
+        },
+        "vegemite": {
+            "type": "sandwich",
+            "views": 76587,
+            "year": "1922"
+        },
+        "vichyssoise": {
+            "ingredients": [
+                "leeks",
+                "onions",
+                "potatoes",
+                "cream",
+                "chicken stock"
+            ],
+            "origin": "France",
+            "type": "soup",
+            "views": 12916,
+            "year": "19th century"
+        },
+        "vienna sausage": {
+            "type": "sausage",
+            "views": 14698,
+            "year": "1950s"
+        },
+        "vinegar": {
+            "type": "fermented food",
+            "views": 71103,
+            "year": "19th century"
+        },
+        "waffle": {
+            "ingredients": [
+                "batter",
+                "dough"
+            ],
+            "origin": "France, Belgium",
+            "type": "dessert",
+            "views": 20376,
+            "year": "13th century"
+        },
+        "waldorf salad": {
+            "ingredients": [
+                "apples",
+                "celery",
+                "mayonnaise",
+                "walnuts",
+                "grapes"
+            ],
+            "origin": "United States",
+            "type": "salad",
+            "views": 15094,
+            "year": "1893"
+        },
+        "walnut": {
+            "type": "snack",
+            "views": 50176,
+            "year": "1806"
+        },
+        "watermelon": {
+            "type": "snack",
+            "views": 39177,
+            "year": "7th century"
+        },
+        "wedding cake": {
+            "type": "dessert",
+            "views": 10964,
+            "year": "16th century"
+        },
+        "wedding soup": {
+            "ingredients": [
+                "green vegetables",
+                "chicken broth"
+            ],
+            "origin": "Italy",
+            "type": "soup",
+            "views": 14027
+        },
+        "whey": {
+            "type": "dairy product",
+            "views": 34682,
+            "year": "1752"
+        },
+        "whey protein": {
+            "type": "dairy product",
+            "views": 29054,
+            "year": "1641"
+        },
+        "whipped cream": {
+            "ingredients": [
+                "cream"
+            ],
+            "type": "dairy product",
+            "views": 16286,
+            "year": "16th century"
+        },
+        "white pudding": {
+            "ingredients": [
+                "oatmeal",
+                "barley",
+                "suet",
+                "pork meat",
+                "liver"
+            ],
+            "origin": "Scotland, Ireland",
+            "type": "savoury pudding",
+            "views": 17400,
+            "year": "15th century"
+        },
+        "wine": {
+            "type": "fermented food",
+            "views": 60757,
+            "year": "14th century"
+        },
+        "wonton": {
+            "type": "deep fried food",
+            "views": 25033
+        },
+        "worcestershire sauce": {
+            "type": "sauce",
+            "views": 74155,
+            "year": "19th century"
+        },
+        "yakisoba": {
+            "ingredients": [
+                "noodles"
+            ],
+            "origin": "Japan",
+            "type": "sandwich",
+            "views": 12122
+        },
+        "yakitori": {
+            "type": "chicken dish",
+            "views": 16485
+        },
+        "yakult": {
+            "type": "dairy product",
+            "views": 33021,
+            "year": "1930s"
+        },
+        "yogurt": {
+            "ingredients": [
+                "milk",
+                "bacteria"
+            ],
+            "type": "dairy product",
+            "views": 53162,
+            "year": "11th century"
+        },
+        "yorkshire pudding": {
+            "ingredients": [
+                "milk",
+                "water",
+                "flour",
+                "eggs"
+            ],
+            "origin": "Northern England",
+            "type": "savoury pudding",
+            "views": 47455,
+            "year": "1737"
+        },
+        "youtiao": {
+            "ingredients": [
+                "dough"
+            ],
+            "origin": "China",
+            "type": "dessert",
+            "views": 11246
+        },
+        "yusheng": {
+            "ingredients": [
+                "raw fish",
+                "shredded vegetables",
+                "a variety of sauces",
+                "condiments"
+            ],
+            "origin": "Malaysia ",
+            "type": "raw fish dish",
+            "views": 56891,
+            "year": "1960s"
+        },
+        "yuzu": {
+            "type": "citrus fruit",
+            "views": 36196
+        },
+        "zongzi": {
+            "ingredients": [
+                "glutinous rice stuffed",
+                "different fillings",
+                "wrapped in bamboo",
+                "reed leaves"
+            ],
+            "origin": "China",
+            "type": "rice dish",
+            "views": 10445,
+            "year": "5th century"
+        },
+        "\u00e9clair": {
+            "ingredients": [
+                "choux pastry",
+                "flavoured cream filling",
+                "icing"
+            ],
+            "origin": "France",
+            "type": "choux pastry dish",
+            "views": 11468,
+            "year": "1860s"
+        },
+        "\u00e9touff\u00e9e": {
+            "ingredients": [
+                "shellfish",
+                "rice"
+            ],
+            "origin": "United States",
+            "type": "stew",
+            "views": 18614,
+            "year": "1920s"
+        }
+    },
+    "ingredients": {
+        "25% milk": 1,
+        "3": 1,
+        "a fried egg": 1,
+        "a hamburger patty": 1,
+        "a liquid such as water": 1,
+        "a pastry case traditionally filled": 1,
+        "a variety of sauces": 1,
+        "agar": 1,
+        "air": 1,
+        "almond flavouring": 1,
+        "almond meal": 1,
+        "almond paste": 1,
+        "almond powder": 1,
+        "almonds": 6,
+        "anchovies": 2,
+        "and": 1,
+        "anise oil": 1,
+        "apples": 3,
+        "apricot jam": 1,
+        "artificial flavors": 1,
+        "artificial sweetener": 1,
+        "ash": 1,
+        "assorted condiments": 1,
+        "atta": 1,
+        "atta flour": 1,
+        "avocado": 3,
+        "avocados": 1,
+        "bacon": 5,
+        "bacteria": 1,
+        "bagel": 1,
+        "baking powder": 5,
+        "baking soda": 1,
+        "baltic herring": 1,
+        "banana": 1,
+        "banana leaf": 1,
+        "bananas": 2,
+        "bap": 1,
+        "barley": 2,
+        "based on yoghurt": 1,
+        "basil": 2,
+        "batter": 5,
+        "batter: flour": 1,
+        "battered": 1,
+        "bay leaf": 1,
+        "bay leaves": 2,
+        "beans": 4,
+        "beef": 9,
+        "beef patty": 1,
+        "beef skirt": 1,
+        "beef stock": 1,
+        "beef tripe": 1,
+        "beefsandwich: shawarma meat": 1,
+        "beetroot": 2,
+        "bell peppers": 1,
+        "binding agent": 1,
+        "biscuit stick": 1,
+        "bits of dried orange zest": 1,
+        "black gram": 2,
+        "black lentils": 1,
+        "black pepper": 4,
+        "black peppercorn": 1,
+        "black-eyed peas": 1,
+        "boiled egg": 1,
+        "borlotti beans": 1,
+        "bouillon": 1,
+        "bouquet garni": 1,
+        "bread": 10,
+        "bread crumbs": 3,
+        "bread: wheat flour": 1,
+        "brewed tea": 1,
+        "brick cheese": 1,
+        "brine": 1,
+        "broth": 6,
+        "brown gravy": 1,
+        "brown sauce": 1,
+        "brown sugar": 4,
+        "brown sugar syrup": 1,
+        "buckwheat flour": 2,
+        "bulgur": 1,
+        "bun": 1,
+        "butter": 38,
+        "buttermilk": 1,
+        "b\u00e9chamel": 1,
+        "b\u00e9chamel sauce": 1,
+        "cabbage": 4,
+        "cake": 1,
+        "cake base": 1,
+        "canadian bacon": 1,
+        "candied fruit": 1,
+        "candied fruit and": 1,
+        "candied fruits": 1,
+        "cannellini beans": 1,
+        "capers": 1,
+        "caramel": 2,
+        "cardamom": 1,
+        "cardamom pods": 1,
+        "carne adobada": 1,
+        "carrots": 1,
+        "cashews": 1,
+        "cayenne pepper": 1,
+        "celery": 2,
+        "cheddar cheese": 1,
+        "cheddar sauce": 1,
+        "cheeks": 1,
+        "cheese": 18,
+        "cheese curds": 1,
+        "cheese filling served": 1,
+        "cheese powder": 1,
+        "cheeses": 1,
+        "chicken": 21,
+        "chicken breast": 4,
+        "chicken broth": 2,
+        "chicken fat": 1,
+        "chicken stock": 3,
+        "chicken wing  cayenne pepper hot sauce  butter": 1,
+        "chickpeas": 4,
+        "chile peppers": 1,
+        "chili": 1,
+        "chili pepper": 2,
+        "chili pepper sauce": 1,
+        "chili peppers": 3,
+        "chili powder": 1,
+        "chili sauce": 1,
+        "chilli": 1,
+        "chinese wheat noodles": 1,
+        "chipolata": 1,
+        "chives": 2,
+        "chocolate": 9,
+        "chocolate and": 1,
+        "chocolate cake": 1,
+        "chocolate chips": 1,
+        "chocolate ganache": 1,
+        "chocolate glaze": 1,
+        "chocolate liquor": 1,
+        "chocolate sauce": 1,
+        "chocolate sponge cake": 1,
+        "chopped": 1,
+        "chopped onion": 1,
+        "choux pastry": 1,
+        "choux pastryfilling: whipped cream": 1,
+        "christmas pudding": 1,
+        "chunjang": 1,
+        "cilantro": 1,
+        "cinnamon": 6,
+        "cinnamon sugar": 1,
+        "citric acid": 1,
+        "clotted cream": 1,
+        "cloves": 1,
+        "cocoa": 1,
+        "cocoa butter for white chocolate": 1,
+        "cocoa powder": 2,
+        "coconut": 2,
+        "coconut milk": 5,
+        "coconut pieces": 1,
+        "coffee": 1,
+        "coffee buttercream": 1,
+        "coffee syrup": 1,
+        "colors": 1,
+        "combination of milk": 1,
+        "condensed milk": 1,
+        "condiments": 2,
+        "confiture": 1,
+        "cooked rice": 1,
+        "cookie: egg white": 1,
+        "cooking oil": 5,
+        "coriander": 1,
+        "corn": 1,
+        "corn flour": 1,
+        "corn starch": 1,
+        "corn syrup": 1,
+        "corned beef": 1,
+        "cornmeal": 3,
+        "cornmeal batter": 1,
+        "cornstarch": 1,
+        "crab meat": 1,
+        "cream": 17,
+        "cream cheese": 1,
+        "creamer": 1,
+        "creamy peanut butter": 1,
+        "cross-cut veal shanks braised": 1,
+        "croutons": 2,
+        "crumb": 1,
+        "crumbled biscuits": 1,
+        "crust: lard": 1,
+        "crustaceans": 1,
+        "cuban bread": 1,
+        "cubed boneless chicken": 1,
+        "cucumber": 4,
+        "cucumbers": 1,
+        "cumian": 1,
+        "cumin": 1,
+        "curry soup base": 1,
+        "custard": 3,
+        "cutlet": 1,
+        "dahi": 2,
+        "dark chocolate icing": 1,
+        "dashi stock": 1,
+        "dates": 1,
+        "deep fried dried starch": 1,
+        "deep-fried chips": 1,
+        "dehusked rice": 1,
+        "desiccated coconut": 1,
+        "different fillings": 1,
+        "dijon mustard": 1,
+        "dill": 1,
+        "dough": 5,
+        "dried bread": 1,
+        "dried chili peppers": 1,
+        "dried fruit": 3,
+        "dried fruits": 1,
+        "dried pasta": 1,
+        "dried peas": 1,
+        "dumplings": 1,
+        "durum wheat": 1,
+        "durum wheat flour": 1,
+        "egg": 9,
+        "egg batter": 1,
+        "egg noodles": 1,
+        "egg preserved in clay": 1,
+        "egg whites": 8,
+        "egg yolks": 8,
+        "eggplant": 1,
+        "eggs": 37,
+        "eggsfilling: syrup": 1,
+        "english muffin": 1,
+        "espresso": 1,
+        "etc": 1,
+        "evaporated milk": 1,
+        "extract of the roots of the liquorice plant": 1,
+        "fat": 2,
+        "fava beans": 1,
+        "fennel": 1,
+        "fermented soybean": 1,
+        "fermented soybeans": 1,
+        "fermented tofu": 1,
+        "feta cheese": 1,
+        "fettuccine": 1,
+        "filo pastry": 1,
+        "fil\u00e9 powder": 1,
+        "fine shredded raw cabbage": 1,
+        "fine white flour": 1,
+        "fish": 4,
+        "fish herbs spices": 1,
+        "fish sauce": 3,
+        "fish-based broth": 1,
+        "flavoring": 2,
+        "flavorings": 2,
+        "flavors": 1,
+        "flavoured cream filling": 1,
+        "flavouring ingredient": 1,
+        "flour": 44,
+        "flour base: grain flournut base: nut butter": 1,
+        "flour dough": 1,
+        "flour from lentils": 1,
+        "flour tortillas": 1,
+        "food coloring": 2,
+        "food colouringfilling: buttercream": 1,
+        "food-grade glycerine": 1,
+        "french fries": 1,
+        "fried beaten eggs": 1,
+        "fried fish": 1,
+        "fried noodles": 1,
+        "fried pastry dough": 1,
+        "fried rice": 1,
+        "fruit": 2,
+        "fruits": 1,
+        "galangal": 2,
+        "ganache": 2,
+        "garlic": 15,
+        "gelatin": 5,
+        "gelato": 1,
+        "german nougat: sugar": 1,
+        "ghee": 3,
+        "gim": 1,
+        "ginger": 5,
+        "ginger root": 1,
+        "glaze": 1,
+        "glucose syrup": 1,
+        "glutinous rice": 3,
+        "glutinous rice flour": 1,
+        "glutinous rice stuffed": 1,
+        "glycerinerolled fondant: sugar": 1,
+        "goat meat": 1,
+        "gourd": 1,
+        "graham crackers": 1,
+        "graham flour": 1,
+        "grain alcohol": 1,
+        "granulated sugar": 1,
+        "grape jelly": 1,
+        "grapes": 1,
+        "grated cheese": 1,
+        "gravy": 1,
+        "green curry paste": 1,
+        "green vegetables": 1,
+        "grilled meats": 1,
+        "ground beef": 3,
+        "ground beef patty": 1,
+        "ground corn": 1,
+        "ground meat": 5,
+        "ground pepper": 1,
+        "guacamole": 1,
+        "guanciale": 2,
+        "gum base": 1,
+        "ham": 5,
+        "hamburger bun": 1,
+        "hard-boiled eggs": 1,
+        "hazelnut": 1,
+        "heavy cream": 2,
+        "herbs": 2,
+        "high-gluten flour": 1,
+        "hollandaise sauce": 1,
+        "hominy": 3,
+        "honey": 7,
+        "horseradish": 1,
+        "hot chili peppers": 1,
+        "hot dog": 3,
+        "hundreds": 1,
+        "ice cream": 6,
+        "icing": 4,
+        "icing sugar": 2,
+        "imitation crab": 1,
+        "invert sugar": 1,
+        "irish moss": 1,
+        "jaggery": 1,
+        "jalape\u00f1o": 1,
+        "jam": 1,
+        "juice": 1,
+        "kaffir lime leaves": 2,
+        "kaymak": 1,
+        "kefir grains": 1,
+        "ketchup": 4,
+        "khoa": 1,
+        "kirsch": 1,
+        "koji": 1,
+        "korean radish": 1,
+        "laksa noodles": 1,
+        "lamb": 1,
+        "lardons": 3,
+        "layers of mortadella": 1,
+        "leaf vegetable": 1,
+        "leaf vegetables": 1,
+        "leavening": 1,
+        "leaves": 1,
+        "leaves of pandan screwpine": 1,
+        "leeks": 1,
+        "lemon": 1,
+        "lemon juice": 4,
+        "lemongrass": 2,
+        "lentils": 3,
+        "lettuce": 1,
+        "lima beans": 1,
+        "lime": 2,
+        "lime juice": 2,
+        "liquid": 1,
+        "liquorice-root extract": 1,
+        "liver": 2,
+        "lotus seed paste": 1,
+        "lox": 1,
+        "lungs": 1,
+        "macaroni": 1,
+        "machaca": 1,
+        "maida": 1,
+        "maida flour": 1,
+        "mainly peanut sauce": 1,
+        "malt extract": 1,
+        "mandarin oranges": 1,
+        "mare's milk": 1,
+        "margarine": 1,
+        "marjoram": 1,
+        "marshmallows": 2,
+        "masa harina": 1,
+        "mascarpone": 1,
+        "mashed potatoes": 2,
+        "may": 1,
+        "may not have additional ingredients": 1,
+        "mayonnaise": 9,
+        "mayonnaisesour creambuttermilksaltblack peppergarliconionchivesparsleydill": 1,
+        "meat": 32,
+        "meat-": 1,
+        "meat: beef": 1,
+        "meat: lamb": 1,
+        "meats": 2,
+        "meju powder": 1,
+        "meringue": 1,
+        "milk": 32,
+        "milk chocolate": 2,
+        "mincemeat": 1,
+        "mirepoix": 1,
+        "mirin": 1,
+        "miso paste": 1,
+        "miso soup": 1,
+        "mizuame": 1,
+        "mochi": 1,
+        "modified starch": 1,
+        "molasses": 2,
+        "mornay sauce": 1,
+        "mozzarella": 2,
+        "multiple": 2,
+        "mung bean": 1,
+        "mung beanspicy: rice": 1,
+        "mush of pork": 1,
+        "mushrooms": 3,
+        "mustard": 3,
+        "mutton": 1,
+        "natural coloring": 1,
+        "noodles": 3,
+        "nougat": 1,
+        "nutmeg": 1,
+        "nuts": 4,
+        "nuts viennese": 1,
+        "oatmeal": 2,
+        "oats": 1,
+        "octopus": 1,
+        "often flour": 1,
+        "often tomatoes": 1,
+        "oil": 7,
+        "okra": 1,
+        "olive oil": 12,
+        "olives": 2,
+        "onion": 8,
+        "onions": 11,
+        "optionally frosting": 1,
+        "optionally garlic": 1,
+        "or cocoa powder": 1,
+        "or cream cheese icing": 1,
+        "or dried fruit": 1,
+        "orange peels": 1,
+        "orange sauce": 1,
+        "orange-flavoured jam": 1,
+        "oregano": 2,
+        "other cake decorations": 1,
+        "other ingredients": 3,
+        "other nuts": 2,
+        "other sausage": 1,
+        "other solution": 1,
+        "other sweet filling": 1,
+        "palm oil": 1,
+        "palm sugar": 3,
+        "pandan leaves juice": 1,
+        "paprika": 3,
+        "parmesan": 1,
+        "parmesan cheese": 3,
+        "parmigiano-reggiano cheese": 1,
+        "parsley": 2,
+        "pasta": 1,
+        "pastry base": 1,
+        "pastry case filled": 1,
+        "peanut butter": 1,
+        "peanuts": 2,
+        "pearl onions": 1,
+        "pecorino romano": 1,
+        "peel of citrus fruits": 1,
+        "pepper": 3,
+        "pepper and": 1,
+        "peppers": 2,
+        "phyllo": 1,
+        "pickles": 2,
+        "pie crust": 1,
+        "pie shell": 1,
+        "pig skin": 1,
+        "pimentos": 2,
+        "pineapple": 1,
+        "pistachios": 1,
+        "pita": 1,
+        "pizza dough": 1,
+        "plasticizers": 1,
+        "platostoma palustre  stalks": 1,
+        "poblano pepper": 1,
+        "polyols": 1,
+        "pork": 6,
+        "pork belly": 1,
+        "pork blood": 1,
+        "pork jowl": 1,
+        "pork meat": 1,
+        "pork skin": 1,
+        "potassium carbonate": 1,
+        "potato": 6,
+        "potatoes": 9,
+        "potatoes\noil": 1,
+        "poured fondant: sugar": 1,
+        "powdered gelatin": 1,
+        "powdered sugar": 6,
+        "prawn": 1,
+        "processed cheese": 1,
+        "profiteroles": 1,
+        "provolone": 1,
+        "puff pastry": 1,
+        "quicklime": 1,
+        "rabbit": 1,
+        "rag\u00f9": 1,
+        "raisins": 2,
+        "raw beef": 1,
+        "raw fish": 1,
+        "raw meat": 1,
+        "reblochon": 1,
+        "red chili": 1,
+        "red chili peppers": 1,
+        "red chilles": 1,
+        "red food coloring": 1,
+        "red wine": 1,
+        "red-wine vinaigrette": 1,
+        "reed leaves": 1,
+        "refried beans": 2,
+        "rice": 21,
+        "rice\nindian spices\nvegetables": 1,
+        "rice cooked in coconut milk": 1,
+        "rice flour jelly": 1,
+        "rice hulls": 1,
+        "rice noodles": 1,
+        "rice vermicelli": 1,
+        "rice vinegar  shaoxing wine": 1,
+        "ricotta filling": 1,
+        "roasted pork": 1,
+        "romaine lettuce": 1,
+        "roquefort cheese": 1,
+        "rose water": 1,
+        "roux": 1,
+        "russian dressing": 1,
+        "rye berries": 1,
+        "rye bread": 2,
+        "rye flour": 2,
+        "saffron": 3,
+        "salad cream": 1,
+        "salad greens": 1,
+        "salad vegetables": 1,
+        "salami": 1,
+        "salmiak salt": 1,
+        "salmon": 1,
+        "salt": 26,
+        "sambal": 1,
+        "sauce": 4,
+        "sauerkraut": 1,
+        "sausage": 1,
+        "sausages": 1,
+        "savoiardi": 1,
+        "savoury spread": 1,
+        "scallions": 2,
+        "sea salt": 1,
+        "seafood": 7,
+        "seasoned": 1,
+        "seasoned flour": 1,
+        "seasoning": 3,
+        "seasonings": 2,
+        "served": 1,
+        "sesame chutney dip": 1,
+        "sesame oil": 1,
+        "sesame seeds": 1,
+        "sesame soup": 1,
+        "shallot": 1,
+        "shark fins": 1,
+        "shaved ice": 2,
+        "sheep's heart": 1,
+        "shellfish": 3,
+        "sherry": 2,
+        "short grain rice": 1,
+        "shortening": 2,
+        "shredded chicken": 1,
+        "shredded vegetables": 2,
+        "skewered": 1,
+        "sliced bacon": 1,
+        "sliced bread": 1,
+        "sliced steak": 1,
+        "small pasta": 1,
+        "smetana": 1,
+        "smoked haddock": 1,
+        "sometimes flavoured": 1,
+        "soy milk": 1,
+        "soy sauce": 3,
+        "soybean": 1,
+        "soybeans": 2,
+        "spaghetti": 1,
+        "spiced water": 1,
+        "spices": 16,
+        "spirit vinegar": 1,
+        "sponge cake": 4,
+        "star anise": 1,
+        "starch": 2,
+        "stewed tomato": 1,
+        "stock": 8,
+        "stomach": 1,
+        "strained curdled milk": 1,
+        "stuffed peppers": 1,
+        "suet": 5,
+        "sugar": 63,
+        "sugars": 1,
+        "sugarsandwich: marinated muffuletta-style olive salad": 1,
+        "swede": 1,
+        "sweet corn": 1,
+        "sweet soy sauce": 1,
+        "sweet: rice": 1,
+        "sweetened azuki beans": 1,
+        "sweetened tomato sauce": 1,
+        "sweetener": 1,
+        "sweeteners": 2,
+        "swiss cheese": 3,
+        "syrup": 3,
+        "tahini": 1,
+        "tamarind broth": 1,
+        "tamarind rice": 1,
+        "tamarind sauce": 1,
+        "tandoori masala": 1,
+        "tapioca": 1,
+        "teff flour": 1,
+        "tempura scraps": 1,
+        "testicles": 1,
+        "thai basil": 1,
+        "the most popular is prawn": 1,
+        "the nearest bowl is a dahi chutney": 1,
+        "thousands": 1,
+        "thyme": 1,
+        "toast": 1,
+        "toasted bread": 1,
+        "toffee": 2,
+        "tofu": 3,
+        "tomato": 5,
+        "tomato paste": 4,
+        "tomato pur\u00e9e": 1,
+        "tomato sauce": 2,
+        "tomato soup": 1,
+        "tomato-chili sauce": 1,
+        "tomatoes": 14,
+        "topped": 1,
+        "tortilla chips": 1,
+        "tortillas": 3,
+        "traditional: potato flour\nvariations: milk": 1,
+        "treacle": 1,
+        "treacle of date syrup": 1,
+        "turkey": 3,
+        "turmeric": 1,
+        "unripe plantains": 1,
+        "usually cassava": 1,
+        "usually stale bread": 1,
+        "vanilla": 5,
+        "variable: sponge biscuit": 1,
+        "varies": 1,
+        "varies by type": 1,
+        "various": 1,
+        "various fillings": 1,
+        "various fruits": 1,
+        "various sauces": 1,
+        "various side dishes": 1,
+        "various stuffings": 1,
+        "various toppings": 1,
+        "various vegetables including napa cabbage": 1,
+        "veal": 2,
+        "vegetable": 1,
+        "vegetable oil": 1,
+        "vegetable oilfilling: red bean": 1,
+        "vegetables": 24,
+        "vegetablesgram flourspices": 1,
+        "vegetarian filling": 1,
+        "vinaigrette": 1,
+        "vine leaves": 1,
+        "vinegar": 8,
+        "vinegared rice": 1,
+        "waffles": 1,
+        "walnuts": 1,
+        "water": 27,
+        "wheat": 2,
+        "wheat bread": 1,
+        "wheat dough": 1,
+        "wheat flour": 10,
+        "wheat pastry skin": 1,
+        "whipped cream": 2,
+        "white bread": 1,
+        "white haricot beans": 1,
+        "white mustard": 1,
+        "white nougat: sugar": 1,
+        "white rice": 1,
+        "white sugar": 1,
+        "white wine": 3,
+        "white-flour-and-water dough": 1,
+        "whole grains": 1,
+        "wine": 2,
+        "wine vinegar": 1,
+        "with added sugar": 1,
+        "worcestershire sauce": 3,
+        "wrap bread": 1,
+        "wrapped in bamboo": 1,
+        "wrapper": 1,
+        "yeast": 11,
+        "yeast dough": 1,
+        "yeast-based dough": 1,
+        "yeast-leavened dough": 2,
+        "yogurt": 3,
+        "yufka": 1,
+        "ziti pasta": 1
+    }
+}

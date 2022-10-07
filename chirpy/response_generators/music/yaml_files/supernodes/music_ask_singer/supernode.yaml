@@ -1,24 +1,24 @@
-name: music_ask_singer
-trigger_response: None
-requirements:
-  - ask_user_about_specific_singer: True
-    exit_music_rg: False
-
-prompt:
-  - required: None
-    prompt: ''
-
-subnode_state_updates:
-  til_exists:
-    just_used_til: True
-    music_ask_singer_respond_til: True # go to music_ask_singer_respond_til supernode
-  no_til_cur_song_is_top_song:
-    go_to_handoff: True
-  no_til_comment_on_singer_only:
-    go_to_handoff: True
-
-global_post_supernode_state_updates:
-  ask_user_about_specific_singer: False
-  cur_singer_str: state.cur_singer_str
-  cur_singer_ent: state.cur_singer_ent
+#name: music_ask_singer
+#trigger_response: None
+#requirements:
+#  - ask_user_about_specific_singer: True
+#    exit_music_rg: False
+#
+#prompt:
+#  - required: None
+#    prompt: ''
+#
+#subnode_state_updates:
+#  til_exists:
+#    just_used_til: True
+#    music_ask_singer_respond_til: True # go to music_ask_singer_respond_til supernode
+#  no_til_cur_song_is_top_song:
+#    go_to_handoff: True
+#  no_til_comment_on_singer_only:
+#    go_to_handoff: True
+#
+#global_post_supernode_state_updates:
+#  ask_user_about_specific_singer: False
+#  cur_singer_str: state.cur_singer_str
+#  cur_singer_ent: state.cur_singer_ent
 

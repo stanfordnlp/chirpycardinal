@@ -27,8 +27,8 @@ jsonpickle.set_encoder_options('json', sort_keys=True)
 
 '''
 @amelia: agent-side writing new code + new abstractions for classes & objects
-- copy from state, state_manager, handler w/o touching
-- agent calls handler.execute()
+- copy from state, state_manager, handlers w/o touching
+- agent calls handlers.execute()
 - entry point changing from baseline_bot -> alexa_agent
 - alexa agent will have a lot of code from baseline_bot
 - look at how IT's work (may need to re-write)

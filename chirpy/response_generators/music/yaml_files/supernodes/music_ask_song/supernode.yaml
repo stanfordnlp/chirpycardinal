@@ -1,27 +1,27 @@
-name: music_ask_song
-requirements:
-  - ask_user_about_specific_song: True
-    exit_music_rg: False
-
-prompt:
-  - required: None
-    prompt: ''
-
-subnode_state_updates:
-  thats: None
-  didnt_know: None
-  answered_no: None
-  answered_yes: None
-  questioned: None
-  opinion: None
-  just_used_til_only: None
-  catch_all: None
-
-global_post_supernode_state_updates:
-  # state updates done by all paths out of this supernode
-  ask_user_about_specific_song: False
-  cur_song_str: get_cur_song_str(rg)
-  cur_song_ent: rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None
-  cur_entity: (rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None) or state.cur_singer_ent
-  go_to_handoff: True
+#name: music_ask_song
+#requirements:
+#  - ask_user_about_specific_song: True
+#    exit_music_rg: False
+#
+#prompt:
+#  - required: None
+#    prompt: ''
+#
+#subnode_state_updates:
+#  thats: None
+#  didnt_know: None
+#  answered_no: None
+#  answered_yes: None
+#  questioned: None
+#  opinion: None
+#  just_used_til_only: None
+#  catch_all: None
+#
+#global_post_supernode_state_updates:
+#  # state updates done by all paths out of this supernode
+#  ask_user_about_specific_song: False
+#  cur_song_str: get_cur_song_str(rg)
+#  cur_song_ent: rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None
+#  cur_entity: (rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None) or state.cur_singer_ent
+#  go_to_handoff: True
 

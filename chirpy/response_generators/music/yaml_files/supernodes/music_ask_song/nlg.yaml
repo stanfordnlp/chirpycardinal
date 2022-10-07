@@ -1,55 +1,81 @@
-response:
-  - node_name: thats
-    entry_conditions:
-      thats: True
+sname: music_ask_song
+requirements:
+  - state.ask_user_about_specific_song: True
+    state.exit_music_rg: False
+
+prompt_subnodes: None
+
+global_post_supernode_updates:
+  state.ask_user_about_specific_song: False
+  state.cur_song_str:
+    nlg_helper:
+      name: get_cur_song_str()
+  state.cur_song_ent:
+      eval: "rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None"
+  state.cur_entity:
+      eval: (rg.get_song_entity(get_cur_song_str(rg)) if get_cur_song_str(rg) else None) or state.cur_singer_ent
+  state.go_to_handoff: True
+
+
+response_subnodes:
+  - response_node_name: thats
+    response_entry_conditions:
+      response_flags.thats: True
     response: >-
       {thats_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: didnt_know
-    entry_conditions:
-      didnt_know: True
+
+  - response_node_name: didnt_know
+    response_entry_conditions:
+      response_flags.didnt_know: True
     response: >-
       {didnt_know_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: answered_no
-    entry_conditions:
-      answered_no: True
+
+  - response_node_name: answered_no
+    response_entry_conditions:
+      response_flags.answered_no: True
     response: >-
       {no_response(rg)}
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: answered_yes
-    entry_conditions:
-      answered_yes: True
+
+  - response_node_name: answered_yes
+    response_entry_conditions:
+      response_flags.answered_yes: True
     response: >-
       {yes_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: questioned
-    entry_conditions:
-      questioned: True
+
+  - response_node_name: questioned
+    response_entry_conditions:
+      response_flags.questioned: True
     response: >-
       {question_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: opinion
-    entry_conditions:
-      opinion: True
+
+  - response_node_name: opinion
+    response_entry_conditions:
+      response_flags.opinion: True
     response: >-
       {opinion_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: just_used_til_only
-    entry_conditions:
-      til_only: True
+
+  - response_node_name: just_used_til_only
+    response_entry_conditions:
+      response_flags.til_only: True
     response: >-
       {til_only_response(rg)} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
-  - node_name: catch_all
-    entry_conditions:
-      thats: False
-      didnt_know: False
-      answered_no: False
-      answered_yes: False
-      questioned: False
-      opinion: False
-      only_til: False
+
+  - response_node_name: catch_all
+    response_entry_conditions:
+      response_flags.thats: False
+      response_flags.didnt_know: False
+      response_flags.answered_no: False
+      response_flags.answered_yes: False
+      response_flags.questioned: False
+      response_flags.opinion: False
+      response_flags.only_til: False
     response: >-
       {rg.state_manager.current_state.choose_least_repetitive([ 'That is great!', 'Awesome!', 'Cool!'])} 
       {complement_fav_song(rg, state.cur_singer_str, get_cur_song_str(rg))}
