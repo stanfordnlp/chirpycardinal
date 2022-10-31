@@ -7,7 +7,7 @@ from chirpy.core.entity_linker.entity_groups import ENTITY_GROUPS_FOR_CLASSIFICA
 from chirpy.core.response_priority import ResponsePriority
 from chirpy.core.response_generator_datatypes import emptyResult, ResponseGeneratorResult
 from chirpy.core.response_generator_datatypes import PromptResult, emptyPrompt, UpdateEntity
-from chirpy.response_generators.opinion2.opinion_sql import get_opinionable_phrases
+#from chirpy.response_generators.opinion2.opinion_sql import get_opinionable_phrases
 from chirpy.response_generators.wiki2.blacklists import ENTITY_BLACK_LIST
 from chirpy.core.response_generator import *
 from chirpy.response_generators.acknowledgment.state import *
@@ -16,8 +16,8 @@ logger = logging.getLogger('chirpylogger')
 
 
 # Get a list of entity names that OPINION has twitter opinions for
-opinionable_phrases = get_opinionable_phrases()  # List of "Phrase" object
-opinionable_entity_names = {phrase.wiki_entity_name for phrase in opinionable_phrases if phrase.wiki_entity_name}
+#opinionable_phrases = get_opinionable_phrases()  # List of "Phrase" object
+#opinionable_entity_names = {phrase.wiki_entity_name for phrase in opinionable_phrases if phrase.wiki_entity_name}
 
 # def get_acknowledgement(cur_entity: 'WikiEntity'):
 #     for ent_group_name, ent_group in ENTITY_GROUPS_FOR_CLASSIFICATION.ordered_items:
@@ -55,9 +55,9 @@ class AcknowledgmentResponseGenerator(ResponseGenerator):
                                                cur_entity=None, conditional_state=ConditionalState())
 
         # Don't acknowledge entities that OPINION has Twitter opinions on (to avoid contradiction)
-        if cur_entity.name in opinionable_entity_names:
-            logger.primary_info(f'Opinion RG has Twitter opinions for cur_entity {cur_entity}, so Acknowledgment RG is doing nothing (to avoid contradiction)')
-            return self.emptyResult()
+        # if cur_entity.name in opinionable_entity_names:
+        #     logger.primary_info(f'Opinion RG has Twitter opinions for cur_entity {cur_entity}, so Acknowledgment RG is doing nothing (to avoid contradiction)')
+        #     return self.emptyResult()
 
         # Don't acknowledge MUSIC, since MUSIC takes care of that already...
         if cur_entity.name in ("Music",):

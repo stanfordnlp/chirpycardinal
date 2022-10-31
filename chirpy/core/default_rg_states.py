@@ -10,7 +10,7 @@ from chirpy.response_generators.neural_chat.state import State as NeuralChatStat
 from chirpy.response_generators.neural_fallback.state import State as NeuralFallbackState
 from chirpy.response_generators.offensive_user.state import State as OffensiveUserState
 from chirpy.response_generators.one_turn_hack.state import State as OneTurnHackState
-from chirpy.response_generators.opinion2.state_actions import State as OpinionState
+#from chirpy.response_generators.opinion2.state_actions import State as OpinionState
 from chirpy.response_generators.personal_issues.state import State as PersonalIssuesState
 from chirpy.response_generators.sports.state import State as SportsState
 from chirpy.response_generators.pets.state import State as PetsState
@@ -34,7 +34,7 @@ DEFAULT_RG_STATES = {
     'NEURAL_FALLBACK': NeuralFallbackState(),
     'OFFENSIVE_USER': OffensiveUserState(),
     'ONE_TURN_HACK': OneTurnHackState(),
-    'OPINION': OpinionState(),
+    #'OPINION': OpinionState(),
     'PERSONAL_ISSUES': PersonalIssuesState(),
     'RED_QUESTION': BaseState(),
     'TRANSITION': TransitionState(),

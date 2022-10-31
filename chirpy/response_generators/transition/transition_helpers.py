@@ -15,8 +15,6 @@ host = 'search-default-nfnpn4os4ajabsvj6ts3cfl3vy.us-east-1.es.amazonaws.com' # 
 # host = 'search-en-wiki2-a3bimhsymud77u4lkr2py4cpeq.us-east-1.es.amazonaws.com'
 region = 'us-east-1' # e.g. us-west-1
 service = 'es'
-credentials = boto3.Session().get_credentials()
-awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
 
 es = Elasticsearch(
     hosts = [{'host': host, 'port': 443}],
@@ -27,7 +25,7 @@ es = Elasticsearch(
     timeout=2,
 )
 
-INDEX='enwiki-20200920-sections'
+INDEX='enwiki-20201201-sections'
 
 def prune_section(section):
     return section['text'][0] in {'†', '+', '*'}

@@ -54,6 +54,7 @@ def fetch_sql(sql_statement, args=None):
     :param args: tuple
     :return:
     """
+    print(host_stream, port, database, user, password)
     conn = psycopg2.connect(host=host_stream, port=port, database=database, user=user, password=password)
     cur = conn.cursor()
     if args is None:
