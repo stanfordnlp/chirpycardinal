@@ -7,7 +7,7 @@ import logging
 import chirpy.response_generators.wiki2.wiki_utils as wiki_utils
 from chirpy.response_generators.wiki2.wiki_helpers import ResponseType
 from chirpy.response_generators.wiki2.response_templates.response_components import *
-from chirpy.response_generators.opinion2.utils import get_reasons
+#from chirpy.response_generators.opinion2.utils import get_reasons
 from chirpy.response_generators.wiki2.wiki_helpers import contains_first_person_word
 import random
 
