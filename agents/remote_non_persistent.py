@@ -39,8 +39,12 @@ class RemoteNonPersistentAgent(LocalAgent):
         self.new_session = new_session
         self.last_state_creation_time = last_state_creation_time
 
-def lambda_handler():
-    test_script = ["", "em", "i like potatoes"]
+def lambda_handler(args):
+    if args.test_script:
+        with open(args.test_script, 'r') as f:
+            test_script = [x.strip() for x in f.readlines()]
+    else:
+        test_script = [""]
     local_agent = RemoteNonPersistentAgent('a', 'b', False, 0)
     user_input = ""
     while user_input != "bye":
@@ -58,6 +62,7 @@ def init_argparse() -> argparse.ArgumentParser:
         description="Process what retrieval mechanism we will use"
     )
     parser.add_argument('--use_colbert', action = 'store_true', default = False)
+    parser.add_argument('-t', '--test_script', default="")
     return parser
 
 if __name__ == '__main__':
@@ -112,4 +117,4 @@ if __name__ == '__main__':
     os.environ['ES_PORT'] = '443'
     os.environ['ES_SCHEME'] = 'https'
 
-    lambda_handler()
+    lambda_handler(args)
