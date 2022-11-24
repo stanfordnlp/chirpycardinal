@@ -52,7 +52,12 @@ class SymbolicResponseGenerator(ResponseGenerator):
         return {path: Supernode(path) for path in supernode_paths}
         
     def get_global_flags(self, state, utterance):
-        return {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()} 
+        # response types
+        global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()} 
+        
+        # abrupt initiative
+        return global_flags
+        
                 
     def get_response(self, state) -> ResponseGeneratorResult:
         logger.warning("Begin response for SymbolicResponseGenerator.")
@@ -99,17 +104,19 @@ class SymbolicResponseGenerator(ResponseGenerator):
         logger.warning(f'Received {response} from subnode {subnode}.')
         
         # update state
-        state.update(subnode.get_state_updates())
-        state.update(supernode.get_global_state_updates())
+        state.data.update(supernode.get_state_updates())
+        state.data.update(subnode.get_state_updates())
         
+        # TODO
+        answer_type = AnswerType.QUESTION_SELFHANDLING
         
         return ResponseGeneratorResult(text=response, 
-                                       priority=Priority.STRONG_CONTINUE, 
+                                       priority=ResponsePriority.STRONG_CONTINUE, 
                                        needs_prompt=False,
                                        state=state,
-                                       cur_entity=cur_entity, 
+                                       cur_entity=None, 
                                        answer_type=answer_type,
-                                       conditional_state=self.state_module.ConditionalState(**subnode_state_updates)
+                                       conditional_state=BaseSymbolicConditionalState(data=state.data)
                                       )
         
         # post-subnode state updates

@@ -100,6 +100,7 @@ class Subnode:
 		self.entry_conditions = data.get('entry_conditions', {})
 		self.response = data.get('response')
 		self.name = data['node_name']
+		self.state_updates = data.get('state_updates', {})
 		
 	def is_valid(self, contexts):
 		for condition_style, var_name in self.entry_conditions.items():
@@ -111,6 +112,9 @@ class Subnode:
 		
 	def get_response(self, python_context, contexts):
 		return evaluate_nlg_calls(self.response, python_context, contexts)
+		
+	def get_state_updates(self):
+		return self.state_updates
 		
 	def __str__(self):
 		return f'Subnode({self.name})'
@@ -124,6 +128,7 @@ class Supernode:
 		self.requirements = self.load_requirements(self.content['supernode_requirements'])
 		self.locals = self.content['locals']
 		self.subnodes = self.load_subnodes(self.content['subnodes'])
+		self.state_updates = self.content.get('set_state', {})
 		
 		self.nlu = import_module(f'chirpy.symbolic_rgs.{name}.nlu')
 		_ = import_module(f'chirpy.symbolic_rgs.{name}.nlg_helpers')		
@@ -157,6 +162,9 @@ class Supernode:
 		
 	def get_flags(self, rg, state, utterance):
 		return self.nlu.nlu_processing(rg, state, utterance, set())
+		
+	def get_state_updates(self):
+		return self.state_updates
 		
 	def __str__(self):
 		return f"Supernode({self.yaml_path})"

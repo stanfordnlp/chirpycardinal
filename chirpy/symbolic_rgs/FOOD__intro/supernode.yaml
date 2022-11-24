@@ -117,7 +117,7 @@ subnodes:
     set_state:
       open_ended: True
 
-set_state_global:
+set_state:
   cur_food: rg.get_current_entity()
   cur_entity_known_food: False
   acknowledge_fav_food: False
