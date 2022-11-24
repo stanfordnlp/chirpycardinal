@@ -862,6 +862,7 @@ class ResponseGenerator(NamedCallable):
 
 
     def get_response(self, state) -> ResponseGeneratorResult:
+        logger.warning(f"{self.name} is beginning GET_RESPONSE")
         response_types = self.identify_response_types(self.utterance)
         logger.primary_info(f"{self.name} identified response_types: {response_types}")
         self.state = state

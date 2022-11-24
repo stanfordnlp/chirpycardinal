@@ -79,6 +79,9 @@ def identify_base_response_types(rg, utterance) -> Set[ResponseType]:
 
     return retval
 
+def global_response_type_dict(rg, utterance):
+    vals = identify_base_response_types(rg, utterance)
+    return {v : (v in vals) for v in ResponseType.__members__.values()}
 
 def is_disinterested(rg, utterance):
     """

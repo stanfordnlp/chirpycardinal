@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 import copy
 
-from chirpy.core.response_generator import ResponseGenerator, GodTreelet
+from chirpy.core.response_generator import ResponseGenerator, SymbolicTreelet
 from chirpy.core.response_priority import ResponsePriority, PromptType
 from chirpy.core.response_generator_datatypes import emptyResult, ResponseGeneratorResult, PromptResult, emptyPrompt, \
     UpdateEntity, AnswerType
@@ -27,7 +27,7 @@ class FoodResponseGenerator(ResponseGenerator):
     name='FOOD'
 
     def __init__(self, state_manager) -> None:
-        self.god_treelet = GodTreelet(self, 'food')
+        self.god_treelet = SymbolicTreelet(self, 'food')
         treelets = {treelet.name: treelet for treelet in [self.god_treelet]}
         super().__init__(state_manager, treelets=treelets, intent_templates=[], can_give_prompts=True,
                          state_constructor=State,

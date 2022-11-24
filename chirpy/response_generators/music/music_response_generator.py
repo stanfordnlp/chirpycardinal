@@ -2,7 +2,7 @@
 MUSIC RG
 """
 import logging
-from chirpy.core.response_generator import ResponseGenerator, GodTreelet
+from chirpy.core.response_generator import ResponseGenerator, SymbolicTreelet
 from chirpy.core.response_priority import ResponsePriority, PromptType
 from chirpy.response_generators.music.regex_templates.word_lists import KEYWORD_MUSIC
 import chirpy.response_generators.music.treelets as treelets
@@ -33,8 +33,8 @@ class MusicResponseGenerator(ResponseGenerator):
         # self.ask_song_treelet = treelets.AskSongTreelet(self)
         # self.get_instrument_treelet = treelets.GetInstrumentTreelet(self)
         # self.handoff_treelet = treelets.HandoffTreelet(self)
-        # self.god_treelet = treelets.GodTreelet(self)
-        self.god_treelet = GodTreelet(self, 'music')
+        # self.god_treelet = treelets.SymbolicTreelet(self)
+        self.god_treelet = SymbolicTreelet(self, 'music')
 
         # self.treelets = {
         #     treelet.name: treelet for treelet in [

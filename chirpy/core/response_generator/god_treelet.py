@@ -24,7 +24,7 @@ def effify(non_f_str: str, global_context: dict):
     return eval(f'f"""{non_f_str}"""', global_context, global_context)
     # return eval(f'print("Right inside, globals() are", globals().keys(), "locals() are", locals().keys()) or f"""{non_f_str}"""', global_context, global_context)
 
-class GodTreelet(Treelet):
+class SymbolicTreelet(Treelet):
     def __init__(self, rg, rg_folder_name):
         super().__init__(rg)
         self.name = 'god_treelet'

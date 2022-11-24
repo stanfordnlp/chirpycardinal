@@ -24,7 +24,7 @@ class AliensResponseGenerator(ResponseGenerator):
         # self.fourth_turn_treelet = FourthTurnTreelet(self)
         # self.fifth_turn_treelet = FifthTurnTreelet(self)
         # self.question_treelet = QuestionTreelet(self)
-        self.god_treelet = GodTreelet(self, 'aliens')
+        self.god_treelet = SymbolicTreelet(self, 'aliens')
 
         treelets = {
             treelet.name: treelet for treelet in [self.god_treelet]

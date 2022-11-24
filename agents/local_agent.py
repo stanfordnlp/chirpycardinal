@@ -8,6 +8,8 @@ import uuid
 import time
 from typing import Dict
 
+from chirpy.core.response_generator.symbolic_response_generator import SymbolicResponseGenerator
+
 from chirpy.response_generators.launch.launch_response_generator import LaunchResponseGenerator
 from chirpy.response_generators.fallback.fallback_response_generator import FallbackResponseGenerator
 #from chirpy.response_generators.red_question.red_question_response_generator import RedQuestionResponseGenerator
@@ -213,7 +215,8 @@ class LocalAgent():
                                             # OpinionResponseGenerator2,
                                             # AliensResponseGenerator,
                                             # TransitionResponseGenerator,
-                                            FoodResponseGenerator,
+                                            # FoodResponseGenerator,
+                                            SymbolicResponseGenerator,
                                             # WikiResponseGenerator,
                                             # MusicResponseGenerator,
 

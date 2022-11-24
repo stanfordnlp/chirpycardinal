@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, List, Tuple, Set, Optional, Dict  # NOQA
 
 from chirpy.core.response_generator.response_type import ResponseType
@@ -31,3 +31,19 @@ class BaseConditionalState:
 
 def construct_response_types_tuple(response_types):
     return tuple([str(x) for x in response_types])
+
+@dataclass
+class BaseSymbolicState:
+    prev_treelet_str: str = ''
+    next_treelet_str: Optional[str] = ''
+    response_types: Tuple[str] = ()
+    num_turns_in_rg: int = 0
+    cur_supernode: str = ''
+    data: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class BaseSymbolicConditionalState:
+    prev_treelet_str: str = ''
+    next_treelet_str: Optional[str] = ''
+    response_types: Tuple[str] = NO_UPDATE
+    data: Dict[str, Any] = NO_UPDATE

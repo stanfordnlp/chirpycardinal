@@ -36,6 +36,7 @@ class DialogManager:
         self.state_manager = state_manager
         self.ranking_strategy = ranking_strategy
         # self.offensive_speech_classifier = OffensiveSpeechClassifier(timeout_in_millis=self.OFFENSIVE_TIMEOUT * 1000)
+        logging.warning(f"response generators are {response_generators}")
         self.response_generators = response_generators
 
 

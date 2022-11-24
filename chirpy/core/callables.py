@@ -121,6 +121,7 @@ class RemoteCallable(NamedCallable):
 class ResponseGenerators:
     def __init__(self,  state_manager: StateManager, rg_classes):
         self.name_to_class = {rg_class.name: rg_class for rg_class in rg_classes}
+        logging.warning(f"name to class is {self.name_to_class}")
         self.state_manager = state_manager
 
     def run_multithreaded(self, rg_names: List[str],

@@ -6,4 +6,4 @@ from .ask_singer_treelet import AskSingerTreelet
 from .ask_song_treelet import AskSongTreelet
 from .get_instrument_treelet import GetInstrumentTreelet
 from .handoff_treelet import HandoffTreelet
-from .god_treelet import GodTreelet
+from .god_treelet import SymbolicTreelet

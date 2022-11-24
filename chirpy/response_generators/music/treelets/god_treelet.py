@@ -19,7 +19,7 @@ def effify(non_f_str: str, global_context: dict):
     return eval(f'f"""{non_f_str}"""', global_context)
 
 
-class GodTreelet(Treelet):
+class SymbolicTreelet(Treelet):
     def __init__(self, rg):
         super().__init__(rg)
         self.name = 'god_treelet'
