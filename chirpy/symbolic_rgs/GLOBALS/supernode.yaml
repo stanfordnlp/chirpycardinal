@@ -1,6 +1,7 @@
-supernode_requirements: []
+entry_conditions: []
 
-supernode_takeover_requirements: []
+entry_conditions_takeover:
+  disallow
 
 locals: {}
 
@@ -19,16 +20,7 @@ subnodes:
     exit: True
     
   # open-ended
-  - node_name: open_ended_thats
-    entry_conditions:
-      - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
-      - is_true: flags.GlobalFlag__THATS
-    response:
-      - I know, right?
-  
-  - node_name: open_ended_neural_fallback
-    entry_conditions:
-      - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
+  - node_name: open_ended_neural_fallback      
     response:
       - neural_generation:
           prefix: ""

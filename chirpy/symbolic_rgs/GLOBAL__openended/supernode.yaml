@@ -1,10 +1,15 @@
-supernode_requirements:
+entry_conditions:
   - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
 
-supernode_takeover_requirements: 
+entry_conditions_takeover: 
   - disallow
 
 locals: {}
+
+prompt:
+  - one of:
+    - What do you think?
+    - What are your thoughts?
 
 subnodes:
   # abrupt initiative
@@ -12,14 +17,11 @@ subnodes:
   # open-ended
   - node_name: open_ended_thats
     entry_conditions:
-      - is_true: 
       - is_true: flags.GlobalFlag__THATS
     response:
       - I know, right?
   
-  - node_name: open_ended_neural_fallback
-    entry_conditions:
-      - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
+  - node_name: open_ended_neural_fallback      
     response:
       - neural_generation:
           prefix: ""

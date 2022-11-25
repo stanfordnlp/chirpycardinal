@@ -52,7 +52,13 @@ class BaseSymbolicState:
         logger.warning(f"Looking up value for {key}, data keys are {self.data}, all_state_keys are {ALL_STATE_KEYS}")
         return self.data.get(key, ALL_STATE_KEYS[key])
         
+    def __setitem__(self, key, new_value):
+        assert key in ALL_STATE_KEYS
+        self.data[key] = new_value
+        
     def update(self, data):
+        for key in data:
+            assert key in ALL_STATE_KEYS, f"Key not found: {key}"    
         self.data.update(data)
         
 @dataclass

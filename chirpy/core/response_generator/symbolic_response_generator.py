@@ -36,6 +36,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
                  state_manager,
                  supernodes=[
                     'FOOD__intro',
+                    'GLOBAL__openended',
                     'GLOBALS'
                  ],
                  ):
@@ -88,10 +89,11 @@ class SymbolicResponseGenerator(ResponseGenerator):
         return self.paths_to_supernodes.values()
         
     def get_next_supernode(self, python_context, contexts):
-        can_start_supernodes = [supernode for supernode in self.get_supernodes() if supernode.can_start(python_context, contexts)]
-        logger.warning(f"Supernodes that can start: {can_start_supernodes}")
-        can_start_supernodes = sorted(can_start_supernodes, key=lambda x: str(x.name))
-        return can_start_supernodes[0]
+        can_start_supernodes = {supernode: supernode.can_start(python_context, contexts, return_specificity=True)
+                                for supernode in self.get_supernodes()}
+        can_start_supernodes = sorted(can_start_supernodes.items(), key=lambda kv: kv[1], reverse=True)
+        logger.warning(f"Supernodes that can start (in order): {can_start_supernodes}")
+        return can_start_supernodes[0][0]
         
     def get_any_takeover_supernode(self, python_context, contexts):
         return self.paths_to_supernodes['GLOBALS']
@@ -115,7 +117,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
             namespace_name, value_name = value_name.split('.')
             assert namespace_name in ['flags', 'state'], f"Can't update namespace {namespace_name}"
             
-            if namespace_name == flags:
+            if namespace_name == 'flags':
                 flags[value_name] = value
             else:
                 state_update_dict[value_name] = value
@@ -195,6 +197,8 @@ class SymbolicResponseGenerator(ResponseGenerator):
                             conditional_state_updates)
         
         state.update(conditional_state_updates)
+        
+        logger.warning(f"Conditional state updates are {conditional_state_updates}, state is {state}")
         
         # get next prompt
         next_supernode = self.get_next_supernode(python_context, contexts)

@@ -188,8 +188,21 @@ class Supernode:
 		with open(os.path.join(self.yaml_path, 'supernode.yaml'), 'r') as f:
 			self.content = yaml.safe_load(f)
 			
+		ALLOWED_KEYS = [
+			'entry_conditions',
+			'entry_conditions_takeover',
+			'continue_conditions',
+			'prompt',
+			'locals',
+			'subnodes',
+			'set_state'
+		]
+		
+		invalid_keys = set(self.content.keys()) - set(ALLOWED_KEYS)
+		assert len(invalid_keys) == 0, f"Invalid key: {invalid_keys}"
+			
 		self.entry_conditions = self.content.get('entry_conditions', [])
-		self.entry_conditions_takeover = self.content.get('entry_conditions_takeover', [])
+		self.entry_conditions_takeover = self.content.get('entry_conditions_takeover', 'disallow')
 		self.continue_conditions = self.content.get('continue_conditions', [])
 		self.locals = self.content['locals']
 		self.subnodes = self.load_subnodes(self.content['subnodes'])
@@ -227,10 +240,13 @@ class Supernode:
 			output[local_key] = evaluate_nlg_calls(local_values, python_context, contexts)
 		return output
 	
-	def can_start(self, python_context, contexts):
+	def can_start(self, python_context, contexts, return_specificity=False):
 		result = is_valid(self.entry_conditions, python_context, contexts)
 		logger.warning(f"Can_start for {self.name} logged {result}")
-		return result
+		if return_specificity:
+			return len(self.entry_conditions) + 1 if result else 0
+		else:
+			return result
 		
 	def can_continue(self, python_context, contexts):
 		result = is_valid(self.continue_conditions, python_context, contexts)

@@ -204,9 +204,10 @@ class LocalAgent():
 
     def create_handler(self):
         return Handler(
-                response_generator_classes=[LaunchResponseGenerator, FallbackResponseGenerator,
+                response_generator_classes=[LaunchResponseGenerator, 
+                                            FallbackResponseGenerator,
                                             NeuralFallbackResponseGenerator,
-                                            NeuralChatResponseGenerator,
+                                            # NeuralChatResponseGenerator,
                                             # OffensiveUserResponseGenerator,
                                             # CategoriesResponseGenerator,
                                             # ClosingConfirmationResponseGenerator,
