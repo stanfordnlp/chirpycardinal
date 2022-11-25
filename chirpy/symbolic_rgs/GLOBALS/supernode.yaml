@@ -3,17 +3,18 @@ supernode_requirements: []
 locals: {}
 
 subnodes:
-- node_name: fallback
-  response: Sorry, I don't know what you're talking about.
-  needs_prompt: True
-  state_updates:
-    no_entity: True
-  exit: True
-    
-subnodes:
+  - node_name: weather
+    response:
+      - I live in the cloud so I'm not sure what the weather is like on earth! But anyway, I was just saying,
+      - val: self.last_utterance
+    needs_prompt: True
+    state_updates:
+      no_entity: True
+    exit: True
   - node_name: fallback
     response: Sorry, I don't know what you're talking about.
     needs_prompt: True
     state_updates:
       no_entity: True
     exit: True
+    

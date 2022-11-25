@@ -45,11 +45,11 @@ CONDITION_STYLE_TO_BEHAVIOR = {
 
 BASE_PATH = os.path.join(os.path.dirname(__file__), '../../symbolic_rgs')
 
-def lookup_value(contexts):
+def lookup_value(value_name, contexts):
 	if '.' in value_name:
 		assert len(value_name.split('.')) == 2, "Only one namespace allowed."
 		namespace_name, value_name = value_name.split('.')
-		value = contexts[namespace_value][value_name]
+		value = contexts[namespace_name][value_name]
 	else:
 		assert False, f"Need a namespace for entry condition {value_name}."
 
@@ -111,6 +111,7 @@ class Subnode:
 		return True
 		
 	def get_response(self, python_context, contexts):
+		self.last_utterance = contexts["utilities"]["last_utterance"]
 		return evaluate_nlg_calls(self.response, python_context, contexts)
 		
 	def get_state_updates(self):
@@ -148,6 +149,8 @@ class Supernode:
 	def get_optimal_subnode(self, contexts):
 		possible_subnodes = [subnode for subnode in self.subnodes + self.get_global_subnodes() if subnode.is_valid(contexts)]
 		assert len(possible_subnodes), "No subnode found!"
+
+		logger.warning(f"POSSIBLE SUBNODES ARE: {possible_subnodes}")
 		
 		# for now, just return the first possible subnode
 		return possible_subnodes[0]

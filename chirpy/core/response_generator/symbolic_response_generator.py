@@ -53,7 +53,32 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
     def get_global_flags(self, state, utterance):
         # response types
-        global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()} 
+        global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()
+        } 
+
+        # map from string to None / template
+        abrupt_initiative_templates = {
+            "weather": WeatherTemplate(),   # problems
+            # "time": 
+            "repeat": SayThatAgainTemplate(),
+            # "correct_name":
+            "request_name": RequestNameTemplate(),
+            # "age"
+            # "clarification"
+            # "abilities"
+            # "personal"
+            # "interrupt"
+            "chatty": ChattyTemplate(),
+            # "story"
+            # "personal_problem"
+            # "anything"
+        }
+
+        abrupt_initiative_flags = {f"GlobalFlag__Initiative__{k}": v.execute(utterance) for k, v in abrupt_initiative_templates.items()}
+        logger.warning(f"ABRUPT INITIATIVE FLAGS: {abrupt_initiative_flags}")
+
+        global_flags.update(abrupt_initiative_flags)
+        logger.warning(f"GLOBAL FLAGS: {global_flags}")
         
         # abrupt initiative
         return global_flags
@@ -90,10 +115,13 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
         # Process locals        
         locals = {}
+        utilities = {"last_utterance": utterance}
+
         contexts = {
             'flags': flags,
             'locals': locals,
             'state': state,
+            'utilities': utilities,
         }
         locals = supernode.evaluate_locals(contexts)
         logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
