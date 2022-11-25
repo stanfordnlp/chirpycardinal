@@ -1,15 +1,9 @@
 supernode_requirements: []
 
+supernode_takeover_requirements: []
+
 locals: {}
 
-subnodes:
-- node_name: fallback
-  response: Sorry, I don't know what you're talking about.
-  needs_prompt: True
-  state_updates:
-    no_entity: True
-  exit: True
-    
 subnodes:
   - node_name: fallback
     response: Sorry, I don't know what you're talking about.

@@ -212,13 +212,13 @@ def run_multithreaded(module_instance: List[NamedCallable],
                     #logger.warning(f"Found a good response from {module_name}: {future_result}, {future_result.priority}, {STRONG}")
                     good_response = future_result
             result[module_name] = future_result
-            if good_response is not None and not any(unkillable in undone_futures for unkillable in UNKILLABLES) and (not any(unkillable in undone_futures for unkillable in UNKILLABLE_WITHOUT_NONPROMPTING_RESPONSE) or good_response.needs_prompt == False):
-                for dead_future, dead_future_name in future_to_module_name.items():
-                    if dead_future_name in undone_futures and dead_future_name != 'FALLBACK':
-                        #logger.warning(f"Killing {dead_future_name}")
-                        dead_future.cancel()
-                        result[dead_future_name] = KILLED_RESULT
-                break
+            # if good_response is not None and not any(unkillable in undone_futures for unkillable in UNKILLABLES) and (not any(unkillable in undone_futures for unkillable in UNKILLABLE_WITHOUT_NONPROMPTING_RESPONSE) or good_response.needs_prompt == False):
+            #     for dead_future, dead_future_name in future_to_module_name.items():
+            #         if dead_future_name in undone_futures and dead_future_name != 'FALLBACK':
+            #             #logger.warning(f"Killing {dead_future_name}")
+            #             dead_future.cancel()
+            #             result[dead_future_name] = KILLED_RESULT
+            #     break
         except requests.exceptions.Timeout:
             logger.warning(f"Timed out when running module {module_name} with function "
                            f"{function_name}. So {module_name} will be missing from state.")

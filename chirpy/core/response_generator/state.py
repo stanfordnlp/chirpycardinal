@@ -45,5 +45,6 @@ class BaseSymbolicState:
 class BaseSymbolicConditionalState:
     prev_treelet_str: str = ''
     next_treelet_str: Optional[str] = ''
+    cur_supernode: str = NO_UPDATE
     response_types: Tuple[str] = NO_UPDATE
     data: Dict[str, Any] = NO_UPDATE

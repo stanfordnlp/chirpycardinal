@@ -93,11 +93,11 @@ def result2entity(result: dict) -> Optional[WikiEntity]:
     wikidata_categories = {s for s in wikidata_categories if not should_remove_wikidata_category(s)}
 
     anchortext_counts = {}
-    for anchortext, count in source['linkable_span_info']:
-        if anchortext in anchortext_counts:
-            anchortext_counts[anchortext] += count
-        else:
-            anchortext_counts[anchortext] = count
+    # for anchortext, count in source['linkable_span_info']:
+    #     if anchortext in anchortext_counts:
+    #         anchortext_counts[anchortext] += count
+    #     else:
+    #         anchortext_counts[anchortext] = count
 
     plural = source.get('plural', source['doc_title'])
     if plural.strip() == "":
@@ -183,7 +183,7 @@ def get_entities_by_wiki_name(wiki_names: List[str]) -> Dict[str, WikiEntity]:
     # Query ES
     wiki_names = list(set(wiki_names))
     logger.info(f'Querying "{ARTICLES_INDEX_NAME}" ES index with these {len(wiki_names)} wiki names: {wiki_names}')
-    query = {'query': {'bool': {'must': [{'terms': {'doc_title': wiki_names}}]}}}
+    query = {"query": {"bool": {"filter": [{"terms": {"doc_title.keyword": wiki_names}}]}}}
     results = query_es_index(es, ARTICLES_INDEX_NAME, query, size=MAX_ES_SEARCH_SIZE, timeout=ENTITYNAME_QUERY_TIMEOUT, filter_path=['hits.hits._source.{}'.format(field) for field in FIELDS_FILTER])
 
     # Process into WikiEntities

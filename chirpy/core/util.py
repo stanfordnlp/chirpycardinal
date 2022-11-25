@@ -213,10 +213,11 @@ def query_es_index(es: Elasticsearch, index_name: str, query: dict, size: int, t
         A list of results. If there's an error or a timeout, returns an empty list.
     """
     timeout = timeout if use_timeouts else inf_timeout
-    logger.info(f"Querying ElasticSearch '{index_name}' index with timeout={timeout}s, size={size}, and this query: {query}")
+    logger.warning(f"Querying ElasticSearch '{index_name}' index with timeout={timeout}s, size={size}, and this query: {query}")
     try:
         results = es.search(index=index_name, body=query, size=size, filter_path=filter_path,
                             request_timeout=timeout)
+        logger.warning(f"Results are {results}")
         # logger.debug('Query to ElasticSearch "{}" took {}ms'.format(index_name, results['took']))  # sometimes 'took' isn't in results, I'm not sure why
         if not results:
             return []

@@ -13,10 +13,11 @@ from chirpy.core.response_generator_datatypes import ResponseGeneratorResult, Pr
 	emptyResult_with_conditional_state, emptyPrompt, UpdateEntity, AnswerType
 from chirpy.core.response_generator.helpers import *
 from chirpy.core.response_priority import ResponsePriority
-from chirpy.core.util import load_text_file
+from chirpy.core.util import load_text_file, infl
 from typing import Set, Optional, List, Dict
 import logging
 import os
+import random
 
 from importlib import import_module
 
@@ -45,13 +46,13 @@ CONDITION_STYLE_TO_BEHAVIOR = {
 
 BASE_PATH = os.path.join(os.path.dirname(__file__), '../../symbolic_rgs')
 
-def lookup_value(contexts):
+def lookup_value(value_name, contexts):
 	if '.' in value_name:
 		assert len(value_name.split('.')) == 2, "Only one namespace allowed."
 		namespace_name, value_name = value_name.split('.')
-		value = contexts[namespace_value][value_name]
+		value = contexts[namespace_name][value_name]
 	else:
-		assert False, f"Need a namespace for entry condition {value_name}."
+		assert False, f"Need a namespace for value name {value_name}."
 
 def evaluate_nlg_call(data, python_context, contexts):
 	if isinstance(data, str): # plain text
@@ -75,12 +76,15 @@ def evaluate_nlg_call(data, python_context, contexts):
 	elif type == 'inflect':
 		assert isinstance(nlg_params, dict)
 		inflect_token = nlg_params['inflect_token']
-		return lookup_value(nlg_params, contexts)
+		inflect_val = lookup_value(nlg_params['inflect_entity'], contexts)
+		return infl(inflect_token, inflect_val.is_plural())
 	elif type == 'inflect_helper':
 		assert isinstance(nlg_params, dict)
 		inflect_function = nlg_params['type']
-		inflect_input = self.evaluate_nlg_call(nlg_params['str'], python_context, contexts)
+		inflect_input = evaluate_nlg_call(nlg_params['str'], python_context, contexts)
 		return getattr(engine, inflect_function)(inflect_input)
+	elif type == 'one of':
+		return evaluate_nlg_call(random.choice(nlg_params), python_context, contexts)
 	else:
 		assert False, f"Generation type {type} not found!"
 		
@@ -106,7 +110,7 @@ class Subnode:
 		for condition_style, var_name in self.entry_conditions.items():
 			assert condition_style in CONDITION_STYLE_TO_BEHAVIOR, f"Condition style {condition_style} is not recognized!"
 			validity_func = CONDITION_STYLE_TO_BEHAVIOR[condition_style]
-			evaluated_value = self.lookup_value(var_name, contexts)
+			evaluated_value = lookup_value(var_name, contexts)
 			if not validity_func(evaluated_value): return False
 		return True
 		
@@ -129,6 +133,8 @@ class Supernode:
 		self.locals = self.content['locals']
 		self.subnodes = self.load_subnodes(self.content['subnodes'])
 		self.state_updates = self.content.get('set_state', {})
+		self.prompt = self.content.get('prompt', [])
+		self.name = name
 		
 		self.nlu = import_module(f'chirpy.symbolic_rgs.{name}.nlu')
 		_ = import_module(f'chirpy.symbolic_rgs.{name}.nlg_helpers')		
@@ -154,10 +160,11 @@ class Supernode:
 		
 		return None
 		
-	def evaluate_locals(self, contexts):
+	def evaluate_locals(self, python_context, contexts):
 		output = {}
+		contexts['locals'] = output
 		for local_key, local_values in self.locals.items():
-			output[local_key] = self.evaluate_nlg_calls(local_values, contexts)
+			output[local_key] = evaluate_nlg_calls(local_values, python_context, contexts)
 		return output
 		
 	def get_flags(self, rg, state, utterance):
@@ -165,6 +172,9 @@ class Supernode:
 		
 	def get_state_updates(self):
 		return self.state_updates
+		
+	def get_prompt(self, python_context, contexts):
+		return evaluate_nlg_calls(self.prompt, python_context, contexts)
 		
 	def __str__(self):
 		return f"Supernode({self.yaml_path})"

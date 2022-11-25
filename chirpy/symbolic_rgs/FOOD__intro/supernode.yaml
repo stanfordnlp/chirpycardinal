@@ -1,17 +1,17 @@
-name: food_introductory
+# THESE ARE EVALUATED AT THE PROMPT STAGE
+supernode_requirements: []
 
-supernode_requirements:
-  - entry_entity_is_food: False
+prompt: 
+- "What's your favorite food?"
+
+# THESE ARE EVALUATED AT THE GENERATION STAGE
+    
+supernode_takeover_requirements:
+  - FOOD__user_mentioned_food_entity: False
     cur_entity_known_food: True
     exit_food: False
-  - acknowledge_fav_food: True
-    exit_food: False
-
-prompt: None
 
 locals:
-  cur_entity:
-    eval: "rg.get_current_entity()"
   lowercased_entity:
     eval: "(rg.get_current_entity() or '').name.lower()"
     
@@ -28,20 +28,21 @@ locals:
       - such an amazing choice. It's one of my favorite foods up here in the cloud.
     
 subnodes:
-  - node_name: entity_not_found
-    entry_conditions:
-      is_true: flags.no_food_entity_found
-    response: ''
-    needs_prompt: True
-    state_updates:
-      no_entity: True
-    exit: True
+  # This one shouldn't be necessary bc we only activate if the user mentions a food entity.
+  # - node_name: entity_not_found
+  #   entry_conditions:
+  #     is_true: flags.no_food_entity_found
+  #   response: ''
+  #   needs_prompt: True
+  #   state_updates:
+  #     no_entity: True
+  #   exit: True
       
   # Personally, I especially like the peanuts in them, I think it gives them a really nice flavor.
   - node_name: make_ingredient_attribute_comment
     entry_conditions:
       is_value:
-        - name: flags.best_comment_type
+        - name: flags.FOOD__best_comment_type
         - value: has_ingredient
     response:
       - val: locals.intro_statement
@@ -55,13 +56,13 @@ subnodes:
           inflect_entity: locals.cur_entity
       - a really nice flavor. 
     set_state:
-      open_ended: True
+      GLOBALS__utility__openended: True
 
   # Personally, I especially like its texture, especially how it's so grainy.
   - node_name: make_texture_attribute_comment
     entry_conditions:
       is_value:
-        - name: flags.best_comment_type
+        - name: flags.FOOD__best_comment_type
         - value: texture
     response:
       - val: locals.intro_statement
@@ -79,13 +80,13 @@ subnodes:
           args: [locals.lowercased_entity]
       - plain_text: . 
     set_state:
-      open_ended: True
+      GLOBALS__utility__openended: True
       
   # Personally, I especially like it's especially good as part of a patatas bravas.
   - node_name: make_food_is_an_ingredient_comment
     entry_conditions:
       is_value:
-        - name: flags.best_comment_type
+        - name: flags.FOOD__best_comment_type
         - value: is_ingredient
     response:
       - val: locals.intro_statement
@@ -102,7 +103,7 @@ subnodes:
                 args: [locals.lowercased_entity]
       - plain_text: . 
     set_state:
-      open_ended: True
+      GLOBALS__utility__openended: True
 
   # I especially love how it's [NEURAL_GEN]...
   - node_name: default
@@ -115,7 +116,7 @@ subnodes:
             inflect_token: it's
             inflect_entity: locals.cur_entity
     set_state:
-      open_ended: True
+      GLOBALS__utility__openended: True
 
 set_state:
   cur_food: rg.get_current_entity()

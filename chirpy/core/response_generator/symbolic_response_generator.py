@@ -12,6 +12,7 @@ from chirpy.core.response_generator.helpers import *
 from chirpy.core.response_generator.response_generator import ResponseGenerator
 from chirpy.core.response_generator.supernode import Supernode, Subnode
 from chirpy.core.response_priority import ResponsePriority
+from chirpy.symbolic_rgs import global_nlu
 from chirpy.core.util import load_text_file
 from typing import Set, Optional, List, Dict
 import logging
@@ -56,7 +57,18 @@ class SymbolicResponseGenerator(ResponseGenerator):
         global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()} 
         
         # abrupt initiative
+        #global_flags.update(self.get_abrupt_initiative_flags())
+        
+        # custom activation logic
+        global_flags.update(global_nlu.get_flags(self, state, utterance))
+        
+        logger.warning(f"GlobalFlags are: {global_flags}")
+        
         return global_flags
+        
+    def get_next_supernode(self, state):
+        next_supernode_path = 'FOOD__intro'
+        return self.paths_to_supernodes[next_supernode_path]
         
                 
     def get_response(self, state) -> ResponseGeneratorResult:
@@ -73,6 +85,9 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
         supernode_path = state.cur_supernode or 'GLOBALS'
         supernode = self.paths_to_supernodes[supernode_path]
+        
+        # TODO allow takeover
+        
         logger.warning(f"Currently, we are in supernode {supernode}.")
             
         python_context = get_context_for_supernode(supernode)
@@ -87,16 +102,18 @@ class SymbolicResponseGenerator(ResponseGenerator):
         flags.update(supernode.get_flags(self, state, utterance))
         
         logging.warning(f"Flags are: {flags}")
+        logging.warning(f"Current entity is: {self.get_current_entity()}")
         
         # Process locals        
-        locals = {}
         contexts = {
             'flags': flags,
-            'locals': locals,
             'state': state,
         }
-        locals = supernode.evaluate_locals(contexts)
+        locals = supernode.evaluate_locals(python_context, contexts)
+        contexts['locals'] = locals
         logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
+        
+        locals['cur_entity'] = self.get_current_entity()
 
         # select subnode
         subnode = supernode.get_optimal_subnode(contexts=contexts)
@@ -107,16 +124,24 @@ class SymbolicResponseGenerator(ResponseGenerator):
         state.data.update(supernode.get_state_updates())
         state.data.update(subnode.get_state_updates())
         
+        # get next prompt
+        next_supernode = self.get_next_supernode(state)
+        prompt = next_supernode.get_prompt(python_context, contexts) # TODO fix contexts
+        
+        conditional_state = BaseSymbolicConditionalState(data=state.data,
+            cur_supernode=next_supernode.name,                                                    
+        )
+    
         # TODO
         answer_type = AnswerType.QUESTION_SELFHANDLING
         
-        return ResponseGeneratorResult(text=response, 
+        return ResponseGeneratorResult(text=response + " " + prompt, 
                                        priority=ResponsePriority.STRONG_CONTINUE, 
                                        needs_prompt=False,
                                        state=state,
                                        cur_entity=None, 
                                        answer_type=answer_type,
-                                       conditional_state=BaseSymbolicConditionalState(data=state.data)
+                                       conditional_state=conditional_state
                                       )
         
         # post-subnode state updates
@@ -129,9 +154,6 @@ class SymbolicResponseGenerator(ResponseGenerator):
         # select new supernode
         
         # return
-        
-
-    
 
     def update_state_if_chosen(self, state, conditional_state):
         """
