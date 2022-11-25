@@ -41,12 +41,7 @@ logger = logging.getLogger('chirpylogger')
 # 		return cases['case_name'], cases['prompt']
 # return None
 
-CONDITION_STYLE_TO_BEHAVIOR = {
-	'is_none': (lambda val: (val is None)),
-	'is_true': (lambda val: (val is True)),
-	'is_false': (lambda val: (val is False)),
-	'is_value': (lambda val, target: (val == target)),
-}
+
 
 BASE_PATH = os.path.join(os.path.dirname(__file__), '../../symbolic_rgs')
 
@@ -54,8 +49,8 @@ def lookup_value(value_name, contexts):
 	if '.' in value_name:
 		assert len(value_name.split('.')) == 2, "Only one namespace allowed."
 		namespace_name, value_name = value_name.split('.')
-		value = contexts[namespace_name][value_name]
-		return value
+		namespace = contexts[namespace_name]
+		return namespace[value_name]
 	else:
 		assert False, f"Need a namespace for value name {value_name}."
 
@@ -95,8 +90,14 @@ def evaluate_nlg_call(data, python_context, contexts):
 		inflect_function = nlg_params['type']
 		inflect_input = evaluate_nlg_call(nlg_params['str'], python_context, contexts)
 		return getattr(engine, inflect_function)(inflect_input)
+	elif type == "neural_generation":
+		assert isinstance(nlg_params, dict)
+		prefix = evaluate_nlg_calls(nlg_params['prefix'], python_context, contexts)
+		return python_context['rg'].get_neural_response(prefix=prefix)
 	elif type == 'one of':
 		return evaluate_nlg_call(random.choice(nlg_params), python_context, contexts)
+	elif type == 'constant':
+		return nlg_params
 	else:
 		assert False, f"Generation type {type} not found!"
 		
@@ -117,6 +118,45 @@ def evaluate_nlg_calls(datas, python_context, contexts):
 		output.append(evaluate_nlg_call(elem, python_context, contexts))
 	
 	return spacingaware_join(output)
+	
+def evaluate_nlg_calls_or_constant(datas, python_context, contexts):
+	if isinstance(datas, dict):
+		assert len(datas) == 1, "should be a dict with key constant"
+		return datas['constant']
+	return evaluate_nlg_calls(datas, python_context, contexts)
+	
+CONDITION_STYLE_TO_BEHAVIOR = {
+	'is_none': (lambda val: (val is None)),
+	'is_true': (lambda val: (val is True)),
+	'is_false': (lambda val: (val is False)),
+	'is_value': (lambda val, target: (val == target)),
+}
+	
+def is_valid(entry_conditions, python_context, contexts):
+	for entry_condition_dict in entry_conditions:
+		logger.warning(f"Entry conditions are: {entry_conditions}")
+		condition_style, var_data = list(entry_condition_dict.items())[0]
+		
+		if condition_style == 'is_value':
+			var_name = var_data['name']
+			var_expected_value = evaluate_nlg_call(var_data['value'], python_context, contexts)
+		else:
+			var_name = var_data
+		
+		assert condition_style in CONDITION_STYLE_TO_BEHAVIOR, f"Condition style {condition_style} is not recognized!"
+		validity_func = CONDITION_STYLE_TO_BEHAVIOR[condition_style]
+		
+		evaluated_value = lookup_value(var_name, contexts)
+		
+		if condition_style == 'is_value':
+			result = validity_func(evaluated_value, var_expected_value)
+		else:	
+			logger.warning(f"Evaluated value is {evaluated_value}")
+			result = validity_func(evaluated_value)
+			logger.warning(f"Result is {result}")
+			
+		if not result: return False
+	return True
 
 class Subnode:
 	def __init__(self, data):
@@ -125,34 +165,19 @@ class Subnode:
 		self.entry_conditions = data.get('entry_conditions', {})
 		self.response = data.get('response')
 		self.name = data['node_name']
-		self.state_updates = data.get('state_updates', {})
+		self.updates = data.get('set_state', {})
 		
-	def is_valid(self, contexts):
-		for condition_style, var_data in self.entry_conditions.items():
-			assert condition_style in CONDITION_STYLE_TO_BEHAVIOR, f"Condition style {condition_style} is not recognized!"
-			validity_func = CONDITION_STYLE_TO_BEHAVIOR[condition_style]
-			
-			if condition_style == 'is_value':
-				var_name = var_data['name']
-				var_expected_value = var_data['value']
-			else:
-				var_name = var_data
-			
-			evaluated_value = lookup_value(var_name, contexts)
-			
-			if condition_style == 'is_value':
-				result = validity_func(evaluated_value, var_expected_value)
-			else:	
-				result = validity_func(evaluated_value)
-				
-			if not result: return False
-		return True
+	def is_valid(self, python_context, contexts):
+		return is_valid(self.entry_conditions, python_context, contexts)
 		
 	def get_response(self, python_context, contexts):
 		return evaluate_nlg_calls(self.response, python_context, contexts)
 		
-	def get_state_updates(self):
-		return self.state_updates
+	def get_state_updates(self, python_context, contexts):
+		return {
+			value_name: evaluate_nlg_calls(value_data, python_context, contexts)
+			for value_name, value_data in self.updates.items()
+		}
 		
 	def __str__(self):
 		return f'Subnode({self.name})'
@@ -163,21 +188,20 @@ class Supernode:
 		with open(os.path.join(self.yaml_path, 'supernode.yaml'), 'r') as f:
 			self.content = yaml.safe_load(f)
 			
-		self.requirements = self.load_requirements(self.content['supernode_requirements'])
+		self.entry_conditions = self.content.get('entry_conditions', [])
+		self.entry_conditions_takeover = self.content.get('entry_conditions_takeover', [])
+		self.continue_conditions = self.content.get('continue_conditions', [])
 		self.locals = self.content['locals']
 		self.subnodes = self.load_subnodes(self.content['subnodes'])
-		self.state_updates = self.content.get('set_state', {})
+		self.updates = self.content.get('set_state', {})
 		self.prompt = self.content.get('prompt', [])
 		self.name = name
 		
 		self.nlu = import_module(f'chirpy.symbolic_rgs.{name}.nlu')
 		self.nlg_helpers = import_module(f'chirpy.symbolic_rgs.{name}.nlg_helpers')		
-	
-	def load_requirements(self, requirements):
-		self.requirements = requirements
 		
-	def is_eligible(self, state):
-		return any(self.all_matches(self.requirement) in self.requirements)
+	def is_eligible(self, python_context, contexts):
+		return is_valid(self.requirements, python_context, contexts)
 
 	def get_global_subnodes(self):
 		return []
@@ -185,8 +209,8 @@ class Supernode:
 	def load_subnodes(self, subnode_data):
 		return [Subnode(data) for data in subnode_data]
 	
-	def get_optimal_subnode(self, contexts):
-		possible_subnodes = [subnode for subnode in self.subnodes + self.get_global_subnodes() if subnode.is_valid(contexts)]
+	def get_optimal_subnode(self, python_context, contexts):
+		possible_subnodes = [subnode for subnode in self.subnodes + self.get_global_subnodes() if subnode.is_valid(python_context, contexts)]
 		assert len(possible_subnodes), "No subnode found!"
 
 		logger.warning(f"POSSIBLE SUBNODES ARE: {possible_subnodes}")
@@ -202,15 +226,35 @@ class Supernode:
 		for local_key, local_values in self.locals.items():
 			output[local_key] = evaluate_nlg_calls(local_values, python_context, contexts)
 		return output
+	
+	def can_start(self, python_context, contexts):
+		result = is_valid(self.entry_conditions, python_context, contexts)
+		logger.warning(f"Can_start for {self.name} logged {result}")
+		return result
+		
+	def can_continue(self, python_context, contexts):
+		result = is_valid(self.continue_conditions, python_context, contexts)
+		logger.warning(f"Can_continue logged {result}")
+		return result
 		
 	def get_flags(self, rg, state, utterance):
-		return self.nlu.nlu_processing(rg, state, utterance, set())
-		
-	def get_state_updates(self):
-		return self.state_updates
+		#logger.warning(f"{dir(self.nlu)}")
+		flags = self.nlu.get_flags(rg, state, utterance)
+		logger.warning(f"Added the following flags: {flags}")
+		return flags
 		
 	def get_prompt(self, python_context, contexts):
 		return evaluate_nlg_calls(self.prompt, python_context, contexts)
 		
+	def get_state_updates(self, python_context, contexts):
+		return {
+			value_name: evaluate_nlg_calls_or_constant(value_data, python_context, contexts)
+			for value_name, value_data in self.updates.items()
+		}
+			
+		
 	def __str__(self):
 		return f"Supernode({self.yaml_path})"
+		
+	def __repr__(self):
+		return str(self)

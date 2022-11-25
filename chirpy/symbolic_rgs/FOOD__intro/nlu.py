@@ -1,4 +1,5 @@
 from chirpy.response_generators.food import food_helpers
+from chirpy.core.response_generator.nlu import nlu_processing
 
 def get_best_attribute(food):
     food_data = food_helpers.get_food_data(food)
@@ -11,25 +12,14 @@ def get_best_attribute(food):
     else:
         return None
 
-def nlu_processing(rg, state, utterance, response_types):
-    # flags = {
-    #     'no_entity': False,
-    #     'cur_food': None,
-    #     'food_type_comment': False,
-    #     'custom_comment_exists': False,
-    #     'is_ingredient': False,
-    #     'catch_all': False
-    # }
-    flags = {'cur_food': None, 'no_food_entity_found': False}
-    entity = rg.get_current_entity()
-    cur_food = entity.name.lower()
-    flags['cur_food'] = cur_food
-    cur_talkable_food = entity.talkable_name
-
-    if not food_helpers.is_known_food(cur_food):
-        flags['no_food_entity_found'] = True
-        return flags 
-        
-    flags['best_comment_type'] = get_best_attribute(cur_food)        
-    return flags
-
+@nlu_processing
+def get_flags(rg, state, utterance):
+    entity = rg.get_current_entity()	
+    if entity is None: return
+    
+    entity_name = entity.name.lower()
+    is_known_food = food_helpers.is_known_food(entity_name)
+    if is_known_food:
+        best_attribute = get_best_attribute(entity_name)
+        ADD_NLU_FLAG('FOOD__user_mentioned_food') 
+        ADD_NLU_FLAG('FOOD__best_comment_type', best_attribute) 

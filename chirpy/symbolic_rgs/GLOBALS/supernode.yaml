@@ -5,16 +5,34 @@ supernode_takeover_requirements: []
 locals: {}
 
 subnodes:
+  # abrupt initiative
+  
   - node_name: weather
     entry_conditions:
-      is_true: global_flags.weather
+      - is_true: flags.GlobalFlag__Initiative__weather
     response:
-      - I live in the cloud so I'm not sure what the weather is like on earth! But anyway, I was just saying,
-      - val: utilities.last_utterance
+      - I live in the cloud so I'm not sure what the weather is like on earth! 
+      - On another note,
     needs_prompt: True
     state_updates:
       no_entity: True
     exit: True
+    
+  # open-ended
+  - node_name: open_ended_thats
+    entry_conditions:
+      - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
+      - is_true: flags.GlobalFlag__THATS
+    response:
+      - I know, right?
+  
+  - node_name: open_ended_neural_fallback
+    entry_conditions:
+      - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
+    response:
+      - neural_generation:
+          prefix: ""
+  
   - node_name: fallback
     response: Sorry, I don't know what you're talking about.
     needs_prompt: True

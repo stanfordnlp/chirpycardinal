@@ -12,6 +12,7 @@ from chirpy.core.response_generator.helpers import *
 from chirpy.core.response_generator.response_generator import ResponseGenerator
 from chirpy.core.response_generator.supernode import Supernode, Subnode
 from chirpy.core.response_priority import ResponsePriority
+from chirpy.core.response_generator.nlu import get_default_flags
 from chirpy.symbolic_rgs import global_nlu
 from chirpy.core.util import load_text_file
 from typing import Set, Optional, List, Dict
@@ -54,8 +55,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
     def get_global_flags(self, state, utterance):
         # response types
-        global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()
-        } 
+        global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()} 
 
         # map from string to None / template
         abrupt_initiative_templates = {
@@ -75,26 +75,50 @@ class SymbolicResponseGenerator(ResponseGenerator):
             # "anything"
         }
 
-        abrupt_initiative_flags = {f"GlobalFlag__Initiative__{k}": v.execute(utterance) for k, v in abrupt_initiative_templates.items()}
-        logger.warning(f"ABRUPT INITIATIVE FLAGS: {abrupt_initiative_flags}")
-
-        global_flags.update(abrupt_initiative_flags)
+        global_flags.update({f"GlobalFlag__Initiative__{k}": bool(v.execute(utterance)) for k, v in abrupt_initiative_templates.items()})
         logger.warning(f"GLOBAL FLAGS: {global_flags}")
         
-        # abrupt initiative
-        #global_flags.update(self.get_abrupt_initiative_flags())
-        
-        # custom activation logic
         global_flags.update(global_nlu.get_flags(self, state, utterance))
         
         logger.warning(f"GlobalFlags are: {global_flags}")
         
         return global_flags
         
-    def get_next_supernode(self, state):
-        next_supernode_path = 'FOOD__intro'
-        return self.paths_to_supernodes[next_supernode_path]
+    def get_supernodes(self):
+        return self.paths_to_supernodes.values()
         
+    def get_next_supernode(self, python_context, contexts):
+        can_start_supernodes = [supernode for supernode in self.get_supernodes() if supernode.can_start(python_context, contexts)]
+        logger.warning(f"Supernodes that can start: {can_start_supernodes}")
+        can_start_supernodes = sorted(can_start_supernodes, key=lambda x: str(x.name))
+        return can_start_supernodes[0]
+        
+    def get_any_takeover_supernode(self, python_context, contexts):
+        return self.paths_to_supernodes['GLOBALS']
+        
+    def get_takeover_or_current_supernode(self, state):
+        """Returns a takeover supernode if one has high priority.
+        Else, returns the current supernode if it exists."""
+        
+        # TODO: implement takeover supernode logic
+        path = state.cur_supernode or 'GLOBALS'
+        return self.paths_to_supernodes[path]
+                
+    def update_context(
+        self,
+        update_dict, 
+        flags, 
+        state_update_dict
+    ):
+        for value_name, value in update_dict.items():
+            assert value_name.count('.') == 1, "Must have a namespace and a var name."
+            namespace_name, value_name = value_name.split('.')
+            assert namespace_name in ['flags', 'state'], f"Can't update namespace {namespace_name}"
+            
+            if namespace_name == flags:
+                flags[value_name] = value
+            else:
+                state_update_dict[value_name] = value
                 
     def get_response(self, state) -> ResponseGeneratorResult:
         logger.warning("Begin response for SymbolicResponseGenerator.")
@@ -107,11 +131,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
         needs_prompt = False
         
         # figure out what supernode we're in
-        
-        supernode_path = state.cur_supernode or 'GLOBALS'
-        supernode = self.paths_to_supernodes[supernode_path]
-        
-        # TODO allow takeover
+        supernode = self.get_takeover_or_current_supernode(state)
         
         logger.warning(f"Currently, we are in supernode {supernode}.")
             
@@ -122,46 +142,66 @@ class SymbolicResponseGenerator(ResponseGenerator):
             'state': state
         })
         
-        # perform nlu
-        
-        flags = self.get_global_flags(state, utterance)
-        flags.update(supernode.get_flags(self, state, utterance))
-        
-        logging.warning(f"Flags are: {flags}")
-        
         # Process locals        
         utilities = {
-            "last_utterance": utterance, 
+            "last_utterance": self.get_last_response().text, 
             "cur_entity": self.get_current_entity(),
             "cur_talkable": self.get_current_entity().talkable_name if self.get_current_entity() else "",
             "lowercased_cur_entity": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
         }
         logging.warning(f"Utilities are: {utilities}")
-        contexts = {
-            'flags': flags,
-            'state': state,
-            'utilities': utilities,
-        }
-        locals = supernode.evaluate_locals(python_context, contexts)
-        contexts['locals'] = locals
-        logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
+
+        # perform nlu
         
-        locals['cur_entity'] = self.get_current_entity()
+        global_flags = self.get_global_flags(state, utterance)
+        
+        while True:
+            flags = get_default_flags()
+            flags.update(global_flags)
+            flags.update(supernode.get_flags(self, state, utterance))
+            
+            logging.warning(f"Flags for supernode {supernode} are: {flags}")
+            
+            contexts = {
+                'flags': flags,
+                'state': state,
+                'utilities': utilities,
+            }
+            
+            if not supernode.can_continue(python_context, contexts):
+                supernode = self.get_any_takeover_supernode(python_context, contexts)
+                logger.warning(f"Switching to supernode {supernode}")
+                continue
+                
+            locals = supernode.evaluate_locals(python_context, contexts)
+            contexts['locals'] = locals
+            logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
+            locals['cur_entity'] = self.get_current_entity()
+            break
+            
 
         # select subnode
-        subnode = supernode.get_optimal_subnode(contexts=contexts)
+        subnode = supernode.get_optimal_subnode(python_context, contexts)
         response = subnode.get_response(python_context, contexts)
         logger.warning(f'Received {response} from subnode {subnode}.')
         
         # update state
-        state.data.update(supernode.get_state_updates())
-        state.data.update(subnode.get_state_updates())
+        conditional_state_updates = {}
+        self.update_context(supernode.get_state_updates(python_context, contexts),
+                            flags,
+                            conditional_state_updates)
+        self.update_context(subnode.get_state_updates(python_context, contexts),
+                            flags,
+                            conditional_state_updates)
+        
+        state.update(conditional_state_updates)
         
         # get next prompt
-        next_supernode = self.get_next_supernode(state)
+        next_supernode = self.get_next_supernode(python_context, contexts)
         prompt = next_supernode.get_prompt(python_context, contexts) # TODO fix contexts
         
-        conditional_state = BaseSymbolicConditionalState(data=state.data,
+        conditional_state = BaseSymbolicConditionalState(
+            data=state.data,
             cur_supernode=next_supernode.name,                                                    
         )
     
@@ -177,42 +217,13 @@ class SymbolicResponseGenerator(ResponseGenerator):
                                        conditional_state=conditional_state
                                       )
         
-        # post-subnode state updates
-        # expose_vars = self.get_exposed_subnode_vars(supernode, subnode_name)
-        # exposed_context = {}
-        # if expose_vars is not None:
-        #     for key in expose_vars:
-        #         exposed_context[key] = eval(expose_vars[key], context)
-        
-        # select new supernode
-        
-        # return
 
     def update_state_if_chosen(self, state, conditional_state):
-        """
-        This method updates the internal state of the response generator,
-        given that this RG is chosen as the next turn by the bot dialog manager. This state is accessible given
-        the global state of the bot in the variable
-
-        global_state['response_generator_states'][self.name]
-
-        If the attribute value is NO_UPDATE: no update is done for that attribute.
-        Otherwise, the attribute value is updated.
-        If conditional_state is None: make no update other than saving the response types
-        """
-        response_types = self.get_cache(f'{self.name}_response_types')
-        logger.info(f"Got cache for {self.name} response_types: {response_types}")
-        if response_types is not None:
-            state.response_types = construct_response_types_tuple(response_types)
-
         if conditional_state is None: return state
 
-        if conditional_state:
-            for attr in dir(conditional_state):
-                if not callable(getattr(conditional_state, attr)) and not attr.startswith("__"):
-                    val = getattr(conditional_state, attr)
-                    if val != NO_UPDATE: setattr(state, attr, val)
-        state.num_turns_in_rg += 1
+        state.cur_supernode = conditional_state.cur_supernode
+        state.data.update(conditional_state.data)
+        
         return state
 
     def update_state_if_not_chosen(self, state, conditional_state):

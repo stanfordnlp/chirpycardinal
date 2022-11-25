@@ -3,6 +3,7 @@ from typing import Any, List, Tuple, Set, Optional, Dict  # NOQA
 
 from chirpy.core.response_generator.response_type import ResponseType
 
+import os
 import logging
 logger = logging.getLogger('chirpylogger')
 
@@ -15,6 +16,11 @@ For no update to be made, set the conditional state's attribute values to NO_UPD
 """
 
 NO_UPDATE = "no-update"
+
+import yaml
+BASE_PATH = os.path.join(os.path.dirname(__file__), '../../symbolic_rgs')
+with open(os.path.join(BASE_PATH, 'state.yaml')) as f:
+    ALL_STATE_KEYS = yaml.safe_load(f)
 
 @dataclass
 class BaseState:
@@ -40,7 +46,15 @@ class BaseSymbolicState:
     num_turns_in_rg: int = 0
     cur_supernode: str = ''
     data: Dict[str, Any] = field(default_factory=dict)
-
+    
+    def __getitem__(self, key):
+        assert key in ALL_STATE_KEYS
+        logger.warning(f"Looking up value for {key}, data keys are {self.data}, all_state_keys are {ALL_STATE_KEYS}")
+        return self.data.get(key, ALL_STATE_KEYS[key])
+        
+    def update(self, data):
+        self.data.update(data)
+        
 @dataclass
 class BaseSymbolicConditionalState:
     prev_treelet_str: str = ''
