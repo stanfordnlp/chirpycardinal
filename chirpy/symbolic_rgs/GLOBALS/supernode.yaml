@@ -4,6 +4,8 @@ locals: {}
 
 subnodes:
   - node_name: weather
+    entry_conditions:
+      is_true: global_flags.weather
     response:
       - I live in the cloud so I'm not sure what the weather is like on earth! But anyway, I was just saying,
       - val: self.last_utterance
@@ -17,4 +19,3 @@ subnodes:
     state_updates:
       no_entity: True
     exit: True
-    
