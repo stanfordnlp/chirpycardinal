@@ -23,6 +23,10 @@ from importlib import import_module
 
 from concurrent import futures
 
+import inflect
+engine = inflect.engine()
+
+
 logger = logging.getLogger('chirpylogger')
 
 
@@ -51,10 +55,14 @@ def lookup_value(value_name, contexts):
 		assert len(value_name.split('.')) == 2, "Only one namespace allowed."
 		namespace_name, value_name = value_name.split('.')
 		value = contexts[namespace_name][value_name]
+		return value
 	else:
 		assert False, f"Need a namespace for value name {value_name}."
 
 def evaluate_nlg_call(data, python_context, contexts):
+	logger.warning(f"Eval data: {data}")
+	if isinstance(data, list):
+		return evaluate_nlg_calls(data, python_context, contexts)
 	if isinstance(data, str): # plain text
 		return data
 	
@@ -70,15 +78,19 @@ def evaluate_nlg_call(data, python_context, contexts):
 	elif type == 'nlg_helper':
 		assert isinstance(nlg_params, dict)
 		function_name = nlg_params['name']
-		assert function_name in python_context
-		args = [rg] + data.get('args', [])   # Add RG as first argument
-		return python_context[function_name](*args)
+		logger.warning(f"NLG helpers dir: {dir(python_context['supernode'].nlg_helpers)}")
+		assert hasattr(python_context['supernode'].nlg_helpers, function_name), f"Function name {function_name} not found"
+		args = nlg_params.get('args', [])
+		args = [evaluate_nlg_call(arg, python_context, contexts) for arg in args]
+		args = [python_context['rg']] + args  # Add RG as first argument
+		logger.warning(f"Args are: {args}")
+		return getattr(python_context['supernode'].nlg_helpers, function_name)(*args)
 	elif type == 'inflect':
 		assert isinstance(nlg_params, dict)
 		inflect_token = nlg_params['inflect_token']
 		inflect_val = lookup_value(nlg_params['inflect_entity'], contexts)
-		return infl(inflect_token, inflect_val.is_plural())
-	elif type == 'inflect_helper':
+		return infl(inflect_token, inflect_val.is_plural)
+	elif type == 'inflect_engine':
 		assert isinstance(nlg_params, dict)
 		inflect_function = nlg_params['type']
 		inflect_input = evaluate_nlg_call(nlg_params['str'], python_context, contexts)
@@ -88,6 +100,15 @@ def evaluate_nlg_call(data, python_context, contexts):
 	else:
 		assert False, f"Generation type {type} not found!"
 		
+PUNCTUATION = ['.', ',', '?', '!', ':', ';']
+def spacingaware_join(x):
+	result = ""
+	for idx, item in enumerate(x):
+		if idx != 0 and not any(item.startswith(punct) for punct in PUNCTUATION):
+			result += " "
+		result += item
+	return result
+
 def evaluate_nlg_calls(datas, python_context, contexts):
 	output = []
 	if isinstance(datas, str):
@@ -95,7 +116,7 @@ def evaluate_nlg_calls(datas, python_context, contexts):
 	for elem in datas:
 		output.append(evaluate_nlg_call(elem, python_context, contexts))
 	
-	return ' '.join(output)
+	return spacingaware_join(output)
 
 class Subnode:
 	def __init__(self, data):
@@ -107,11 +128,24 @@ class Subnode:
 		self.state_updates = data.get('state_updates', {})
 		
 	def is_valid(self, contexts):
-		for condition_style, var_name in self.entry_conditions.items():
+		for condition_style, var_data in self.entry_conditions.items():
 			assert condition_style in CONDITION_STYLE_TO_BEHAVIOR, f"Condition style {condition_style} is not recognized!"
 			validity_func = CONDITION_STYLE_TO_BEHAVIOR[condition_style]
+			
+			if condition_style == 'is_value':
+				var_name = var_data['name']
+				var_expected_value = var_data['value']
+			else:
+				var_name = var_data
+			
 			evaluated_value = lookup_value(var_name, contexts)
-			if not validity_func(evaluated_value): return False
+			
+			if condition_style == 'is_value':
+				result = validity_func(evaluated_value, var_expected_value)
+			else:	
+				result = validity_func(evaluated_value)
+				
+			if not result: return False
 		return True
 		
 	def get_response(self, python_context, contexts):
@@ -137,7 +171,7 @@ class Supernode:
 		self.name = name
 		
 		self.nlu = import_module(f'chirpy.symbolic_rgs.{name}.nlu')
-		_ = import_module(f'chirpy.symbolic_rgs.{name}.nlg_helpers')		
+		self.nlg_helpers = import_module(f'chirpy.symbolic_rgs.{name}.nlg_helpers')		
 	
 	def load_requirements(self, requirements):
 		self.requirements = requirements
@@ -154,6 +188,8 @@ class Supernode:
 	def get_optimal_subnode(self, contexts):
 		possible_subnodes = [subnode for subnode in self.subnodes + self.get_global_subnodes() if subnode.is_valid(contexts)]
 		assert len(possible_subnodes), "No subnode found!"
+
+		logger.warning(f"POSSIBLE SUBNODES ARE: {possible_subnodes}")
 		
 		# for now, just return the first possible subnode
 		return possible_subnodes[0]

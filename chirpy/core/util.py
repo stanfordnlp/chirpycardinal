@@ -556,7 +556,8 @@ def infl(word, is_plural):
         ('will be', 'will be'),
         ('it', 'they'),
         ('it', 'them'),
-        ('has', 'have')
+        ('has', 'have'),
+        ('it\'s', 'they are')
     ]
     for sing_form, plur_form in lookup:
         if sing_form == word or plur_form == word:

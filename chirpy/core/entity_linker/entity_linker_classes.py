@@ -123,6 +123,8 @@ class WikiEntity(object):
 
     @property
     def is_plural(self) -> bool:
+        #logger.warning(f"Talkable name is {self.talkable_name}")
+        #logger.warning(f"Is singular is {engine.singular_noun(self.talkable_name)}")
         return bool(engine.singular_noun(self.talkable_name))
 
 

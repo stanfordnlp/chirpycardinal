@@ -54,7 +54,32 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
     def get_global_flags(self, state, utterance):
         # response types
-        global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()} 
+        global_flags = {"GlobalFlag__" + k.name: v for k, v in global_response_type_dict(self, utterance).items()
+        } 
+
+        # map from string to None / template
+        abrupt_initiative_templates = {
+            "weather": WeatherTemplate(),   # problems
+            # "time": 
+            "repeat": SayThatAgainTemplate(),
+            # "correct_name":
+            "request_name": RequestNameTemplate(),
+            # "age"
+            # "clarification"
+            # "abilities"
+            # "personal"
+            # "interrupt"
+            "chatty": ChattyTemplate(),
+            # "story"
+            # "personal_problem"
+            # "anything"
+        }
+
+        abrupt_initiative_flags = {f"GlobalFlag__Initiative__{k}": v.execute(utterance) for k, v in abrupt_initiative_templates.items()}
+        logger.warning(f"ABRUPT INITIATIVE FLAGS: {abrupt_initiative_flags}")
+
+        global_flags.update(abrupt_initiative_flags)
+        logger.warning(f"GLOBAL FLAGS: {global_flags}")
         
         # abrupt initiative
         #global_flags.update(self.get_abrupt_initiative_flags())
@@ -93,6 +118,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
         python_context = get_context_for_supernode(supernode)
         python_context.update({
             'rg': self,
+            'supernode': supernode,
             'state': state
         })
         
@@ -102,12 +128,19 @@ class SymbolicResponseGenerator(ResponseGenerator):
         flags.update(supernode.get_flags(self, state, utterance))
         
         logging.warning(f"Flags are: {flags}")
-        logging.warning(f"Current entity is: {self.get_current_entity()}")
         
         # Process locals        
+        utilities = {
+            "last_utterance": utterance, 
+            "cur_entity": self.get_current_entity(),
+            "cur_talkable": self.get_current_entity().talkable_name if self.get_current_entity() else "",
+            "lowercased_cur_entity": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
+        }
+        logging.warning(f"Utilities are: {utilities}")
         contexts = {
             'flags': flags,
             'state': state,
+            'utilities': utilities,
         }
         locals = supernode.evaluate_locals(python_context, contexts)
         contexts['locals'] = locals

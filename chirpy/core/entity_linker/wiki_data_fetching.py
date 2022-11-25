@@ -98,7 +98,7 @@ def result2entity(result: dict) -> Optional[WikiEntity]:
     #         anchortext_counts[anchortext] += count
     #     else:
     #         anchortext_counts[anchortext] = count
-
+    logger.warning(f"Source is {source}.")
     plural = source.get('plural', source['doc_title'])
     if plural.strip() == "":
         plural = source['doc_title']
