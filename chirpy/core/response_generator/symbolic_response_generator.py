@@ -148,8 +148,10 @@ class SymbolicResponseGenerator(ResponseGenerator):
         utilities = {
             "last_utterance": self.get_last_response().text, 
             "cur_entity": self.get_current_entity(),
+            "cur_entity_name": self.get_current_entity().name if self.get_current_entity() else "",
+            "cur_entity_name_lower": self.get_current_entity().name.lower() if self.get_current_entity() else "",
             "cur_talkable": self.get_current_entity().talkable_name if self.get_current_entity() else "",
-            "lowercased_cur_entity": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
+            "cur_entity_talkable_lower": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
         }
         logging.warning(f"Utilities are: {utilities}")
 
@@ -181,6 +183,11 @@ class SymbolicResponseGenerator(ResponseGenerator):
             locals['cur_entity'] = self.get_current_entity()
             break
             
+        conditional_state_updates = {}
+        self.update_context(supernode.get_state_updates(python_context, contexts),
+                            flags,
+                            conditional_state_updates)
+        state.update(conditional_state_updates)
 
         # select subnode
         subnode = supernode.get_optimal_subnode(python_context, contexts)
@@ -189,7 +196,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
         # update state
         conditional_state_updates = {}
-        self.update_context(supernode.get_state_updates(python_context, contexts),
+        self.update_context(supernode.get_state_updates_after(python_context, contexts),
                             flags,
                             conditional_state_updates)
         self.update_context(subnode.get_state_updates(python_context, contexts),

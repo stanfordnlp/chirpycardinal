@@ -105,6 +105,7 @@ PUNCTUATION = ['.', ',', '?', '!', ':', ';']
 def spacingaware_join(x):
 	result = ""
 	for idx, item in enumerate(x):
+		assert isinstance(item, str), f"Item {item} (from {x}) is not a string"
 		if idx != 0 and not any(item.startswith(punct) for punct in PUNCTUATION):
 			result += " "
 		result += item
@@ -115,7 +116,9 @@ def evaluate_nlg_calls(datas, python_context, contexts):
 	if isinstance(datas, str):
 		datas = [datas]
 	for elem in datas:
-		output.append(evaluate_nlg_call(elem, python_context, contexts))
+		out = evaluate_nlg_call(elem, python_context, contexts)
+		logger.warning(f"nlg_generation {datas} {out}")
+		output.append(out)
 	
 	return spacingaware_join(output)
 	
@@ -127,35 +130,44 @@ def evaluate_nlg_calls_or_constant(datas, python_context, contexts):
 	
 CONDITION_STYLE_TO_BEHAVIOR = {
 	'is_none': (lambda val: (val is None)),
+	'is_not_none': (lambda val: (val is not None)),
 	'is_true': (lambda val: (val is True)),
 	'is_false': (lambda val: (val is False)),
 	'is_value': (lambda val, target: (val == target)),
 }
 	
+def compute_entry_condition(entry_condition, python_context, contexts):
+	assert len(entry_condition) == 1
+	condition_style, var_data = list(entry_condition.items())[0]
+	if condition_style == 'or':
+		return any(compute_entry_condition(ent) for ent in var_data)
+
+	if condition_style == 'is_value':
+		var_name = var_data['name']
+		var_expected_value = evaluate_nlg_call(var_data['value'], python_context, contexts)
+	else:
+		var_name = var_data
+	
+	assert condition_style in CONDITION_STYLE_TO_BEHAVIOR, f"Condition style {condition_style} is not recognized!"
+	validity_func = CONDITION_STYLE_TO_BEHAVIOR[condition_style]
+	
+	evaluated_value = lookup_value(var_name, contexts)
+	
+	if condition_style == 'is_value':
+		result = validity_func(evaluated_value, var_expected_value)
+	else:	
+		logger.warning(f"Evaluated value is {evaluated_value}")
+		result = validity_func(evaluated_value)
+		logger.warning(f"Result is {result}")
+		
+	return result
+
 def is_valid(entry_conditions, python_context, contexts):
 	for entry_condition_dict in entry_conditions:
 		logger.warning(f"Entry conditions are: {entry_conditions}")
-		condition_style, var_data = list(entry_condition_dict.items())[0]
-		
-		if condition_style == 'is_value':
-			var_name = var_data['name']
-			var_expected_value = evaluate_nlg_call(var_data['value'], python_context, contexts)
-		else:
-			var_name = var_data
-		
-		assert condition_style in CONDITION_STYLE_TO_BEHAVIOR, f"Condition style {condition_style} is not recognized!"
-		validity_func = CONDITION_STYLE_TO_BEHAVIOR[condition_style]
-		
-		evaluated_value = lookup_value(var_name, contexts)
-		
-		if condition_style == 'is_value':
-			result = validity_func(evaluated_value, var_expected_value)
-		else:	
-			logger.warning(f"Evaluated value is {evaluated_value}")
-			result = validity_func(evaluated_value)
-			logger.warning(f"Result is {result}")
-			
-		if not result: return False
+		if not compute_entry_condition(entry_condition_dict, python_context, contexts):
+			return False
+
 	return True
 
 class Subnode:
@@ -182,6 +194,9 @@ class Subnode:
 	def __str__(self):
 		return f'Subnode({self.name})'
 
+	def __repr__(self):
+		return str(self)
+
 class Supernode:
 	def __init__(self, name):
 		self.yaml_path = os.path.join(BASE_PATH, name)
@@ -195,7 +210,8 @@ class Supernode:
 			'prompt',
 			'locals',
 			'subnodes',
-			'set_state'
+			'set_state',
+			'set_state_after'
 		]
 		
 		invalid_keys = set(self.content.keys()) - set(ALLOWED_KEYS)
@@ -207,6 +223,7 @@ class Supernode:
 		self.locals = self.content['locals']
 		self.subnodes = self.load_subnodes(self.content['subnodes'])
 		self.updates = self.content.get('set_state', {})
+		self.updates_after = self.content.get('set_state_after', {})
 		self.prompt = self.content.get('prompt', [])
 		self.name = name
 		
@@ -266,6 +283,12 @@ class Supernode:
 		return {
 			value_name: evaluate_nlg_calls_or_constant(value_data, python_context, contexts)
 			for value_name, value_data in self.updates.items()
+		}
+
+	def get_state_updates_after(self, python_context, contexts):
+		return {
+			value_name: evaluate_nlg_calls_or_constant(value_data, python_context, contexts)
+			for value_name, value_data in self.updates_after.items()
 		}
 			
 		

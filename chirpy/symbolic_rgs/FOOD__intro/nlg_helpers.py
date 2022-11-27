@@ -19,7 +19,77 @@ def sample_food_containing_ingredient(rg, food: str):
     logger.warning(f"{[item for item, item_data in food_helpers.FOODS.items() if ('ingredients' in item_data and food in item_data['ingredients'])]}")
     return random.choice([item for item, item_data in food_helpers.FOODS.items() if ('ingredients' in item_data and food in item_data['ingredients'])])
 
+# def get_factoid_kind(rg, cur_entity):
+#     talkable_food = cur_entity.talkable_name
+#     food_data = food_helpers.get_food_data(food)
 
+#     if 'year' in food_data and food_helpers.get_time_comment(food_data['year'], talkable_food) is not None:
+#         if 'origin' in food_data:
+#             logger.warning("FACTOID KIND is now origin_and_year")
+#             return 'origin_and_year'
+#         else:
+#             logger.warning("FACTOID KIND is now year")
+#             return 'year'
+#     elif 'origin' in food_data:
+#         logger.warning("FACTOID KIND is now origin")
+#         return 'origin'
+#     return None
+
+@nlg_helper
+def get_food_origin(rg, food): 
+    food_data = food_helpers.get_food_data(food)
+    logger.warning(f"FACTOID includes ORIGIN: {'origin' in food_data}")
+    if 'origin' in food_data:
+        return food_data['origin']
+    return None
+
+YEAR_ENDINGS = ['st', 'th', 'nd', 'rd', ' century', 'BC']
+
+@nlg_helper
+def get_food_year(rg, food):
+    food_data = food_helpers.get_food_data(food)
+    
+    if 'year' not in food_data:
+        return None
+    
+    year = food_data['year'].strip()
+
+    # the 4th century BC
+    if 'century' in year or ' BC' in year: 
+        if 'the' not in year: year = "the " + year
+        return year
+    
+    year = year.strip()
+    if year.endswith('s'):
+        intyear = int(year[:-1])
+    else:
+        intyear = int(year)
+    if intyear > 1800:
+        return None
+        
+    return year
+    
+def get_attribute(food: str):
+    food_data = food_helpers.get_food_data(food)
+    if 'ingredients' in food_data:
+        return 'ingredient', 
+    elif 'texture' in food_data:
+        return 'texture', food_data['texture']
+    # elif 'origin' in food_data:
+    #     return 'origin', food_data['origin']
+    return None, None
+
+@nlg_helper
+def get_food_ingredient(rg, food: str):
+    return food_helpers.sample_ingredient(food)
+
+@nlg_helper
+def get_food_texture(rg, food: str):
+    return food_helpers.get_texture(food)
+
+@nlg_helper
+def get_food_ingredient_of(rg, food: str):
+    return food_helpers.sample_food_containing_ingredient(food)
 
 
 CUSTOM_STATEMENTS = {
