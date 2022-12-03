@@ -1,7 +1,8 @@
-entry_conditions: []
-
+entry_flag_conditions: []
 entry_conditions_takeover:
   disallow
+
+prompts: []
 
 locals: {}
 
@@ -9,7 +10,7 @@ subnodes:
   # abrupt initiative
   
   - node_name: weather
-    entry_conditions:
+    entry_flag_conditions:
       - is_true: flags.GlobalFlag__Initiative__weather
     response:
       - I live in the cloud so I'm not sure what the weather is like on earth! 

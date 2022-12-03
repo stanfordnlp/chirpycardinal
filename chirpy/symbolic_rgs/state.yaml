@@ -1,4 +1,12 @@
 User__FavoriteFood: null
+User__FavoriteFoodAttribute: null
+User__FavoriteFoodFactoidOrigin: null
+User__FavoriteFoodFactoidYear: null
 User__FavoriteFoodHasFactoid: false
+User__FavoriteFoodHasOrigin: false
+User__FavoriteFoodIngredient: null
+User__FavoriteFoodIngredientOf: null
+User__FavoriteFoodTalkable: null
+User__FavoriteFoodTexture: null
 User__FavoriteSport: null
 User__FavoritePlace: null

@@ -34,8 +34,9 @@ class SymbolicResponseGenerator(ResponseGenerator):
     name='SYMBOLIC_RESPONSE'
     def __init__(self,
                  state_manager,
-                 supernodes=[
+                 supernode_paths=[
                     'FOOD__intro',
+                    'FOOD__factoid',
                     'GLOBAL__openended',
                     'GLOBALS'
                  ],
@@ -47,11 +48,11 @@ class SymbolicResponseGenerator(ResponseGenerator):
             conditional_state_constructor=BaseSymbolicConditionalState,
         )
         
-        logger.warning(f"Starting load process with supernodes {supernodes}.")
-        self.paths_to_supernodes = self.load_supernodes_from_paths(supernodes)
+        logger.warning(f"Starting load process with supernodes {supernode_paths}.")
+        self.paths_to_supernodes = self.load_supernodes_from_paths(supernode_paths)
         logger.warning(f"Supernodes are: {', '.join(str(x) for x in self.paths_to_supernodes.keys())}")
                 
-    def load_supernodes_from_paths(self, supernode_paths):   
+    def load_supernodes_from_paths(self, supernode_paths):
         return {path: Supernode(path) for path in supernode_paths}
         
     def get_global_flags(self, state, utterance):
@@ -91,10 +92,10 @@ class SymbolicResponseGenerator(ResponseGenerator):
     def get_next_supernode(self, python_context, contexts):
         can_start_supernodes = {supernode: supernode.can_start(python_context, contexts, return_specificity=True)
                                 for supernode in self.get_supernodes()}
-        can_start_supernodes = sorted(can_start_supernodes.items(), key=lambda kv: kv[1], reverse=True)
+        can_start_supernodes = sorted(can_start_supernodes.items(), key=lambda kv: (kv[1][0], kv[1][1]), reverse=True)
         logger.warning(f"Supernodes that can start (in order): {can_start_supernodes}")
         return can_start_supernodes[0][0]
-        
+
     def get_any_takeover_supernode(self, python_context, contexts):
         return self.paths_to_supernodes['GLOBALS']
         
@@ -193,7 +194,8 @@ class SymbolicResponseGenerator(ResponseGenerator):
         subnode = supernode.get_optimal_subnode(python_context, contexts)
         response = subnode.get_response(python_context, contexts)
         logger.warning(f'Received {response} from subnode {subnode}.')
-        
+        assert response is not None, "Received a None response."
+
         # update state
         conditional_state_updates = {}
         self.update_context(supernode.get_state_updates_after(python_context, contexts),
@@ -209,7 +211,9 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
         # get next prompt
         next_supernode = self.get_next_supernode(python_context, contexts)
-        prompt = next_supernode.get_prompt(python_context, contexts) # TODO fix contexts
+        prompt = next_supernode.get_optimal_prompt(python_context, contexts) # TODO fix contexts
+
+        print(f"OPTIMAL PROMPT: {prompt}")
         
         conditional_state = BaseSymbolicConditionalState(
             data=state.data,
@@ -219,7 +223,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
         # TODO
         answer_type = AnswerType.QUESTION_SELFHANDLING
         
-        return ResponseGeneratorResult(text=response + " " + prompt, 
+        return ResponseGeneratorResult(text=response + " " + prompt,
                                        priority=ResponsePriority.STRONG_CONTINUE, 
                                        needs_prompt=False,
                                        state=state,

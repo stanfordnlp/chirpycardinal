@@ -1,9 +1,10 @@
-entry_conditions:
+entry_state_conditions:
   - is_none: state.User__FavoriteFood
 
 # THESE ARE EVALUATED AT THE PROMPT STAGE
-prompt: 
-- "What's your favorite food?"
+prompts:
+- prompt_name: favorite_food
+  prompt_text: "What's your favorite food?"
 
 # THESE ARE EVALUATED AT THE GENERATION STAGE
 entry_conditions_takeover:
@@ -14,9 +15,6 @@ continue_conditions:
   - is_true: flags.FOOD__user_mentioned_food
 
 locals:
-  lowercased_entity:
-    eval: "(rg.get_current_entity() or '').name.lower()"
-    
   intro_statement: # Ah yes, potatoes are one of my favorite things to eat up here...
     - one of: 
       - Ah yes,
@@ -30,7 +28,9 @@ locals:
       - such an amazing choice. It's one of my favorite foods up here in the cloud.
     
 set_state:
-  state.User__FavoriteFood: 
+  state.User__FavoriteFood:
+    - val: utilities.cur_entity
+  state.User__FavoriteFoodTalkable:
     - val: utilities.cur_entity_talkable_lower
   state.User__FavoriteFoodFactoidYear:
     - nlg_helper:
@@ -47,16 +47,17 @@ set_state:
         name: get_food_ingredient
         args:
           - val: utilities.cur_entity_name
-  state.User__FavoriteFoodAttribute:
-    - nlg_helper:
-        name: get_food_attribute
-        args:
-          - val: utilities.cur_entity_name
   state.User__FavoriteFoodIngredientOf:
     - nlg_helper:
         name: get_food_ingredient_of
         args:
           - val: utilities.cur_entity_name
+  state.User__FavoriteFoodTexture:
+    - nlg_helper:
+        name: get_food_texture
+        args:
+          - val: utilities.cur_entity_name
+
   
 
 subnodes:
@@ -72,14 +73,12 @@ subnodes:
       
   # Personally, I especially like the peanuts in them, I think it gives them a really nice flavor.
   - node_name: make_ingredient_attribute_comment
-    entry_conditions:
-      - is_not_none: flags.User__FavoriteFoodIngredient
+    entry_state_conditions:
+      - is_not_none: state.User__FavoriteFoodIngredient
     response:
       - val: locals.intro_statement
       - Personally, I especially like the
-      - nlg_helper:
-          name: get_best_attribute_value
-          args: [utilities.cur_entity_name]
+      - val: state.User__FavoriteFoodIngredient
       - ", I think it gives"
       - inflect:
           inflect_token: them
@@ -88,8 +87,8 @@ subnodes:
       
   # Personally, I especially like its texture, especially how it's so grainy.
   - node_name: make_texture_attribute_comment
-    entry_conditions:
-      - is_not_none: User__FavoriteFoodAttribute
+    entry_state_conditions:
+      - is_not_none: state.User__FavoriteFoodTexture
     response:
       - val: locals.intro_statement
       - Personally, I especially like the
@@ -101,16 +100,14 @@ subnodes:
           inflect_token: it's
           inflect_entity: utilities.cur_entity
       - so
-      - nlg_helper:
-          name: get_best_attribute_value
-          args: [utilities.lowercased_cur_entity]
+      - val: state.User__FavoriteFoodTexture
       - . 
       
       
   # In my opinion, I think it's especially good as part of a patatas bravas.
   - node_name: make_food_is_an_ingredient_comment
-    entry_conditions:
-      - is_not_none: flags.User__FavoriteFoodIngredient
+    entry_state_conditions:
+      - is_not_none: state.User__FavoriteFoodIngredientOf
     response:
       - val: locals.intro_statement
       - In my opinion, I think
@@ -121,10 +118,7 @@ subnodes:
       - inflect_engine:
           type: a
           str:
-            - nlg_helper:
-                name: sample_food_containing_ingredient
-                args: 
-                  - val: utilities.lowercased_cur_entity
+            - val: state.User__FavoriteFoodIngredientOf
       - . 
 
   # I especially love how it's [NEURAL_GEN]...

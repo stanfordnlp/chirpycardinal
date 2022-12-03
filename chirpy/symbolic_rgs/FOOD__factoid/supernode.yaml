@@ -1,0 +1,87 @@
+entry_state_conditions:
+  - is_not_none: state.User__FavoriteFood
+  - or:
+    - is_not_none: state.User__FavoriteFoodFactoidYear
+    - is_not_none: state.User__FavoriteFoodFactoidOrigin
+
+# THESE ARE EVALUATED AT THE PROMPT STAGE
+prompts:
+  - prompt_name: origin_year_factoid_prompt
+    entry_state_conditions:
+      - is_not_none: state.User__FavoriteFoodFactoidYear
+      - is_not_none: state.User__FavoriteFoodFactoidOrigin
+    prompt_text:
+      - Did you know that
+      - val: state.User__FavoriteFoodTalkable
+      - inflect:
+          inflect_token: was
+          inflect_entity: state.User__FavoriteFoodTalkable
+      - first made in
+      - val: state.User__FavoriteFoodFactoidOrigin
+      - around
+      - val: state.User__FavoriteFoodFactoidYear
+      - "?"
+      - I can't believe people have been eating
+      - val: state.User__FavoriteFoodTalkable
+      - for so long!
+  # if only origin
+  - prompt_name: origin_factoid_prompt
+    entry_state_conditions:
+      - is_not_none: state.User__FavoriteFoodFactoidOrigin
+    prompt_text:
+      - Did you know that
+      - val: state.User__FavoriteFoodTalkable
+      - inflect:
+          inflect_token: is
+          inflect_entity: state.User__FavoriteFood
+      - originally from
+      - val: state.User__FavoriteFoodFactoidOrigin
+      - "?"
+  # if only year
+  - prompt_name: make_year_factoid_comment
+    entry_state_conditions:
+      - is_not_none: state.User__FavoriteFoodFactoidYear
+    prompt_text:
+      - Did you know that
+      - inflect:
+          inflect_token: has
+          inflect_entity: state.User__FavoriteFood
+      - been made since
+      - val: state.User__FavoriteFoodFactoidYear
+      - "?"
+      - I can't believe people have been eating
+      - val: state.User__FavoriteFoodTalkable
+      - for so long!
+  # I especially love how it's [NEURAL_GEN]...
+  - prompt_name: default
+    prompt_text:
+    - neural_generation:
+        prefix:
+          - I especially love how
+          - inflect:
+              inflect_token: it\'s
+              inflect_entity: state.User__FavoriteFood
+
+# THESE ARE EVALUATED AT THE GENERATION STAGE
+entry_conditions_takeover:
+  - is_true: GLOBAL__user_has_navigational_intent
+  - is_true: FOOD__cur_entity_known_food
+
+continue_conditions:
+
+locals:
+
+set_state:
+
+subnodes:
+  - node_name: open_ended_neural_fallback
+    response:
+      - neural_generation:
+          prefix: ""
+
+set_state_after:
+  state.User__FavoriteFood: 
+    - val: utilities.lowercased_cur_entity
+  
+  flags.GlobalFlag__LastBotTurnWasOpenEnded:
+    constant: True

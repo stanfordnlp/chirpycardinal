@@ -68,16 +68,6 @@ def get_food_year(rg, food):
         return None
         
     return year
-    
-def get_attribute(food: str):
-    food_data = food_helpers.get_food_data(food)
-    if 'ingredients' in food_data:
-        return 'ingredient', 
-    elif 'texture' in food_data:
-        return 'texture', food_data['texture']
-    # elif 'origin' in food_data:
-    #     return 'origin', food_data['origin']
-    return None, None
 
 @nlg_helper
 def get_food_ingredient(rg, food: str):

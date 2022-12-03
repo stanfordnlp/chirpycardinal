@@ -1,4 +1,4 @@
-entry_conditions:
+entry_flag_conditions:
   - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
 
 entry_conditions_takeover: 
@@ -6,10 +6,12 @@ entry_conditions_takeover:
 
 locals: {}
 
-prompt:
-  - one of:
-    - What do you think?
-    - What are your thoughts?
+prompts:
+  - prompt_name: what_say_you
+    prompt_text:
+      - one of:
+        - What do you think?
+        - What are your thoughts?
 
 subnodes:
   # abrupt initiative

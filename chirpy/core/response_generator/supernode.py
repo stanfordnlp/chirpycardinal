@@ -100,6 +100,8 @@ def evaluate_nlg_call(data, python_context, contexts):
 		return nlg_params
 	else:
 		assert False, f"Generation type {type} not found!"
+
+
 		
 PUNCTUATION = ['.', ',', '?', '!', ':', ';']
 def spacingaware_join(x):
@@ -113,19 +115,23 @@ def spacingaware_join(x):
 
 def evaluate_nlg_calls(datas, python_context, contexts):
 	output = []
-	if isinstance(datas, str):
-		datas = [datas]
+	logger.warning(f"datas is {datas}")
+	if isinstance(datas, str) or isinstance(datas, dict):
+		return evaluate_nlg_call(datas, python_context, contexts)
+	if len(datas) == 1:
+		return evaluate_nlg_call(datas[0], python_context, contexts)
 	for elem in datas:
 		out = evaluate_nlg_call(elem, python_context, contexts)
 		logger.warning(f"nlg_generation {datas} {out}")
 		output.append(out)
-	
+
 	return spacingaware_join(output)
 	
 def evaluate_nlg_calls_or_constant(datas, python_context, contexts):
 	if isinstance(datas, dict):
 		assert len(datas) == 1, "should be a dict with key constant"
 		return datas['constant']
+	logger.warning(f"Datas is: {datas}")
 	return evaluate_nlg_calls(datas, python_context, contexts)
 	
 CONDITION_STYLE_TO_BEHAVIOR = {
@@ -140,7 +146,7 @@ def compute_entry_condition(entry_condition, python_context, contexts):
 	assert len(entry_condition) == 1
 	condition_style, var_data = list(entry_condition.items())[0]
 	if condition_style == 'or':
-		return any(compute_entry_condition(ent) for ent in var_data)
+		return any(compute_entry_condition(ent, python_context, contexts) for ent in var_data)
 
 	if condition_style == 'is_value':
 		var_name = var_data['name']
@@ -170,19 +176,51 @@ def is_valid(entry_conditions, python_context, contexts):
 
 	return True
 
+class Prompt:
+	def __init__(self, data):
+		logger.warning(f"Prompt data is: {data}")
+		self.data = data
+		self.entry_flag_conditions = data.get('entry_flag_conditions', [])
+		self.entry_state_conditions = data.get('entry_state_conditions', [])
+		self.prompt_text = data.get('prompt_text')
+		self.name = data['prompt_name']
+		self.updates = data.get('set_state', {})
+
+	def is_valid(self, python_context, contexts):
+		return is_valid(self.entry_flag_conditions + self.entry_state_conditions,
+						python_context, contexts)
+
+	def get_prompt_text(self, python_context, contexts):
+		return evaluate_nlg_calls(self.prompt_text, python_context, contexts)
+
+	def get_state_updates(self, python_context, contexts):
+		return {
+			value_name: evaluate_nlg_calls(value_data, python_context, contexts)
+			for value_name, value_data in self.updates.items()
+		}
+
+	def __str__(self):
+		return f'Prompt text: ({self.prompt_text})'
+
+	def __repr__(self):
+		return str(self)
+
 class Subnode:
 	def __init__(self, data):
-		logger.warning(f"Data is, {data}")
+		logger.warning(f"Subnode data is, {data}")
 		self.data = data
-		self.entry_conditions = data.get('entry_conditions', {})
+		self.entry_flag_conditions = data.get('entry_flag_conditions', [])
+		self.entry_state_conditions = data.get('entry_state_conditions', [])
 		self.response = data.get('response')
 		self.name = data['node_name']
 		self.updates = data.get('set_state', {})
 		
 	def is_valid(self, python_context, contexts):
-		return is_valid(self.entry_conditions, python_context, contexts)
+		return is_valid(self.entry_flag_conditions + self.entry_state_conditions,
+						python_context, contexts)
 		
 	def get_response(self, python_context, contexts):
+		logger.warning(f"Subnode response is: {self.response}")
 		return evaluate_nlg_calls(self.response, python_context, contexts)
 		
 	def get_state_updates(self, python_context, contexts):
@@ -204,10 +242,11 @@ class Supernode:
 			self.content = yaml.safe_load(f)
 			
 		ALLOWED_KEYS = [
-			'entry_conditions',
+			'entry_flag_conditions',
+			'entry_state_conditions',
 			'entry_conditions_takeover',
 			'continue_conditions',
-			'prompt',
+			'prompts',
 			'locals',
 			'subnodes',
 			'set_state',
@@ -217,14 +256,15 @@ class Supernode:
 		invalid_keys = set(self.content.keys()) - set(ALLOWED_KEYS)
 		assert len(invalid_keys) == 0, f"Invalid key: {invalid_keys}"
 			
-		self.entry_conditions = self.content.get('entry_conditions', [])
+		self.entry_flag_conditions = self.content.get('entry_flag_conditions', [])
+		self.entry_state_conditions = self.content.get('entry_state_conditions', [])
 		self.entry_conditions_takeover = self.content.get('entry_conditions_takeover', 'disallow')
 		self.continue_conditions = self.content.get('continue_conditions', [])
 		self.locals = self.content['locals']
 		self.subnodes = self.load_subnodes(self.content['subnodes'])
 		self.updates = self.content.get('set_state', {})
 		self.updates_after = self.content.get('set_state_after', {})
-		self.prompt = self.content.get('prompt', [])
+		self.prompts = self.load_prompts(self.content['prompts'])
 		self.name = name
 		
 		self.nlu = import_module(f'chirpy.symbolic_rgs.{name}.nlu')
@@ -238,7 +278,7 @@ class Supernode:
 		
 	def load_subnodes(self, subnode_data):
 		return [Subnode(data) for data in subnode_data]
-	
+
 	def get_optimal_subnode(self, python_context, contexts):
 		possible_subnodes = [subnode for subnode in self.subnodes + self.get_global_subnodes() if subnode.is_valid(python_context, contexts)]
 		assert len(possible_subnodes), "No subnode found!"
@@ -248,8 +288,17 @@ class Supernode:
 		# for now, just return the first possible subnode
 		return possible_subnodes[0]
 		
-		return None
-		
+	def load_prompts(self, prompt_data):
+		return [Prompt(data) for data in prompt_data]
+
+	def get_optimal_prompt(self, python_context, contexts):
+		possible_prompts = [prompt.get_prompt_text(python_context, contexts) for prompt in self.prompts if
+							 prompt.is_valid(python_context, contexts)]
+		assert len(possible_prompts), "No prompt found!"
+
+		# for now, just return the first possible subnode
+		return possible_prompts[0]
+
 	def evaluate_locals(self, python_context, contexts):
 		output = {}
 		contexts['locals'] = output
@@ -258,10 +307,11 @@ class Supernode:
 		return output
 	
 	def can_start(self, python_context, contexts, return_specificity=False):
-		result = is_valid(self.entry_conditions, python_context, contexts)
+		result = is_valid(self.entry_flag_conditions + self.entry_state_conditions,
+						  python_context, contexts)
 		logger.warning(f"Can_start for {self.name} logged {result}")
 		if return_specificity:
-			return len(self.entry_conditions) + 1 if result else 0
+			return (len(self.entry_flag_conditions), len(self.entry_state_conditions) + 1) if result else (0, 0)
 		else:
 			return result
 		
@@ -275,10 +325,7 @@ class Supernode:
 		flags = self.nlu.get_flags(rg, state, utterance)
 		logger.warning(f"Added the following flags: {flags}")
 		return flags
-		
-	def get_prompt(self, python_context, contexts):
-		return evaluate_nlg_calls(self.prompt, python_context, contexts)
-		
+
 	def get_state_updates(self, python_context, contexts):
 		return {
 			value_name: evaluate_nlg_calls_or_constant(value_data, python_context, contexts)

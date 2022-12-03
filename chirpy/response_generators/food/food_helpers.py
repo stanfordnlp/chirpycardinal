@@ -78,15 +78,30 @@ def get_attribute(food: str):
 
 def get_ingredients_in(food: str) -> set:
     """Returns ingredients in a food"""
-    food = food.lower()
-    if food not in FOODS: return None
     food_data = get_food_data(food)
-    return food_data.get('ingredients', None)
+    return food_data.get('ingredients', [])
+
+def get_texture(food: str):
+    food_data = get_food_data(food)
+    return food_data.get('texture', None)
+
+# def get_ingredients_in(food: str) -> set:
+#     """Returns ingredients in a food"""
+#     food_data = get_food_data(food)
+#     return food_data.get('texture', None)
+
+def is_ingredient(food: str):
+    food = food.lower()
+    # logger.primary_info(f"Food checking: {food}")
+    # logger.primary_info(f"{any('ingredients' in item and food in item['ingredients'] for item in FOODS)}")
+    # logger.primary_info(f"{any('ingredients' in item and food in item['ingredients'] for item in FOODS)}")
+    return any('ingredients' in item_data and food in item_data['ingredients'] for item, item_data in FOODS.items())
 
 BAD_INGREDIENTS = ['binding agent', 'sweeteners']
 
 def sample_ingredient(food):
     ingredients = get_ingredients_in(food)
+    if len(ingredients) == 0: return None
     def key(a, b):
         if a in BAD_INGREDIENTS: return 1
         if b in BAD_INGREDIENTS: return -1
@@ -96,16 +111,13 @@ def sample_ingredient(food):
     ingredients = sorted(ingredients, key=cmp_to_key(key))
     return ingredients[0]
 
-def is_ingredient(food: str):
-    food = food.lower()
-    # logger.primary_info(f"Food checking: {food}")
-    # logger.primary_info(f"{any('ingredients' in item and food in item['ingredients'] for item in FOODS)}")
-    # logger.primary_info(f"{any('ingredients' in item and food in item['ingredients'] for item in FOODS)}")
-    return any('ingredients' in item_data and food in item_data['ingredients'] for item, item_data in FOODS.items())
-
 def sample_food_containing_ingredient(food: str):
     food = food.lower()
-    return random.choice([item for item, item_data in FOODS.items() if ('ingredients' in item_data and food in item_data['ingredients'])])
+    contains_food = [item for item, item_data in FOODS.items() 
+                          if ('ingredients' in item_data and food in item_data['ingredients'])
+                    ]
+    if len(contains_food) == 0: return None
+    return random.choice(contains_food)
 
 def get_time_comment(year, food):
     if 'century' in year: intyear = int(year.replace('st', '').replace('th', '').replace('nd', '').replace('rd', '').replace(' century', '').replace('BC', '').strip()) * 100
@@ -117,6 +129,10 @@ def get_time_comment(year, food):
         if 'century' in year or 'era' in year: year = f"the {year}"
         return f"{year}", f"I can't believe people have been eating {food} for so long!"
     return None # the "modern" comment tends to be quite silly
+
+
+
+
 
 def get_factoid(cur_entity):
     food = cur_entity.name.lower()
