@@ -15,6 +15,7 @@ def dir_path(string):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('path', type=dir_path)
+parser.add_argument('--prefix', default="", type=str)
 
 arguments = parser.parse_args()
 with open(arguments.path, 'r') as f:
@@ -24,6 +25,7 @@ lines = [x for x in lines if x]
 print('\n'.join(lines))
 json = {
 	"history": lines,
+	"prefix": arguments.prefix,
 }
 result = requests.post("http://localhost:4087", json=json)
 result = result.json()
