@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from logging import Handler, LogRecord
 from pathlib import Path
-from collections import Iterable
+from collections.abc import Iterable
 from typing import ClassVar, Iterable, List, Optional, Type, TYPE_CHECKING, Union, Callable
 import os
 import rich

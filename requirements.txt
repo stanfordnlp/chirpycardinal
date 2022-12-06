@@ -57,5 +57,4 @@ metaphone==0.6
 
 textstat
 
-# logging
 rich
