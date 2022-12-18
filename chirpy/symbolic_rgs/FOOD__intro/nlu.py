@@ -2,6 +2,8 @@ from chirpy.response_generators.food import food_helpers
 from chirpy.core.response_generator.nlu import nlu_processing
 
 def get_best_attribute(food):
+    if not food_helpers.is_known_food(food):
+        return None
     food_data = food_helpers.get_food_data(food)
     if 'ingredients' in food_data:
         return 'has_ingredient'

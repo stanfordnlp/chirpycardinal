@@ -37,6 +37,8 @@ def sample_food_containing_ingredient(rg, food: str):
 
 @nlg_helper
 def get_food_origin(rg, food): 
+    if not food_helpers.is_known_food(food):
+        return None
     food_data = food_helpers.get_food_data(food)
     logger.warning(f"FACTOID includes ORIGIN: {'origin' in food_data}")
     if 'origin' in food_data:
@@ -47,6 +49,8 @@ YEAR_ENDINGS = ['st', 'th', 'nd', 'rd', ' century', 'BC']
 
 @nlg_helper
 def get_food_year(rg, food):
+    if not food_helpers.is_known_food(food):
+        return None
     food_data = food_helpers.get_food_data(food)
     
     if 'year' not in food_data:
