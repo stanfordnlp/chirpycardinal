@@ -160,6 +160,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
             "cur_entity_name_lower": self.get_current_entity().name.lower() if self.get_current_entity() else "",
             "cur_talkable": self.get_current_entity().talkable_name if self.get_current_entity() else "",
             "cur_entity_talkable_lower": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
+            "cur_supernode": state.cur_supernode,
         }
         logging.warning(f"Utilities are: {utilities}")
 
