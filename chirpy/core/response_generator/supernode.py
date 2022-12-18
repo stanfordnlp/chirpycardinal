@@ -140,6 +140,7 @@ CONDITION_STYLE_TO_BEHAVIOR = {
 	'is_true': (lambda val: (val is True)),
 	'is_false': (lambda val: (val is False)),
 	'is_value': (lambda val, target: (val == target)),
+	'is_not_one_of': (lambda val, target: (val not in target)),
 }
 	
 def compute_entry_condition(entry_condition, python_context, contexts):
@@ -147,6 +148,10 @@ def compute_entry_condition(entry_condition, python_context, contexts):
 	condition_style, var_data = list(entry_condition.items())[0]
 	if condition_style == 'or':
 		return any(compute_entry_condition(ent, python_context, contexts) for ent in var_data)
+	if condition_style == 'is_not_one_of':
+		var_value = lookup_value(var_data['name'], contexts)
+		logger.warning(f"Calculated value: {var_value} versus {var_data['values']}.")
+		return CONDITION_STYLE_TO_BEHAVIOR[condition_style](var_value, var_data['values'])
 
 	if condition_style == 'is_value':
 		var_name = var_data['name']
