@@ -331,6 +331,11 @@ class Supernode:
 		logger.warning(f"Added the following flags: {flags}")
 		return flags
 
+	def get_background_flags(self, rg, utterance):
+		# background_flags: flags to update even if this supernode was not chosen
+		flags = self.nlu.get_background_flags(rg, utterance)
+		return flags
+
 	def get_state_updates(self, python_context, contexts):
 		return {
 			value_name: evaluate_nlg_calls_or_constant(value_data, python_context, contexts)
