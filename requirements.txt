@@ -56,3 +56,6 @@ metaphone==0.6
 # pyxDamerauLevenshtein==1.6
 
 textstat
+
+# logging
+rich
