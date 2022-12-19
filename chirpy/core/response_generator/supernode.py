@@ -141,6 +141,7 @@ CONDITION_STYLE_TO_BEHAVIOR = {
 	'is_false': (lambda val: (val is False)),
 	'is_value': (lambda val, target: (val == target)),
 	'is_not_one_of': (lambda val, target: (val not in target)),
+	'is_greater_than': (lambda val, target: (val > target)),
 }
 	
 def compute_entry_condition(entry_condition, python_context, contexts):
@@ -148,10 +149,20 @@ def compute_entry_condition(entry_condition, python_context, contexts):
 	condition_style, var_data = list(entry_condition.items())[0]
 	if condition_style == 'or':
 		return any(compute_entry_condition(ent, python_context, contexts) for ent in var_data)
-	if condition_style == 'is_not_one_of':
+	elif condition_style == 'is_not_one_of':
 		var_value = lookup_value(var_data['name'], contexts)
 		logger.warning(f"Calculated value: {var_value} versus {var_data['values']}.")
 		return CONDITION_STYLE_TO_BEHAVIOR[condition_style](var_value, var_data['values'])
+	elif condition_style == 'is_greater_than':
+		# is_greater_than (returns true if variable associated with name > value + additional_target)
+		#   name: variable to look up
+		#   value: an integer value
+		#   additional_target: variable to look up (can be omitted). additional_target set to 0 if omitted
+		var_value = lookup_value(var_data['name'], contexts)
+		additional_target = 0
+		if 'additional_target' in var_data:
+			additional_target = lookup_value(var_data['additional_target'], contexts)
+		return CONDITION_STYLE_TO_BEHAVIOR[condition_style](var_value, var_data['value'] + additional_target)
 
 	if condition_style == 'is_value':
 		var_name = var_data['name']
