@@ -30,16 +30,20 @@ STOPWORDS_FILEPATH = os.path.join(os.path.dirname(__file__), '../../data/long_st
 STOPWORDS = load_text_file(STOPWORDS_FILEPATH)
 
 
+def get_supernode_paths():
+    path = os.path.join(os.path.dirname(__file__), '../../symbolic_rgs/active_supernodes.list')
+    with open(path, 'r') as f:
+        out = [x.strip() for x in f]
+    out = [x for x in out if not x.startswith('#')]
+    out = [x for x in out if x]
+    return out
+
+
 class SymbolicResponseGenerator(ResponseGenerator):
     name='SYMBOLIC_RESPONSE'
     def __init__(self,
                  state_manager,
-                 supernode_paths=[
-                    'FOOD__intro',
-                    'FOOD__factoid',
-                    'GLOBAL__openended',
-                    'GLOBALS'
-                 ],
+                 supernode_paths=None,
                  ):
 
         super().__init__(state_manager,  
@@ -47,6 +51,9 @@ class SymbolicResponseGenerator(ResponseGenerator):
             state_constructor=BaseSymbolicState,
             conditional_state_constructor=BaseSymbolicConditionalState,
         )
+        
+        if supernode_paths is None:
+            supernode_paths = get_supernode_paths()
         
         logger.warning(f"Starting load process with supernodes {supernode_paths}.")
         self.paths_to_supernodes = self.load_supernodes_from_paths(supernode_paths)
