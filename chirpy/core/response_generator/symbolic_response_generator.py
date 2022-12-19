@@ -113,6 +113,17 @@ class SymbolicResponseGenerator(ResponseGenerator):
         # TODO: implement takeover supernode logic
         path = state.cur_supernode or 'GLOBALS'
         return self.paths_to_supernodes[path]
+
+    def init_state(self):
+        # Supernode turn counters:
+        # There is a dictionary in base symbolic state (the state object for symbolic rg)
+        # This dictionary counts what turn number each supernode was last called
+        # We overload the init_state function to return a fresh instance of base symbolic state 
+        #   with all of the supernodes' last_turn_called set to -1
+        # For selected supernode, set last_turn_called to current turn number
+        state = BaseSymbolicState()
+        state.turns_history = {supernode.name: -1 for supernode in self.get_supernodes()}
+        return state
                 
     def update_context(
         self,
@@ -139,6 +150,8 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
         state, utterance, response_types = self.get_state_utterance_response_types()
         needs_prompt = False
+
+        logger.warning(f"Turn history for supernodes: {state.turns_history}.")
         
         # figure out what supernode we're in
         supernode = self.get_takeover_or_current_supernode(state)
@@ -161,6 +174,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
             "cur_talkable": self.get_current_entity().talkable_name if self.get_current_entity() else "",
             "cur_entity_talkable_lower": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
             "cur_supernode": state.cur_supernode,
+            "cur_turn_number": self.state_manager.current_state.turn_num,
         }
         logging.warning(f"Utilities are: {utilities}")
 
@@ -197,7 +211,10 @@ class SymbolicResponseGenerator(ResponseGenerator):
             logger.warning(f"Finished evaluating locals: {'; '.join((k + ': ' + v) for (k, v) in locals.items())}")
             locals['cur_entity'] = self.get_current_entity()
             break
-            
+
+        # Updating the turn number
+        state.turns_history[supernode.name] = utilities["cur_turn_number"]
+
         conditional_state_updates = {}
         self.update_context(supernode.get_state_updates(python_context, contexts),
                             flags,

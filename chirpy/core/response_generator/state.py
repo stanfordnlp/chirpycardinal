@@ -46,6 +46,7 @@ class BaseSymbolicState:
     num_turns_in_rg: int = 0
     cur_supernode: str = ''
     data: Dict[str, Any] = field(default_factory=dict)
+    turns_history: Dict[str, int] = field(default_factory=dict)
     
     def __getitem__(self, key):
         assert key in ALL_STATE_KEYS
