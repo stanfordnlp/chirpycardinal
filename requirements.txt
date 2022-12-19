@@ -32,7 +32,7 @@ ipython-sql
 textblob
 flask_restful
 vaderSentiment
-rasa_core
+#rasa_core
 nose
 parameterized
 
@@ -53,6 +53,9 @@ python-Levenshtein
 # entity linker - needed for asr robustness
 g2p_en
 metaphone==0.6
-pyxDamerauLevenshtein==1.6
+# pyxDamerauLevenshtein==1.6
 
 textstat
+
+# logging
+rich
