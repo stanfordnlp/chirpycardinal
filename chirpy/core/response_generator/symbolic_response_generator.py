@@ -168,8 +168,8 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
         global_flags = self.get_global_flags(state, utterance)
 
-        for _, supernode in self.paths_to_supernodes.items():
-            bg_flags = supernode.get_background_flags(self, utterance)
+        for _, _supernode in self.paths_to_supernodes.items():
+            bg_flags = _supernode.get_background_flags(self, utterance)
             global_flags.update(bg_flags)
 
         logger.warning(f"GLOBAL FLAGS after background flags: {global_flags}")
