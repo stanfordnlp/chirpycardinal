@@ -147,7 +147,9 @@ CONDITION_STYLE_TO_BEHAVIOR = {
 def compute_entry_condition(entry_condition, python_context, contexts):
 	assert len(entry_condition) == 1
 	condition_style, var_data = list(entry_condition.items())[0]
-	if condition_style == 'or':
+	if condition_style == 'and':
+		return all(compute_entry_condition(ent, python_context, contexts) for ent in var_data)
+	elif condition_style == 'or':
 		return any(compute_entry_condition(ent, python_context, contexts) for ent in var_data)
 	elif condition_style == 'is_not_one_of':
 		var_value = lookup_value(var_data['name'], contexts)
