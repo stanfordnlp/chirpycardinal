@@ -103,7 +103,12 @@ class SymbolicResponseGenerator(ResponseGenerator):
         logger.warning(f"Supernodes that can start (in order): {can_start_supernodes}")
         return can_start_supernodes[0][0]
 
-    def get_any_takeover_supernode(self, python_context, contexts):
+    def get_any_takeover_supernode(self, python_context, contexts, cancelled_supernodes):
+        for supernode in self.get_supernodes():
+            if supernode.name in cancelled_supernodes:
+                continue
+            if supernode.can_takeover(python_context, contexts):
+                return supernode
         return self.paths_to_supernodes['GLOBALS']
 
     def get_current_supernode_with_fallback(self, state):
@@ -225,6 +230,8 @@ class SymbolicResponseGenerator(ResponseGenerator):
         python_context = self.get_python_context(supernode, state)
         utilities = self.get_utilities(supernode)
         global_flags = contexts['flags']
+
+        cancelled_supernodes = set()
         
         while True:
             flags = get_default_flags()
@@ -236,7 +243,8 @@ class SymbolicResponseGenerator(ResponseGenerator):
             contexts = self.construct_contexts(flags, state, utilities)
             
             if not supernode.can_continue(python_context, contexts):
-                supernode = self.get_any_takeover_supernode(python_context, contexts)
+                cancelled_supernodes.add(supernode.name)
+                supernode = self.get_any_takeover_supernode(python_context, contexts, cancelled_supernodes)
                 logger.warning(f"Switching to supernode {supernode}")
                 continue
                 
