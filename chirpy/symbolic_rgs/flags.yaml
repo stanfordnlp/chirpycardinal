@@ -15,11 +15,13 @@
 - GlobalFlag__Initiative__request_name
 - GlobalFlag__Initiative__chatty
 - GlobalFlag__LastBotTurnWasOpenEnded
+- GlobalFlag__LastTurnUsedNeuralGeneration
 - FOOD__user_mentioned_food
 - FOOD__best_comment_type
+- PERSONALISSUE_supernode_is_responding
 - PERSONALISSUE_personal_sharing_negative
-- PERSONALISSUE_issue_responding
 - PERSONALISSUE_gratitude
 - PERSONALISSUE_is_continued_sharing
 - PERSONALISSUE_noncommittal
 - PERSONALISSUE_short_response
+- PERSONALISSUE_responded_with_question

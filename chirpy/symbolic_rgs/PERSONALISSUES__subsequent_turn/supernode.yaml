@@ -1,0 +1,211 @@
+entry_state_conditions:
+  - is_true: flags.PERSONALISSUE_supernode_is_responding
+
+# THESE ARE EVALUATED AT THE PROMPT STAGE
+prompts:
+  - prompt_name: personal_issue_subsequent_turn
+    prompt_text: ""
+
+# THESE ARE EVALUATED AT THE GENERATION STAGE
+entry_conditions_takeover:
+  # None. This supernode should not takeover
+
+continue_conditions:
+  # None. If we are in this supernode, we should at least give a closing message
+
+locals:
+  possible_continue_statement: # Ah yes, potatoes are one of my favorite things to eat up here...
+    - nlg_helper:
+        name: sample_possible_continue_statement
+  possible_continue_accepted_statement: # Ah yes, potatoes are one of my favorite things to eat up here...
+    - nlg_helper:
+        name: sample_possible_continue_accepted_statement
+  ending_statement: # Ah yes, potatoes are one of my favorite things to eat up here...
+    - nlg_helper:
+        name: sample_ending_statement
+  can_enter_subsequent_turn:
+    - bool:
+      - or :
+        - is_true: flags.PERSONALISSUE_is_continued_sharing
+        - is_true: flags.PERSONALISSUE_personal_sharing_negative
+        - and:
+          - is_none: state.PERSONALISSUE__PreviousSubnode
+          - is_true: flags.PERSONALISSUE_short_response
+        - and:
+          - is_value: 
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: subsequent_turn
+          - is_true: flags.PERSONALISSUE_responded_with_question
+          - or:
+            - is_true: flags.GlobalFlag__YES
+            - is_true: flags.GlobalFlag__NO
+        - and:
+          - is_value: 
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: subsequent_turn
+          - is_false: flags.PERSONALISSUE_responded_with_question
+          - is_true: flags.PERSONALISSUE_short_response
+  
+    
+set_state:
+  # No state to set
+  
+
+subnodes:
+  # See above template in locals for how this response will be structured
+  # Note: We set the state.PERSONALISSUE__PreviousSubnode to a general subsequent_turn
+  # string instead of the specific subnode name b/c the specific name does not matter
+  - node_name: subsequent_turn_after_short_response
+    entry_state_conditions:
+      - is_true: locals.can_enter_subsequent_turn
+      - is_true: flags.PERSONALISSUE_short_response
+    response:
+      - one of:
+        - Okay, I'm listening.
+        - Go ahead, I'm listening.
+    set_state:
+      flags.GlobalFlag__LastTurnUsedNeuralGeneration:
+        constant: False
+      state.PERSONALISSUE__PreviousSubnode:
+        constant: subsequent_turn
+  - node_name: subsequent_turn_after_question_response
+    entry_state_conditions:
+      - is_true: locals.can_enter_subsequent_turn
+      - is_true: flags.PERSONALISSUE_responded_with_question
+    response:
+      - nlg_helper:
+          name: sample_validation_statement
+    set_state:
+      flags.GlobalFlag__LastTurnUsedNeuralGeneration:
+        constant: False
+      state.PERSONALISSUE__PreviousSubnode:
+        constant: subsequent_turn
+  - node_name: subsequent_turn_templated
+    entry_state_conditions:
+      - is_true: locals.can_enter_subsequent_turn
+      - is_true: flags.GlobalFlag__LastTurnUsedNeuralGeneration
+    response:
+      - nlg_helper:
+          name: sample_subsequent_turn_statement
+    set_state:
+      flags.GlobalFlag__LastTurnUsedNeuralGeneration:
+        constant: False
+      state.PERSONALISSUE__PreviousSubnode:
+        constant: subsequent_turn
+  - node_name: subsequent_turn_neural
+    entry_state_conditions:
+      - is_true: locals.can_enter_subsequent_turn
+      - is_false: flags.GlobalFlag__LastTurnUsedNeuralGeneration
+    response:
+      - neural_generation:
+        prefix: 
+          - one of:
+            - That sounds frustrating.
+            - How awful, I'm sorry.
+            - That's tough and really unfortunate.
+          - one of:
+            - hopefully
+            - I hope
+      - nlg_helper:
+          name: sample_partial_subsequent_turn_statement
+    set_state:
+      flags.GlobalFlag__LastTurnUsedNeuralGeneration:
+        constant: True
+      state.PERSONALISSUE__PreviousSubnode:
+        constant: subsequent_turn
+  - node_name: possible_continue
+    entry_state_conditions:
+      - or :
+        - and:
+          - is_value:
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: possible_continue_accepted
+          - or:
+            - is_true: flags.GlobalFlag__YES
+            - is_true: flags.PERSONALISSUE_noncommittal
+        - and:
+          - is_value:
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: subsequent_turn
+          - is_true: flags.PERSONALISSUE_responded_with_question
+          - is_true: flags.PERSONALISSUE_short_response
+        - is_value:
+            name: state.PERSONALISSUE__PreviousSubnode
+            value: subsequent_turn
+    response:
+      - nlg_helper:
+          name: sample_possible_continue_statement
+    set_state:
+      flags.GlobalFlag__LastTurnUsedNeuralGeneration:
+        constant: False
+      state.PERSONALISSUE__PreviousSubnode:
+        constant: possible_continue
+  - node_name: possible_continue_accepted
+    entry_state_conditions:
+      - or:
+        - and:
+          - is_value:
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: subsequent_turn
+          - is_false: flags.PERSONALISSUE_responded_with_question
+          - is_true: flags.GlobalFlag__YES
+        - and:
+          - is_value:
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: possible_continue
+          - is_true: flags.GlobalFlag__YES
+    response:
+      - nlg_helper:
+          name: sample_possible_continue_accepted_statement
+    set_state:
+      flags.GlobalFlag__LastTurnUsedNeuralGeneration:
+        constant: False
+      state.PERSONALISSUE__PreviousSubnode:
+        constant: possible_continue_accepted
+  - node_name: ending
+    entry_state_conditions:
+      - or :
+        - is_true: flags.GlobalFlag__DISINTERESTED
+        - is_true: flags.PERSONALISSUE_gratitude
+        - and:
+            - is_one_of:
+                name: state.PERSONALISSUE__PreviousSubnode
+                values:
+                  - null
+                  - possible_continue
+                  - possible_continue_accepted
+            - is_true: flags.GlobalFlag__NO
+        - and:
+          - is_value:
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: subsequent_turn
+          - is_false: flags.PERSONALISSUE_responded_with_question
+          - or:
+            - is_true: flags.PERSONALISSUE_gratitude
+            - is_true: flags.GlobalFlag__NO
+        - and:
+          - is_value:
+              name: state.PERSONALISSUE__PreviousSubnode
+              value: possible_continue
+          - or:
+            - is_true: flags.PERSONALISSUE_short_response
+            - is_true: flags.PERSONALISSUE_noncommittal
+    response:
+      - nlg_helper:
+          name: sample_ending_statement
+    set_state:
+      flags.GlobalFlag__LastTurnUsedNeuralGeneration:
+        constant: False
+      flags.PERSONALISSUE_supernode_is_responding:
+        constant: False
+      state.PERSONALISSUE__PreviousSubnode:
+        constant: ending
+
+set_state_after:
+  flags.PERSONALISSUEINTRO_personal_issue_responded:
+    constant: True
+  flags.PERSONALISSUE_responded_with_question:
+    - nlg_helper:
+        name: response_contains_question
+        args:
+          - val: response_data.response
