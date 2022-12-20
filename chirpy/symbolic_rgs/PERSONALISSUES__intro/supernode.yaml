@@ -23,10 +23,14 @@ entry_conditions_takeover:
         - ALIENS__TODO_ADD_SUPERNODE
         - CATEGORIES__TODO_ADD_SUPERNODE
   - is_true: flags.PERSONALISSUE_personal_sharing_negative
-  - is_greater_than:
-      name: supernode_turns.PERSONALISSUES__intro
-      additional_target: utilities.cur_turn_num
-      value: 14  
+  - or:
+    - is_value:
+        name: supernode_turns.PERSONALISSUES__intro
+        value: -1
+    - is_greater_than:
+        name: supernode_turns.PERSONALISSUES__intro
+        additional_target: utilities.cur_turn_num
+        value: 14
 
 continue_conditions:
   # If supernode takes over, then it can obviously continue
@@ -48,7 +52,8 @@ locals:
       - I'd be willing to listen if you're willing to continue sharing.
     
 set_state:
-  # No state to set in intro. Just return the intro response
+  flags.PERSONALISSUE_supernode_is_responding:
+    constant: True
 
 subnodes:
   # See above template in locals for how this response will be structured
@@ -58,5 +63,3 @@ subnodes:
       - val: locals.intro_statement
 
 set_state_after:
-  flags.PERSONALISSUE_issue_responding:
-    constant: True
