@@ -120,7 +120,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
         return self.get_current_supernode_with_fallback(state)
 
     def get_python_context(self, supernode, state):
-        """Returns the current supernode's python context."""
+        """Returns the supernode's python context."""
         python_context = get_context_for_supernode(supernode)
         python_context.update({
             'rg': self,
