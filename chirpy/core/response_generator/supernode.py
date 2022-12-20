@@ -67,6 +67,9 @@ def evaluate_nlg_call(data, python_context, contexts):
 	if type == 'eval':
 		assert isinstance(nlg_params, str)
 		return effify(nlg_params, global_context=python_context)
+	elif type == 'bool':
+		assert isinstance(nlg_params, list)
+		return is_valid(nlg_params, python_context, contexts)
 	elif type == 'val':
 		assert isinstance(nlg_params, str)
 		return lookup_value(nlg_params, contexts)
