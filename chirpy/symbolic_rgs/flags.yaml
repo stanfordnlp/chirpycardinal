@@ -17,4 +17,9 @@
 - GlobalFlag__LastBotTurnWasOpenEnded
 - FOOD__user_mentioned_food
 - FOOD__best_comment_type
-- PERSONALISSUEINTRO_personal_sharing_negative
+- PERSONALISSUE_personal_sharing_negative
+- PERSONALISSUE_issue_responding
+- PERSONALISSUE_gratitude
+- PERSONALISSUE_is_continued_sharing
+- PERSONALISSUE_noncommittal
+- PERSONALISSUE_short_response

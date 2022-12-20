@@ -1,0 +1,62 @@
+entry_state_conditions:
+  # The personal issues intro should never be prompting or being entered into. It should just
+  # takeover whenever it sees a personal issue.
+
+# THESE ARE EVALUATED AT THE PROMPT STAGE
+prompts:
+  # A blank prompt (personal issues intro supernode does not prompt)
+  - prompt_name: personal_issue_intro
+    prompt_text: ""
+
+# THESE ARE EVALUATED AT THE GENERATION STAGE
+entry_conditions_takeover:
+  # disallow entry into personal_issues supernode from the below supernodes
+  - is_not_one_of:
+      # check that the variable listed by name is not one of the following values 
+      name: utilities.cur_supernode
+      values:
+        # do not allow reentry into personal issues intro if we are already in a personal issue convo
+        - PERSONALISSUES__intro
+        - PERSONALISSUES__subsequent_turn
+        - OPINION__TODO_ADD_SUPERNODE
+        - WIKI__TODO_ADD_SUPERNODE
+        - ALIENS__TODO_ADD_SUPERNODE
+        - CATEGORIES__TODO_ADD_SUPERNODE
+  - is_true: flags.PERSONALISSUE_personal_sharing_negative
+  - is_greater_than:
+      name: supernode_turns.PERSONALISSUES__intro
+      additional_target: utilities.cur_turn_num
+      value: 14  
+
+continue_conditions:
+  # If supernode takes over, then it can obviously continue
+
+locals:
+  intro_statement: # Ah yes, potatoes are one of my favorite things to eat up here...
+    - one of: 
+      - Thank you for sharing that with me.
+    - one of:
+      - I'm sorry to hear that.
+      - That sounds difficult.
+      - That's really unfortunate.
+    - one of:
+      - I'm here to listen if you would like to tell me more.
+      - I would be interested to hear more if you don't mind sharing.
+      - Feel free to continue telling me more.
+      - Please continue telling me more if you would like to.
+      - I'm willing to hear more if you'd like to tell me about it.
+      - I'd be willing to listen if you're willing to continue sharing.
+    
+set_state:
+  # No state to set in intro. Just return the intro response
+
+subnodes:
+  # See above template in locals for how this response will be structured
+  - node_name: respond_to_personal_issue
+    entry_state_conditions:
+    response:
+      - val: locals.intro_statement
+
+set_state_after:
+  flags.PERSONALISSUE_issue_responding:
+    constant: True

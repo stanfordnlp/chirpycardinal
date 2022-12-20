@@ -8,4 +8,4 @@ def get_flags(rg, state, utterance):
 @nlu_processing
 def get_background_flags(rg, utterance):
     is_personal_issue = personal_issues_helpers.is_personal_issue(rg, utterance)
-    ADD_NLU_FLAG('PERSONALISSUEINTRO_personal_sharing_negative', is_personal_issue)
+    ADD_NLU_FLAG('PERSONALISSUE_personal_sharing_negative', is_personal_issue)
