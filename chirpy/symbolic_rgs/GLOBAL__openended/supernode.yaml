@@ -2,7 +2,6 @@ entry_flag_conditions:
   - is_true: flags.GlobalFlag__LastBotTurnWasOpenEnded
 
 entry_conditions_takeover: 
-  - disallow
 
 locals: {}
 

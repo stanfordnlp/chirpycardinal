@@ -8,8 +8,8 @@ prompts:
 
 # THESE ARE EVALUATED AT THE GENERATION STAGE
 entry_conditions_takeover:
-  - is_true: GLOBAL__user_has_navigational_intent
-  - is_true: FOOD__cur_entity_known_food
+  # - is_true: GLOBAL__user_has_navigational_intent
+  # - is_true: FOOD__cur_entity_known_food
 
 continue_conditions:
   - is_true: flags.FOOD__user_mentioned_food

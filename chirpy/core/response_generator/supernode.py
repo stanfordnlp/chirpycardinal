@@ -330,6 +330,18 @@ class Supernode:
 			return (len(self.entry_flag_conditions), len(self.entry_state_conditions) + 1) if result else (0, 0)
 		else:
 			return result
+
+	def can_takeover(self, python_context, contexts, return_specificity=False):
+		if self.entry_conditions_takeover == None:
+			# Supernode with no entry conditions cannot takeover
+			return False
+		
+		result = is_valid(self.entry_conditions_takeover, python_context, contexts)
+		logger.warning(f"Can_takeover for {self.name} logged {result}")
+		if return_specificity:
+			return len(self.entry_conditions_takeover) if result else 0
+		else:
+			return result
 		
 	def can_continue(self, python_context, contexts):
 		result = is_valid(self.continue_conditions, python_context, contexts)

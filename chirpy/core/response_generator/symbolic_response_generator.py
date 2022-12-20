@@ -105,14 +105,73 @@ class SymbolicResponseGenerator(ResponseGenerator):
 
     def get_any_takeover_supernode(self, python_context, contexts):
         return self.paths_to_supernodes['GLOBALS']
-        
-    def get_takeover_or_current_supernode(self, state):
-        """Returns a takeover supernode if one has high priority.
-        Else, returns the current supernode if it exists."""
-        
-        # TODO: implement takeover supernode logic
+
+    def get_current_supernode_with_fallback(self, state):
+        """Returns the current supernode or GLOBALS (if no current supernode exists)."""
         path = state.cur_supernode or 'GLOBALS'
         return self.paths_to_supernodes[path]
+        
+    def get_takeover_or_current_supernode(self, state, python_context, contexts):
+        """Returns a takeover supernode if one has high priority.
+        Else, returns the current supernode if it exists."""
+        for supernode in self.get_supernodes():
+            if supernode.can_takeover(python_context, contexts):
+                return supernode
+        return self.get_current_supernode_with_fallback(state)
+
+    def get_python_context(self, supernode, state):
+        """Returns the current supernode's python context."""
+        python_context = get_context_for_supernode(supernode)
+        python_context.update({
+            'rg': self,
+            'supernode': supernode,
+            'state': state
+        })
+        return python_context
+
+    def get_utilities(self, supernode):
+        """Packages some useful data into one object."""
+        return {
+            "last_utterance": self.get_last_response().text, 
+            "cur_entity": self.get_current_entity(),
+            "cur_entity_name": self.get_current_entity().name if self.get_current_entity() else "",
+            "cur_entity_name_lower": self.get_current_entity().name.lower() if self.get_current_entity() else "",
+            "cur_talkable": self.get_current_entity().talkable_name if self.get_current_entity() else "",
+            "cur_entity_talkable_lower": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
+            "cur_supernode": supernode.name,
+            "cur_turn_num": self.state_manager.current_state.turn_num,
+        }
+
+    def get_background_flags(self, utterance):
+        """Collects all background flags from all supernodes."""
+        flags = {}
+        for _, _supernode in self.paths_to_supernodes.items():
+            bg_flags = _supernode.get_background_flags(self, utterance)
+            flags.update(bg_flags)
+        return flags
+
+    def get_initial_contexts(self, state, utterance):
+        """Gets the python context, utilities, and contexts dictionary for 
+        the currently active supernode."""
+        # grab python context
+        supernode = self.get_current_supernode_with_fallback(state)
+        python_context = self.get_python_context(supernode, state)
+        utilities = self.get_utilities(supernode)
+        # grab global flags
+        global_flags = self.get_global_flags(state, utterance)
+        global_flags.update(self.get_background_flags(utterance))
+        # construct contexts dictionary
+        contexts = self.construct_contexts(global_flags, state, utilities)
+        return python_context, utilities, contexts
+
+    def construct_contexts(self, flags, state, utilities):
+        """Constructs contexts dictionary."""
+        return {
+            'flags': flags,
+            'state': state,
+            'utilities': utilities,
+            'supernode_turns': state.turns_history,
+        }
 
     def init_state(self):
         # Supernode turn counters:
@@ -148,45 +207,24 @@ class SymbolicResponseGenerator(ResponseGenerator):
         
         self.state = state
         
-        state, utterance, response_types = self.get_state_utterance_response_types()
-        needs_prompt = False
+        state, utterance, _ = self.get_state_utterance_response_types()
 
         logger.warning(f"Turn history for supernodes: {state.turns_history}.")
+
+        # get initial python context, utilities, and contexts in order to determine the takeover supernode
+        python_context, utilities, contexts = self.get_initial_contexts(state, utterance)
         
-        # figure out what supernode we're in
-        supernode = self.get_takeover_or_current_supernode(state)
+        # Figure out what supernode we're in
+        supernode = self.get_takeover_or_current_supernode(state, python_context, contexts)
         
         logger.warning(f"Currently, we are in supernode {supernode}.")
-            
-        python_context = get_context_for_supernode(supernode)
-        python_context.update({
-            'rg': self,
-            'supernode': supernode,
-            'state': state
-        })
         
-        # Process locals        
-        utilities = {
-            "last_utterance": self.get_last_response().text, 
-            "cur_entity": self.get_current_entity(),
-            "cur_entity_name": self.get_current_entity().name if self.get_current_entity() else "",
-            "cur_entity_name_lower": self.get_current_entity().name.lower() if self.get_current_entity() else "",
-            "cur_talkable": self.get_current_entity().talkable_name if self.get_current_entity() else "",
-            "cur_entity_talkable_lower": self.get_current_entity().talkable_name.lower() if self.get_current_entity() else "",
-            "cur_supernode": state.cur_supernode,
-            "cur_turn_number": self.state_manager.current_state.turn_num,
-        }
-        logging.warning(f"Utilities are: {utilities}")
-
-        # perform nlu
-        
-        global_flags = self.get_global_flags(state, utterance)
-
-        for _, _supernode in self.paths_to_supernodes.items():
-            bg_flags = _supernode.get_background_flags(self, utterance)
-            global_flags.update(bg_flags)
-
-        logger.warning(f"GLOBAL FLAGS after background flags: {global_flags}")
+        # Re-update python context and utilities with new supernode
+        # We can keep the global flags as what we had before because their values are not dependent
+        # on the selected supernode
+        python_context = self.get_python_context(supernode, state)
+        utilities = self.get_utilities(supernode)
+        global_flags = contexts['flags']
         
         while True:
             flags = get_default_flags()
@@ -195,11 +233,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
             
             logging.warning(f"Flags for supernode {supernode} are: {flags}")
             
-            contexts = {
-                'flags': flags,
-                'state': state,
-                'utilities': utilities,
-            }
+            contexts = self.construct_contexts(flags, state, utilities)
             
             if not supernode.can_continue(python_context, contexts):
                 supernode = self.get_any_takeover_supernode(python_context, contexts)
@@ -213,7 +247,7 @@ class SymbolicResponseGenerator(ResponseGenerator):
             break
 
         # Updating the turn number
-        state.turns_history[supernode.name] = utilities["cur_turn_number"]
+        state.turns_history[supernode.name] = utilities["cur_turn_num"]
 
         conditional_state_updates = {}
         self.update_context(supernode.get_state_updates(python_context, contexts),
