@@ -261,6 +261,9 @@ class SymbolicResponseGenerator(ResponseGenerator):
         logger.warning(f'Received {response} from subnode {subnode}.')
         assert response is not None, "Received a None response."
 
+        # Making response available to yaml supernode
+        contexts['response_data'] = { 'response': response }
+
         # update state
         conditional_state_updates = {}
         self.update_context(supernode.get_state_updates_after(python_context, contexts),
