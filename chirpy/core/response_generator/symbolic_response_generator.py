@@ -145,8 +145,8 @@ class SymbolicResponseGenerator(ResponseGenerator):
     def get_background_flags(self, utterance):
         """Collects all background flags from all supernodes."""
         flags = {}
-        for _, _supernode in self.paths_to_supernodes.items():
-            bg_flags = _supernode.get_background_flags(self, utterance)
+        for supernode in self.get_supernodes():
+            bg_flags = supernode.get_background_flags(self, utterance)
             flags.update(bg_flags)
         return flags
 
