@@ -15,7 +15,7 @@ In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assist
 
 {: .fs-6 .fw-300 }
 
-[Chat with Chirpy](live_demo/){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+[Chat with Chirpy](http://20.80.185.97/static/index.html){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 [Browse code](https://github.com/stanfordnlp/chirpycardinal){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
 <!--[View our repo](TBD){: .btn .fs-5 .mb-4 .mb-md-0 }-->
 
