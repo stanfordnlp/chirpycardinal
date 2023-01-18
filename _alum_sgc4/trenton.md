@@ -2,6 +2,6 @@
 name: Trenton Chang
 link: https://web.stanford.edu/~tchang97
 image: /assets/images/trenton.png
-order: 15
+order: 5
 ---
-MS student in CS working on neural response ranking and response generation for the team.
+SGC4. Built our distilled neural generator. Now a PhD candidate at UMich.

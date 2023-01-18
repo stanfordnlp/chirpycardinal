@@ -2,6 +2,6 @@
 name: Alexander Iyabor
 link: https://www.linkedin.com/in/alexanderiyabor/
 image: /assets/images/alexander.jpg
-order: 7
+order: 10
 ---
-MS student in CS. He is working on news dialogue, neural summarization, and user characteristic inference.
+SGC4. Co-built the news module. Now a PhD candidate at UC Berkeley.

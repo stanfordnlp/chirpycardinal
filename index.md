@@ -22,6 +22,7 @@ In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assist
 {: .fs-6 .fw-300 }
 
 ## Publications and Media
+* [**SIGDIAL 2022**](
 * [**ICLR 2022**](https://openreview.net/pdf?id=Vr_BTpw3wz): New research paper on jointly training neural retriever and generator for knowledge-grounded conversations.
 * [**NAACL 2021 and SIGDIAL 2021**](/chirpycardinal/publications): 4 new research papers accepted! 
 * [**Stanford AI Lab Blog**](https://ai.stanford.edu/blog/chirpy-cardinal/): _Inside Chirpy Cardinal: Stanford's Open-Source Social Chatbot that Won 2nd place in the Alexa Prize_

@@ -37,22 +37,74 @@ body {
 }
 .people-cards{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-evenly;
+}
 
-    .person {
-        margin: 1em; 
-        padding-left: 1em;
-        padding-right: 1em;
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-        width: 250px;
-        img {
-            border-radius:5px;
-        }
+.person {
+    display: flex;
+    flex-direction: column;
+    margin: 1em; 
+    padding-left: 1em;
+    padding-right: 1em;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    text-align: center;
+    width: 300px;
+    img {
+        border-radius:5px;
     }
-    .person:hover{
+    &:hover{
         box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    }
+    p:nth-child(2) {
+        margin-bottom: 0em;
+    }
+    p+p {
+        margin-top: 0em;
     }
 }
 
+
+
+.alum {
+    display: flex;
+    flex-direction: row;
+    margin: 1em; 
+    padding-left: 1em;
+    padding-right: 1em;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    width: 100%;
+    max-width: 1200px;
+    img {
+        border-radius:5px;
+    }
+    // .person:hover{
+    //     box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+    // }
+    .alum-name {
+        font-weight: bold;
+        margin-right: 1em;
+        text-align: right;
+        min-width: 13em;
+        :after {
+            content: "";
+               
+        }
+    }
+}
+
+.contest {
+    font-weight: bold;
+    
+    &.sgc4 {
+        color: #33aa66;   
+    }
+    
+    :before {
+        content: "(";
+    }
+    :after {
+        content: ")";
+    }
+}

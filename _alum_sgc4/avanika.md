@@ -2,6 +2,6 @@
 name: Avanika Narayan
 link: https://www.linkedin.com/in/avanika-n-a35a02a3/
 image: /assets/images/avanika.png
-order: 11
+order: 15
 ---
-MS student in CS working on sports-related dialogue and improving the robustness of the bot.
+SGC4. Worked on dialogue robustness. Now a PhD candidate at Stanford.
