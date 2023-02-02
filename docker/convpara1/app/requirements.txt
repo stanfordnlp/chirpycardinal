@@ -1,6 +1,6 @@
 Flask==0.11.1
 Flask-RESTful==0.3.5
-Werkzeug==0.10.4
+Werkzeug==0.15.5
 jsonpickle==0.9.4
 gunicorn==19.7.1
 
