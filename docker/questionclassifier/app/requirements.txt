@@ -1,6 +1,6 @@
 Flask==0.11.1
 Flask-RESTful==0.3.5
-Werkzeug==0.15.3
+Werkzeug==0.15.5
 future==0.16.0
 jsonpickle==0.9.4
 numpy==1.16.4
