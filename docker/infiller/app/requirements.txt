@@ -1,7 +1,7 @@
 itsdangerous==2.0.1
 Flask==0.11.1
 Flask-RESTful==0.3.5
-Werkzeug==0.10.4
+Werkzeug==2.2.3
 future==0.16.0
 jsonpickle==0.9.4
 pandoc==1.0.0b2
