@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="22fbb00b-c712-4f17-b783-f6754218f8e9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/_people/brian.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/gary.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/gordon.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/jack.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/jeremy.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/jihun.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/katherine.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/kristie.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/ly-ly.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/nathan.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/parth.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/patrick.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/ryan.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/scott.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/shashank.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/siyan.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/steven.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_people/virginia.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/original_size/resize_image.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_sass/custom/custom.scss" beforeDir="false" afterPath="$PROJECT_DIR$/_sass/custom/custom.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/abi.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/abi.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/amelia.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/amelia.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/ashwin.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/ashwin.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/ashwin.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/ashwin.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/chris.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/chris.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/dilara.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/dilara.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/haojun.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/haojun.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/kathleen.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/kathleen.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/kaushik.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/kaushik.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/minh.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/minh.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/peng.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/peng.png" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2M3vLV1tIF4usqHVmYFkkc63UIK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Siyan Sylvia Li/Documents/Chirpy/webpage/chirpycardinal/_people&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Siyan Sylvia Li\Documents\Chirpy\webpage\chirpycardinal\_people" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="resize_image" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="chirpycardinal" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/assets/images/original_size" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/assets/images/original_size/resize_image.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.resize_image" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="22fbb00b-c712-4f17-b783-f6754218f8e9" name="Changes" comment="" />
+      <created>1677009024900</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1677009024900</updated>
+      <workItem from="1677009026891" duration="6769000" />
+      <workItem from="1677051553053" duration="4432000" />
+      <workItem from="1677090074991" duration="3003000" />
+      <workItem from="1677108194568" duration="2147000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/chirpycardinal$resize_image.coverage" NAME="resize_image Coverage Results" MODIFIED="1677110278448" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/assets/images/original_size" />
+  </component>
+</project>
