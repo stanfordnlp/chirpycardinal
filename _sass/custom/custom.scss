@@ -35,9 +35,9 @@ body {
       white-space: normal;
   }
 }
-.people-cards{
+.people-cards {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly;
 }
