@@ -33,6 +33,16 @@ In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assist
 
 ---
 
+# Alexa Prize 5 (2022-2023)
+
+In September 2023, our revamped Chirpy Cardinal bot won 1st Place (Science Prize) in the finals of the Alexa Prize Socialbot Grand Challenge 5. We introduced a number of innovations, including:
+- CAMEL: a markup language for stateful, editable, and neurally interpolable chatbot development
+- Goldfinch: a method for automatically generates nodes in a conversational graph using an LLM 
+- Kingfisher: a method for reducing LLM latency by predicting future user utterances and precomputing responses to them
+
+[Read our paper](https://assets.amazon.science/c6/bc/589db16944f1a185305802f8393e/chirpy-cardinal-dialogue-distillery-crafting-interpolable-interpretable-and-introspectable-dialogue-from-llms.pdf){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 }
+
+
 # Alexa Prize 4 (2020-2021)
 
 In July 2021, our much improved Chirpy Cardinal again won 2nd place in the finals of the Alexa Prize Socialbot Grand Challenge 4.
