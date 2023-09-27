@@ -9,7 +9,7 @@ permalink: /
 <img style='float:right;' src="{{site.baseurl}}/assets/images/chirpy_logo_optimized.svg" width="140" height="140">
 <h1 class='fs-9'> Welcome to <strong>Chirpy Cardinal</strong>. </h1>
 We are a <a href="https://nlp.stanford.edu/">Stanford NLP</a> research group focussed on open-domain conversational dialogue. <br><br>
-Our research is informed by hundreds of thousands of people chatting with our bot Chirpy Cardinal via the <a href="https://developer.amazon.com/alexaprize">Alexa Prize</a>, a university competition to advance conversational AI. <br><br>
+Our research is informed by hundreds of thousands of people chatting with our bot Chirpy Cardinal via the <a href="https://developer.amazon.com/alexaprize">Alexa Prize</a>, a university competition to advance conversational AI. In <a href="https://twitter.com/AmazonScience/status/1701697037807313148">2023</a>, we won <b>1st Place (Science Prize).</b><br><br>
 In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assistant Lab (OVAL)</a>, we have open-sourced our award-winning socialbot from Alexa Prize 2020/2021. 
 </div>
 
@@ -22,7 +22,7 @@ In collaboration with <a href="https://oval.cs.stanford.edu">Open Virtual Assist
 {: .fs-6 .fw-300 }
 
 ## Publications and Media
-* [**SIGDIAL 2022**](
+* [**SIGDIAL 2022**](https://aclanthology.org/2022.sigdial-1.22/): New research paper on predicting lead-time to initiation.
 * [**ICLR 2022**](https://openreview.net/pdf?id=Vr_BTpw3wz): New research paper on jointly training neural retriever and generator for knowledge-grounded conversations.
 * [**NAACL 2021 and SIGDIAL 2021**](/chirpycardinal/publications): 4 new research papers accepted! 
 * [**Stanford AI Lab Blog**](https://ai.stanford.edu/blog/chirpy-cardinal/): _Inside Chirpy Cardinal: Stanford's Open-Source Social Chatbot that Won 2nd place in the Alexa Prize_
